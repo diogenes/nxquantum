@@ -11,12 +11,18 @@
 
 ## Phase 1 - v0.2 P0: Correctness + Runtime Profiles
 
-- [ ] Implement deterministic 1-2 qubit state-vector evolution.
-- [ ] Implement expectation values for Pauli observables.
-- [ ] Add property tests for normalization and gate composition.
-- [ ] Stabilize runtime profile contract (`cpu_portable`, `cpu_compiled`, `nvidia_gpu_compiled`, `torch_interop_runtime`).
-- [ ] Implement deterministic fallback policy (`strict`, `allow_cpu_compiled`).
-- [ ] Add executable feature scenarios for backend and hybrid-training deterministic behavior.
+- [x] Implement deterministic 1-2 qubit state-vector evolution with analytical reference scenarios.
+- [x] Implement expectation values for Pauli observables (`:pauli_x`, `:pauli_y`, `:pauli_z`).
+- [x] Add property tests for normalization and gate composition (1-2 qubits).
+- [x] Stabilize runtime profile contract (`cpu_portable`, `cpu_compiled`, `nvidia_gpu_compiled`, `torch_interop_runtime`).
+- [x] Implement deterministic fallback policy (`strict`, `allow_cpu_compiled`).
+- [x] Add executable feature scenarios for backend and hybrid-training deterministic behavior.
+
+Milestone A review gate (before Phase 2):
+
+1. Feature scenarios explicitly cover 1-2 qubit deterministic evolution and Pauli expectation references.
+2. Property coverage includes both gate-composition invariants and state normalization invariants.
+3. Runtime profile/fallback behaviors are covered by executable deterministic scenarios.
 
 ## Phase 2 - v0.2 P1: Differentiation, Noise, and Optimization
 

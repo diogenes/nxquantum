@@ -140,6 +140,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
     a
     |> Nx.reshape({ar, ac, 1, 1})
     |> Nx.multiply(Nx.reshape(b, {1, 1, br, bc}))
+    |> Nx.transpose(axes: [0, 2, 1, 3])
     |> Nx.reshape({ar * br, ac * bc})
   end
 end

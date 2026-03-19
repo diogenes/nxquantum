@@ -35,4 +35,36 @@ defmodule NxQuantum.StateVectorTest do
 
     assert_in_delta expectation, 0.0, 1.0e-6
   end
+
+  test "ry(pi/2) yields Pauli-X expectation 1 and Pauli-Y expectation 0" do
+    circuit =
+      [qubits: 1]
+      |> Circuit.new()
+      |> Gates.ry(0, theta: :math.pi() / 2.0)
+
+    expectation_x =
+      circuit
+      |> Circuit.expectation(observable: :pauli_x, wire: 0)
+      |> Nx.to_number()
+
+    expectation_y =
+      circuit
+      |> Circuit.expectation(observable: :pauli_y, wire: 0)
+      |> Nx.to_number()
+
+    assert_in_delta expectation_x, 1.0, 1.0e-5
+    assert_in_delta expectation_y, 0.0, 1.0e-5
+  end
+
+  test "bell state has deterministic zero Pauli-Z expectation on the second qubit" do
+    expectation =
+      [qubits: 2]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Circuit.expectation(observable: :pauli_z, wire: 1)
+      |> Nx.to_number()
+
+    assert_in_delta expectation, 0.0, 1.0e-6
+  end
 end
