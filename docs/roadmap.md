@@ -82,3 +82,50 @@ Milestone E review gate (v0.3 foundation):
 3. Mitigation and transpilation facades are deterministic and feature-covered.
 4. Dynamic IR validation and explicit no-execution runtime boundary are implemented in `NxQuantum.DynamicIR`.
 5. v0.3 spec includes feature-to-step mapping and aligns with implemented foundation behavior.
+
+## Known Gaps (Post-v0.3 Foundation)
+
+1. Dynamic-circuit execution is still boundary-only (validation exists, execution engine is pending).
+2. Hardware-provider depth is still early (job lifecycle/calibration/provider-specific contracts need expansion).
+3. Large-scale simulation strategies (for example tensor-network/MPS) are still pending.
+4. Product-positioning assets versus Python-first alternatives need stronger public packaging (migration guides, side-by-side comparisons, case studies).
+
+## Phase 6 - v0.4 P0: Dynamic Execution + Hardware Bridges
+
+- [ ] Implement dynamic-circuit runtime execution for supported IR nodes (mid-circuit measurement + feed-forward branches).
+- [ ] Add provider-facing job lifecycle contracts (`submit`, `poll`, `cancel`, typed result retrieval).
+- [ ] Add first provider bridge adapter behind ports with deterministic typed error mapping.
+- [ ] Extend mitigation hooks to accept hardware calibration payload contracts.
+
+Milestone F review gate (before Phase 7):
+
+1. Dynamic IR execution works for the approved v0.4 subset and remains typed/deterministic.
+2. Provider bridge integration is behind explicit ports/adapters and has contract tests.
+3. Hardware execution and mitigation calibration paths are covered by executable acceptance scenarios.
+
+## Phase 7 - v0.4 P1: Scale and Performance
+
+- [ ] Add large-scale simulator fallback path (tensor-network/MPS-oriented strategy).
+- [ ] Improve batched execution path for `batch >= 32` with deterministic shape/performance contracts.
+- [ ] Publish cross-profile benchmark matrix (latency, throughput, memory) with reproducible scripts.
+- [ ] Add regression thresholds for performance-sensitive paths in CI reporting.
+
+Milestone G review gate (before Phase 8):
+
+1. Large-scale simulator fallback is callable through stable facades.
+2. Benchmarks show measurable gains for targeted batch/size ranges versus current baseline.
+3. Performance reports are reproducible and versioned in-repo.
+
+## Phase 8 - v0.4 P2: Product Positioning vs Python-First Alternatives
+
+- [ ] Publish side-by-side workflow docs for identical tasks (estimation, sampling, kernels, transpilation) vs Python-first stacks.
+- [ ] Add migration playbooks from common Python quantum workflows into Elixir/NxQuantum patterns.
+- [ ] Provide Livebook-first tutorials and runnable end-to-end recipe packs for ML teams.
+- [ ] Publish a clear decision matrix: when NxQuantum is the better fit and when Python-first tooling is still preferable.
+- [ ] Add at least one public case-study style benchmark narrative focused on BEAM integration value.
+
+Milestone H review gate (positioning readiness):
+
+1. Positioning docs make differentiators explicit without hiding current limitations.
+2. Migration guides and side-by-side examples are runnable and verified.
+3. Public narrative is backed by reproducible data (benchmarks and workflow evidence), not only claims.

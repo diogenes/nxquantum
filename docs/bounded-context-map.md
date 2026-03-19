@@ -164,6 +164,49 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - typed validation errors
   - explicit no-execution boundary for v0.3
 
+### 10) Dynamic Execution and Provider Bridge Context (Planned v0.4)
+
+- Features:
+  - `features/dynamic_execution_hardware_bridges.feature`
+- Planned public entrypoints:
+  - dynamic execution entrypoint over `NxQuantum.DynamicIR`
+  - provider bridge port contracts
+- Planned domain/application modules:
+  - dynamic execution interpreter (supported subset)
+  - provider lifecycle contract objects
+  - calibration payload validation contracts
+- Invariants:
+  - deterministic dynamic branch execution for supported subset
+  - typed provider lifecycle and transport errors
+
+### 11) Scale and Performance Context (Planned v0.4)
+
+- Features:
+  - `features/scale_and_performance.feature`
+- Planned public entrypoints:
+  - scale strategy options under execution facades
+  - benchmark/report interfaces
+- Planned domain/application modules:
+  - large-scale fallback strategy contracts
+  - benchmark matrix/report builders
+  - regression threshold evaluators
+- Invariants:
+  - deterministic fallback selection
+  - reproducible benchmark evidence
+
+### 12) Product Positioning Context (Planned v0.4)
+
+- Artifacts:
+  - positioning and comparison docs
+  - migration playbooks and case-study narratives
+- Planned public assets:
+  - side-by-side workflow guides
+  - migration playbooks
+  - decision matrix and case-study evidence
+- Invariants:
+  - claims backed by reproducible scripts/benchmarks
+  - limitations explicitly documented
+
 ## Refactor Rules
 
 1. Start from one context and one behavior slice.

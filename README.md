@@ -48,6 +48,7 @@ Track status here:
 
 - [docs/roadmap.md](docs/roadmap.md)
 - [docs/v0.3-feature-spec.md](docs/v0.3-feature-spec.md)
+- [docs/v0.4-feature-spec.md](docs/v0.4-feature-spec.md)
 
 ## Docs
 

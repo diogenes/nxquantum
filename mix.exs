@@ -118,6 +118,7 @@ defmodule NxQuantum.MixProject do
         "docs/v0.2-feature-spec.md",
         "docs/v0.2-improvement-plan.md",
         "docs/v0.3-feature-spec.md",
+        "docs/v0.4-feature-spec.md",
         "docs/getting-started.md",
         "docs/product-positioning.md",
         "docs/axon-integration.md",
