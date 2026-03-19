@@ -61,7 +61,8 @@ defmodule NxQuantum.Runtime.Detection do
   defp module_loaded?(module), do: Code.ensure_loaded?(module)
 
   defp exla_client_available?(client) do
-    if module_loaded?(EXLA.Client) and function_exported?(EXLA.Client, :fetch!, 1) do
+    if module_loaded?(EXLA.Client) and function_exported?(EXLA.Client, :fetch!, 1) and
+         exla_platform_supported?(client) do
       case safe_fetch_exla_client(client) do
         {:ok, _client} -> true
         :ok -> true
@@ -72,12 +73,38 @@ defmodule NxQuantum.Runtime.Detection do
     end
   end
 
+  defp exla_platform_supported?(platform) do
+    if function_exported?(EXLA.Client, :get_supported_platforms, 0) do
+      case safe_supported_platforms() do
+        platforms when is_map(platforms) -> Map.has_key?(platforms, platform)
+        _ -> false
+      end
+    else
+      true
+    end
+  end
+
+  defp safe_supported_platforms do
+    try do
+      EXLA.Client.get_supported_platforms()
+    rescue
+      _ -> :error
+    catch
+      :exit, _reason -> :error
+      _kind, _reason -> :error
+    end
+  end
+
   defp safe_fetch_exla_client(client) do
     exla_client_module = :"Elixir.EXLA.Client"
-    :erlang.apply(exla_client_module, :fetch!, [client])
-  rescue
-    _ -> :error
-  catch
-    _, _ -> :error
+
+    try do
+      :erlang.apply(exla_client_module, :fetch!, [client])
+    rescue
+      _ -> :error
+    catch
+      :exit, _reason -> :error
+      _kind, _reason -> :error
+    end
   end
 end
