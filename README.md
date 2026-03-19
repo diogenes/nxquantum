@@ -1,147 +1,65 @@
 # NxQuantum
 
-Pure-Elixir quantum circuit simulation and quantum machine learning primitives powered by `Nx`.
+NxQuantum is a pure-Elixir quantum ML library for the `Nx` ecosystem.
+It is built for ML engineers and researchers who want quantum primitives inside the same BEAM stack used for training loops, inference services, and production pipelines.
 
-## Why NxQuantum
+## Why It Matters
 
-`NxQuantum` treats quantum state vectors and gates as tensor transformations, so the entire execution
-path can be compiled and accelerated on BEAM-compatible numerical backends.
+Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx community by providing:
 
-Core principles:
+- Elixir-native primitives (`Estimator`, `Sampler`, `Kernels`, `Transpiler`).
+- Deterministic behavior with explicit runtime and seed contracts.
+- A cleaner path from research code to BEAM production systems.
 
-- Pipelines over configuration.
-- `Nx.Defn`-ready APIs.
-- Composable, test-first architecture (DDD + Hexagonal).
+See positioning and comparison details:
 
-## Current Status
+- [docs/product-positioning.md](docs/product-positioning.md)
 
-This repository is currently in **active v0.2/v0.3 foundation delivery**:
-
-- v0.2 Milestones A-D are implemented (correctness, runtime, differentiation/noise/optimization, ecosystem readiness).
-- v0.3 foundation milestone is implemented (primitives, batch workflows, mitigation/transpilation interfaces, dynamic IR boundary).
-- v0.3 specification work continues for deeper hardware-ready execution paths.
-
-## Quickstart
+## Quick Start
 
 ```bash
 mise trust
 mise install
 mix setup
-mix test
-mix test.features
-mix quality
+mix run examples/quantum_kernel_classifier.exs
 ```
 
-## Publish to Hex
+For full setup and API walkthroughs and usage examples:
 
-1. Authenticate once (or refresh your key):
+- [docs/getting-started.md](docs/getting-started.md)
 
-```bash
-mix hex.user auth
-```
+## Main Features (Current)
 
-2. Run release checks:
+- Circuit construction and expectation estimation.
+- Shot-based sampling with deterministic seeds.
+- Batched estimator/sampler APIs.
+- Gradient modes (`backprop`, `parameter_shift`, `adjoint`).
+- Error mitigation pipeline (`readout`, `zne_linear`).
+- Topology-aware transpilation interface.
+- Quantum kernel matrix generation.
 
-```bash
-mix ci
-mix hex.build
-```
+## What Is Still Planned
 
-3. Publish the package:
+- Full dynamic-circuit execution engine (validation boundary exists, execution is future work).
+- Deeper hardware-provider integrations and calibration workflows.
+- Larger-scale simulator strategies (for example tensor-network/MPS paths).
 
-```bash
-mix hex.publish
-```
+Track status here:
 
-4. Publish docs to HexDocs:
+- [docs/roadmap.md](docs/roadmap.md)
+- [docs/v0.3-feature-spec.md](docs/v0.3-feature-spec.md)
 
-```bash
-mix hex.publish docs
-```
+## Docs
 
-Optional dry-run before publishing:
+- [docs/getting-started.md](docs/getting-started.md)
+- [docs/product-positioning.md](docs/product-positioning.md)
+- [docs/axon-integration.md](docs/axon-integration.md)
+- [docs/model-recipes.md](docs/model-recipes.md)
+- [docs/backend-support.md](docs/backend-support.md)
+- [docs/api-stability.md](docs/api-stability.md)
+- [docs/architecture.md](docs/architecture.md)
 
-```bash
-mix hex.publish --dry-run
-```
-
-## Mix vs Mise
-
-- `mix` is the source of truth for project tasks and dependencies.
-- `mix` alone does not enforce Erlang/Elixir versions across developer machines.
-- `mise` is used here only to pin/install the local toolchain (`erlang`, `elixir`) from `mise.toml`.
-- After toolchain setup, all daily commands stay on `mix`.
-
-See [docs/development-flow.md](docs/development-flow.md) for full developer workflow and task catalog.
-
-## VSCode Cucumber
-
-If you use the Cucumber extension in VSCode, refresh editor glue after feature-step changes:
-
-```bash
-mix features.sync_glue
-```
-
-## Backend Lanes
-
-Dependency lanes can be toggled to keep local setup and CI reproducible:
-
-- `NXQ_ENABLE_EXLA=1|0` (default `1`)
-- `NXQ_ENABLE_TORCHX=1|0` (default `0`)
-
-Examples:
-
-```bash
-NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 mix test
-NXQ_ENABLE_EXLA=1 NXQ_ENABLE_TORCHX=0 mix test
-NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=1 mix test
-```
-
-## API Preview
-
-```elixir
-alias NxQuantum.Circuit
-alias NxQuantum.Gates
-
-Circuit.new(qubits: 2)
-|> Gates.h(0)
-|> Gates.rx(0, theta: Nx.tensor(0.3))
-|> Gates.cnot(control: 0, target: 1)
-|> Gates.ry(1, theta: Nx.tensor(0.1))
-|> Circuit.expectation(observable: :pauli_z, wire: 1)
-```
-
-## Architecture Snapshot
-
-- Domain:
-  - `NxQuantum.Circuit`
-  - `NxQuantum.GateOperation`
-  - `NxQuantum.Observables`
-- Application:
-  - `NxQuantum.Application.ExecuteCircuit`
-- Ports:
-  - `NxQuantum.Ports.Simulator`
-  - `NxQuantum.Ports.Backend`
-- Adapters:
-  - `NxQuantum.Adapters.Simulators.StateVector`
-  - `NxQuantum.Adapters.Backends.NxBackend`
-
-See [docs/architecture.md](docs/architecture.md) for details.
-
-## Development Documentation
+## Contributing
 
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/development-flow.md](docs/development-flow.md)
-- [docs/backend-support.md](docs/backend-support.md)
-- [docs/bounded-context-map.md](docs/bounded-context-map.md)
-- [docs/v0.2-feature-spec.md](docs/v0.2-feature-spec.md)
-- [docs/v0.2-improvement-plan.md](docs/v0.2-improvement-plan.md)
-- [docs/v0.3-feature-spec.md](docs/v0.3-feature-spec.md)
-- [docs/axon-integration.md](docs/axon-integration.md)
-- [docs/model-recipes.md](docs/model-recipes.md)
-- [docs/api-stability.md](docs/api-stability.md)
-- [docs/release-process.md](docs/release-process.md)
-- [docs/testing-strategy.md](docs/testing-strategy.md)
-- [docs/roadmap.md](docs/roadmap.md)
-- [AGENTS.md](AGENTS.md)
-- [SKILLS.md](SKILLS.md)
