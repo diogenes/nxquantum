@@ -85,14 +85,12 @@ defmodule NxQuantum.Runtime.Detection do
   end
 
   defp safe_supported_platforms do
-    try do
-      EXLA.Client.get_supported_platforms()
-    rescue
-      _ -> :error
-    catch
-      :exit, _reason -> :error
-      _kind, _reason -> :error
-    end
+    EXLA.Client.get_supported_platforms()
+  rescue
+    _ -> :error
+  catch
+    :exit, _reason -> :error
+    _kind, _reason -> :error
   end
 
   defp safe_fetch_exla_client(client) do
