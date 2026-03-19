@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "codex/**"
+  pull_request:
+
+jobs:
+  test-matrix:
+    name: "${{ matrix.name }}"
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.optional }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: core-cpu-portable
+            optional: false
+            nxq_enable_exla: "0"
+            nxq_enable_torchx: "0"
+            run_ci_alias: "true"
+          - name: exla-cpu
+            optional: false
+            nxq_enable_exla: "1"
+            nxq_enable_torchx: "0"
+            run_ci_alias: "false"
+          - name: torchx-optional
+            optional: true
+            nxq_enable_exla: "0"
+            nxq_enable_torchx: "1"
+            run_ci_alias: "false"
+
+    env:
+      MIX_ENV: test
+      NXQ_ENABLE_EXLA: ${{ matrix.nxq_enable_exla }}
+      NXQ_ENABLE_TORCHX: ${{ matrix.nxq_enable_torchx }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Erlang/Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28.0"
+          elixir-version: "1.19.1"
+
+      - name: Cache deps and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ matrix.name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ matrix.name }}-
+            ${{ runner.os }}-mix-
+
+      - name: Install deps
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile --warnings-as-errors
+
+      - name: Run full quality gate (core lane)
+        if: matrix.run_ci_alias == 'true'
+        run: mix ci
+
+      - name: Run tests (backend lane)
+        if: matrix.run_ci_alias != 'true'
+        run: |
+          mix test
+          mix test test/acceptance/backend_compilation_test.exs

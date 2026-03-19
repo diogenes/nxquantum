@@ -1,0 +1,22 @@
+{
+  "files.associations": {
+    "*.feature": "cucumber"
+  },
+  "cucumber.features": [
+    "features/**/*.feature"
+  ],
+  "cucumber.glue": [
+    ".vscode/cucumber-glue/**/*.js",
+    "test/features/steps/**/*.ex",
+    "test/support/test_support/**/*.ex"
+  ],
+  "cucumberautocomplete.features": "features/**/*.feature",
+  "cucumberautocomplete.syncfeatures": "features/**/*.feature",
+  "cucumberautocomplete.steps": [
+    ".vscode/cucumber-glue/**/*.js",
+    "test/features/steps/**/*.ex",
+    "test/support/test_support/**/*.ex"
+  ],
+  "cucumberautocomplete.strictGherkinValidation": false,
+  "cucumberautocomplete.strictGherkinCompletion": false
+}
