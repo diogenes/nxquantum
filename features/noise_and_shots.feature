@@ -24,3 +24,8 @@ Feature: Finite-shot estimation and noise modeling
       When I evaluate expectation with depolarizing noise
       Then noisy expectation absolute value is less than "1.0"
 
+    Scenario: Amplitude damping drives expectation toward ground-state bias
+      Given a one-qubit circuit with ideal expectation "-1.0"
+      And amplitude damping probability is "0.2"
+      When I evaluate expectation with amplitude damping noise
+      Then noisy expectation value is greater than "-1.0"

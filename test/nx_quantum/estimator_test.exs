@@ -4,6 +4,7 @@ defmodule NxQuantum.EstimatorTest do
   alias NxQuantum.Circuit
   alias NxQuantum.Estimator
   alias NxQuantum.Estimator.Result
+  alias NxQuantum.Gates
 
   describe "expectation_result/2" do
     test "returns typed error for unsupported runtime profile" do
@@ -40,6 +41,20 @@ defmodule NxQuantum.EstimatorTest do
       {:ok, noisy} = Estimator.expectation_result(circuit, noise: [depolarizing: 0.2])
 
       assert abs(Nx.to_number(noisy)) < abs(Nx.to_number(ideal))
+    end
+
+    test "amplitude damping biases expectation toward ground state" do
+      circuit =
+        [qubits: 1]
+        |> Circuit.new()
+        |> Gates.ry(0, theta: :math.pi())
+        |> Map.put(:measurement, %{observable: :pauli_z, wire: 0})
+
+      {:ok, ideal} = Estimator.expectation_result(circuit)
+      {:ok, noisy} = Estimator.expectation_result(circuit, noise: [amplitude_damping: 0.2])
+
+      assert Nx.to_number(ideal) < -0.99
+      assert Nx.to_number(noisy) > Nx.to_number(ideal)
     end
   end
 

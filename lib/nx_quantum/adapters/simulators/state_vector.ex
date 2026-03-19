@@ -2,9 +2,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
   @moduledoc """
   State-vector simulator adapter.
 
-  This module intentionally starts as correctness-first scaffold. Tensorized
-  `Nx.Defn` kernels will be introduced incrementally once invariants are covered
-  by unit/property tests.
+  Gate application and expectation primitives delegate to `Nx.Defn` kernels in
+  `NxQuantum.Adapters.Simulators.StateVector.State`.
   """
 
   @behaviour NxQuantum.Ports.Simulator

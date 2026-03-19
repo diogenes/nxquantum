@@ -55,6 +55,9 @@ defmodule NxQuantum.Features.Steps.NoiseAndShotsSteps do
       text =~ ~r/^depolarizing probability is / ->
         {:handled, Map.put(ctx, :depolarizing, Helpers.parse_quoted_number(text))}
 
+      text =~ ~r/^amplitude damping probability is / ->
+        {:handled, Map.put(ctx, :amplitude_damping, Helpers.parse_quoted_number(text))}
+
       true ->
         :unhandled
     end
@@ -79,6 +82,15 @@ defmodule NxQuantum.Features.Steps.NoiseAndShotsSteps do
 
         {:handled, Map.put(ctx, :noisy, Nx.to_number(noisy))}
 
+      text == "I evaluate expectation with amplitude damping noise" ->
+        {:ok, noisy} =
+          Estimator.expectation_result(
+            ctx.circuit,
+            noise: [amplitude_damping: ctx.amplitude_damping]
+          )
+
+        {:handled, Map.put(ctx, :noisy, Nx.to_number(noisy))}
+
       true ->
         :unhandled
     end
@@ -97,6 +109,10 @@ defmodule NxQuantum.Features.Steps.NoiseAndShotsSteps do
 
       text =~ ~r/^noisy expectation absolute value is less than / ->
         assert abs(ctx.noisy) < Helpers.parse_quoted_number(text)
+        {:handled, ctx}
+
+      text =~ ~r/^noisy expectation value is greater than / ->
+        assert ctx.noisy > Helpers.parse_quoted_number(text)
         {:handled, ctx}
 
       true ->

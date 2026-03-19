@@ -26,11 +26,19 @@ Milestone A review gate (before Phase 2):
 
 ## Phase 2 - v0.2 P1: Differentiation, Noise, and Optimization
 
-- [ ] Move gate application path into `Nx.Defn` kernels.
-- [ ] Add gradient modes (`backprop`, `parameter_shift`, optional `adjoint`).
-- [ ] Add seeded shots and initial noise channels.
-- [ ] Add deterministic circuit optimization pass pipeline.
-- [ ] Add benchmark suite and baseline reports.
+- [x] Move gate application path into `Nx.Defn` kernels.
+- [x] Add gradient modes (`backprop`, `parameter_shift`, optional `adjoint`).
+- [x] Add seeded shots and initial noise channels.
+- [x] Add deterministic circuit optimization pass pipeline.
+- [x] Add benchmark suite and baseline reports.
+
+Milestone B review gate (before Phase 3):
+
+1. Simulator gate application and expectation hot paths execute via explicit `Nx.Defn` kernels.
+2. Differentiation modes (`backprop`, `parameter_shift`, `adjoint`) are covered by deterministic acceptance tests.
+3. Seeded shot sampling and initial noise channels (depolarizing + amplitude damping) are covered by executable scenarios/tests.
+4. Optimization pipeline (`simplify`, `fuse`, `cancel`) preserves expectations and emits deterministic reduction reports.
+5. Benchmark suite and baseline report are committed under `bench/` with reproducible run instructions.
 
 ## Phase 3 - v0.2 P2: Advanced ML Workflows
 
