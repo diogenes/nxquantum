@@ -31,28 +31,31 @@ defmodule NxQuantum.DynamicIR.Validator do
   defp validate_dependencies(%{nodes: nodes, registers: declared} = ir) do
     validation =
       Enum.reduce_while(nodes, MapSet.new(), fn node, produced ->
-        case node do
-          %{type: :measure, register: register} when is_binary(register) ->
-            {:cont, MapSet.put(produced, register)}
-
-          %{type: :conditional_gate, register: register} when is_binary(register) ->
-            if MapSet.member?(produced, register) or MapSet.member?(declared, register) do
-              {:cont, produced}
-            else
-              {:halt, {:error, %{code: :invalid_dynamic_ir, register: register}}}
-            end
-
-          %{type: _other} ->
-            {:cont, produced}
-
-          _ ->
-            {:halt, {:error, %{code: :invalid_dynamic_ir, reason: :invalid_node_shape}}}
-        end
+        validate_dependency_node(node, produced, declared)
       end)
 
     case validation do
       {:error, _} = error -> error
       _produced -> {:ok, ir}
     end
+  end
+
+  defp validate_dependency_node(%{type: :measure, register: register}, produced, _declared) when is_binary(register) do
+    {:cont, MapSet.put(produced, register)}
+  end
+
+  defp validate_dependency_node(%{type: :conditional_gate, register: register}, produced, declared)
+       when is_binary(register) do
+    if MapSet.member?(produced, register) or MapSet.member?(declared, register) do
+      {:cont, produced}
+    else
+      {:halt, {:error, %{code: :invalid_dynamic_ir, register: register}}}
+    end
+  end
+
+  defp validate_dependency_node(%{type: _other}, produced, _declared), do: {:cont, produced}
+
+  defp validate_dependency_node(_invalid, _produced, _declared) do
+    {:halt, {:error, %{code: :invalid_dynamic_ir, reason: :invalid_node_shape}}}
   end
 end

@@ -74,33 +74,7 @@ defmodule NxQuantum.Features.Steps.DynamicExecutionHardwareBridgesSteps do
         {:handled, Map.put(ctx, :dynamic_result, DynamicIR.execute(ctx.ir, mode: mode, seed: 77))}
 
       text == "I submit a circuit execution job" ->
-        submit_result =
-          ProviderBridge.submit_job(ctx.provider_adapter, ctx.job_payload,
-            simulate_timeout: Map.get(ctx, :simulate_timeout, false)
-          )
-
-        {poll_result, fetch_result} =
-          case submit_result do
-            {:ok, submitted} ->
-              poll = ProviderBridge.poll_job(ctx.provider_adapter, submitted)
-
-              fetch =
-                case poll do
-                  {:ok, polled} -> ProviderBridge.fetch_result(ctx.provider_adapter, polled)
-                  _ -> nil
-                end
-
-              {poll, fetch}
-
-            _ ->
-              {nil, nil}
-          end
-
-        {:handled,
-         ctx
-         |> Map.put(:submit_result, submit_result)
-         |> Map.put(:poll_result, poll_result)
-         |> Map.put(:fetch_result, fetch_result)}
+        {:handled, submit_and_collect_job_lifecycle(ctx)}
 
       text == "I poll job status" ->
         assert {:ok, submitted} = ctx.submit_result
@@ -212,5 +186,33 @@ defmodule NxQuantum.Features.Steps.DynamicExecutionHardwareBridgesSteps do
 
   defp submitted_timeout_job do
     %{id: "job_timeout", state: :submitted, payload: %{circuit_id: "c1"}, simulate_timeout: true}
+  end
+
+  defp submit_and_collect_job_lifecycle(ctx) do
+    submit_result =
+      ProviderBridge.submit_job(ctx.provider_adapter, ctx.job_payload,
+        simulate_timeout: Map.get(ctx, :simulate_timeout, false)
+      )
+
+    {poll_result, fetch_result} = poll_and_fetch(ctx, submit_result)
+
+    ctx
+    |> Map.put(:submit_result, submit_result)
+    |> Map.put(:poll_result, poll_result)
+    |> Map.put(:fetch_result, fetch_result)
+  end
+
+  defp poll_and_fetch(_ctx, {:error, _}), do: {nil, nil}
+
+  defp poll_and_fetch(ctx, {:ok, submitted}) do
+    poll_result = ProviderBridge.poll_job(ctx.provider_adapter, submitted)
+
+    fetch_result =
+      case poll_result do
+        {:ok, polled} -> ProviderBridge.fetch_result(ctx.provider_adapter, polled)
+        _ -> nil
+      end
+
+    {poll_result, fetch_result}
   end
 end

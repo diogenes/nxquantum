@@ -42,27 +42,36 @@ defmodule NxQuantum.Estimator do
       when is_function(circuit_builder, 1) do
     shape = Nx.shape(params_batch)
 
+    with :ok <- validate_batch_shape(shape),
+         results = batch_results(circuit_builder, params_batch, opts),
+         nil <- Enum.find(results, &match?({:error, _}, &1)) do
+      values =
+        results
+        |> Enum.map(fn {:ok, tensor} -> Nx.to_number(tensor) end)
+        |> Nx.tensor(type: {:f, 32})
+
+      {:ok, values}
+    else
+      {:error, _} = error -> error
+    end
+  end
+
+  defp validate_batch_shape(shape) do
     if tuple_size(shape) == 1 do
-      results =
-        params_batch
-        |> Nx.to_flat_list()
-        |> Enum.map(fn value ->
-          value
-          |> Nx.tensor()
-          |> circuit_builder.()
-          |> expectation_result(opts)
-        end)
-
-      case Enum.find(results, &match?({:error, _}, &1)) do
-        {:error, metadata} ->
-          {:error, metadata}
-
-        nil ->
-          values = results |> Enum.map(fn {:ok, tensor} -> Nx.to_number(tensor) end) |> Nx.tensor(type: {:f, 32})
-          {:ok, values}
-      end
+      :ok
     else
       {:error, %{code: :invalid_batch_shape, expected: {:batch}, received: shape}}
     end
+  end
+
+  defp batch_results(circuit_builder, params_batch, opts) do
+    params_batch
+    |> Nx.to_flat_list()
+    |> Enum.map(fn value ->
+      value
+      |> Nx.tensor()
+      |> circuit_builder.()
+      |> expectation_result(opts)
+    end)
   end
 end

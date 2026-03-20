@@ -10,44 +10,9 @@ defmodule NxQuantum.Performance.Gates do
     current_by_batch = throughput_by_batch(current_report)
 
     with :ok <- validate_baseline_values(baseline_by_batch) do
-      regressions =
-        Enum.reduce_while(baseline_by_batch, [], fn {batch_size, baseline_value}, acc ->
-          case Map.fetch(current_by_batch, batch_size) do
-            :error ->
-              {:halt, {:error, %{code: :missing_benchmark_metric, batch_size: batch_size}}}
-
-            {:ok, current_value} ->
-              floor_value = baseline_value * (1.0 - max_regression_pct / 100.0)
-
-              if current_value < floor_value do
-                delta_pct = Float.round((current_value - baseline_value) / baseline_value * 100.0, 3)
-
-                {:cont,
-                 [
-                   %{
-                     metric: :throughput_ops_s,
-                     batch_size: batch_size,
-                     baseline: baseline_value,
-                     current: current_value,
-                     delta_pct: delta_pct
-                   }
-                   | acc
-                 ]}
-              else
-                {:cont, acc}
-              end
-          end
-        end)
-
-      case regressions do
-        {:error, _} = error ->
-          error
-
-        regression_list ->
-          ordered = Enum.reverse(regression_list)
-          status = if ordered == [], do: :passed, else: :failed
-          {:ok, %GateResult{status: status, version: version, regressions: ordered}}
-      end
+      baseline_by_batch
+      |> build_regressions(current_by_batch, max_regression_pct)
+      |> build_gate_result(version)
     end
   end
 
@@ -55,10 +20,61 @@ defmodule NxQuantum.Performance.Gates do
     {:error, %{code: :invalid_performance_gate_input}}
   end
 
+  defp build_regressions(baseline_by_batch, current_by_batch, max_regression_pct) do
+    Enum.reduce_while(baseline_by_batch, [], fn {batch_size, baseline_value}, acc ->
+      process_batch(batch_size, baseline_value, current_by_batch, max_regression_pct, acc)
+    end)
+  end
+
+  defp process_batch(batch_size, _baseline_value, current_by_batch, _max_regression_pct, _acc)
+       when not is_map_key(current_by_batch, batch_size) do
+    {:halt, {:error, %{code: :missing_benchmark_metric, batch_size: batch_size}}}
+  end
+
+  defp process_batch(batch_size, baseline_value, current_by_batch, max_regression_pct, acc) do
+    current_value = Map.fetch!(current_by_batch, batch_size)
+
+    if regression?(baseline_value, current_value, max_regression_pct) do
+      {:cont, [regression_record(batch_size, baseline_value, current_value) | acc]}
+    else
+      {:cont, acc}
+    end
+  end
+
+  defp build_gate_result({:error, _} = error, _version), do: error
+
+  defp build_gate_result(regression_list, version) do
+    ordered = Enum.reverse(regression_list)
+    status = if ordered == [], do: :passed, else: :failed
+    {:ok, %GateResult{status: status, version: version, regressions: ordered}}
+  end
+
+  defp regression?(baseline_value, current_value, max_regression_pct) do
+    floor_value = baseline_value * (1.0 - max_regression_pct / 100.0)
+    current_value < floor_value
+  end
+
+  defp regression_record(batch_size, baseline_value, current_value) do
+    delta_pct = Float.round((current_value - baseline_value) / baseline_value * 100.0, 3)
+
+    %{
+      metric: :throughput_ops_s,
+      batch_size: batch_size,
+      baseline: baseline_value,
+      current: current_value,
+      delta_pct: delta_pct
+    }
+  end
+
   defp validate_baseline_values(baseline_by_batch) do
-    case Enum.find(baseline_by_batch, fn {_batch_size, value} -> not is_number(value) or value <= 0 end) do
-      nil -> :ok
-      {batch_size, value} -> {:error, %{code: :invalid_baseline_threshold, batch_size: batch_size, value: value}}
+    case Enum.find(baseline_by_batch, fn {_batch_size, value} ->
+           not is_number(value) or value <= 0
+         end) do
+      nil ->
+        :ok
+
+      {batch_size, value} ->
+        {:error, %{code: :invalid_baseline_threshold, batch_size: batch_size, value: value}}
     end
   end
 

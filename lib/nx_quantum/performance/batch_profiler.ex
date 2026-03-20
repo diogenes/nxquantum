@@ -24,6 +24,23 @@ defmodule NxQuantum.Performance.BatchProfiler do
   end
 
   defp scalar_values(circuit_builder, params_batch, opts) do
+    results = collect_scalar_results(circuit_builder, params_batch, opts)
+
+    case Enum.find(results, &match?({:error, _}, &1)) do
+      nil ->
+        values =
+          results
+          |> Enum.map(fn {:ok, tensor} -> Nx.to_number(tensor) end)
+          |> Nx.tensor(type: {:f, 32})
+
+        {:ok, values}
+
+      {:error, metadata} ->
+        {:error, metadata}
+    end
+  end
+
+  defp collect_scalar_results(circuit_builder, params_batch, opts) do
     params_batch
     |> Nx.to_flat_list()
     |> Enum.map(fn value ->
@@ -32,21 +49,6 @@ defmodule NxQuantum.Performance.BatchProfiler do
       |> circuit_builder.()
       |> Estimator.expectation_result(opts)
     end)
-    |> case do
-      results when is_list(results) ->
-        case Enum.find(results, &match?({:error, _}, &1)) do
-          {:error, metadata} ->
-            {:error, metadata}
-
-          nil ->
-            values =
-              results
-              |> Enum.map(fn {:ok, tensor} -> Nx.to_number(tensor) end)
-              |> Nx.tensor(type: {:f, 32})
-
-            {:ok, values}
-        end
-    end
   end
 
   defp deterministic_metrics(batch_size, profile) do
