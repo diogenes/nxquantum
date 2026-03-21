@@ -1,13 +1,15 @@
-alias NxQuantum.ProviderBridge.Errors
-
 defmodule NxQuantum.ProviderBridge do
   @moduledoc """
   Provider lifecycle facade with typed deterministic error mapping.
   """
+  alias NxQuantum.ProviderBridge.Errors
+  alias NxQuantum.Providers.Capabilities
 
   @spec submit_job(module(), map(), keyword()) :: {:ok, map()} | {:error, map()}
   def submit_job(provider_adapter, payload, opts \\ []) do
-    provider_call(provider_adapter, :submit, [payload, opts], :submit)
+    with :ok <- preflight(provider_adapter, payload, opts) do
+      provider_call(provider_adapter, :submit, [payload, opts], :submit)
+    end
   end
 
   @spec poll_job(module(), map(), keyword()) :: {:ok, map()} | {:error, map()}
@@ -66,11 +68,66 @@ defmodule NxQuantum.ProviderBridge do
     Errors.transport_error(operation, provider, :timeout)
   end
 
+  defp map_error({:provider_auth_error, reason}, operation, provider) do
+    Errors.auth_error(operation, provider, reason)
+  end
+
+  defp map_error({:provider_rate_limited, reason}, operation, provider) do
+    Errors.rate_limited(operation, provider, reason)
+  end
+
+  defp map_error({:provider_capability_mismatch, capability}, operation, provider) do
+    Errors.capability_mismatch(operation, provider, capability)
+  end
+
+  defp map_error({:invalid_response, _source, response}, operation, provider) do
+    Errors.invalid_response(operation, provider, response)
+  end
+
   defp map_error({:invalid_state, state}, operation, provider) do
     Errors.invalid_state(operation, provider, state)
   end
 
+  defp map_error(%{code: _} = error, operation, provider) do
+    error
+    |> Map.put_new(:operation, operation)
+    |> Map.put_new(:provider, provider)
+    |> Map.put_new(:metadata, %{})
+  end
+
   defp map_error(reason, operation, provider) do
-    Errors.provider_error(operation, provider, reason)
+    Errors.execution_error(operation, provider, reason)
+  end
+
+  defp preflight(provider_adapter, payload, opts) do
+    contract_version = Keyword.get(opts, :capability_contract, :v1)
+    target = Keyword.get(opts, :target)
+    provider = provider_id(provider_adapter)
+
+    with {:ok, capabilities} <- fetch_capabilities(provider_adapter, target, opts),
+         {:ok, validated} <- Capabilities.validate_contract(capabilities, provider, contract_version, target),
+         :ok <- Capabilities.preflight(validated, request_envelope(payload, opts), provider, target) do
+      :ok
+    else
+      :skip -> :ok
+      {:error, _} = error -> error
+    end
+  end
+
+  defp fetch_capabilities(provider_adapter, target, opts) do
+    if function_exported?(provider_adapter, :capabilities, 2) do
+      provider_adapter.capabilities(target, opts)
+    else
+      :skip
+    end
+  end
+
+  defp request_envelope(payload, opts) do
+    %{
+      workflow: Map.get(payload, :workflow, Keyword.get(opts, :workflow)),
+      dynamic: Map.get(payload, :dynamic, Keyword.get(opts, :dynamic, false)),
+      batch: Map.get(payload, :batch, Keyword.get(opts, :batch, false)),
+      calibration_payload: Map.get(payload, :calibration_payload, Keyword.get(opts, :calibration_payload))
+    }
   end
 end

@@ -135,15 +135,15 @@ Milestone H review gate (positioning readiness):
 
 ## Phase 9 - v0.5 P0: Production Provider Bridges (IBM Runtime + AWS Braket)
 
-- [ ] Finalize provider capability contract (`supports_estimator`, `supports_sampler`, `supports_dynamic`, `supports_cancel_in_running`, `supports_calibration_payload`).
-- [ ] Implement `NxQuantum.Adapters.Providers.IBMRuntime` behind `NxQuantum.Ports.Provider` with typed lifecycle/error mapping.
-- [ ] Implement `NxQuantum.Adapters.Providers.AwsBraket` behind `NxQuantum.Ports.Provider` with typed lifecycle/error mapping.
-- [ ] Add provider credential/config envelope with deterministic redaction and typed configuration diagnostics.
-- [ ] Add deterministic fixture-backed contract tests for IBM Runtime and AWS Braket lifecycle transitions.
-- [ ] Publish v0.5 specification and provider implementation playbook:
+- [x] Finalize provider capability contract (`supports_estimator`, `supports_sampler`, `supports_dynamic`, `supports_cancel_in_running`, `supports_calibration_payload`).
+- [x] Implement `NxQuantum.Adapters.Providers.IBMRuntime` behind `NxQuantum.Ports.Provider` with typed lifecycle/error mapping.
+- [x] Implement `NxQuantum.Adapters.Providers.AwsBraket` behind `NxQuantum.Ports.Provider` with typed lifecycle/error mapping.
+- [x] Add provider credential/config envelope with deterministic redaction and typed configuration diagnostics.
+- [x] Add deterministic fixture-backed contract tests for IBM Runtime and AWS Braket lifecycle transitions.
+- [x] Publish v0.5 specification and provider implementation playbook:
   - `docs/v0.5-feature-spec.md`
   - `docs/v0.5-provider-implementation-plan.md`
-- [ ] Add provider architecture ADR set:
+- [x] Add provider architecture ADR set:
   - `docs/adr/0002-provider-capability-contract-v1.md`
   - `docs/adr/0003-ibm-runtime-provider-adapter.md`
   - `docs/adr/0004-aws-braket-provider-adapter.md`

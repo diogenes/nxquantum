@@ -164,20 +164,30 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - typed validation errors
   - explicit no-execution boundary for v0.3
 
-### 10) Dynamic Execution and Provider Bridge Context (Planned v0.4)
+### 10) Dynamic Execution and Provider Bridge Context (v0.5 P0 active)
 
 - Features:
   - `features/dynamic_execution_hardware_bridges.feature`
+  - `features/provider_capability_contracts.feature`
+  - `features/provider_ibm_runtime_bridge.feature`
+  - `features/provider_aws_braket_bridge.feature`
 - Planned public entrypoints:
   - dynamic execution entrypoint over `NxQuantum.DynamicIR`
-  - provider bridge port contracts
-- Planned domain/application modules:
+  - provider lifecycle orchestration through `NxQuantum.ProviderBridge`
+- Domain/application modules:
   - dynamic execution interpreter (supported subset)
-  - provider lifecycle contract objects
+  - provider lifecycle contract objects (`NxQuantum.Ports.Provider`, `NxQuantum.ProviderBridge`)
+  - capability preflight domain contract (`NxQuantum.Providers.Capabilities`)
+  - provider config/redaction contracts (`NxQuantum.Providers.Config`, `NxQuantum.Providers.Redaction`)
   - calibration payload validation contracts
+- Adapter modules:
+  - `NxQuantum.Adapters.Providers.IBMRuntime`
+  - `NxQuantum.Adapters.Providers.AwsBraket`
+  - `NxQuantum.Adapters.Providers.Common.StateMapper`
 - Invariants:
   - deterministic dynamic branch execution for supported subset
-  - typed provider lifecycle and transport errors
+  - typed provider lifecycle and capability/error diagnostics
+  - deterministic unsupported-capability preflight (no silent provider fallback)
 
 ### 11) Scale and Performance Context (Planned v0.4)
 
