@@ -105,6 +105,48 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
     raise ArgumentError, "unsupported single-qubit gate #{inspect(name)}"
   end
 
+  @type single_qubit_gate_coefficients :: %{
+          g00: Nx.Tensor.t(),
+          g01: Nx.Tensor.t(),
+          g10: Nx.Tensor.t(),
+          g11: Nx.Tensor.t()
+        }
+
+  @spec single_qubit_gate_coefficients(GateOperation.t()) :: single_qubit_gate_coefficients()
+  def single_qubit_gate_coefficients(%GateOperation{name: :h}),
+    do: cached_matrix({:single_gate, :coeffs, :h}, fn -> extract_gate_coefficients(hadamard()) end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: :x}),
+    do: cached_matrix({:single_gate, :coeffs, :x}, fn -> extract_gate_coefficients(pauli_x()) end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: :y}),
+    do: cached_matrix({:single_gate, :coeffs, :y}, fn -> extract_gate_coefficients(pauli_y()) end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: :z}),
+    do: cached_matrix({:single_gate, :coeffs, :z}, fn -> extract_gate_coefficients(pauli_z()) end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: :rx, params: params}),
+    do:
+      cached_matrix({:single_gate, :coeffs, :rx, theta_key(Map.fetch!(params, :theta))}, fn ->
+        params |> Map.fetch!(:theta) |> rx_matrix() |> extract_gate_coefficients()
+      end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: :ry, params: params}),
+    do:
+      cached_matrix({:single_gate, :coeffs, :ry, theta_key(Map.fetch!(params, :theta))}, fn ->
+        params |> Map.fetch!(:theta) |> ry_matrix() |> extract_gate_coefficients()
+      end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: :rz, params: params}),
+    do:
+      cached_matrix({:single_gate, :coeffs, :rz, theta_key(Map.fetch!(params, :theta))}, fn ->
+        params |> Map.fetch!(:theta) |> rz_matrix() |> extract_gate_coefficients()
+      end)
+
+  def single_qubit_gate_coefficients(%GateOperation{name: name}) do
+    raise ArgumentError, "unsupported single-qubit gate coefficients #{inspect(name)}"
+  end
+
   @spec cnot_permutation(non_neg_integer(), non_neg_integer(), pos_integer()) :: Nx.Tensor.t()
   def cnot_permutation(control, target, qubits) do
     cached_matrix({:gate, :cnot, :permutation, control, target, qubits}, fn ->
@@ -262,6 +304,15 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
     |> Nx.multiply(Nx.reshape(b, {1, 1, br, bc}))
     |> Nx.transpose(axes: [0, 2, 1, 3])
     |> Nx.reshape({ar * br, ac * bc})
+  end
+
+  defp extract_gate_coefficients(matrix) do
+    %{
+      g00: matrix |> Nx.slice([0, 0], [1, 1]) |> Nx.reshape({}),
+      g01: matrix |> Nx.slice([0, 1], [1, 1]) |> Nx.reshape({}),
+      g10: matrix |> Nx.slice([1, 0], [1, 1]) |> Nx.reshape({}),
+      g11: matrix |> Nx.slice([1, 1], [1, 1]) |> Nx.reshape({})
+    }
   end
 
   defp cached_matrix(key, builder_fun) when is_function(builder_fun, 0) do

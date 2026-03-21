@@ -40,9 +40,15 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
 
   defp apply_operation(%Nx.Tensor{} = state, %GateOperation{name: name, wires: [wire]} = op, qubits)
        when name in [:h, :x, :y, :z, :rx, :ry, :rz] do
-    op
-    |> Matrices.single_qubit_gate_matrix()
-    |> apply_single_qubit_gate(state, wire, qubits)
+    if qubits <= 2 do
+      op
+      |> Matrices.single_qubit_gate_matrix()
+      |> apply_single_qubit_gate_small(state, wire, qubits)
+    else
+      op
+      |> Matrices.single_qubit_gate_coefficients()
+      |> apply_single_qubit_gate_pairwise(state, wire, qubits)
+    end
   end
 
   defp apply_operation(%Nx.Tensor{} = state, %GateOperation{name: :cnot, wires: [control, target]}, qubits) do
@@ -54,14 +60,6 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
   defp apply_operation(%Nx.Tensor{} = state, %GateOperation{} = op, qubits) do
     matrix = Matrices.gate_matrix(op, qubits)
     apply_gate_kernel(matrix, state)
-  end
-
-  defp apply_single_qubit_gate(gate, state, wire, qubits) do
-    if qubits <= 2 do
-      apply_single_qubit_gate_small(gate, state, wire, qubits)
-    else
-      apply_single_qubit_gate_pairwise(gate, state, wire, qubits)
-    end
   end
 
   defp apply_single_qubit_gate_small(gate, state, wire, qubits) do
@@ -81,7 +79,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
     |> Nx.reshape(Nx.shape(state))
   end
 
-  defp apply_single_qubit_gate_pairwise(gate, state, wire, qubits) do
+  defp apply_single_qubit_gate_pairwise(gate_coefficients, state, wire, qubits) do
     layout = Matrices.single_qubit_layout_plan(wire, qubits)
     reshaped = Nx.reshape(state, layout.pair_shape)
 
@@ -95,10 +93,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
       |> Nx.slice_along_axis(1, 1, axis: 1)
       |> Nx.reshape({layout.outer_size, layout.inner_size})
 
-    g00 = gate_entry(gate, 0, 0)
-    g01 = gate_entry(gate, 0, 1)
-    g10 = gate_entry(gate, 1, 0)
-    g11 = gate_entry(gate, 1, 1)
+    %{g00: g00, g01: g01, g10: g10, g11: g11} = gate_coefficients
 
     updated0 = Nx.add(Nx.multiply(g00, v0), Nx.multiply(g01, v1))
     updated1 = Nx.add(Nx.multiply(g10, v0), Nx.multiply(g11, v1))
@@ -111,12 +106,6 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
   defp invert_permutation(axes) do
     max_axis = length(axes) - 1
     Enum.map(0..max_axis, fn axis -> Enum.find_index(axes, &(&1 == axis)) end)
-  end
-
-  defp gate_entry(gate, row, col) do
-    gate
-    |> Nx.slice([row, col], [1, 1])
-    |> Nx.reshape({})
   end
 
   defn apply_gate_kernel(matrix, state) do

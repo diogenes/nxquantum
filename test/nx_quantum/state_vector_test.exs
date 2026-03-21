@@ -4,6 +4,7 @@ defmodule NxQuantum.StateVectorTest do
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
   alias NxQuantum.Adapters.Simulators.StateVector.State
   alias NxQuantum.Circuit
+  alias NxQuantum.GateOperation
   alias NxQuantum.Gates
 
   test "expectation of |0> on Pauli-Z is 1" do
@@ -102,5 +103,17 @@ defmodule NxQuantum.StateVectorTest do
     assert plan.inner_size == 4
     assert plan.trailing_size == 32
     assert plan.state_shape == {64}
+  end
+
+  test "single-qubit gate coefficient cache is deterministic" do
+    op = GateOperation.new(:ry, [0], theta: 0.3)
+    coefficients = Matrices.single_qubit_gate_coefficients(op)
+    coefficients_again = Matrices.single_qubit_gate_coefficients(op)
+
+    assert coefficients == coefficients_again
+    assert_in_delta Nx.to_number(Nx.real(coefficients.g00)), :math.cos(0.15), 1.0e-7
+    assert_in_delta Nx.to_number(Nx.real(coefficients.g01)), -:math.sin(0.15), 1.0e-7
+    assert_in_delta Nx.to_number(Nx.real(coefficients.g10)), :math.sin(0.15), 1.0e-7
+    assert_in_delta Nx.to_number(Nx.real(coefficients.g11)), :math.cos(0.15), 1.0e-7
   end
 end
