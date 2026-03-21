@@ -2,6 +2,8 @@ defmodule NxQuantum.StateVectorTest do
   use ExUnit.Case, async: true
 
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
+  alias NxQuantum.Adapters.Simulators.StateVector.Operations.Cnot
+  alias NxQuantum.Adapters.Simulators.StateVector.Operations.SingleQubit
   alias NxQuantum.Adapters.Simulators.StateVector.State
   alias NxQuantum.Circuit
   alias NxQuantum.GateOperation
@@ -129,9 +131,9 @@ defmodule NxQuantum.StateVectorTest do
 
     assert plan == plan_again
     assert length(plan) == 3
-    assert {:single_qubit, 0, _gate0, _coeff0} = Enum.at(plan, 0)
-    assert {:single_qubit, 1, _gate1, _coeff1} = Enum.at(plan, 1)
-    assert {:cnot, _perm} = Enum.at(plan, 2)
+    assert %SingleQubit{wire: 0} = Enum.at(plan, 0)
+    assert %SingleQubit{wire: 1} = Enum.at(plan, 1)
+    assert %Cnot{} = Enum.at(plan, 2)
   end
 
   test "compiled execution plan fuses consecutive cnot operations" do
@@ -145,8 +147,8 @@ defmodule NxQuantum.StateVectorTest do
     plan = Matrices.compiled_execution_plan(operations, 4)
 
     assert length(plan) == 2
-    assert {:cnot, fused_permutation} = Enum.at(plan, 0)
-    assert {:single_qubit, 0, _gate, _coefficients} = Enum.at(plan, 1)
+    assert %Cnot{permutation: fused_permutation} = Enum.at(plan, 0)
+    assert %SingleQubit{wire: 0} = Enum.at(plan, 1)
 
     state = State.initial_state(4)
     p01 = Matrices.cnot_permutation(0, 1, 4)

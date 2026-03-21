@@ -10,6 +10,8 @@ defmodule NxQuantum.Kernels do
 
   import Nx.Defn
 
+  alias NxQuantum.Random.Seed
+
   @type opts :: [
           gamma: number(),
           seed: integer() | nil
@@ -49,7 +51,7 @@ defmodule NxQuantum.Kernels do
   defp phase_offsets(feature_count, nil), do: Nx.broadcast(Nx.tensor(0.0), {1, feature_count})
 
   defp phase_offsets(feature_count, seed) when is_integer(seed) do
-    _ = :rand.seed(:exsplus, seed_tuple(seed))
+    Seed.seed(seed, :kernels_phase)
 
     values =
       Enum.map(1..feature_count, fn _ ->
@@ -57,13 +59,6 @@ defmodule NxQuantum.Kernels do
       end)
 
     Nx.tensor([values], type: {:f, 64})
-  end
-
-  defp seed_tuple(seed) do
-    a = rem(:erlang.phash2({seed, :a}), 30_000) + 1
-    b = rem(:erlang.phash2({seed, :b}), 30_000) + 1
-    c = rem(:erlang.phash2({seed, :c}), 30_000) + 1
-    {a, b, c}
   end
 
   defp ensure_2d!(%Nx.Tensor{} = x) do

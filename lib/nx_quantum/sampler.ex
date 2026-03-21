@@ -8,6 +8,7 @@ defmodule NxQuantum.Sampler do
   - simple probability/count outputs for foundational workflows.
   """
 
+  alias NxQuantum.Application.BatchExecutor
   alias NxQuantum.Circuit
   alias NxQuantum.Estimator
   alias NxQuantum.Sampler.Engine
@@ -33,33 +34,12 @@ defmodule NxQuantum.Sampler do
         values = Nx.to_flat_list(params_batch)
 
         results =
-          if Keyword.get(opts, :parallel, false) do
-            max_concurrency = Keyword.get(opts, :max_concurrency, System.schedulers_online())
-
-            values
-            |> Task.async_stream(
-              fn value ->
-                value
-                |> Nx.tensor()
-                |> circuit_builder.()
-                |> run_with_config(config, estimator_opts)
-              end,
-              max_concurrency: max_concurrency,
-              ordered: true,
-              timeout: :infinity
-            )
-            |> Enum.map(fn
-              {:ok, result} -> result
-              {:exit, reason} -> {:error, %{code: :batch_parallel_worker_crash, reason: reason}}
-            end)
-          else
-            Enum.map(values, fn value ->
-              value
-              |> Nx.tensor()
-              |> circuit_builder.()
-              |> run_with_config(config, estimator_opts)
-            end)
-          end
+          BatchExecutor.run(values, opts, fn value ->
+            value
+            |> Nx.tensor()
+            |> circuit_builder.()
+            |> run_with_config(config, estimator_opts)
+          end)
 
         case Enum.find(results, &match?({:error, _}, &1)) do
           {:error, metadata} -> {:error, metadata}

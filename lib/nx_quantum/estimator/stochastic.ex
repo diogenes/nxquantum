@@ -1,6 +1,8 @@
 defmodule NxQuantum.Estimator.Stochastic do
   @moduledoc false
 
+  alias NxQuantum.Random.Seed
+
   @spec apply_noise(number(), keyword()) :: number()
   def apply_noise(expectation, opts) do
     noise = Keyword.get(opts, :noise, [])
@@ -27,21 +29,13 @@ defmodule NxQuantum.Estimator.Stochastic do
 
       true ->
         seed = Keyword.get(opts, :seed, 0)
-        seed_rng(seed)
+        Seed.seed(seed, :estimator_stochastic)
 
         p_plus = (expectation + 1.0) / 2.0
         plus_count = sample_plus_count(shots, p_plus)
 
         (2.0 * plus_count - shots) / shots
     end
-  end
-
-  defp seed_rng(seed) do
-    a = rem(:erlang.phash2({seed, :a}), 30_000) + 1
-    b = rem(:erlang.phash2({seed, :b}), 30_000) + 1
-    c = rem(:erlang.phash2({seed, :c}), 30_000) + 1
-    _ = :rand.seed(:exsplus, {a, b, c})
-    :ok
   end
 
   defp clamp(v) when v > 1.0, do: 1.0

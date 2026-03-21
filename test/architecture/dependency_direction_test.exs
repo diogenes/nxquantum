@@ -109,6 +109,10 @@ defmodule NxQuantum.Architecture.DependencyDirectionTest do
     end
   end
 
+  defp maybe_capture_module({:__aliases__, _, parts}, acc) when is_list(parts) do
+    MapSet.put(acc, Enum.join(parts, "."))
+  end
+
   defp maybe_capture_module({{:., _, [{:__aliases__, _, parts}, _fun]}, _, _args}, acc) when is_list(parts) do
     MapSet.put(acc, Enum.join(parts, "."))
   end

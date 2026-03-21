@@ -7,6 +7,7 @@ defmodule NxQuantum.Estimator do
   - expectation evaluation through application/service boundaries.
   """
 
+  alias NxQuantum.Application.BatchExecutor
   alias NxQuantum.Circuit
   alias NxQuantum.Estimator.Batch
   alias NxQuantum.Estimator.ObservableSpecs
@@ -67,32 +68,11 @@ defmodule NxQuantum.Estimator do
   defp batch_results(circuit_builder, params_batch, opts) do
     values = Nx.to_flat_list(params_batch)
 
-    if Keyword.get(opts, :parallel, false) do
-      max_concurrency = Keyword.get(opts, :max_concurrency, System.schedulers_online())
-
-      values
-      |> Task.async_stream(
-        fn value ->
-          value
-          |> Nx.tensor()
-          |> circuit_builder.()
-          |> expectation_result(opts)
-        end,
-        max_concurrency: max_concurrency,
-        ordered: true,
-        timeout: :infinity
-      )
-      |> Enum.map(fn
-        {:ok, result} -> result
-        {:exit, reason} -> {:error, %{code: :batch_parallel_worker_crash, reason: reason}}
-      end)
-    else
-      Enum.map(values, fn value ->
-        value
-        |> Nx.tensor()
-        |> circuit_builder.()
-        |> expectation_result(opts)
-      end)
-    end
+    BatchExecutor.run(values, opts, fn value ->
+      value
+      |> Nx.tensor()
+      |> circuit_builder.()
+      |> expectation_result(opts)
+    end)
   end
 end

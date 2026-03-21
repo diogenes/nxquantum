@@ -4,6 +4,9 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
   import Nx.Defn
 
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
+  alias NxQuantum.Adapters.Simulators.StateVector.Operations.Cnot
+  alias NxQuantum.Adapters.Simulators.StateVector.Operations.Dense
+  alias NxQuantum.Adapters.Simulators.StateVector.Operations.SingleQubit
 
   @spec initial_state(pos_integer()) :: Nx.Tensor.t()
   def initial_state(qubits) do
@@ -38,20 +41,20 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
     size |> :math.log2() |> round()
   end
 
-  defp apply_compiled_operation(%Nx.Tensor{} = state, {:single_qubit, wire, gate_matrix, gate_coefficients}, qubits) do
+  defp apply_compiled_operation(%Nx.Tensor{} = state, %SingleQubit{} = op, qubits) do
     if qubits <= 2 do
-      apply_single_qubit_gate_small(gate_matrix, state, wire, qubits)
+      apply_single_qubit_gate_small(op.gate_matrix, state, op.wire, qubits)
     else
-      apply_single_qubit_gate_pairwise(gate_coefficients, state, wire, qubits)
+      apply_single_qubit_gate_pairwise(op.gate_coefficients, state, op.wire, qubits)
     end
   end
 
-  defp apply_compiled_operation(%Nx.Tensor{} = state, {:cnot, permutation}, _qubits) do
-    apply_permutation_kernel(permutation, state)
+  defp apply_compiled_operation(%Nx.Tensor{} = state, %Cnot{} = op, _qubits) do
+    apply_permutation_kernel(op.permutation, state)
   end
 
-  defp apply_compiled_operation(%Nx.Tensor{} = state, {:dense, matrix}, _qubits) do
-    apply_gate_kernel(matrix, state)
+  defp apply_compiled_operation(%Nx.Tensor{} = state, %Dense{} = op, _qubits) do
+    apply_gate_kernel(op.matrix, state)
   end
 
   defp apply_single_qubit_gate_small(gate, state, wire, qubits) do
