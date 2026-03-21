@@ -38,7 +38,7 @@ defmodule NxQuantum.Adapters.Providers.AzureQuantum do
          {:ok, state, metadata} <-
            StateMapper.map(:submit, provider_id(), @submit_states, raw_state, target(opts), %{
              workflow: Map.get(payload, :workflow),
-             shots: Map.get(payload, :shots, 1024)
+             shots: Map.get(payload, :shots)
            }) do
       {:ok,
        %{
@@ -142,7 +142,7 @@ defmodule NxQuantum.Adapters.Providers.AzureQuantum do
   defp default_raw_state(:cancel), do: "CANCELLED"
 
   defp default_payload(job) do
-    shots = get_in(job, [:metadata, :shots]) || 1024
+    shots = get_in(job, [:metadata, :shots]) || 0
     zero_count = div(shots, 2)
 
     %{

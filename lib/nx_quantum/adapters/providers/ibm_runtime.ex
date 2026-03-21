@@ -37,12 +37,17 @@ defmodule NxQuantum.Adapters.Providers.IBMRuntime do
 
       {:ok,
        %{
-         id: job_id(opts),
+         id: job_id(payload, opts),
          state: state,
          provider: provider_id(),
          target: target(opts),
-         submitted_at: "2026-03-20T00:00:00Z",
-         metadata: Map.merge(metadata, %{workflow: Map.get(payload, :workflow), provider_payload_version: "ibm.v1"})
+         submitted_at: submitted_at(opts),
+         metadata:
+           Map.merge(metadata, %{
+             workflow: Map.get(payload, :workflow),
+             shots: Map.get(payload, :shots),
+             provider_payload_version: "ibm.v1"
+           })
        }}
     end
   end
@@ -123,9 +128,42 @@ defmodule NxQuantum.Adapters.Providers.IBMRuntime do
   defp default_raw_state(:cancel), do: "CANCELLED"
 
   defp default_payload(job) do
-    %{workflow: "estimator", values: [1.0], metadata: %{job_id: job.id, source: "fixture"}}
+    workflow = get_in(job, [:metadata, :workflow]) || :unknown_workflow
+    shots = get_in(job, [:metadata, :shots]) || 0
+    zero_count = div(shots, 2)
+
+    case workflow do
+      workflow when workflow in [:sampler, "sampler"] ->
+        %{
+          workflow: "sampler",
+          counts: %{"00" => zero_count, "11" => shots - zero_count},
+          metadata: %{job_id: job.id, source: "fixture", shots: shots}
+        }
+
+      _other ->
+        %{workflow: to_string(workflow), values: [], metadata: %{job_id: job.id, source: "fixture"}}
+    end
   end
 
-  defp job_id(opts), do: Keyword.get(opts, :job_id, "ibm_job_123")
-  defp target(opts), do: Keyword.get(opts, :target, "ibm_backend_simulator")
+  defp submitted_at(opts), do: Keyword.get(opts, :submitted_at)
+
+  defp job_id(payload, opts) do
+    Keyword.get_lazy(opts, :job_id, fn ->
+      digest =
+        :sha256
+        |> :crypto.hash(:erlang.term_to_binary(%{payload: payload, target: target(opts)}))
+        |> Base.encode16(case: :lower)
+        |> binary_part(0, 12)
+
+      "ibm_job_#{digest}"
+    end)
+  end
+
+  defp target(opts) do
+    Keyword.get_lazy(opts, :target, fn ->
+      opts
+      |> Keyword.get(:provider_config, %{})
+      |> Map.get(:backend, "unknown_target")
+    end)
+  end
 end

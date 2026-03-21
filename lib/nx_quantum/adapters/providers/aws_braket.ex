@@ -36,18 +36,19 @@ defmodule NxQuantum.Adapters.Providers.AwsBraket do
          {:ok, raw_state} <- raw_state(:submit, opts),
          {:ok, state, metadata} <-
            StateMapper.map(:submit, provider_id(), @submit_states, raw_state, target(opts), %{
-             workflow: Map.get(payload, :workflow)
+             workflow: Map.get(payload, :workflow),
+             shots: Map.get(payload, :shots)
            }),
          :ok <- validate_supported_workflow(payload) do
       maybe_notify_submit(opts)
 
       {:ok,
        %{
-         id: job_id(opts),
+         id: job_id(payload, opts),
          state: state,
          provider: provider_id(),
          target: target(opts),
-         submitted_at: "2026-03-20T00:00:00Z",
+         submitted_at: submitted_at(opts),
          metadata: Map.put(metadata, :provider_payload_version, "braket.v1")
        }}
     end
@@ -140,9 +141,35 @@ defmodule NxQuantum.Adapters.Providers.AwsBraket do
   defp default_raw_state(:cancel), do: "CANCELLED"
 
   defp default_payload(job) do
-    %{workflow: "sampler", counts: %{"00" => 512, "11" => 512}, metadata: %{job_id: job.id, source: "fixture"}}
+    shots = get_in(job, [:metadata, :shots]) || 0
+    zero_count = div(shots, 2)
+
+    %{
+      workflow: "sampler",
+      counts: %{"00" => zero_count, "11" => shots - zero_count},
+      metadata: %{job_id: job.id, source: "fixture", shots: shots}
+    }
   end
 
-  defp job_id(opts), do: Keyword.get(opts, :job_id, "braket_task_123")
-  defp target(opts), do: Keyword.get(opts, :target, "arn:aws:braket:::device/quantum-simulator/amazon/sv1")
+  defp submitted_at(opts), do: Keyword.get(opts, :submitted_at)
+
+  defp job_id(payload, opts) do
+    Keyword.get_lazy(opts, :job_id, fn ->
+      digest =
+        :sha256
+        |> :crypto.hash(:erlang.term_to_binary(%{payload: payload, target: target(opts)}))
+        |> Base.encode16(case: :lower)
+        |> binary_part(0, 12)
+
+      "braket_task_#{digest}"
+    end)
+  end
+
+  defp target(opts) do
+    Keyword.get_lazy(opts, :target, fn ->
+      opts
+      |> Keyword.get(:provider_config, %{})
+      |> Map.get(:device_arn, "unknown_target")
+    end)
+  end
 end
