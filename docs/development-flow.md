@@ -137,3 +137,12 @@ When preparing provider release evidence:
 3. Update support tiers and known limits in `docs/v0.5-provider-support-tiers.md`.
 4. Validate observability dashboards against `docs/observability-dashboards.md`.
 5. Run `mix test.provider_smoke` before final release checklist sign-off.
+
+## 10) Parallel Batch Execution Guidelines
+
+`NxQuantum.Estimator.batched_expectation/3` and `NxQuantum.Sampler.batched_run/3` support optional parallel mode:
+
+1. Enable with `parallel: true`.
+2. Bound worker count with `max_concurrency: System.schedulers_online()` (or lower).
+3. Keep deterministic reproducibility by using fixed `seed` values in sampler workflows.
+4. Use sequential mode (`parallel: false`) for very small batches where task overhead may dominate.

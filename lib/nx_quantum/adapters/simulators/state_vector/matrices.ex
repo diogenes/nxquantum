@@ -5,34 +5,56 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
 
   alias NxQuantum.GateOperation
 
+  @cache_table :nxq_state_vector_matrix_cache
+  @cache_max_entries 4096
+
   @spec observable_matrix(
           :pauli_x | :pauli_y | :pauli_z,
           non_neg_integer(),
           pos_integer()
         ) :: Nx.Tensor.t()
-  def observable_matrix(:pauli_z, wire, qubits), do: full_single_wire_matrix(pauli_z(), wire, qubits)
-  def observable_matrix(:pauli_x, wire, qubits), do: full_single_wire_matrix(pauli_x(), wire, qubits)
-  def observable_matrix(:pauli_y, wire, qubits), do: full_single_wire_matrix(pauli_y(), wire, qubits)
+  def observable_matrix(:pauli_z, wire, qubits),
+    do: cached_matrix({:observable, :pauli_z, wire, qubits}, fn -> full_single_wire_matrix(pauli_z(), wire, qubits) end)
+
+  def observable_matrix(:pauli_x, wire, qubits),
+    do: cached_matrix({:observable, :pauli_x, wire, qubits}, fn -> full_single_wire_matrix(pauli_x(), wire, qubits) end)
+
+  def observable_matrix(:pauli_y, wire, qubits),
+    do: cached_matrix({:observable, :pauli_y, wire, qubits}, fn -> full_single_wire_matrix(pauli_y(), wire, qubits) end)
 
   @spec gate_matrix(GateOperation.t(), pos_integer()) :: Nx.Tensor.t()
-  def gate_matrix(%GateOperation{name: :h, wires: [wire]}, qubits), do: full_single_wire_matrix(hadamard(), wire, qubits)
+  def gate_matrix(%GateOperation{name: :h, wires: [wire]}, qubits),
+    do: cached_matrix({:gate, :h, wire, qubits}, fn -> full_single_wire_matrix(hadamard(), wire, qubits) end)
 
-  def gate_matrix(%GateOperation{name: :x, wires: [wire]}, qubits), do: full_single_wire_matrix(pauli_x(), wire, qubits)
+  def gate_matrix(%GateOperation{name: :x, wires: [wire]}, qubits),
+    do: cached_matrix({:gate, :x, wire, qubits}, fn -> full_single_wire_matrix(pauli_x(), wire, qubits) end)
 
-  def gate_matrix(%GateOperation{name: :y, wires: [wire]}, qubits), do: full_single_wire_matrix(pauli_y(), wire, qubits)
+  def gate_matrix(%GateOperation{name: :y, wires: [wire]}, qubits),
+    do: cached_matrix({:gate, :y, wire, qubits}, fn -> full_single_wire_matrix(pauli_y(), wire, qubits) end)
 
-  def gate_matrix(%GateOperation{name: :z, wires: [wire]}, qubits), do: full_single_wire_matrix(pauli_z(), wire, qubits)
+  def gate_matrix(%GateOperation{name: :z, wires: [wire]}, qubits),
+    do: cached_matrix({:gate, :z, wire, qubits}, fn -> full_single_wire_matrix(pauli_z(), wire, qubits) end)
 
   def gate_matrix(%GateOperation{name: :rx, wires: [wire], params: params}, qubits),
-    do: full_single_wire_matrix(rx_matrix(Map.fetch!(params, :theta)), wire, qubits)
+    do:
+      cached_matrix({:gate, :rx, wire, qubits, theta_key(Map.fetch!(params, :theta))}, fn ->
+        full_single_wire_matrix(rx_matrix(Map.fetch!(params, :theta)), wire, qubits)
+      end)
 
   def gate_matrix(%GateOperation{name: :ry, wires: [wire], params: params}, qubits),
-    do: full_single_wire_matrix(ry_matrix(Map.fetch!(params, :theta)), wire, qubits)
+    do:
+      cached_matrix({:gate, :ry, wire, qubits, theta_key(Map.fetch!(params, :theta))}, fn ->
+        full_single_wire_matrix(ry_matrix(Map.fetch!(params, :theta)), wire, qubits)
+      end)
 
   def gate_matrix(%GateOperation{name: :rz, wires: [wire], params: params}, qubits),
-    do: full_single_wire_matrix(rz_matrix(Map.fetch!(params, :theta)), wire, qubits)
+    do:
+      cached_matrix({:gate, :rz, wire, qubits, theta_key(Map.fetch!(params, :theta))}, fn ->
+        full_single_wire_matrix(rz_matrix(Map.fetch!(params, :theta)), wire, qubits)
+      end)
 
-  def gate_matrix(%GateOperation{name: :cnot, wires: [control, target]}, qubits), do: cnot_matrix(control, target, qubits)
+  def gate_matrix(%GateOperation{name: :cnot, wires: [control, target]}, qubits),
+    do: cached_matrix({:gate, :cnot, control, target, qubits}, fn -> cnot_matrix(control, target, qubits) end)
 
   def gate_matrix(%GateOperation{name: name}, _qubits) do
     raise ArgumentError, "unsupported gate #{inspect(name)}"
@@ -124,6 +146,17 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
   defp scalar_tensor(%Nx.Tensor{} = theta), do: theta
   defp scalar_tensor(theta) when is_number(theta), do: Nx.tensor(theta)
 
+  defp theta_key(%Nx.Tensor{} = theta) do
+    if Nx.shape(theta) == {} do
+      Nx.to_number(theta)
+    else
+      :erlang.phash2(Nx.to_flat_list(theta))
+    end
+  end
+
+  defp theta_key(theta) when is_number(theta), do: theta
+  defp theta_key(theta), do: :erlang.phash2(theta)
+
   defp i2, do: Nx.tensor([[1.0, 0.0], [0.0, 1.0]], type: {:c, 64})
 
   defp map_cnot_column(col, control, target) do
@@ -142,5 +175,50 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
     |> Nx.multiply(Nx.reshape(b, {1, 1, br, bc}))
     |> Nx.transpose(axes: [0, 2, 1, 3])
     |> Nx.reshape({ar * br, ac * bc})
+  end
+
+  defp cached_matrix(key, builder_fun) when is_function(builder_fun, 0) do
+    table = ensure_cache_table()
+
+    case :ets.lookup(table, key) do
+      [{^key, value}] ->
+        value
+
+      [] ->
+        value = builder_fun.()
+        cache_store(table, key, value)
+        value
+    end
+  end
+
+  defp ensure_cache_table do
+    case :ets.whereis(@cache_table) do
+      :undefined ->
+        try do
+          :ets.new(@cache_table, [:named_table, :set, :public, read_concurrency: true, write_concurrency: true])
+        rescue
+          _ -> @cache_table
+        end
+
+      _table ->
+        @cache_table
+    end
+  end
+
+  defp cache_store(table, key, value) do
+    if table_size(table) >= @cache_max_entries do
+      :ets.delete_all_objects(table)
+    end
+
+    _ = :ets.insert(table, {key, value})
+    :ok
+  end
+
+  defp table_size(table) do
+    case :ets.info(table, :size) do
+      :undefined -> 0
+      size when is_integer(size) -> size
+      _other -> 0
+    end
   end
 end

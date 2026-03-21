@@ -29,6 +29,7 @@ See positioning and comparison details:
 - Start interactive tutorials: [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
 - Check provider support tiers and limits: [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
 - Review reproducible provider benchmark matrix: [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
+- Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-21.md](docs/python-alternatives-benchmark-2026-03-21.md)
 - Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 ## Quick Start
@@ -87,6 +88,7 @@ Track status here:
 - [docs/v0.5-acceptance-criteria.md](docs/v0.5-acceptance-criteria.md)
 - [docs/v0.5-migration-packs.md](docs/v0.5-migration-packs.md)
 - [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
+- [docs/python-alternatives-benchmark-2026-03-21.md](docs/python-alternatives-benchmark-2026-03-21.md)
 - [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
 
 ## Contributing

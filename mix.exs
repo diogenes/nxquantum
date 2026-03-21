@@ -127,6 +127,7 @@ defmodule NxQuantum.MixProject do
         "docs/migration-python-playbook.md",
         "docs/decision-matrix.md",
         "docs/livebook-tutorials.md",
+        "docs/python-alternatives-benchmark-2026-03-21.md",
         "docs/observability.md",
         "docs/observability-dashboards.md",
         "docs/v0.5-feature-spec.md",

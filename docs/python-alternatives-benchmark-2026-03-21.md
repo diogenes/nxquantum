@@ -24,6 +24,7 @@ Benchmark settings:
 1. iterations: `2000`
 2. warmup: `100`
 3. metric: `per_op_ms` (lower is better)
+4. NxQuantum runtime profiles requested: `cpu_portable`, `cpu_compiled`
 
 ## Environment
 
@@ -43,10 +44,20 @@ source .venv-bench/bin/activate
 python -m pip install --upgrade pip
 python -m pip install 'qiskit>=1.2,<2' 'pennylane>=0.38,<0.40' 'cirq-core>=1.3,<1.5'
 python -m pip install 'autoray<0.7'
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100
+python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled
 ```
 
-## Raw Results (3 runs)
+## Latest Raw Result Snapshot (2026-03-21)
+
+| Framework lane | Requested profile | Resolved profile | ms/op |
+| --- | --- | --- | ---: |
+| NxQuantum | `cpu_portable` | `cpu_portable` | 0.041891 |
+| NxQuantum | `cpu_compiled` | `cpu_portable` | 0.041559 |
+| Qiskit | n/a | n/a | 0.103706 |
+| PennyLane | n/a | n/a | 0.405602 |
+| Cirq | n/a | n/a | 0.340328 |
+
+## Previous 3-run Baseline (before optimization pass)
 
 | Run | NxQuantum (ms/op) | Qiskit (ms/op) | PennyLane (ms/op) | Cirq (ms/op) |
 | --- | ---: | ---: | ---: | ---: |
@@ -54,18 +65,10 @@ python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100
 | 2 | 0.073941 | 0.103735 | 0.401781 | 0.339375 |
 | 3 | 0.073600 | 0.103969 | 0.405483 | 0.339976 |
 
-Median `per_op_ms`:
+## Notes on Runtime Profile Resolution
 
-1. NxQuantum: `0.073600`
-2. Qiskit: `0.103969`
-3. PennyLane: `0.405483`
-4. Cirq: `0.339976`
-
-Relative to NxQuantum median:
-
-1. Qiskit: `1.41x` slower
-2. PennyLane: `5.51x` slower
-3. Cirq: `4.62x` slower
+1. In this machine run, requesting `cpu_compiled` resolved to `cpu_portable`.
+2. The benchmark now reports both requested and resolved runtime profiles for transparency.
 
 ## Notes and Caveats
 
@@ -77,3 +80,5 @@ Relative to NxQuantum median:
 
 1. `bench/python_alternatives_benchmark.py`
 2. `bench/nxquantum_python_comparison.exs`
+3. `bench/nxquantum_parallel_opportunity.exs`
+4. `bench/nxquantum_parallel_opportunity_sampler.exs`

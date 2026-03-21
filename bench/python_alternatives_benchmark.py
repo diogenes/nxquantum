@@ -91,7 +91,7 @@ def bench_cirq(iterations: int, warmup: int):
     return _bench(run_once, iterations, warmup)
 
 
-def bench_nxquantum(repo_root: Path, iterations: int):
+def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str):
     cmd = [
         "mise",
         "exec",
@@ -100,6 +100,7 @@ def bench_nxquantum(repo_root: Path, iterations: int):
         "run",
         "bench/nxquantum_python_comparison.exs",
         str(iterations),
+        runtime_profile,
     ]
 
     completed = subprocess.run(
@@ -129,15 +130,17 @@ def bench_nxquantum(repo_root: Path, iterations: int):
         "per_op_ms": float(fields["per_op_ms"]),
         "ops_s": float(fields["ops_s"]),
         "value": fields.get("value"),
+        "requested_profile": fields.get("runtime_profile"),
+        "resolved_profile": fields.get("resolved_profile"),
     }
 
 
 def print_table(results):
     print("\nBenchmark results (lower per_op_ms is better):")
-    print("framework,total_ms,per_op_ms,ops_s,value")
+    print("framework,total_ms,per_op_ms,ops_s,value,requested_profile,resolved_profile")
     for name, data in results.items():
         print(
-            f"{name},{data['total_ms']:.6f},{data['per_op_ms']:.6f},{data['ops_s']:.6f},{data['value']}"
+            f"{name},{data['total_ms']:.6f},{data['per_op_ms']:.6f},{data['ops_s']:.6f},{data['value']},{data.get('requested_profile','')},{data.get('resolved_profile','')}"
         )
 
     fastest = min(results.items(), key=lambda x: x[1]["per_op_ms"])
@@ -148,11 +151,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--iterations", type=int, default=2000)
     parser.add_argument("--warmup", type=int, default=100)
+    parser.add_argument("--nx-runtime-profiles", type=str, default="cpu_portable")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
     args = parser.parse_args()
 
     results = {}
-    results["nxquantum"] = bench_nxquantum(args.repo_root, args.iterations)
+    nx_profiles = [profile.strip() for profile in args.nx_runtime_profiles.split(",") if profile.strip()]
+
+    for profile in nx_profiles:
+        results[f"nxquantum[{profile}]"] = bench_nxquantum(args.repo_root, args.iterations, profile)
+
     results["qiskit"] = bench_qiskit(args.iterations, args.warmup)
     results["pennylane"] = bench_pennylane(args.iterations, args.warmup)
     results["cirq"] = bench_cirq(args.iterations, args.warmup)

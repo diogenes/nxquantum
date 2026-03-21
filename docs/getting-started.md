@@ -63,7 +63,9 @@ end
     builder,
     angles,
     observable: :pauli_z,
-    wire: 0
+    wire: 0,
+    parallel: true,
+    max_concurrency: System.schedulers_online()
   )
 ```
 
@@ -83,6 +85,25 @@ calibration = Nx.tensor([[0.95, 0.05], [0.06, 0.94]], type: {:f, 32})
     {:readout, calibration: calibration},
     {:zne_linear, scales: [1.0, 2.0, 3.0]}
   ])
+```
+
+### Batched sampler (optional parallel lane)
+
+```elixir
+angles = Nx.tensor([0.1, 0.2, 0.3, 0.4], type: {:f, 32})
+
+builder = fn theta ->
+  NxQuantum.Circuit.new(qubits: 1)
+  |> NxQuantum.Gates.ry(0, theta: theta)
+end
+
+{:ok, samples} =
+  NxQuantum.Sampler.batched_run(builder, angles,
+    shots: 1024,
+    seed: 11,
+    parallel: true,
+    max_concurrency: System.schedulers_online()
+  )
 ```
 
 ### Kernel matrix
