@@ -37,51 +37,115 @@ def _bench(fn, iterations: int, warmup: int):
     }
 
 
-def bench_qiskit(iterations: int, warmup: int):
+def bench_qiskit(iterations: int, warmup: int, scenario: str):
     from qiskit import QuantumCircuit
     from qiskit.quantum_info import Pauli, Statevector
 
-    circuit = QuantumCircuit(2)
-    circuit.h(0)
-    circuit.cx(0, 1)
-    circuit.ry(0.3, 1)
-
-    pauli_z_q1 = Pauli("IZ")
+    if scenario == "deep_6q":
+        circuit = QuantumCircuit(6)
+        circuit.h(0)
+        circuit.cx(0, 1)
+        circuit.cx(1, 2)
+        circuit.cx(2, 3)
+        circuit.cx(3, 4)
+        circuit.cx(4, 5)
+        circuit.ry(0.11, 0)
+        circuit.ry(0.22, 1)
+        circuit.ry(0.33, 2)
+        circuit.ry(0.44, 3)
+        circuit.ry(0.55, 4)
+        circuit.ry(0.66, 5)
+        circuit.cx(0, 3)
+        circuit.cx(2, 5)
+        circuit.cx(1, 4)
+        observable = Pauli("ZIIIII")
+    else:
+        circuit = QuantumCircuit(2)
+        circuit.h(0)
+        circuit.cx(0, 1)
+        circuit.ry(0.3, 1)
+        observable = Pauli("IZ")
 
     def run_once():
-        return float(Statevector.from_instruction(circuit).expectation_value(pauli_z_q1).real)
+        return float(Statevector.from_instruction(circuit).expectation_value(observable).real)
 
     return _bench(run_once, iterations, warmup)
 
 
-def bench_pennylane(iterations: int, warmup: int):
+def bench_pennylane(iterations: int, warmup: int, scenario: str):
     import pennylane as qml
 
-    dev = qml.device("default.qubit", wires=2)
+    if scenario == "deep_6q":
+        dev = qml.device("default.qubit", wires=6)
 
-    @qml.qnode(dev)
-    def circuit(theta):
-        qml.Hadamard(wires=0)
-        qml.CNOT(wires=[0, 1])
-        qml.RY(theta, wires=1)
-        return qml.expval(qml.PauliZ(1))
+        @qml.qnode(dev)
+        def circuit():
+            qml.Hadamard(wires=0)
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            qml.CNOT(wires=[2, 3])
+            qml.CNOT(wires=[3, 4])
+            qml.CNOT(wires=[4, 5])
+            qml.RY(0.11, wires=0)
+            qml.RY(0.22, wires=1)
+            qml.RY(0.33, wires=2)
+            qml.RY(0.44, wires=3)
+            qml.RY(0.55, wires=4)
+            qml.RY(0.66, wires=5)
+            qml.CNOT(wires=[0, 3])
+            qml.CNOT(wires=[2, 5])
+            qml.CNOT(wires=[1, 4])
+            return qml.expval(qml.PauliZ(5))
 
-    def run_once():
-        return float(circuit(0.3))
+        def run_once():
+            return float(circuit())
+    else:
+        dev = qml.device("default.qubit", wires=2)
+
+        @qml.qnode(dev)
+        def circuit(theta):
+            qml.Hadamard(wires=0)
+            qml.CNOT(wires=[0, 1])
+            qml.RY(theta, wires=1)
+            return qml.expval(qml.PauliZ(1))
+
+        def run_once():
+            return float(circuit(0.3))
 
     return _bench(run_once, iterations, warmup)
 
 
-def bench_cirq(iterations: int, warmup: int):
+def bench_cirq(iterations: int, warmup: int, scenario: str):
     import cirq
 
-    q0, q1 = cirq.LineQubit.range(2)
-    circuit = cirq.Circuit(
-        cirq.H(q0),
-        cirq.CNOT(q0, q1),
-        cirq.ry(0.3)(q1),
-    )
-    observable = cirq.Z(q1)
+    if scenario == "deep_6q":
+        q = cirq.LineQubit.range(6)
+        circuit = cirq.Circuit(
+            cirq.H(q[0]),
+            cirq.CNOT(q[0], q[1]),
+            cirq.CNOT(q[1], q[2]),
+            cirq.CNOT(q[2], q[3]),
+            cirq.CNOT(q[3], q[4]),
+            cirq.CNOT(q[4], q[5]),
+            cirq.ry(0.11)(q[0]),
+            cirq.ry(0.22)(q[1]),
+            cirq.ry(0.33)(q[2]),
+            cirq.ry(0.44)(q[3]),
+            cirq.ry(0.55)(q[4]),
+            cirq.ry(0.66)(q[5]),
+            cirq.CNOT(q[0], q[3]),
+            cirq.CNOT(q[2], q[5]),
+            cirq.CNOT(q[1], q[4]),
+        )
+        observable = cirq.Z(q[5])
+    else:
+        q0, q1 = cirq.LineQubit.range(2)
+        circuit = cirq.Circuit(
+            cirq.H(q0),
+            cirq.CNOT(q0, q1),
+            cirq.ry(0.3)(q1),
+        )
+        observable = cirq.Z(q1)
     simulator = cirq.Simulator()
 
     def run_once():
@@ -91,7 +155,7 @@ def bench_cirq(iterations: int, warmup: int):
     return _bench(run_once, iterations, warmup)
 
 
-def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str):
+def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str, scenario: str):
     cmd = [
         "mise",
         "exec",
@@ -101,6 +165,7 @@ def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str):
         "bench/nxquantum_python_comparison.exs",
         str(iterations),
         runtime_profile,
+        scenario,
     ]
 
     completed = subprocess.run(
@@ -132,6 +197,7 @@ def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str):
         "value": fields.get("value"),
         "requested_profile": fields.get("runtime_profile"),
         "resolved_profile": fields.get("resolved_profile"),
+        "scenario": fields.get("scenario"),
     }
 
 
@@ -152,6 +218,7 @@ def main():
     parser.add_argument("--iterations", type=int, default=2000)
     parser.add_argument("--warmup", type=int, default=100)
     parser.add_argument("--nx-runtime-profiles", type=str, default="cpu_portable")
+    parser.add_argument("--scenario", type=str, default="baseline_2q", choices=["baseline_2q", "deep_6q"])
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
     args = parser.parse_args()
 
@@ -159,11 +226,11 @@ def main():
     nx_profiles = [profile.strip() for profile in args.nx_runtime_profiles.split(",") if profile.strip()]
 
     for profile in nx_profiles:
-        results[f"nxquantum[{profile}]"] = bench_nxquantum(args.repo_root, args.iterations, profile)
+        results[f"nxquantum[{profile}]"] = bench_nxquantum(args.repo_root, args.iterations, profile, args.scenario)
 
-    results["qiskit"] = bench_qiskit(args.iterations, args.warmup)
-    results["pennylane"] = bench_pennylane(args.iterations, args.warmup)
-    results["cirq"] = bench_cirq(args.iterations, args.warmup)
+    results["qiskit"] = bench_qiskit(args.iterations, args.warmup, args.scenario)
+    results["pennylane"] = bench_pennylane(args.iterations, args.warmup, args.scenario)
+    results["cirq"] = bench_cirq(args.iterations, args.warmup, args.scenario)
 
     print_table(results)
 

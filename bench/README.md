@@ -49,6 +49,7 @@ python -m pip install --upgrade pip
 python -m pip install 'qiskit>=1.2,<2' 'pennylane>=0.38,<0.40' 'cirq-core>=1.3,<1.5'
 python -m pip install 'autoray<0.7'
 python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled
+python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario deep_6q
 ```
 
 NxQuantum benchmark scripts used by the Python harness:

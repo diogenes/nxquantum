@@ -20,9 +20,17 @@ parse_runtime_profile = fn value ->
   end
 end
 
+parse_scenario = fn value ->
+  case String.trim(value) do
+    "baseline_2q" -> :baseline_2q
+    "deep_6q" -> :deep_6q
+    _ -> :baseline_2q
+  end
+end
+
 {iterations, runtime_profile} =
   case System.argv() do
-    [iterations_arg, profile_arg | _rest] ->
+    [iterations_arg, profile_arg, _scenario_arg | _rest] ->
       {parse_iterations.(iterations_arg), parse_runtime_profile.(profile_arg)}
 
     [iterations_arg] ->
@@ -30,6 +38,12 @@ end
 
     _ ->
       {1000, :cpu_portable}
+  end
+
+scenario =
+  case System.argv() do
+    [_iterations_arg, _profile_arg, scenario_arg | _rest] -> parse_scenario.(scenario_arg)
+    _ -> :baseline_2q
   end
 
 resolved_profile =
@@ -41,16 +55,38 @@ resolved_profile =
 warmup = min(100, iterations)
 
 circuit =
-  [qubits: 2]
-  |> Circuit.new()
-  |> Gates.h(0)
-  |> Gates.cnot(control: 0, target: 1)
-  |> Gates.ry(1, theta: Nx.tensor(0.3))
+  case scenario do
+    :baseline_2q ->
+      [qubits: 2]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Gates.ry(1, theta: Nx.tensor(0.3))
+
+    :deep_6q ->
+      [qubits: 6]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Gates.cnot(control: 1, target: 2)
+      |> Gates.cnot(control: 2, target: 3)
+      |> Gates.cnot(control: 3, target: 4)
+      |> Gates.cnot(control: 4, target: 5)
+      |> Gates.ry(0, theta: Nx.tensor(0.11))
+      |> Gates.ry(1, theta: Nx.tensor(0.22))
+      |> Gates.ry(2, theta: Nx.tensor(0.33))
+      |> Gates.ry(3, theta: Nx.tensor(0.44))
+      |> Gates.ry(4, theta: Nx.tensor(0.55))
+      |> Gates.ry(5, theta: Nx.tensor(0.66))
+      |> Gates.cnot(control: 0, target: 3)
+      |> Gates.cnot(control: 2, target: 5)
+      |> Gates.cnot(control: 1, target: 4)
+  end
 
 run_once = fn ->
   case Estimator.expectation_result(circuit,
          observable: :pauli_z,
-         wire: 1,
+         wire: if(scenario == :deep_6q, do: 5, else: 1),
          runtime_profile: runtime_profile,
          fallback_policy: :allow_cpu_compiled
        ) do
@@ -76,5 +112,5 @@ ops_s = iterations / (microseconds / 1_000_000.0)
 numeric_value = Nx.to_number(last_value)
 
 IO.puts(
-  "NXQ_BENCH runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} total_ms=#{Float.round(total_ms, 6)} per_op_ms=#{Float.round(per_op_ms, 6)} ops_s=#{Float.round(ops_s, 6)} value=#{Float.round(numeric_value, 10)}"
+  "NXQ_BENCH scenario=#{scenario} runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} total_ms=#{Float.round(total_ms, 6)} per_op_ms=#{Float.round(per_op_ms, 6)} ops_s=#{Float.round(ops_s, 6)} value=#{Float.round(numeric_value, 10)}"
 )

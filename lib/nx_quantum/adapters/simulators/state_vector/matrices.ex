@@ -180,11 +180,11 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
   defp cached_matrix(key, builder_fun) when is_function(builder_fun, 0) do
     table = ensure_cache_table()
 
-    case :ets.lookup(table, key) do
-      [{^key, value}] ->
+    case safe_lookup(table, key) do
+      {:ok, value} ->
         value
 
-      [] ->
+      :miss ->
         value = builder_fun.()
         cache_store(table, key, value)
         value
@@ -207,18 +207,48 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
 
   defp cache_store(table, key, value) do
     if table_size(table) >= @cache_max_entries do
-      :ets.delete_all_objects(table)
+      safe_delete_all_objects(table)
     end
 
-    _ = :ets.insert(table, {key, value})
+    _ = safe_insert(table, key, value)
     :ok
   end
 
   defp table_size(table) do
-    case :ets.info(table, :size) do
+    case safe_table_size(table) do
       :undefined -> 0
       size when is_integer(size) -> size
       _other -> 0
     end
+  end
+
+  defp safe_lookup(table, key) do
+    case :ets.lookup(table, key) do
+      [{^key, value}] -> {:ok, value}
+      [] -> :miss
+    end
+  rescue
+    _ -> :miss
+  end
+
+  defp safe_table_size(table) do
+    :ets.info(table, :size)
+  rescue
+    _ -> :undefined
+  end
+
+  defp safe_delete_all_objects(table) do
+    _ = :ets.delete_all_objects(table)
+    :ok
+  rescue
+    _ -> :ok
+  end
+
+  defp safe_insert(table, key, value) do
+    :ets.insert(table, {key, value})
+  rescue
+    _ ->
+      retry_table = ensure_cache_table()
+      :ets.insert(retry_table, {key, value})
   end
 end

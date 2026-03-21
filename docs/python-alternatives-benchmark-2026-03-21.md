@@ -25,6 +25,9 @@ Benchmark settings:
 2. warmup: `100`
 3. metric: `per_op_ms` (lower is better)
 4. NxQuantum runtime profiles requested: `cpu_portable`, `cpu_compiled`
+5. Scenarios:
+   - `baseline_2q` (existing)
+   - `deep_6q` (new, deeper multi-qubit benchmark)
 
 ## Environment
 
@@ -44,7 +47,8 @@ source .venv-bench/bin/activate
 python -m pip install --upgrade pip
 python -m pip install 'qiskit>=1.2,<2' 'pennylane>=0.38,<0.40' 'cirq-core>=1.3,<1.5'
 python -m pip install 'autoray<0.7'
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled
+python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario baseline_2q
+python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario deep_6q
 ```
 
 ## Latest Raw Result Snapshot (2026-03-21)
@@ -69,6 +73,21 @@ python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --n
 
 1. In this machine run, requesting `cpu_compiled` resolved to `cpu_portable`.
 2. The benchmark now reports both requested and resolved runtime profiles for transparency.
+
+## Deep 6-Qubit Scenario Snapshot (2026-03-21)
+
+| Framework lane | Requested profile | Resolved profile | ms/op |
+| --- | --- | --- | ---: |
+| NxQuantum | `cpu_portable` | `cpu_portable` | 17.472098 |
+| NxQuantum | `cpu_compiled` | `cpu_portable` | 17.252916 |
+| Qiskit | n/a | n/a | 0.303125 |
+| PennyLane | n/a | n/a | 1.149950 |
+| Cirq | n/a | n/a | 0.896668 |
+
+Interpretation:
+
+1. NxQuantum remains fastest on `baseline_2q` in this environment.
+2. For `deep_6q`, current state-vector implementation is significantly slower than Qiskit/Cirq and should be treated as an optimization target.
 
 ## Notes and Caveats
 
