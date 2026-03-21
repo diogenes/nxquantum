@@ -133,4 +133,34 @@ defmodule NxQuantum.StateVectorTest do
     assert {:single_qubit, 1, _gate1, _coeff1} = Enum.at(plan, 1)
     assert {:cnot, _perm} = Enum.at(plan, 2)
   end
+
+  test "compiled execution plan fuses consecutive cnot operations" do
+    operations = [
+      GateOperation.new(:cnot, [0, 1]),
+      GateOperation.new(:cnot, [1, 2]),
+      GateOperation.new(:cnot, [2, 3]),
+      GateOperation.new(:ry, [0], theta: 0.2)
+    ]
+
+    plan = Matrices.compiled_execution_plan(operations, 4)
+
+    assert length(plan) == 2
+    assert {:cnot, fused_permutation} = Enum.at(plan, 0)
+    assert {:single_qubit, 0, _gate, _coefficients} = Enum.at(plan, 1)
+
+    state = State.initial_state(4)
+    p01 = Matrices.cnot_permutation(0, 1, 4)
+    p12 = Matrices.cnot_permutation(1, 2, 4)
+    p23 = Matrices.cnot_permutation(2, 3, 4)
+
+    sequential_state =
+      state
+      |> Nx.take(p01)
+      |> Nx.take(p12)
+      |> Nx.take(p23)
+
+    fused_state = Nx.take(state, fused_permutation)
+
+    assert Nx.to_flat_list(sequential_state) == Nx.to_flat_list(fused_state)
+  end
 end

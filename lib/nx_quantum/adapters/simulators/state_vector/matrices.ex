@@ -160,7 +160,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
       |> then(&{:execution_plan, qubits, &1})
 
     cached_matrix(cache_key, fn ->
-      Enum.map(operations, &compile_operation(&1, qubits))
+      build_compiled_plan(operations, qubits)
     end)
   end
 
@@ -343,6 +343,54 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
 
   defp compile_operation(%GateOperation{} = op, qubits) do
     {:dense, gate_matrix(op, qubits)}
+  end
+
+  defp build_compiled_plan([], _qubits), do: []
+
+  defp build_compiled_plan(operations, qubits) do
+    {cnot_ops, rest_ops} = take_cnot_prefix(operations)
+
+    cond do
+      length(cnot_ops) >= 2 ->
+        [compile_cnot_chain(cnot_ops, qubits) | build_compiled_plan(rest_ops, qubits)]
+
+      cnot_ops == [] ->
+        [compile_operation(hd(operations), qubits) | build_compiled_plan(tl(operations), qubits)]
+
+      true ->
+        [compile_operation(hd(cnot_ops), qubits) | build_compiled_plan(rest_ops, qubits)]
+    end
+  end
+
+  defp take_cnot_prefix(operations) do
+    do_take_cnot_prefix(operations, [])
+  end
+
+  defp do_take_cnot_prefix([%GateOperation{name: :cnot} = op | rest], acc) do
+    do_take_cnot_prefix(rest, [op | acc])
+  end
+
+  defp do_take_cnot_prefix(rest, acc), do: {Enum.reverse(acc), rest}
+
+  defp compile_cnot_chain(cnot_ops, qubits) do
+    cache_key = {:gate, :cnot_chain, qubits, execution_plan_key(cnot_ops)}
+
+    permutation =
+      cached_matrix(cache_key, fn ->
+        cnot_ops
+        |> Enum.map(fn %GateOperation{wires: [control, target]} ->
+          cnot_permutation(control, target, qubits)
+        end)
+        |> compose_permutations()
+      end)
+
+    {:cnot, permutation}
+  end
+
+  defp compose_permutations([first | rest]) do
+    Enum.reduce(rest, first, fn next_permutation, acc ->
+      Nx.take(acc, next_permutation)
+    end)
   end
 
   defp execution_plan_key(operations) do

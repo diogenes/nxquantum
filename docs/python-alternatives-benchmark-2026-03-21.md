@@ -55,11 +55,11 @@ python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-
 
 | Framework lane | Requested profile | Resolved profile | ms/op |
 | --- | --- | --- | ---: |
-| NxQuantum | `cpu_portable` | `cpu_portable` | 0.031850 |
-| NxQuantum | `cpu_compiled` | `cpu_portable` | 0.031922 |
-| Qiskit | n/a | n/a | 0.144807 |
-| PennyLane | n/a | n/a | 0.410242 |
-| Cirq | n/a | n/a | 0.351909 |
+| NxQuantum | `cpu_portable` | `cpu_portable` | 0.032224 |
+| NxQuantum | `cpu_compiled` | `cpu_portable` | 0.031596 |
+| Qiskit | n/a | n/a | 0.113980 |
+| PennyLane | n/a | n/a | 0.416495 |
+| Cirq | n/a | n/a | 0.357032 |
 
 ## Previous 3-run Baseline (before optimization pass)
 
@@ -78,11 +78,11 @@ python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-
 
 | Framework lane | Requested profile | Resolved profile | ms/op |
 | --- | --- | --- | ---: |
-| NxQuantum | `cpu_portable` | `cpu_portable` | 0.405306 |
-| NxQuantum | `cpu_compiled` | `cpu_portable` | 0.668274 |
-| Qiskit | n/a | n/a | 0.314175 |
-| PennyLane | n/a | n/a | 1.157438 |
-| Cirq | n/a | n/a | 0.912508 |
+| NxQuantum | `cpu_portable` | `cpu_portable` | 0.336410 |
+| NxQuantum | `cpu_compiled` | `cpu_portable` | 0.405146 |
+| Qiskit | n/a | n/a | 0.314114 |
+| PennyLane | n/a | n/a | 1.180001 |
+| Cirq | n/a | n/a | 0.924069 |
 
 Deep scenario delta after structured state-vector gate application refactor:
 
@@ -92,13 +92,14 @@ Deep scenario delta after structured state-vector gate application refactor:
 4. Pairwise single-qubit kernel + hybrid small-qubit fallback improved `deep_6q` to a direct 3-run mean `0.432341 ms/op` (`0.425218..0.436286`, ~23.3% better than `0.563728`) while preserving `baseline_2q` near `~0.032 ms/op`.
 5. Allocation-focused coefficient caching removed per-gate scalar slicing and improved `deep_6q` to a direct 3-run mean `0.408282 ms/op` (`0.401670..0.417186`, ~5.6% better than `0.432341`) while keeping `baseline_2q` stable at `~0.0326 ms/op`.
 6. Compiled execution-plan caching reduced repeated adapter lookup overhead and reached a direct 3-run `deep_6q` mean `0.394299 ms/op` (`0.386832..0.400106`, ~3.4% better than `0.408282`) while keeping direct 3-run `baseline_2q` mean around `0.031653 ms/op`.
+7. CNOT-chain fusion in compiled plans (compose consecutive permutations into a single apply) improved `deep_6q` to a direct 3-run mean `0.338112 ms/op` (`0.332106..0.342586`, ~14.2% better than `0.394299`) while keeping `baseline_2q` around `0.031578 ms/op`.
 
 Interpretation:
 
 1. NxQuantum remains fastest on `baseline_2q` in this environment.
-2. For `deep_6q`, NxQuantum is now in the same sub-millisecond class and materially closer to Qiskit than the earlier dense path.
+2. For `deep_6q`, NxQuantum is now in the same sub-millisecond class and very close to Qiskit in this machine snapshot.
 3. Hybrid kernel selection (small-qubit transpose path + deeper-circuit pairwise path) improved deep performance without sacrificing baseline latency.
-4. Further gains should prioritize compiled runtime availability and minimizing temporary tensor allocations in pairwise updates.
+4. Further gains should prioritize compiled runtime availability and deeper fusion of disjoint single-qubit layers without dense matrix fallback.
 5. Cross-framework deep-circuit order can vary run-to-run; keep using multi-run means for promotion decisions.
 
 ## Notes and Caveats
