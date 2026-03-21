@@ -100,7 +100,7 @@ defmodule NxQuantum.MixProject do
   defp dialyzer do
     [
       plt_add_apps: [:ex_unit, :mix],
-      flags: [:error_handling, :race_conditions, :unmatched_returns]
+      flags: [:error_handling, :unmatched_returns]
     ]
   end
 

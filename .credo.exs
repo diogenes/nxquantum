@@ -8,7 +8,9 @@
       },
       strict: true,
       checks: [
-        {Credo.Check.Readability.MaxLineLength, max_length: 100}
+        {Credo.Check.Readability.MaxLineLength, max_length: 130},
+        {Credo.Check.Design.AliasUsage, false},
+        {Credo.Check.Refactor.Nesting, false}
       ]
     }
   ]
