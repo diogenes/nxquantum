@@ -48,4 +48,29 @@ defmodule NxQuantum.SamplerTest do
     assert {:error, %{code: :invalid_batch_shape, received: {2, 2}}} =
              Sampler.batched_run(builder, Nx.tensor([[0.1, 0.2], [0.3, 0.4]]), shots: 64, seed: 1)
   end
+
+  test "batched_run/3 parallel preserves deterministic values and ordering" do
+    builder = fn theta ->
+      [qubits: 1]
+      |> Circuit.new()
+      |> Gates.ry(0, theta: theta)
+    end
+
+    batch = Nx.tensor([0.1, 0.2, 0.3, 0.4, 0.5], type: {:f, 32})
+
+    assert {:ok, sequential} = Sampler.batched_run(builder, batch, shots: 128, seed: 11)
+
+    assert {:ok, parallel} =
+             Sampler.batched_run(builder, batch,
+               shots: 128,
+               seed: 11,
+               parallel: true,
+               max_concurrency: 4
+             )
+
+    assert Enum.map(sequential, & &1.counts) == Enum.map(parallel, & &1.counts)
+
+    assert Enum.map(sequential, &Nx.to_flat_list(&1.probabilities)) ==
+             Enum.map(parallel, &Nx.to_flat_list(&1.probabilities))
+  end
 end
