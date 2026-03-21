@@ -97,10 +97,9 @@ defmodule NxQuantum.StateVectorTest do
     plan_again = Matrices.single_qubit_layout_plan(2, 6)
 
     assert plan == plan_again
-    assert plan.transpose_axes == [3, 0, 1, 2, 4, 5]
-    assert plan.inverse_axes == [1, 2, 3, 0, 4, 5]
-    assert plan.qubit_shape == {2, 2, 2, 2, 2, 2}
-    assert plan.unflatten_shape == {2, 2, 2, 2, 2, 2}
+    assert plan.pair_shape == {8, 2, 4}
+    assert plan.outer_size == 8
+    assert plan.inner_size == 4
     assert plan.trailing_size == 32
     assert plan.state_shape == {64}
   end
