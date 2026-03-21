@@ -91,4 +91,17 @@ defmodule NxQuantum.StateVectorTest do
 
     assert_in_delta fast, dense, 1.0e-8
   end
+
+  test "single-qubit layout plan is deterministic" do
+    plan = Matrices.single_qubit_layout_plan(2, 6)
+    plan_again = Matrices.single_qubit_layout_plan(2, 6)
+
+    assert plan == plan_again
+    assert plan.transpose_axes == [3, 0, 1, 2, 4, 5]
+    assert plan.inverse_axes == [1, 2, 3, 0, 4, 5]
+    assert plan.qubit_shape == {2, 2, 2, 2, 2, 2}
+    assert plan.unflatten_shape == {2, 2, 2, 2, 2, 2}
+    assert plan.trailing_size == 32
+    assert plan.state_shape == {64}
+  end
 end

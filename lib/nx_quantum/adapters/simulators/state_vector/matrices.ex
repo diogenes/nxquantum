@@ -119,6 +119,38 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
     end)
   end
 
+  @type single_qubit_layout_plan :: %{
+          transpose_axes: [non_neg_integer()],
+          inverse_axes: [non_neg_integer()],
+          qubit_shape: tuple(),
+          unflatten_shape: tuple(),
+          trailing_size: pos_integer(),
+          state_shape: tuple()
+        }
+
+  @spec single_qubit_layout_plan(non_neg_integer(), pos_integer()) :: single_qubit_layout_plan()
+  def single_qubit_layout_plan(wire, qubits) do
+    cached_matrix({:single_gate, :layout_plan, wire, qubits}, fn ->
+      axis = qubits - wire - 1
+      base_axes = Enum.to_list(0..(qubits - 1))
+      transpose_axes = [axis | Enum.reject(base_axes, &(&1 == axis))]
+      inverse_axes = invert_permutation(transpose_axes)
+      qubit_shape = List.to_tuple(List.duplicate(2, qubits))
+      unflatten_shape = List.to_tuple([2 | List.duplicate(2, qubits - 1)])
+      trailing_size = 1 <<< (qubits - 1)
+      state_shape = {1 <<< qubits}
+
+      %{
+        transpose_axes: transpose_axes,
+        inverse_axes: inverse_axes,
+        qubit_shape: qubit_shape,
+        unflatten_shape: unflatten_shape,
+        trailing_size: trailing_size,
+        state_shape: state_shape
+      }
+    end)
+  end
+
   defp full_single_wire_matrix(single_gate, wire, qubits) do
     Enum.reduce((qubits - 1)..0//-1, nil, fn q, acc ->
       next = if q == wire, do: single_gate, else: i2()
@@ -220,6 +252,11 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Matrices do
 
   defp map_cnot_column(col, control, target) do
     if (col >>> control &&& 1) == 1, do: bxor(col, 1 <<< target), else: col
+  end
+
+  defp invert_permutation(axes) do
+    max_axis = length(axes) - 1
+    Enum.map(0..max_axis, fn axis -> Enum.find_index(axes, &(&1 == axis)) end)
   end
 
   defp matrix_value(row, mapped_col) when row == mapped_col, do: 1.0

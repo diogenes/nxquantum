@@ -88,6 +88,7 @@ Deep scenario delta after structured state-vector gate application refactor:
 
 1. NxQuantum (`cpu_portable`) improved from `17.58 ms/op` to `0.57 ms/op` (~31x faster on this machine).
 2. Remaining gap vs Qiskit in `deep_6q` is now ~1.8x (down from ~57x previously).
+3. Follow-up layout-plan caching pass improved `deep_6q` from `0.567794 ms/op` to a 3-run mean `0.563728 ms/op` (`0.560142..0.570376`, ~0.72%).
 
 Interpretation:
 

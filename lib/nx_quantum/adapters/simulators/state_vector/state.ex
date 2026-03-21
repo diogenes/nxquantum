@@ -57,28 +57,17 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
   end
 
   defp apply_single_qubit_gate(gate, state, wire, qubits) do
-    axis = qubits - wire - 1
-    base_axes = Enum.to_list(0..(qubits - 1))
-    transpose_axes = [axis | Enum.reject(base_axes, &(&1 == axis))]
-    inverse_axes = invert_permutation(transpose_axes)
-    reshaped = Nx.reshape(state, qubit_shape(qubits))
-    permuted = Nx.transpose(reshaped, axes: transpose_axes)
-    trailing_size = div(elem(Nx.shape(state), 0), 2)
-    flattened = Nx.reshape(permuted, {2, trailing_size})
+    layout = Matrices.single_qubit_layout_plan(wire, qubits)
+    reshaped = Nx.reshape(state, layout.qubit_shape)
+    permuted = Nx.transpose(reshaped, axes: layout.transpose_axes)
+    flattened = Nx.reshape(permuted, {2, layout.trailing_size})
     updated = apply_small_gate_kernel(gate, flattened)
-    unflattened = Nx.reshape(updated, List.to_tuple([2 | List.duplicate(2, qubits - 1)]))
+    unflattened = Nx.reshape(updated, layout.unflatten_shape)
 
     unflattened
-    |> Nx.transpose(axes: inverse_axes)
-    |> Nx.reshape(Nx.shape(state))
+    |> Nx.transpose(axes: layout.inverse_axes)
+    |> Nx.reshape(layout.state_shape)
   end
-
-  defp invert_permutation(axes) do
-    max_axis = length(axes) - 1
-    Enum.map(0..max_axis, fn axis -> Enum.find_index(axes, &(&1 == axis)) end)
-  end
-
-  defp qubit_shape(qubits), do: List.to_tuple(List.duplicate(2, qubits))
 
   defn apply_gate_kernel(matrix, state) do
     Nx.dot(matrix, state)
