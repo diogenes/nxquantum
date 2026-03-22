@@ -133,9 +133,44 @@ defmodule NxQuantum.StateVectorTest do
 
     assert plan == plan_again
     assert length(plan) == 3
-    assert %SingleQubit{wire: 0, layout: ^layout_wire_0} = Enum.at(plan, 0)
-    assert %SingleQubit{wire: 1, layout: ^layout_wire_1} = Enum.at(plan, 1)
+    assert %SingleQubit{wire: 0, layout: ^layout_wire_0, real_gate_coefficients: %{}} = Enum.at(plan, 0)
+    assert %SingleQubit{wire: 1, layout: ^layout_wire_1, real_gate_coefficients: %{}} = Enum.at(plan, 1)
     assert %Cnot{} = Enum.at(plan, 2)
+  end
+
+  test "real path eligibility and evolution equivalence for real-only operations" do
+    circuit =
+      [qubits: 6]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Gates.cnot(control: 1, target: 2)
+      |> Gates.cnot(control: 2, target: 3)
+      |> Gates.cnot(control: 3, target: 4)
+      |> Gates.cnot(control: 4, target: 5)
+      |> Gates.ry(0, theta: 0.11)
+      |> Gates.ry(1, theta: 0.22)
+      |> Gates.ry(2, theta: 0.33)
+      |> Gates.ry(3, theta: 0.44)
+      |> Gates.ry(4, theta: 0.55)
+      |> Gates.ry(5, theta: 0.66)
+      |> Gates.cnot(control: 0, target: 3)
+      |> Gates.cnot(control: 2, target: 5)
+      |> Gates.cnot(control: 1, target: 4)
+
+    assert State.real_path_eligible?(circuit.operations)
+
+    complex_state = 6 |> State.initial_state() |> State.apply_operations(circuit.operations) |> Nx.real()
+    real_state = 6 |> State.initial_state_real() |> State.apply_operations_real(circuit.operations)
+
+    max_diff =
+      complex_state
+      |> Nx.subtract(real_state)
+      |> Nx.abs()
+      |> Nx.reduce_max()
+      |> Nx.to_number()
+
+    assert max_diff < 1.0e-7
   end
 
   test "compiled execution plan fuses consecutive cnot operations" do

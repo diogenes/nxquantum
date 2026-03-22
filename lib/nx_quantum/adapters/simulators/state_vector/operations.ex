@@ -3,8 +3,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Operations do
 
   defmodule SingleQubit do
     @moduledoc false
-    @enforce_keys [:wire, :gate_matrix, :gate_coefficients, :layout]
-    defstruct [:wire, :gate_matrix, :gate_coefficients, :layout]
+    @enforce_keys [:wire, :gate_matrix, :gate_coefficients, :real_gate_coefficients, :layout]
+    defstruct [:wire, :gate_matrix, :gate_coefficients, :real_gate_coefficients, :layout]
   end
 
   defmodule Cnot do

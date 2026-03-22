@@ -31,10 +31,13 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.CompiledPlan do
 
   defp compile_operation(%GateOperation{name: name, wires: [wire]} = op, qubits)
        when name in [:h, :x, :y, :z, :rx, :ry, :rz] do
+    gate_coefficients = MatrixLibrary.single_qubit_gate_coefficients(op)
+
     %SingleQubit{
       wire: wire,
       gate_matrix: MatrixLibrary.single_qubit_gate_matrix(op),
-      gate_coefficients: MatrixLibrary.single_qubit_gate_coefficients(op),
+      gate_coefficients: gate_coefficients,
+      real_gate_coefficients: real_single_qubit_coefficients(name, gate_coefficients),
       layout: MatrixLibrary.single_qubit_layout_plan(wire, qubits)
     }
   end
@@ -92,4 +95,15 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.CompiledPlan do
       Nx.take(acc, next_permutation)
     end)
   end
+
+  defp real_single_qubit_coefficients(name, gate_coefficients) when name in [:h, :x, :z, :ry] do
+    %{
+      g00: Nx.real(gate_coefficients.g00),
+      g01: Nx.real(gate_coefficients.g01),
+      g10: Nx.real(gate_coefficients.g10),
+      g11: Nx.real(gate_coefficients.g11)
+    }
+  end
+
+  defp real_single_qubit_coefficients(_name, _gate_coefficients), do: nil
 end

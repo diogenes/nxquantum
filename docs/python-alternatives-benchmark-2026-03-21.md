@@ -93,6 +93,7 @@ Deep scenario delta after structured state-vector gate application refactor:
 5. Allocation-focused coefficient caching removed per-gate scalar slicing and improved `deep_6q` to a direct 3-run mean `0.408282 ms/op` (`0.401670..0.417186`, ~5.6% better than `0.432341`) while keeping `baseline_2q` stable at `~0.0326 ms/op`.
 6. Compiled execution-plan caching reduced repeated adapter lookup overhead and reached a direct 3-run `deep_6q` mean `0.394299 ms/op` (`0.386832..0.400106`, ~3.4% better than `0.408282`) while keeping direct 3-run `baseline_2q` mean around `0.031653 ms/op`.
 7. CNOT-chain fusion in compiled plans (compose consecutive permutations into a single apply) improved `deep_6q` to a direct 3-run mean `0.338112 ms/op` (`0.332106..0.342586`, ~14.2% better than `0.394299`) while keeping `baseline_2q` around `0.031578 ms/op`.
+8. Real-gate fast path for `:pauli_z` workflows (real-only state evolution for real-only gate sets) improved `deep_6q` to a cross-framework 3-run mean `0.187335 ms/op` (`0.182092..0.197486`, ~41.1% better than `0.314987`) and moved ahead of the same-run Qiskit mean `0.303946 ms/op` on this machine.
 
 Interpretation:
 

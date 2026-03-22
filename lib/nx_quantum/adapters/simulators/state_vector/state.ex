@@ -7,6 +7,10 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.Cnot
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.Dense
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.SingleQubit
+  alias NxQuantum.GateOperation
+
+  @real_single_qubit_gates [:h, :x, :z, :ry]
+  @real_supported_gates [:cnot | @real_single_qubit_gates]
 
   @spec initial_state(pos_integer()) :: Nx.Tensor.t()
   def initial_state(qubits) do
@@ -15,13 +19,38 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
     Nx.tensor(values, type: {:c, 64})
   end
 
-  @spec apply_operations(Nx.Tensor.t(), [NxQuantum.GateOperation.t()]) :: Nx.Tensor.t()
+  @spec initial_state_real(pos_integer()) :: Nx.Tensor.t()
+  def initial_state_real(qubits) do
+    size = trunc(:math.pow(2, qubits))
+    values = [1.0 | List.duplicate(0.0, size - 1)]
+    Nx.tensor(values, type: {:f, 64})
+  end
+
+  @spec apply_operations(Nx.Tensor.t(), [GateOperation.t()]) :: Nx.Tensor.t()
   def apply_operations(%Nx.Tensor{} = state, operations) when is_list(operations) do
     qubits = qubit_count_from_state(state)
     compiled_plan = Matrices.compiled_execution_plan(operations, qubits)
 
     Enum.reduce(compiled_plan, state, fn compiled_op, acc ->
       apply_compiled_operation(acc, compiled_op, qubits)
+    end)
+  end
+
+  @spec apply_operations_real(Nx.Tensor.t(), [GateOperation.t()]) :: Nx.Tensor.t()
+  def apply_operations_real(%Nx.Tensor{} = state, operations) when is_list(operations) do
+    qubits = qubit_count_from_state(state)
+    compiled_plan = Matrices.compiled_execution_plan(operations, qubits)
+
+    Enum.reduce(compiled_plan, state, fn compiled_op, acc ->
+      apply_compiled_operation_real(acc, compiled_op, qubits)
+    end)
+  end
+
+  @spec real_path_eligible?([GateOperation.t()]) :: boolean()
+  def real_path_eligible?(operations) when is_list(operations) do
+    Enum.all?(operations, fn
+      %GateOperation{name: name} -> name in @real_supported_gates
+      _ -> false
     end)
   end
 
@@ -55,6 +84,27 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
 
   defp apply_compiled_operation(%Nx.Tensor{} = state, %Dense{} = op, _qubits) do
     apply_gate_kernel(op.matrix, state)
+  end
+
+  defp apply_compiled_operation_real(%Nx.Tensor{} = state, %SingleQubit{} = op, qubits) do
+    coeffs = op.real_gate_coefficients || real_coefficients(op.gate_coefficients)
+
+    if qubits <= 2 do
+      apply_single_qubit_gate_small(Nx.real(op.gate_matrix), state, op.wire, qubits)
+    else
+      apply_single_qubit_gate_pairwise(coeffs, op.layout, state)
+    end
+  end
+
+  defp apply_compiled_operation_real(%Nx.Tensor{} = state, %Cnot{} = op, _qubits) do
+    apply_permutation_kernel(op.permutation, state)
+  end
+
+  defp apply_compiled_operation_real(%Nx.Tensor{} = state, %Dense{} = op, _qubits) do
+    state
+    |> Nx.as_type({:c, 64})
+    |> apply_gate_kernel(op.matrix)
+    |> Nx.real()
   end
 
   defp apply_single_qubit_gate_small(gate, state, wire, qubits) do
@@ -99,6 +149,15 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
   defp invert_permutation(axes) do
     max_axis = length(axes) - 1
     Enum.map(0..max_axis, fn axis -> Enum.find_index(axes, &(&1 == axis)) end)
+  end
+
+  defp real_coefficients(gate_coefficients) do
+    %{
+      g00: Nx.real(gate_coefficients.g00),
+      g01: Nx.real(gate_coefficients.g01),
+      g10: Nx.real(gate_coefficients.g10),
+      g11: Nx.real(gate_coefficients.g11)
+    }
   end
 
   defn apply_gate_kernel(matrix, state) do
