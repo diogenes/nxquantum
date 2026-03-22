@@ -132,6 +132,8 @@ defmodule NxQuantum.MixProject do
         "docs/observability.md",
         "docs/observability-dashboards.md",
         "docs/v0.5-feature-spec.md",
+        "docs/v0.6-feature-spec.md",
+        "docs/v0.7-feature-spec.md",
         "docs/v0.5-provider-implementation-plan.md",
         "docs/v0.5-acceptance-criteria.md",
         "docs/v0.5-migration-packs.md",
@@ -146,6 +148,7 @@ defmodule NxQuantum.MixProject do
         "docs/testing-strategy.md",
         "docs/roadmap.md",
         "docs/adr/0001-hexagonal-ddd-foundation.md",
+        "docs/adr/0007-migration-assurance-toolkit.md",
         "AGENTS.md",
         "SKILLS.md"
       ]

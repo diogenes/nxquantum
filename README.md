@@ -57,13 +57,16 @@ For full setup and API walkthroughs and usage examples:
 
 ## What Is Still Planned
 
-- Additional provider depth beyond top-3 v0.5 adapters.
-- Broader provider-native dynamic and non-gate-model paths.
+- v0.6 contract completion and provider adapter hardening.
+- v0.7 standalone production hardening plus external-operations interoperability contracts.
+- Additional provider depth and broader provider-native dynamic/non-gate-model paths.
 - More benchmark-backed case studies across real BEAM deployment patterns.
 
 Track status here:
 
 - [docs/roadmap.md](docs/roadmap.md)
+- [docs/v0.6-feature-spec.md](docs/v0.6-feature-spec.md)
+- [docs/v0.7-feature-spec.md](docs/v0.7-feature-spec.md)
 - [docs/v0.3-feature-spec.md](docs/v0.3-feature-spec.md)
 - [docs/v0.4-feature-spec.md](docs/v0.4-feature-spec.md)
 
@@ -84,6 +87,8 @@ Track status here:
 - [docs/observability.md](docs/observability.md)
 - [docs/observability-dashboards.md](docs/observability-dashboards.md)
 - [docs/v0.5-feature-spec.md](docs/v0.5-feature-spec.md)
+- [docs/v0.6-feature-spec.md](docs/v0.6-feature-spec.md)
+- [docs/v0.7-feature-spec.md](docs/v0.7-feature-spec.md)
 - [docs/v0.5-provider-implementation-plan.md](docs/v0.5-provider-implementation-plan.md)
 - [docs/v0.5-acceptance-criteria.md](docs/v0.5-acceptance-criteria.md)
 - [docs/v0.5-migration-packs.md](docs/v0.5-migration-packs.md)

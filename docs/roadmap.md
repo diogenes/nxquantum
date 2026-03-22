@@ -199,3 +199,46 @@ Milestone K review gate (v0.5 readiness):
 3. Benchmark and case-study evidence are reproducible and tied to exact runtime/provider profiles.
 4. v0.5 release checklist is green (`mix quality`, `mix dialyzer`, docs build, provider smoke lanes).
 5. Observability artifacts (traces/logs/metrics conventions + dashboards) are published and validated.
+
+## Known Gaps (Post-v0.5 Provider Foundation)
+
+1. Five provider scenario families are still scaffold-only at step implementation level and need full executable assertion coverage.
+2. Provider adapters remain fixture-first and require transport seam hardening for optional live smoke lanes while preserving deterministic defaults.
+3. Documentation status notes still contain some stale “pending/planned” wording for already implemented v0.5 paths.
+
+## Phase 12 - v0.6: Contract Completion and Adapter Hardening
+
+- [ ] Harden provider adapter transport seams for optional live smoke lanes while preserving fixture-first deterministic defaults.
+- [ ] Convert remaining scaffold-only provider scenario step modules into executable assertion-driven behavior checks.
+- [ ] Add targeted unit/property checks for newly completed provider scenario families.
+- [ ] Align v0.5/v0.6 docs and release evidence status wording for consistency.
+- [ ] Publish v0.6 feature specification:
+  - `docs/v0.6-feature-spec.md`
+
+Milestone L/M/N review gate (v0.6 readiness):
+
+1. No scaffold-only provider step modules remain for scoped v0.6 scenarios.
+2. Fixture lanes remain deterministic and reproducible across repeated runs.
+3. Optional live smoke-lane readiness is validated without public API contract drift.
+4. Roadmap/spec/acceptance/release docs are internally consistent for v0.6 status.
+
+## Phase 13 - v0.7: Standalone Production Hardening + External Operations Interoperability
+
+- [ ] Stabilize external operations integration contracts (capability/lifecycle/error envelope versioning + deterministic serialization).
+- [ ] Harden observability schema governance and adapter strategy across `high_level`, `granular`, and `forensics`.
+- [ ] Publish standalone production and external integration profile guidance with executable examples.
+- [ ] Add release evidence checks for contract stability and schema compatibility.
+- [ ] Publish v0.7 feature specification:
+  - `docs/v0.7-feature-spec.md`
+
+Milestone O/P/Q review gate (v0.7 readiness):
+
+1. Lifecycle/capability/error contracts are versioned, documented, and schema-tested.
+2. Observability schema and redaction/cardinality invariants are stable across profiles.
+3. Standalone production workflows remain green with no dependency on external orchestration systems.
+4. External clients can consume deterministic machine-readable contracts without undocumented parsing behavior.
+
+## Proposed Backlog (Not Scheduled in Roadmap)
+
+1. Migration assurance toolkit proposal remains unscheduled and tracked via:
+   - `docs/adr/0007-migration-assurance-toolkit.md`
