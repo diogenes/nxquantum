@@ -156,3 +156,13 @@ When executing v0.6 provider completion work:
 3. Add unit/property tests for deterministic invariants behind each completed provider scenario family.
 4. Keep fixture-first determinism as default and treat live smoke lanes as optional/non-default.
 5. Re-run docs build and feature suite before release evidence updates.
+
+## 12) v0.7 Contract and Interoperability Path
+
+When executing v0.7 work:
+
+1. Start from `docs/v0.7-acceptance-criteria.md` and `docs/v0.7-feature-to-step-mapping.md`.
+2. Keep lifecycle/capability/error envelope contracts versioned and machine-readable.
+3. Enforce observability schema checks (profiles, redaction, cardinality) as release-blocking evidence.
+4. Preserve standalone production behavior while improving external integration profile guidance.
+5. Keep orchestration/control-plane concerns out of NxQuantum scope.

@@ -233,6 +233,9 @@ Milestone L/M/N review gate (v0.6 readiness):
 - [ ] Add release evidence checks for contract stability and schema compatibility.
 - [ ] Publish v0.7 feature specification:
   - `docs/v0.7-feature-spec.md`
+- [ ] Publish v0.7 acceptance criteria and feature-to-step execution mapping:
+  - `docs/v0.7-acceptance-criteria.md`
+  - `docs/v0.7-feature-to-step-mapping.md`
 
 Milestone O/P/Q review gate (v0.7 readiness):
 

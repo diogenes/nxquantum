@@ -50,6 +50,13 @@ v0.6 additions should include feature coverage for:
 - deterministic fixture behavior preservation while adapter transport seams are hardened,
 - typed failure behavior for malformed/unsupported provider response paths after seam refactors.
 
+v0.7 additions should include feature coverage for:
+
+- versioned and machine-readable lifecycle/capability/error envelope stability,
+- observability schema governance across `high_level`, `granular`, and `forensics` profiles,
+- deterministic redaction and cardinality safeguards as contract-level checks,
+- standalone production behavior equivalence when observability/export adapter strategies change.
+
 ## Contract Tests
 
 Add explicit contract tests for public APIs to prevent behavior drift:
