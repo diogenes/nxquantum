@@ -16,6 +16,8 @@ defmodule NxQuantum.ProviderAdaptersTest do
     assert {:ok, submitted} = ProviderBridge.submit_job(IBMRuntime, payload, opts)
     assert submitted.state == :submitted
     assert submitted.provider == :ibm_runtime
+    assert submitted.metadata.transport.mode == :fixture
+    refute submitted.metadata.transport.live_smoke.ready?
 
     assert {:ok, polled} = ProviderBridge.poll_job(IBMRuntime, submitted, opts)
     assert polled.state == :completed
@@ -23,6 +25,7 @@ defmodule NxQuantum.ProviderAdaptersTest do
     assert {:ok, result} = ProviderBridge.fetch_result(IBMRuntime, polled, opts)
     assert result.state == :completed
     assert result.provider == :ibm_runtime
+    assert result.metadata.transport.mode == :fixture
   end
 
   test "AWS adapter normalizes submit/poll/fetch lifecycle" do
@@ -40,6 +43,7 @@ defmodule NxQuantum.ProviderAdaptersTest do
     assert {:ok, submitted} = ProviderBridge.submit_job(AwsBraket, payload, opts)
     assert submitted.state == :submitted
     assert submitted.provider == :aws_braket
+    assert submitted.metadata.transport.mode == :fixture
 
     assert {:ok, polled} = ProviderBridge.poll_job(AwsBraket, submitted, opts)
     assert polled.state == :completed
@@ -47,6 +51,7 @@ defmodule NxQuantum.ProviderAdaptersTest do
     assert {:ok, result} = ProviderBridge.fetch_result(AwsBraket, polled, opts)
     assert result.state == :completed
     assert result.provider == :aws_braket
+    assert result.metadata.transport.mode == :fixture
   end
 
   test "provider config errors are typed and deterministically redacted" do

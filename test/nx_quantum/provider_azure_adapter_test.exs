@@ -19,6 +19,7 @@ defmodule NxQuantum.ProviderAzureAdapterTest do
 
     assert {:ok, submitted} = ProviderBridge.submit_job(AzureQuantum, payload, opts)
     assert submitted.state == :submitted
+    assert submitted.metadata.transport.mode == :fixture
 
     assert {:ok, polled} = ProviderBridge.poll_job(AzureQuantum, submitted, opts)
     assert polled.state == :completed
@@ -29,6 +30,7 @@ defmodule NxQuantum.ProviderAzureAdapterTest do
     assert {:ok, result} = ProviderBridge.fetch_result(AzureQuantum, polled, opts)
     assert result.state == :completed
     assert result.provider == :azure_quantum
+    assert result.metadata.transport.mode == :fixture
   end
 
   test "azure target/provider mismatch maps to capability mismatch" do
