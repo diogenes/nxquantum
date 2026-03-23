@@ -1,10 +1,10 @@
+alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
+alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
 alias NxQuantum.Circuit
 alias NxQuantum.Estimator
 alias NxQuantum.Gates
 alias NxQuantum.Observables.SparsePauli
 alias NxQuantum.Runtime
-alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
-alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
 
 parse_iterations = fn value ->
   case Integer.parse(value) do
@@ -149,8 +149,7 @@ batch_observables =
     :batch_obs_8q ->
       observable_cycle = [:pauli_x, :pauli_y, :pauli_z]
 
-      0..47
-      |> Enum.map(fn index ->
+      Enum.map(0..47, fn index ->
         %{observable: Enum.at(observable_cycle, rem(index, 3)), wire: rem(index, 8)}
       end)
 
@@ -166,7 +165,10 @@ state_reuse_payload =
       state = EvolutionStrategy.evolve(circuit)
       x_term = PauliExpval.term_for_observable(:pauli_x, 5)
       y_term = PauliExpval.term_for_observable(:pauli_y, 5)
-      plan = PauliExpval.plan([x_term, y_term], 8, parallel_observables: false)
+
+      plan =
+        PauliExpval.plan([x_term, y_term], 8, parallel_observables: false)
+
       %{state: state, plan: plan}
 
     _ ->
@@ -190,8 +192,7 @@ sampled_counts_payload =
       }
 
       terms =
-        0..47
-        |> Enum.map(fn index ->
+        Enum.map(0..47, fn index ->
           z_mask = rem(index * 37, 255) + 1
           magnitude = 0.02 * (rem(index, 5) + 1)
           coeff = if rem(index, 2) == 0, do: magnitude, else: -magnitude
@@ -222,7 +223,7 @@ run_once = fn ->
 
     :state_reuse_8q_xy ->
       %{state: state, plan: plan} = state_reuse_payload
-      [x, y] = PauliExpval.expectations_with_plan(state, plan)
+      [x, y] = PauliExpval.expectations_with_reuse_cache(state, plan)
       Nx.add(x, y)
 
     :sampled_counts_sparse_terms ->

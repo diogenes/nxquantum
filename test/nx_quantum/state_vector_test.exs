@@ -6,9 +6,9 @@ defmodule NxQuantum.StateVectorTest do
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy.Complex
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy.RealPauliZ
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
-  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.Cnot
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.SingleQubit
+  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
   alias NxQuantum.Adapters.Simulators.StateVector.State
   alias NxQuantum.Circuit
   alias NxQuantum.GateOperation
@@ -308,9 +308,43 @@ defmodule NxQuantum.StateVectorTest do
     assert scalar_plan.strategy.mode == :scalar
     assert parallel_plan.strategy.mode == :parallel
 
-    scalar_values = PauliExpval.expectations_with_plan(state, scalar_plan) |> Enum.map(&Nx.to_number/1)
-    parallel_values = PauliExpval.expectations_with_plan(state, parallel_plan) |> Enum.map(&Nx.to_number/1)
+    scalar_values = state |> PauliExpval.expectations_with_plan(scalar_plan) |> Enum.map(&Nx.to_number/1)
+    parallel_values = state |> PauliExpval.expectations_with_plan(parallel_plan) |> Enum.map(&Nx.to_number/1)
 
     assert scalar_values == parallel_values
+  end
+
+  test "state-reuse cache strategy preserves scalar expectations for repeated evaluations" do
+    circuit =
+      [qubits: 8]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Gates.cnot(control: 1, target: 2)
+      |> Gates.cnot(control: 2, target: 3)
+      |> Gates.cnot(control: 3, target: 4)
+      |> Gates.cnot(control: 4, target: 5)
+      |> Gates.cnot(control: 5, target: 6)
+      |> Gates.cnot(control: 6, target: 7)
+      |> Gates.ry(0, theta: 0.11)
+      |> Gates.ry(1, theta: 0.22)
+      |> Gates.ry(2, theta: 0.33)
+      |> Gates.ry(3, theta: 0.44)
+      |> Gates.ry(4, theta: 0.55)
+      |> Gates.ry(5, theta: 0.66)
+      |> Gates.ry(6, theta: 0.77)
+      |> Gates.ry(7, theta: 0.88)
+
+    state = EvolutionStrategy.evolve(circuit)
+    terms = [PauliExpval.term_for_observable(:pauli_x, 5), PauliExpval.term_for_observable(:pauli_y, 5)]
+
+    memo_plan = PauliExpval.plan(terms, 8, parallel_observables: false)
+
+    memo_values = state |> PauliExpval.expectations_with_plan(memo_plan) |> Enum.map(&Nx.to_number/1)
+    cache_first = state |> PauliExpval.expectations_with_reuse_cache(memo_plan) |> Enum.map(&Nx.to_number/1)
+    cache_second = state |> PauliExpval.expectations_with_reuse_cache(memo_plan) |> Enum.map(&Nx.to_number/1)
+
+    assert memo_values == cache_first
+    assert cache_first == cache_second
   end
 end

@@ -6,6 +6,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval do
   alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.ExecutionStrategy
   alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.ExpectationPlan
   alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire
+  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.SmallPlanCache
   alias NxQuantum.Adapters.Simulators.StateVector.State
 
   @type coefficient :: {number(), number()}
@@ -73,6 +74,42 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval do
           evaluate_scalar_with_memo(state, plan)
         end
     end
+  end
+
+  @spec expectations_with_reuse_cache(Nx.Tensor.t(), expectation_plan()) :: [Nx.Tensor.t()]
+  def expectations_with_reuse_cache(%Nx.Tensor{} = state, %ExpectationPlan{} = plan) do
+    if cache_eligible?(plan) do
+      cached_scalar_expectations(state, plan)
+    else
+      expectations_with_plan(state, plan)
+    end
+  end
+
+  defp cache_eligible?(%ExpectationPlan{} = plan) do
+    length(plan.terms) <= 4 and
+      Enum.all?(plan.terms, fn
+        %{kind: kind} when kind in [:pauli_x, :pauli_y, :pauli_z] -> true
+        _ -> false
+      end)
+  end
+
+  defp cached_scalar_expectations(%Nx.Tensor{} = state, %ExpectationPlan{} = plan) do
+    key =
+      {:pauli_expval, :small_scalar_cache, plan.qubits, term_keys(plan.terms), state_hash(state)}
+
+    SmallPlanCache.fetch(key, fn ->
+      evaluate_scalar_with_memo(state, plan)
+    end)
+  end
+
+  defp term_keys(terms) do
+    terms
+    |> Enum.map(& &1.term_key)
+    |> :erlang.phash2()
+  end
+
+  defp state_hash(%Nx.Tensor{} = state) do
+    {Nx.type(state), :erlang.phash2(Nx.to_binary(state))}
   end
 
   @spec expectation_with_term_plan(Nx.Tensor.t(), prepared_term()) :: Nx.Tensor.t()
