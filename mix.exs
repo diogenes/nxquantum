@@ -89,6 +89,7 @@ defmodule NxQuantum.MixProject do
       "test.arch": :test,
       "test.features": :test,
       "test.provider_smoke": :test,
+      "test.release_evidence": :test,
       "features.sync_glue": :test,
       "test.acceptance": :test,
       "bench.batch_obs_guard": :test,
