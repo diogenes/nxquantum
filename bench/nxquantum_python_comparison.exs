@@ -1,7 +1,10 @@
 alias NxQuantum.Circuit
 alias NxQuantum.Estimator
 alias NxQuantum.Gates
+alias NxQuantum.Observables.SparsePauli
 alias NxQuantum.Runtime
+alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
+alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
 
 parse_iterations = fn value ->
   case Integer.parse(value) do
@@ -24,6 +27,9 @@ parse_scenario = fn value ->
   case String.trim(value) do
     "baseline_2q" -> :baseline_2q
     "deep_6q" -> :deep_6q
+    "batch_obs_8q" -> :batch_obs_8q
+    "state_reuse_8q_xy" -> :state_reuse_8q_xy
+    "sampled_counts_sparse_terms" -> :sampled_counts_sparse_terms
     _ -> :baseline_2q
   end
 end
@@ -81,17 +87,167 @@ circuit =
       |> Gates.cnot(control: 0, target: 3)
       |> Gates.cnot(control: 2, target: 5)
       |> Gates.cnot(control: 1, target: 4)
+
+    :batch_obs_8q ->
+      [qubits: 8]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Gates.cnot(control: 1, target: 2)
+      |> Gates.cnot(control: 2, target: 3)
+      |> Gates.cnot(control: 3, target: 4)
+      |> Gates.cnot(control: 4, target: 5)
+      |> Gates.cnot(control: 5, target: 6)
+      |> Gates.cnot(control: 6, target: 7)
+      |> Gates.ry(0, theta: Nx.tensor(0.11))
+      |> Gates.ry(1, theta: Nx.tensor(0.22))
+      |> Gates.ry(2, theta: Nx.tensor(0.33))
+      |> Gates.ry(3, theta: Nx.tensor(0.44))
+      |> Gates.ry(4, theta: Nx.tensor(0.55))
+      |> Gates.ry(5, theta: Nx.tensor(0.66))
+      |> Gates.ry(6, theta: Nx.tensor(0.77))
+      |> Gates.ry(7, theta: Nx.tensor(0.88))
+      |> Gates.rx(2, theta: Nx.tensor(0.19))
+      |> Gates.rz(3, theta: Nx.tensor(0.29))
+      |> Gates.cnot(control: 0, target: 4)
+      |> Gates.cnot(control: 2, target: 6)
+      |> Gates.cnot(control: 1, target: 5)
+
+    :state_reuse_8q_xy ->
+      [qubits: 8]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.cnot(control: 0, target: 1)
+      |> Gates.cnot(control: 1, target: 2)
+      |> Gates.cnot(control: 2, target: 3)
+      |> Gates.cnot(control: 3, target: 4)
+      |> Gates.cnot(control: 4, target: 5)
+      |> Gates.cnot(control: 5, target: 6)
+      |> Gates.cnot(control: 6, target: 7)
+      |> Gates.ry(0, theta: Nx.tensor(0.11))
+      |> Gates.ry(1, theta: Nx.tensor(0.22))
+      |> Gates.ry(2, theta: Nx.tensor(0.33))
+      |> Gates.ry(3, theta: Nx.tensor(0.44))
+      |> Gates.ry(4, theta: Nx.tensor(0.55))
+      |> Gates.ry(5, theta: Nx.tensor(0.66))
+      |> Gates.ry(6, theta: Nx.tensor(0.77))
+      |> Gates.ry(7, theta: Nx.tensor(0.88))
+      |> Gates.rx(2, theta: Nx.tensor(0.19))
+      |> Gates.rz(3, theta: Nx.tensor(0.29))
+      |> Gates.cnot(control: 0, target: 4)
+      |> Gates.cnot(control: 2, target: 6)
+      |> Gates.cnot(control: 1, target: 5)
+
+    :sampled_counts_sparse_terms ->
+      [qubits: 2]
+      |> Circuit.new()
+      |> Gates.h(0)
+  end
+
+batch_observables =
+  case scenario do
+    :batch_obs_8q ->
+      observable_cycle = [:pauli_x, :pauli_y, :pauli_z]
+
+      0..47
+      |> Enum.map(fn index ->
+        %{observable: Enum.at(observable_cycle, rem(index, 3)), wire: rem(index, 8)}
+      end)
+
+    _ ->
+      []
+  end
+
+max_concurrency = System.schedulers_online()
+
+state_reuse_payload =
+  case scenario do
+    :state_reuse_8q_xy ->
+      state = EvolutionStrategy.evolve(circuit)
+      x_term = PauliExpval.term_for_observable(:pauli_x, 5)
+      y_term = PauliExpval.term_for_observable(:pauli_y, 5)
+      plan = PauliExpval.plan([x_term, y_term], 8, parallel_observables: false)
+      %{state: state, plan: plan}
+
+    _ ->
+      nil
+  end
+
+sampled_counts_payload =
+  case scenario do
+    :sampled_counts_sparse_terms ->
+      counts = %{
+        "00000000" => 900,
+        "00000011" => 420,
+        "00011100" => 330,
+        "00110011" => 270,
+        "01010101" => 510,
+        "01100110" => 340,
+        "10011001" => 290,
+        "10101010" => 470,
+        "11000011" => 280,
+        "11111111" => 286
+      }
+
+      terms =
+        0..47
+        |> Enum.map(fn index ->
+          z_mask = rem(index * 37, 255) + 1
+          magnitude = 0.02 * (rem(index, 5) + 1)
+          coeff = if rem(index, 2) == 0, do: magnitude, else: -magnitude
+          %{x_mask: 0, z_mask: z_mask, coeff: coeff}
+        end)
+
+      {:ok, sparse_pauli} = SparsePauli.new(8, terms)
+
+      %{counts: counts, sparse_pauli: sparse_pauli}
+
+    _ ->
+      nil
   end
 
 run_once = fn ->
-  case Estimator.expectation_result(circuit,
-         observable: :pauli_z,
-         wire: if(scenario == :deep_6q, do: 5, else: 1),
-         runtime_profile: runtime_profile,
-         fallback_policy: :allow_cpu_compiled
-       ) do
-    {:ok, value} -> value
-    {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
+  case scenario do
+    :batch_obs_8q ->
+      case Estimator.run(circuit,
+             observables: batch_observables,
+             runtime_profile: runtime_profile,
+             fallback_policy: :allow_cpu_compiled,
+             parallel_observables: true,
+             max_concurrency: max_concurrency
+           ) do
+        {:ok, result} -> Nx.sum(result.values)
+        {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
+      end
+
+    :state_reuse_8q_xy ->
+      %{state: state, plan: plan} = state_reuse_payload
+      [x, y] = PauliExpval.expectations_with_plan(state, plan)
+      Nx.add(x, y)
+
+    :sampled_counts_sparse_terms ->
+      %{counts: counts, sparse_pauli: sparse_pauli} = sampled_counts_payload
+
+      case Estimator.sampled_expectation_from_counts(counts,
+             sparse_pauli: sparse_pauli,
+             parallel_sampled_terms: true,
+             parallel_sampled_terms_threshold: 8,
+             max_concurrency: max_concurrency
+           ) do
+        {:ok, value} -> value
+        {:error, reason} -> raise "NxQuantum sampled benchmark failed: #{inspect(reason)}"
+      end
+
+    _ ->
+      case Estimator.expectation_result(circuit,
+             observable: :pauli_z,
+             wire: if(scenario == :deep_6q, do: 5, else: 1),
+             runtime_profile: runtime_profile,
+             fallback_policy: :allow_cpu_compiled
+           ) do
+        {:ok, value} -> value
+        {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
+      end
   end
 end
 
