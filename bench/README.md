@@ -50,6 +50,9 @@ python -m pip install 'qiskit>=1.2,<2' 'pennylane>=0.38,<0.40' 'cirq-core>=1.3,<
 python -m pip install 'autoray<0.7'
 python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled
 python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario deep_6q
+python bench/python_alternatives_benchmark.py --iterations 100 --warmup 10 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario batch_obs_8q
+python bench/python_alternatives_benchmark.py --iterations 800 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario state_reuse_8q_xy
+python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario sampled_counts_sparse_terms
 ```
 
 NxQuantum benchmark scripts used by the Python harness:
@@ -63,4 +66,13 @@ Estimator and sampler batch/parallel opportunity probes:
 ```bash
 mise exec -- mix run bench/nxquantum_parallel_opportunity.exs 4000
 mise exec -- mix run bench/nxquantum_parallel_opportunity_sampler.exs 4000
+```
+
+## Estimator Batch Strategy Regression
+
+Deterministic multi-observable estimator strategy benchmark
+(shared-state batch strategy vs scalar loop baseline):
+
+```bash
+mise exec -- mix run bench/nxquantum_estimator_batch_strategy.exs 2000 48 8
 ```
