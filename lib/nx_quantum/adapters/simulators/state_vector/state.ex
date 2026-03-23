@@ -56,13 +56,50 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
 
   @spec expectation_pauli_z(Nx.Tensor.t(), non_neg_integer(), pos_integer()) :: Nx.Tensor.t()
   def expectation_pauli_z(%Nx.Tensor{} = state, wire, qubits) do
+    probabilities = probabilities(state)
+    expectation_pauli_z_from_probabilities(probabilities, wire, qubits)
+  end
+
+  @spec expectation_pauli_z_from_probabilities(Nx.Tensor.t(), non_neg_integer(), pos_integer()) :: Nx.Tensor.t()
+  def expectation_pauli_z_from_probabilities(%Nx.Tensor{} = probabilities, wire, qubits) do
     signs = Matrices.pauli_z_signs(wire, qubits)
-    expectation_pauli_z_kernel(state, signs)
+    Nx.sum(Nx.multiply(probabilities, signs))
+  end
+
+  @spec expectation_pauli_x(Nx.Tensor.t(), non_neg_integer(), pos_integer()) :: Nx.Tensor.t()
+  def expectation_pauli_x(%Nx.Tensor{} = state, wire, qubits) do
+    state
+    |> pairwise_overlap(wire, qubits)
+    |> Nx.real()
+    |> Nx.sum()
+    |> Nx.multiply(2.0)
+  end
+
+  @spec expectation_pauli_y(Nx.Tensor.t(), non_neg_integer(), pos_integer()) :: Nx.Tensor.t()
+  def expectation_pauli_y(%Nx.Tensor{} = state, wire, qubits) do
+    state
+    |> pairwise_overlap(wire, qubits)
+    |> Nx.imag()
+    |> Nx.sum()
+    |> Nx.multiply(2.0)
+  end
+
+  @spec expectation_pauli_xy(Nx.Tensor.t(), non_neg_integer(), pos_integer()) :: {Nx.Tensor.t(), Nx.Tensor.t()}
+  def expectation_pauli_xy(%Nx.Tensor{} = state, wire, qubits) do
+    overlap = pairwise_overlap(state, wire, qubits)
+    x = overlap |> Nx.real() |> Nx.sum() |> Nx.multiply(2.0)
+    y = overlap |> Nx.imag() |> Nx.sum() |> Nx.multiply(2.0)
+    {x, y}
   end
 
   @spec expectation_from_state(Nx.Tensor.t(), Nx.Tensor.t()) :: Nx.Tensor.t()
   def expectation_from_state(state, observable_matrix) do
     expectation_kernel(state, observable_matrix)
+  end
+
+  @spec probabilities(Nx.Tensor.t()) :: Nx.Tensor.t()
+  def probabilities(%Nx.Tensor{} = state) do
+    Nx.real(Nx.multiply(state, Nx.conjugate(state)))
   end
 
   defp qubit_count_from_state(%Nx.Tensor{} = state) do
@@ -160,6 +197,23 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
     }
   end
 
+  defp pairwise_overlap(%Nx.Tensor{} = state, wire, qubits) do
+    layout = Matrices.single_qubit_layout_plan(wire, qubits)
+    reshaped = Nx.reshape(state, layout.pair_shape)
+
+    v0 =
+      reshaped
+      |> Nx.slice_along_axis(0, 1, axis: 1)
+      |> Nx.reshape({layout.outer_size, layout.inner_size})
+
+    v1 =
+      reshaped
+      |> Nx.slice_along_axis(1, 1, axis: 1)
+      |> Nx.reshape({layout.outer_size, layout.inner_size})
+
+    Nx.multiply(Nx.conjugate(v0), v1)
+  end
+
   defn apply_gate_kernel(matrix, state) do
     Nx.dot(matrix, state)
   end
@@ -170,11 +224,6 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.State do
 
   defn apply_permutation_kernel(indices, state) do
     Nx.take(state, indices)
-  end
-
-  defn expectation_pauli_z_kernel(state, signs) do
-    probabilities = Nx.real(Nx.multiply(state, Nx.conjugate(state)))
-    Nx.sum(Nx.multiply(probabilities, signs))
   end
 
   defn expectation_kernel(state, observable_matrix) do

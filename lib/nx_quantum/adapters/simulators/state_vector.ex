@@ -10,6 +10,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
 
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
+  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
   alias NxQuantum.Adapters.Simulators.StateVector.State
   alias NxQuantum.Circuit
   alias NxQuantum.GateOperation
@@ -30,10 +31,40 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
   end
 
   @impl true
+  @spec expectations(Circuit.t(), [map()], keyword()) :: Nx.Tensor.t()
+  def expectations(%Circuit{} = circuit, observable_specs, opts) when is_list(observable_specs) do
+    if observable_specs == [] do
+      Nx.tensor([], type: {:f, 32})
+    else
+      state = EvolutionStrategy.evolve(circuit)
+      maybe_bitmask_terms = Enum.map(observable_specs, &PauliExpval.term_for_observable(&1.observable, &1.wire))
+
+      values =
+        if Enum.all?(maybe_bitmask_terms, &is_map/1) do
+          maybe_bitmask_terms
+          |> PauliExpval.plan(circuit.qubits, opts)
+          |> then(&PauliExpval.expectations_with_plan(state, &1))
+        else
+          Enum.map(observable_specs, fn %{observable: observable, wire: wire} ->
+            expectation_for_observable(state, observable, wire, circuit.qubits)
+          end)
+        end
+
+      values |> Nx.stack() |> Nx.as_type({:f, 32})
+    end
+  end
+
+  @impl true
   @spec apply_gates(state_vector(), [GateOperation.t()], keyword()) :: state_vector()
   def apply_gates(%Nx.Tensor{} = state, operations, _opts) when is_list(operations) do
     State.apply_operations(state, operations)
   end
+
+  defp expectation_for_observable(state, :pauli_x, wire, qubits),
+    do: PauliExpval.expectation(state, PauliExpval.term_for_observable(:pauli_x, wire), qubits)
+
+  defp expectation_for_observable(state, :pauli_y, wire, qubits),
+    do: PauliExpval.expectation(state, PauliExpval.term_for_observable(:pauli_y, wire), qubits)
 
   defp expectation_for_observable(state, :pauli_z, wire, qubits), do: State.expectation_pauli_z(state, wire, qubits)
 

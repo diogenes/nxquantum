@@ -1,10 +1,12 @@
 defmodule NxQuantum.StateVectorTest do
   use ExUnit.Case, async: true
 
+  alias NxQuantum.Adapters.Simulators.StateVector
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy.Complex
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy.RealPauliZ
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
+  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.Cnot
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.SingleQubit
   alias NxQuantum.Adapters.Simulators.StateVector.State
@@ -97,6 +99,52 @@ defmodule NxQuantum.StateVectorTest do
     fast = state |> State.expectation_pauli_z(wire, qubits) |> Nx.to_number()
 
     assert_in_delta fast, dense, 1.0e-8
+  end
+
+  test "bitmask observable expectations match scalar path and preserve parallel ordering" do
+    circuit =
+      [qubits: 3]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.ry(1, theta: 0.41)
+      |> Gates.rx(2, theta: 0.23)
+      |> Gates.cnot(control: 1, target: 2)
+
+    observable_specs = [
+      %{observable: :pauli_x, wire: 0},
+      %{observable: :pauli_y, wire: 1},
+      %{observable: :pauli_z, wire: 2},
+      %{observable: :pauli_x, wire: 2},
+      %{observable: :pauli_z, wire: 0}
+    ]
+
+    sequential =
+      circuit
+      |> StateVector.expectations(observable_specs, parallel_observables: false)
+      |> Nx.to_flat_list()
+
+    parallel =
+      circuit
+      |> StateVector.expectations(observable_specs,
+        parallel_observables: true,
+        parallel_observables_threshold: 2,
+        observable_max_concurrency: 4
+      )
+      |> Nx.to_flat_list()
+
+    scalar =
+      Enum.map(observable_specs, fn %{observable: observable, wire: wire} ->
+        measured = %{circuit | measurement: %{observable: observable, wire: wire}}
+        measured |> StateVector.expectation([]) |> Nx.to_number()
+      end)
+
+    assert sequential == parallel
+
+    sequential
+    |> Enum.zip(scalar)
+    |> Enum.each(fn {bitmask_value, scalar_value} ->
+      assert_in_delta bitmask_value, scalar_value, 1.0e-6
+    end)
   end
 
   test "single-qubit layout plan is deterministic" do
@@ -232,5 +280,37 @@ defmodule NxQuantum.StateVectorTest do
       |> Map.put(:measurement, measurement)
 
     assert EvolutionStrategy.select(measured_circuit) == Complex
+  end
+
+  test "expectation plan is deterministic and preserves values across strategy switch" do
+    circuit =
+      [qubits: 4]
+      |> Circuit.new()
+      |> Gates.h(0)
+      |> Gates.ry(1, theta: 0.41)
+      |> Gates.rx(2, theta: 0.23)
+      |> Gates.cnot(control: 1, target: 3)
+
+    state = EvolutionStrategy.evolve(circuit)
+
+    terms = [
+      PauliExpval.term_for_observable(:pauli_x, 0),
+      PauliExpval.term_for_observable(:pauli_y, 1),
+      PauliExpval.term_for_observable(:pauli_z, 2),
+      PauliExpval.term_for_observable(:pauli_x, 3)
+    ]
+
+    scalar_plan = PauliExpval.plan(terms, 4, parallel_observables: true, parallel_observables_threshold: 99)
+    scalar_plan_again = PauliExpval.plan(terms, 4, parallel_observables: true, parallel_observables_threshold: 99)
+    parallel_plan = PauliExpval.plan(terms, 4, parallel_observables: true, parallel_observables_threshold: 1)
+
+    assert scalar_plan.terms == scalar_plan_again.terms
+    assert scalar_plan.strategy.mode == :scalar
+    assert parallel_plan.strategy.mode == :parallel
+
+    scalar_values = PauliExpval.expectations_with_plan(state, scalar_plan) |> Enum.map(&Nx.to_number/1)
+    parallel_values = PauliExpval.expectations_with_plan(state, parallel_plan) |> Enum.map(&Nx.to_number/1)
+
+    assert scalar_values == parallel_values
   end
 end
