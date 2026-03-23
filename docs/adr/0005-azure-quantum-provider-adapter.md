@@ -1,6 +1,6 @@
 # ADR 0005: Azure Quantum Provider Adapter Strategy
 
-- Status: Accepted (Planned for v0.5 P1)
+- Status: Accepted (Delivered in v0.5 P1)
 - Date: 2026-03-20
 
 ## Context

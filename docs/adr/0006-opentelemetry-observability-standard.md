@@ -1,6 +1,6 @@
 # ADR 0006: OpenTelemetry-First Observability Standard for NxQuantum
 
-- Status: Accepted (Planned for v0.5 P1/P2)
+- Status: Accepted (Delivered in v0.5 P1/P2)
 - Date: 2026-03-20
 
 ## Context

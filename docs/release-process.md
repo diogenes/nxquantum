@@ -10,7 +10,7 @@
 
 1. `mix quality`
 2. `mix dialyzer`
-3. `mix test.provider_smoke`
+3. `mix test.provider_smoke` when optional live smoke lanes are enabled and credentials are available
 4. `mix docs.build`
 5. `mix hex.build`
 6. Update roadmap/spec status and release notes summary.
@@ -50,3 +50,13 @@ Include these references in the release PR or release note:
 3. `docs/v0.5-provider-support-tiers.md`
 4. `docs/observability.md`
 5. `docs/observability-dashboards.md`
+
+## v0.6 Docs and Evidence Bundle
+
+Include these references when releasing v0.6 docs/status updates:
+
+1. `docs/v0.6-feature-spec.md`
+2. `docs/v0.6-acceptance-criteria.md`
+3. `docs/v0.6-feature-to-step-mapping.md`
+4. `docs/roadmap.md`
+5. `docs/testing-strategy.md`

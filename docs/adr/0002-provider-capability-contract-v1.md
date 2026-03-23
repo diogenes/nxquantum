@@ -1,6 +1,6 @@
 # ADR 0002: Provider Capability Contract v1 and Normalized Lifecycle/Error Model
 
-- Status: Accepted (Planned for v0.5)
+- Status: Accepted (Delivered in v0.5)
 - Date: 2026-03-20
 
 ## Context

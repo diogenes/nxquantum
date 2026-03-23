@@ -1,6 +1,6 @@
 # ADR 0004: AWS Braket Provider Adapter Strategy
 
-- Status: Accepted (Planned for v0.5 P0)
+- Status: Accepted (Delivered in v0.5 P0)
 - Date: 2026-03-20
 
 ## Context

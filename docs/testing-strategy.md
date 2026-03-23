@@ -47,7 +47,8 @@ v0.3 additions should include feature coverage for:
 v0.6 additions should include feature coverage for:
 
 - completion of currently scaffold-only provider scenario families (`dynamic capabilities`, `mitigation calibration contracts`, `topology execution policies`, `simulation strategy fallback`, `batched primitives performance`),
-- deterministic fixture behavior preservation while adapter transport seams are hardened,
+- deterministic fixture-first behavior preservation while adapter transport seams are hardened,
+- optional live smoke-lane behavior that remains opt-in and does not replace fixture coverage,
 - typed failure behavior for malformed/unsupported provider response paths after seam refactors.
 
 v0.7 additions should include feature coverage for:

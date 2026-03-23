@@ -204,17 +204,16 @@ Milestone K review gate (v0.5 readiness):
 
 1. Five provider scenario families are still scaffold-only at step implementation level and need full executable assertion coverage.
 2. Provider adapters remain fixture-first and require transport seam hardening for optional live smoke lanes while preserving deterministic defaults.
-3. Documentation status notes still contain some stale “pending/planned” wording for already implemented v0.5 paths.
 
 ## Phase 12 - v0.6: Contract Completion and Adapter Hardening
 
 - [ ] Harden provider adapter transport seams for optional live smoke lanes while preserving fixture-first deterministic defaults.
 - [ ] Convert remaining scaffold-only provider scenario step modules into executable assertion-driven behavior checks.
 - [ ] Add targeted unit/property checks for newly completed provider scenario families.
-- [ ] Align v0.5/v0.6 docs and release evidence status wording for consistency.
-- [ ] Publish v0.6 feature specification:
+- [x] Align v0.5/v0.6 docs and release evidence status wording for consistency.
+- [x] Publish v0.6 feature specification:
   - `docs/v0.6-feature-spec.md`
-- [ ] Publish v0.6 acceptance criteria and feature-to-step execution mapping:
+- [x] Publish v0.6 acceptance criteria and feature-to-step execution mapping:
   - `docs/v0.6-acceptance-criteria.md`
   - `docs/v0.6-feature-to-step-mapping.md`
 
