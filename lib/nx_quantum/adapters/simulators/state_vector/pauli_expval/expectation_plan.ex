@@ -30,20 +30,25 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.ExpectationPlan 
 
   @spec new([pauli_term()], pos_integer(), strategy()) :: t()
   def new(terms, qubits, strategy) when is_list(terms) do
-    Cache.fetch({:pauli_expval, :plan, qubits, terms_key(terms), strategy.mode, strategy.chunk_size, strategy.max_concurrency}, fn ->
-      prepared_terms = Enum.map(terms, &prepare_term(&1, qubits))
-      %__MODULE__{
-        qubits: qubits,
-        terms: prepared_terms,
-        strategy: strategy,
-        vectorized_bundle: nil
-      }
-    end)
+    Cache.fetch(
+      {:pauli_expval, :plan, qubits, terms_key(terms), strategy.mode, strategy.chunk_size, strategy.max_concurrency},
+      fn ->
+        prepared_terms = Enum.map(terms, &prepare_term(&1, qubits))
+
+        %__MODULE__{
+          qubits: qubits,
+          terms: prepared_terms,
+          strategy: strategy,
+          vectorized_bundle: nil
+        }
+      end
+    )
   end
 
   @spec single_term(pauli_term(), pos_integer()) :: t()
   def single_term(term, qubits) do
     prepared = prepare_term(term, qubits)
+
     %__MODULE__{
       qubits: qubits,
       terms: [prepared],
@@ -98,6 +103,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.ExpectationPlan 
           permutation = Matrices.bit_flip_permutation(x_mask, qubits)
           signs = signs_for_mask(z_mask, qubits)
           coeff_tensor = coeff_tensor(coeff)
+
           %{
             kind: :generic,
             permutation: permutation,
@@ -114,19 +120,25 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.ExpectationPlan 
 
   defp fast_term_kind(x_mask, z_mask, {real, imag}) do
     cond do
-      x_mask == 0 and single_wire_mask?(z_mask) and near_zero?(imag) ->
+      pauli_z_term?(x_mask, z_mask, imag) ->
         {:pauli_z, wire_from_single_mask(z_mask), real}
 
-      z_mask == 0 and single_wire_mask?(x_mask) and near_zero?(imag) ->
+      pauli_x_term?(x_mask, z_mask, imag) ->
         {:pauli_x, wire_from_single_mask(x_mask), real}
 
-      x_mask == z_mask and single_wire_mask?(x_mask) and near_zero?(real) ->
+      pauli_y_term?(x_mask, z_mask, real) ->
         {:pauli_y, wire_from_single_mask(x_mask), imag}
 
       true ->
         :generic
     end
   end
+
+  defp pauli_z_term?(x_mask, z_mask, imag), do: x_mask == 0 and single_wire_mask?(z_mask) and near_zero?(imag)
+
+  defp pauli_x_term?(x_mask, z_mask, imag), do: z_mask == 0 and single_wire_mask?(x_mask) and near_zero?(imag)
+
+  defp pauli_y_term?(x_mask, z_mask, real), do: x_mask == z_mask and single_wire_mask?(x_mask) and near_zero?(real)
 
   defp coeff_tensor({real, imag}) when abs(real - 1.0) < 1.0e-12 and abs(imag) < 1.0e-12, do: nil
 
@@ -150,7 +162,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.ExpectationPlan 
     :erlang.phash2(encoded)
   end
 
-  defp single_wire_mask?(mask) when is_integer(mask) and mask > 0, do: (mask &&& (mask - 1)) == 0
+  defp single_wire_mask?(mask) when is_integer(mask) and mask > 0, do: (mask &&& mask - 1) == 0
   defp single_wire_mask?(_mask), do: false
 
   defp wire_from_single_mask(mask), do: mask |> :math.log2() |> round()

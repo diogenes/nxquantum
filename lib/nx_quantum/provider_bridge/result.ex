@@ -4,7 +4,17 @@ defmodule NxQuantum.ProviderBridge.Result do
   """
 
   @enforce_keys [:job_id, :state, :provider, :target, :payload]
-  defstruct [:job_id, :state, :provider, :target, :payload, :schema_version, :correlation_id, :idempotency_key, metadata: %{}]
+  defstruct [
+    :job_id,
+    :state,
+    :provider,
+    :target,
+    :payload,
+    :schema_version,
+    :correlation_id,
+    :idempotency_key,
+    metadata: %{}
+  ]
 
   @type t :: %__MODULE__{
           job_id: String.t(),

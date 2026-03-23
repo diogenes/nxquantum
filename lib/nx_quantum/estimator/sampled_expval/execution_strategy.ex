@@ -20,7 +20,7 @@ defmodule NxQuantum.Estimator.SampledExpval.ExecutionStrategy do
     max_concurrency = max_concurrency(opts)
 
     if parallel? and unit_count >= threshold do
-      chunk_size = div(unit_count + max_concurrency - 1, max_concurrency * 2) |> max(1)
+      chunk_size = (unit_count + max_concurrency - 1) |> div(max_concurrency * 2) |> max(1)
       %{mode: :parallel, max_concurrency: max_concurrency, chunk_size: chunk_size}
     else
       %{mode: :scalar, max_concurrency: 1, chunk_size: max(1, unit_count)}

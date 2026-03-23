@@ -47,8 +47,7 @@ defmodule NxQuantum.ObservabilityTest do
 
   test "schema governance validates high_level, granular, and forensics profiles" do
     snapshots =
-      [:high_level, :granular, :forensics]
-      |> Enum.map(fn profile ->
+      Map.new([:high_level, :granular, :forensics], fn profile ->
         Observability.reset(adapter: OpenTelemetry)
 
         assert {:ok, _} =
@@ -62,7 +61,6 @@ defmodule NxQuantum.ObservabilityTest do
 
         {profile, Observability.snapshot(adapter: OpenTelemetry)}
       end)
-      |> Map.new()
 
     assert :ok = Schema.validate_snapshot(snapshots.high_level, :high_level)
     assert :ok = Schema.validate_snapshot(snapshots.granular, :granular)
@@ -81,14 +79,14 @@ defmodule NxQuantum.ObservabilityTest do
              ProviderBridge.run_lifecycle(
                IBMRuntime,
                payload,
-               Keyword.put(common_opts, :observability, [enabled: false])
+               Keyword.put(common_opts, :observability, enabled: false)
              )
 
     assert {:ok, with_otlp} =
              ProviderBridge.run_lifecycle(
                IBMRuntime,
                payload,
-               Keyword.put(common_opts, :observability, [enabled: true, adapter: OpenTelemetry, profile: :high_level])
+               Keyword.put(common_opts, :observability, enabled: true, adapter: OpenTelemetry, profile: :high_level)
              )
 
     assert Map.keys(with_noop) == Map.keys(with_otlp)

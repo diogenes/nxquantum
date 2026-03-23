@@ -60,4 +60,3 @@ defmodule NxQuantum.ProviderContractSerializationTest do
     assert serialized["code"] == "provider_auth_error"
   end
 end
-

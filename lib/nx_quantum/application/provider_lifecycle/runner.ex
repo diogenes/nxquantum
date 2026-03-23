@@ -107,10 +107,7 @@ defmodule NxQuantum.Application.ProviderLifecycle.Runner do
       | schema_version: Serialization.schema_version(),
         correlation_id: correlation_id,
         idempotency_key: idempotency_key,
-        metadata:
-          Map.merge(job.metadata || %{}, %{
-            contract_schema_version: Serialization.schema_version()
-          })
+        metadata: Map.put(job.metadata || %{}, :contract_schema_version, Serialization.schema_version())
     }
   end
 
@@ -123,10 +120,7 @@ defmodule NxQuantum.Application.ProviderLifecycle.Runner do
       | schema_version: Serialization.schema_version(),
         correlation_id: correlation_id,
         idempotency_key: idempotency_key,
-        metadata:
-          Map.merge(result.metadata || %{}, %{
-            contract_schema_version: Serialization.schema_version()
-          })
+        metadata: Map.put(result.metadata || %{}, :contract_schema_version, Serialization.schema_version())
     }
   end
 
@@ -139,18 +133,14 @@ defmodule NxQuantum.Application.ProviderLifecycle.Runner do
       | schema_version: Serialization.schema_version(),
         correlation_id: correlation_id,
         idempotency_key: idempotency_key,
-        metadata:
-          Map.merge(error.metadata || %{}, %{
-            contract_schema_version: Serialization.schema_version()
-          })
+        metadata: Map.put(error.metadata || %{}, :contract_schema_version, Serialization.schema_version())
     }
   end
 
   defp attach_contract_context(other, _operation, _provider, _source, _opts), do: other
 
   defp resolve_correlation_id(existing, _operation, _provider, _source, _opts)
-       when is_binary(existing) and existing != "",
-       do: existing
+       when is_binary(existing) and existing != "", do: existing
 
   defp resolve_correlation_id(_existing, operation, provider, source, opts) do
     if value = Keyword.get(opts, :correlation_id) do
@@ -161,8 +151,7 @@ defmodule NxQuantum.Application.ProviderLifecycle.Runner do
   end
 
   defp resolve_idempotency_key(existing, _operation, _provider, _source, _opts)
-       when is_binary(existing) and existing != "",
-       do: existing
+       when is_binary(existing) and existing != "", do: existing
 
   defp resolve_idempotency_key(_existing, operation, provider, source, opts) do
     if value = Keyword.get(opts, :idempotency_key) do

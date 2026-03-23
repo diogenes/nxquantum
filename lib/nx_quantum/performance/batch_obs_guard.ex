@@ -28,7 +28,9 @@ defmodule NxQuantum.Performance.BatchObsGuard do
         end
       end
 
-      for _ <- 1..warmup, do: run_once.()
+      Enum.each(1..warmup, fn _ ->
+        _ = run_once.()
+      end)
 
       {microseconds, value} =
         :timer.tc(fn ->

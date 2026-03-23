@@ -32,4 +32,3 @@ defmodule NxQuantum.ReleaseEvidenceContractTest do
     assert first == second
   end
 end
-

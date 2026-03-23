@@ -1,9 +1,9 @@
 defmodule NxQuantum.Estimator.SampledExpval do
   @moduledoc false
 
+  alias NxQuantum.Estimator.ObservableSpecs
   alias NxQuantum.Estimator.SampledExpval.CountsReducer
   alias NxQuantum.Estimator.SampledExpval.MaskLookupCache
-  alias NxQuantum.Estimator.ObservableSpecs
   alias NxQuantum.Estimator.SampledExpval.ParsedCounts
   alias NxQuantum.Observables.SparsePauli
 

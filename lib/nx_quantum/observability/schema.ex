@@ -24,9 +24,8 @@ defmodule NxQuantum.Observability.Schema do
     with :ok <- validate_span_names(snapshot),
          :ok <- validate_metric_names(snapshot),
          :ok <- validate_logs(snapshot),
-         :ok <- validate_redaction(snapshot),
-         :ok <- validate_profile_constraints(snapshot, profile) do
-      :ok
+         :ok <- validate_redaction(snapshot) do
+      validate_profile_constraints(snapshot, profile)
     end
   end
 
@@ -110,4 +109,3 @@ defmodule NxQuantum.Observability.Schema do
 
   defp sensitive_key?(_), do: false
 end
-
