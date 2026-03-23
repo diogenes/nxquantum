@@ -38,8 +38,8 @@ defmodule NxQuantum.MixProject do
       {:axon, "~> 0.8", optional: true},
       {:stream_data, "~> 1.3", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
-      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.40", only: [:dev, :test], runtime: false},
       {:benchee, "~> 1.5", only: :dev},
       {:styler, "~> 1.11", only: [:dev, :test], runtime: false}
     ] ++ optional_backend_deps()
@@ -131,6 +131,7 @@ defmodule NxQuantum.MixProject do
         "docs/decision-matrix.md",
         "docs/livebook-tutorials.md",
         "docs/python-alternatives-benchmark-2026-03-21.md",
+        "docs/python-alternatives-benchmark-2026-03-23-rerun.md",
         "docs/observability.md",
         "docs/observability-dashboards.md",
         "docs/standalone-integration-profiles.md",
