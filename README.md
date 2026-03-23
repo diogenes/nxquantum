@@ -30,6 +30,7 @@ See positioning and comparison details:
 - Check provider support tiers and limits: [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
 - Use standalone and external integration profiles: [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
 - Review Quantum AI tool contract strategy (sync + async): [docs/v1.0-quantum-ai-tool-contracts.md](docs/v1.0-quantum-ai-tool-contracts.md)
+- Review hybrid benchmark/dataset/API spec (planned Phase 20): [docs/v1.0-hybrid-quantum-ai-benchmark.md](docs/v1.0-hybrid-quantum-ai-benchmark.md)
 - Review reproducible provider benchmark matrix: [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
 - Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-21.md](docs/python-alternatives-benchmark-2026-03-21.md)
 - Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)

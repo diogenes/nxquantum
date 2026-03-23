@@ -76,3 +76,16 @@ Deterministic multi-observable estimator strategy benchmark
 ```bash
 mise exec -- mix run bench/nxquantum_estimator_batch_strategy.exs 2000 48 8
 ```
+
+## Phase 20 Hybrid Quantum-AI (Planned)
+
+Implementation-ready benchmark/dataset/API contracts:
+
+- `docs/v1.0-hybrid-quantum-ai-benchmark.md`
+- `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+
+Planned benchmark scripts:
+
+- `bench/hybrid_quantum_ai_benchmark.exs`
+- `bench/hybrid_quantum_ai_baseline.exs`
+- `bench/hybrid_quantum_ai_report.exs`

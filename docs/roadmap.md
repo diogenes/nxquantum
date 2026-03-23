@@ -358,12 +358,45 @@ Implementation deliverables:
    - sparse sampled-count expectation reduction,
    - shot-heavy sampler throughput under batched parameter sweeps,
    - provider-lifecycle latency under fixture and live lanes.
-2. Add deterministic benchmark harness extensions for topology-constrained transpilation and mitigation-overhead paths.
-3. Add explicit parity/position targets versus Qiskit/Cirq on prioritized scenarios with version-pinned reproducibility.
-4. Add CI regression guards for high-value scenarios (not only micro synthetic baselines).
-5. Publish periodic benchmark reports and positioning summaries:
+2. Consolidate simulation-focused high-value scenarios into one deterministic harness:
+   - `bench/high_value_performance_matrix.exs`
+   - required scenario IDs:
+     - `state_reuse_8q_xy`
+     - `batch_obs_8q`
+     - `sampled_counts_sparse_terms`
+     - `shot_sweep_param_grid_v1`
+3. Add explicit shot-heavy parameter sweep scenario contracts and datasets:
+   - `bench/datasets/perf/shot_sweep_param_grid_v1.jsonl`
+   - `bench/datasets/perf/shot_sweep_param_grid_v1.manifest.json`
+   - include fixed shot tiers (`256`, `1024`, `4096`) and fixed parameter grid metadata.
+4. Split provider-lifecycle latency benchmarking into explicit lanes and scripts:
+   - fixture lane:
+     - `bench/provider_lifecycle_latency_fixture.exs` (can absorb/replace current `bench/milestone_k.exs`)
+   - live-smoke/live lanes:
+     - `bench/provider_lifecycle_latency_live.exs`
+   - required lifecycle phases:
+     - `submit`, `poll`, `cancel`, `fetch_result`.
+5. Add deterministic dataset/manifests for all Phase 18 scenarios:
+   - `bench/datasets/perf/state_reuse_8q_xy_v1.manifest.json`
+   - `bench/datasets/perf/batch_obs_8q_v1.manifest.json`
+   - `bench/datasets/perf/sampled_counts_sparse_terms_v1.manifest.json`
+   - manifest fields must include `dataset_id`, `schema_version`, `seed`, and `sha256`.
+6. Add explicit parity/position targets versus Qiskit/Cirq on prioritized scenarios with version-pinned reproducibility.
+7. Add CI regression guards for high-value scenarios (not only micro synthetic baselines):
+   - `test/nx_quantum/high_value_performance_guard_test.exs`
+   - `test/nx_quantum/provider_lifecycle_latency_guard_test.exs`
+8. Publish periodic benchmark reports and positioning summaries:
    - `docs/python-alternatives-benchmark-YYYY-MM-DD.md`
+   - `docs/v0.9-high-value-performance-matrix.md`
    - `docs/case-study-beam-integration.md` (updated)
+
+Scenario closure tracker (as of March 23, 2026):
+
+1. `[x]` repeated expectation on reused states (`state_reuse_8q_xy`) exists in python-comparison harness.
+2. `[x]` multi-observable batch estimation (`batch_obs_8q`) exists with regression guard.
+3. `[x]` sampled-count sparse reductions (`sampled_counts_sparse_terms`) exists in python-comparison harness.
+4. `[ ]` shot-heavy parameter sweeps need a formal dataset + matrix scenario + CI guard.
+5. `[ ]` provider lifecycle live-lane latency (`submit/poll/cancel/fetch_result`) needs benchmark script and release evidence lane.
 
 Milestone V review gate (v0.9 readiness):
 

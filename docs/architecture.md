@@ -130,6 +130,10 @@ Current internal decomposition examples:
   - NxQuantum.Observability.ProfileStrategy.HighLevel
   - NxQuantum.Observability.ProfileStrategy.Granular
   - NxQuantum.Observability.ProfileStrategy.Forensics
+- AI tool transport internals:
+  - NxQuantum.Ports.AIToolTransport
+  - NxQuantum.Adapters.AIToolTransport.McpJsonRpcSync
+  - NxQuantum.Adapters.AIToolTransport.CloudEventsAsync
 - Circuit domain invariants: NxQuantum.Circuit.Validation, NxQuantum.Circuit.Error.
 - Shared observable/measurement schema: NxQuantum.Observables.Schema, NxQuantum.Observables.Error.
 - Sparse observable internals: NxQuantum.Observables.SparsePauli.
