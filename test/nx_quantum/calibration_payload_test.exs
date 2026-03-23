@@ -2,6 +2,7 @@ defmodule NxQuantum.Mitigation.CalibrationPayloadTest do
   use ExUnit.Case, async: true
 
   alias NxQuantum.Mitigation.CalibrationPayload
+  alias NxQuantum.Providers.Redaction
 
   test "validate/1 accepts 2x2 tensor with metadata" do
     payload = %{
@@ -27,5 +28,23 @@ defmodule NxQuantum.Mitigation.CalibrationPayloadTest do
 
     assert %{calibration_version: "v2", calibration_source: "provider-x"} =
              CalibrationPayload.metadata(payload)
+  end
+
+  test "redaction preserves diagnostics while masking sensitive calibration fields" do
+    payload = %{
+      matrix: Nx.tensor([1.0, 0.0], type: {:f, 32}),
+      version: "v1",
+      source: "provider",
+      auth_token: "secret-token",
+      nested: %{secret_key: "nested-secret", label: "keep-me"}
+    }
+
+    assert {:error, %{code: :invalid_calibration_payload, expected_shape: {2, 2}, received_shape: {2}}} =
+             CalibrationPayload.validate(payload)
+
+    redacted = Redaction.redact(payload)
+    assert redacted.auth_token == "[REDACTED]"
+    assert redacted.nested.secret_key == "[REDACTED]"
+    assert redacted.nested.label == "keep-me"
   end
 end

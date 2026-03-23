@@ -20,4 +20,15 @@ defmodule NxQuantum.RuntimeScaleTest do
     assert {:ok, %{selected_path: :dense_state_vector}} =
              Runtime.select_simulation_strategy(:auto, 12, dense_threshold: 20)
   end
+
+  test "select_simulation_strategy/3 returns the same report for repeated identical inputs" do
+    first = Runtime.select_simulation_strategy(:auto, 28, dense_threshold: 20)
+    second = Runtime.select_simulation_strategy(:auto, 28, dense_threshold: 20)
+
+    assert first == second
+    assert {:ok, %{selected_path: :tensor_network_fallback, report: report}} = first
+    assert report.selected_strategy == :auto
+    assert report.qubit_count == 28
+    assert report.dense_threshold == 20
+  end
 end

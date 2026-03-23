@@ -101,4 +101,24 @@ defmodule NxQuantum.ProvidersCapabilitiesTest do
     assert {:error, %{code: :provider_capability_mismatch, capability: :supports_dynamic}} = result
     refute_received {:provider_submit_attempt, :preflight_stub}
   end
+
+  test "preflight/4 is deterministic for identical inputs" do
+    capability = %CapabilityContract{
+      supports_estimator: true,
+      supports_sampler: true,
+      supports_batch: true,
+      supports_dynamic: false,
+      supports_cancel_in_running: true,
+      supports_calibration_payload: false,
+      target_class: :gate_model
+    }
+
+    request = %{workflow: :sampler, dynamic: true}
+
+    first = Capabilities.preflight(capability, request, :aws_braket, "sv1")
+    second = Capabilities.preflight(capability, request, :aws_braket, "sv1")
+
+    assert first == second
+    assert {:error, %{code: :provider_capability_mismatch, capability: :supports_dynamic}} = first
+  end
 end

@@ -23,6 +23,8 @@ defmodule NxQuantum.Providers.Redaction do
   @spec redact(term()) :: term()
   def redact(value)
 
+  def redact(%Nx.Tensor{} = tensor), do: tensor
+
   def redact(%{} = map) do
     Map.new(map, fn {key, val} -> {key, redact_pair(key, val)} end)
   end
