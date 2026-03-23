@@ -26,7 +26,8 @@ defmodule NxQuantum.Features.StepRegistry do
     NxQuantum.Features.Steps.ProviderDynamicCircuitCapabilitiesSteps,
     NxQuantum.Features.Steps.ProviderBatchedPrimitivesPerformanceSteps,
     NxQuantum.Features.Steps.ProviderMitigationCalibrationContractsSteps,
-    NxQuantum.Features.Steps.ProviderSimulationStrategyFallbackSteps
+    NxQuantum.Features.Steps.ProviderSimulationStrategyFallbackSteps,
+    NxQuantum.Features.Steps.ProviderLiveExecutionContractsSteps
   ]
 
   @feature_to_module Map.new(@step_modules, &{&1.feature(), &1})
