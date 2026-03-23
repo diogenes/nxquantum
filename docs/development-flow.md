@@ -166,3 +166,18 @@ When executing v0.7 work:
 3. Enforce observability schema checks (profiles, redaction, cardinality) as release-blocking evidence.
 4. Preserve standalone production behavior while improving external integration profile guidance.
 5. Keep orchestration/control-plane concerns out of NxQuantum scope.
+
+## 13) Roadmap Checklist Enforcement
+
+When editing unfinished roadmap phases:
+
+1. Keep roadmap entries implementation-ready (no exploratory-only milestones).
+2. Ensure each unfinished phase includes:
+   - `Goal`,
+   - `Implementation deliverables`,
+   - milestone review gate.
+3. Validate with:
+
+```bash
+mix test test/nx_quantum/roadmap_structure_test.exs
+```

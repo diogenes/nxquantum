@@ -242,7 +242,245 @@ Milestone O/P/Q review gate (v0.7 readiness):
 3. Standalone production workflows remain green with no dependency on external orchestration systems.
 4. External clients can consume deterministic machine-readable contracts without undocumented parsing behavior.
 
+## Known Gaps (Post-v0.7 Standalone Hardening)
+
+1. Provider adapters remain fixture-first in practice; true remote execution on cloud hardware targets is not yet delivered behind the same typed contracts.
+2. Compilation/transpilation depth is still limited versus Python-first stacks for device-aware optimization and routing strategy breadth.
+3. Observability contracts are stable but troubleshooting depth (custom attributes, poll-phase diagnostics, retry/correlation detail) remains shallow for incident forensics.
+4. High-value cross-ecosystem performance evidence is still concentrated on simulator micro paths and does not yet cover full provider-lifecycle and production-like Q/ML rollout scenarios.
+
+## Phase 14 - v0.8 P0: Live Provider Execution (Top-3) Behind Stable Contracts
+
+Goal:
+
+1. Deliver real cloud provider execution while preserving deterministic fixture parity and typed lifecycle contracts.
+
+Implementation deliverables:
+
+1. Implement real transport execution paths for `IBM Runtime`, `AWS Braket`, and `Azure Quantum` adapters while preserving fixture-first defaults.
+2. Add explicit transport mode contract (`fixture`, `live_smoke`, `live`) with deterministic behavior guarantees and typed failure semantics.
+3. Support actual remote lifecycle transitions (`submit`, `poll`, `cancel`, `fetch_result`) with provider-authenticated SDK/API calls.
+4. Add typed provider calibration/job metadata ingestion for live runs (queue context, provider job ids, terminal diagnostics).
+5. Add replay fixture capture tooling from live runs for deterministic regression lanes.
+6. Publish v0.8 provider execution spec and implementation plan:
+   - `docs/v0.8-feature-spec.md`
+   - `docs/v0.8-provider-live-execution-plan.md`
+7. Publish explicit capability status matrix for real hardware vs simulator execution paths:
+   - `docs/v0.8-provider-capability-matrix.md`
+
+Milestone R review gate (before Phase 15):
+
+1. Live-mode adapter paths execute remote tasks and return normalized typed envelopes.
+2. Fixture and live lanes share identical public contract shape (`schema_version`, `correlation_id`, `idempotency_key`).
+3. Provider-specific live failures map into stable typed NxQuantum error codes and metadata.
+4. CI keeps deterministic fixture gates mandatory and adds optional credentialed live verification lanes.
+
+## Phase 15 - v0.8 P1: Compilation and Transpilation Value Upgrade
+
+Goal:
+
+1. Deliver production-credible compiler/transpiler capabilities with deterministic diagnostics and measurable routing/optimization value.
+
+Implementation deliverables:
+
+1. Expand compiler/transpiler strategy set beyond deterministic shortest-path baseline (layout/routing/cost-model profiles).
+2. Add target-aware optimization profiles for depth-sensitive, latency-sensitive, and calibration-aware execution policies.
+3. Add deterministic compilation diagnostics for strategy decisions (selected heuristic, rejected alternatives, topology pressure indicators).
+4. Add provider-aware transpilation policy adapters that remain behind stable ports and explicit capability checks.
+5. Publish side-by-side compilation value narratives versus Qiskit/Cirq workflows (without parity theater).
+6. Add acceptance and property tests for semantic equivalence under new strategy profiles.
+7. Publish detailed compiler implementation and multi-agent handoff plan:
+   - `docs/v0.8-compiler-implementation-plan.md`
+
+Milestone S review gate (before Phase 16):
+
+1. New compilation profiles are selectable via stable public API contracts.
+2. Routing/optimization strategy decisions are reproducibly reported in machine-readable diagnostics.
+3. Scenario coverage includes topology-constrained circuits and confirms semantic preservation under all supported modes.
+4. Documentation clearly states where NxQuantum compiler value is stronger, equivalent, or currently behind alternatives.
+
+## Phase 16 - v0.8 P2: Observability and Troubleshooting 2.0
+
+Goal:
+
+1. Make provider and hybrid execution troubleshooting production-grade through richer deterministic observability contracts.
+
+Implementation deliverables:
+
+1. Add safe custom span/log attribute injection API with schema-governed allowlists and redaction enforcement.
+2. Expand lifecycle diagnostics to include poll-cycle summaries, retry metadata, terminal provider payload summaries, and queue/execution phase attribution.
+3. Add troubleshooting bundles for Q/ML engineers (single-run correlated trace/log/metric export with deterministic contract versioning).
+4. Add explicit support for user-provided correlation metadata propagation across provider bridge operations.
+5. Publish incident playbooks and updated dashboards for live-provider troubleshooting.
+6. Add acceptance tests for custom-attribute policy, cardinality guardrails, and redaction invariants.
+
+Milestone T review gate (before Phase 17):
+
+1. Users can add approved custom observability attributes without breaking schema/cardinality constraints.
+2. Troubleshooting output includes enough lifecycle context to isolate queue, execution, cancellation, and result-normalization failures.
+3. Redaction and sensitive-field protections remain deterministic under custom metadata paths.
+4. Observability adapter substitution still preserves lifecycle contract shape and deterministic behavior.
+
+## Phase 17 - v0.9 P0: Migration Assurance Toolkit (ADR 0007)
+
+Goal:
+
+1. Provide deterministic migration decision tooling for shadow-mode and promotion workflows.
+
+Implementation deliverables:
+
+1. Implement `NxQuantum.Migration.Manifest` for deterministic canonical workflow manifests and fingerprints.
+2. Implement `NxQuantum.Migration.Compare` with tolerance-budgeted output comparison contracts.
+3. Implement `NxQuantum.Migration.Gates` for CI-friendly promotion decisions.
+4. Implement `NxQuantum.Migration.Report` machine-readable export with explicit schema versioning.
+5. Add acceptance/property tests for manifest determinism, comparison correctness, and gate stability.
+6. Publish migration assurance docs and CI integration examples:
+   - `docs/v0.9-migration-assurance.md`
+
+Milestone U review gate (before Phase 18):
+
+1. Migration assurance APIs are additive and public-contract stable.
+2. Identical workflow inputs produce stable manifest/comparison/decision outputs.
+3. Tolerance gates support shadow-mode promotion decisions with typed failure reasons.
+4. Migration artifacts map cleanly to existing provider lifecycle and observability contracts.
+
+## Phase 18 - v0.9 P1: High-Value Performance Matrix for Q/ML Engineering Workloads
+
+Goal:
+
+1. Anchor performance claims in reproducible high-value workloads that match real Q/ML engineering decisions.
+
+Implementation deliverables:
+
+1. Establish benchmark tiers aligned to production-value use cases:
+   - repeated expectation on reused states,
+   - multi-observable batch estimation on medium qubit counts,
+   - sparse sampled-count expectation reduction,
+   - shot-heavy sampler throughput under batched parameter sweeps,
+   - provider-lifecycle latency under fixture and live lanes.
+2. Add deterministic benchmark harness extensions for topology-constrained transpilation and mitigation-overhead paths.
+3. Add explicit parity/position targets versus Qiskit/Cirq on prioritized scenarios with version-pinned reproducibility.
+4. Add CI regression guards for high-value scenarios (not only micro synthetic baselines).
+5. Publish periodic benchmark reports and positioning summaries:
+   - `docs/python-alternatives-benchmark-YYYY-MM-DD.md`
+   - `docs/case-study-beam-integration.md` (updated)
+
+Milestone V review gate (v0.9 readiness):
+
+1. Benchmark suite covers both simulator and provider-lifecycle workloads that reflect real Q/ML engineering tasks.
+2. Performance targets are explicit per scenario and tied to release gates.
+3. Reported comparisons are reproducible, version-pinned, and caveat-labeled.
+4. Roadmap/README/positioning docs consistently reflect measured strengths and remaining performance gaps.
+
+## Roadmap Scope Policy (Near-Term Execution Only)
+
+1. Roadmap entries must be short-to-medium horizon and have a clear implementation path.
+2. Long-horizon exploratory vision remains documented separately in:
+   - `docs/quantum-llm-vision.md`
+
+## Milestone Template Policy (Required for All Unfinished Phases)
+
+Every unfinished roadmap phase (currently Phase 14 onward) must include:
+
+1. `Goal` section (explicit business/engineering outcome).
+2. `Implementation deliverables` section (concrete modules/files/features/tests/docs).
+3. Review gate with deterministic evidence criteria.
+
+## Phase 19 - v1.0 P0: Quantum AI Tool Interface Contracts
+
+Goal:
+
+1. Ship a production-safe `NxQuantum.AI` tool-call contract layer so BEAM services/agents can invoke quantum workflows through deterministic typed envelopes.
+
+Implementation deliverables:
+
+1. Implement AI contract modules and facades:
+   - `lib/nx_quantum/ai.ex`
+   - `lib/nx_quantum/ai/request.ex`
+   - `lib/nx_quantum/ai/result.ex`
+   - `lib/nx_quantum/ai/tool_runner.ex`
+2. Define stable tool-call envelopes (`request`, `result`, `error`, `trace metadata`) and versioned serialization contract.
+3. Implement first two tool handlers with deterministic fallback behavior:
+   - quantum-kernel reranking request path,
+   - constrained optimization helper request path.
+4. Add acceptance/contract coverage:
+   - `features/quantum_ai_tool_contracts.feature`
+   - `test/features/steps/quantum_ai_tool_contracts_steps.ex`
+   - `test/nx_quantum/ai/tool_contract_test.exs`
+5. Publish docs and runnable examples:
+   - `docs/v1.0-quantum-ai-tool-contracts.md`
+
+Milestone W review gate (before Phase 20):
+
+1. AI-tool contract envelopes are additive, versioned, and machine-consumable.
+2. Deterministic fallback behavior is explicit and acceptance-covered.
+3. Integration consumers can parse typed responses without provider-specific coupling.
+4. Docs/examples are executable and aligned with public APIs.
+
+## Phase 20 - v1.0 P1: Hybrid Quantum AI Evaluation and Benchmark Pack
+
+Goal:
+
+1. Add a reproducible benchmark/evaluation pack that measures where hybrid quantum-AI workflows outperform, match, or underperform classical baselines.
+
+Implementation deliverables:
+
+1. Implement benchmark harness scripts:
+   - `bench/hybrid_quantum_ai_benchmark.exs`
+   - `bench/hybrid_quantum_ai_baseline.exs`
+   - `bench/hybrid_quantum_ai_report.exs`
+2. Implement scoped benchmark scenarios with pinned datasets/seeds and explicit classical baselines:
+   - reranking-quality delta scenarios,
+   - constrained optimization assistant scenarios,
+   - latency and fallback impact scenarios.
+3. Add CI-reportable benchmark gate checks:
+   - `test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`
+4. Publish benchmark evidence and integration guide:
+   - `docs/v1.0-hybrid-quantum-ai-benchmark.md`
+   - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+
+Milestone X review gate (before Phase 21):
+
+1. Hybrid benchmarks are reproducible and version-pinned.
+2. Every reported gain includes a classical baseline and caveat notes.
+3. Fallback and failure-path behavior is measured and documented.
+4. Evidence is sufficient for migration-go/no-go decisions.
+
+## Phase 21 - v1.0 P2: Quantum AI Production Promotion Gates
+
+Goal:
+
+1. Ship deterministic rollout gates so teams can promote or block hybrid quantum-AI workflows in production using typed decisions and reproducible evidence.
+
+Dependency:
+
+1. Requires Phase 17 (`NxQuantum.Migration.*`) and Phase 20 benchmark outputs.
+
+Implementation deliverables:
+
+1. Implement AI promotion gate modules:
+   - `lib/nx_quantum/migration/ai_gates.ex`
+   - `lib/nx_quantum/migration/ai_report.ex`
+2. Implement rollout gate flow with typed decision outputs:
+   - `promote`, `hold`, `rollback`.
+3. Extend observability for AI-tool calls with request correlation:
+   - `lib/nx_quantum/observability/profile_strategy/*` updates
+   - `test/nx_quantum/observability_ai_tool_calls_test.exs`
+4. Add acceptance/contract coverage:
+   - `features/quantum_ai_rollout_gates.feature`
+   - `test/features/steps/quantum_ai_rollout_gates_steps.ex`
+   - `test/nx_quantum/migration/ai_gates_test.exs`
+5. Publish production rollout playbook:
+   - `docs/v1.0-quantum-ai-rollout-playbook.md`
+
+Milestone Y review gate (v1.0 readiness):
+
+1. Hybrid AI promotion decisions are deterministic, typed, and CI-friendly.
+2. Observability provides enough context to isolate quantum-vs-classical path failures.
+3. Rollout artifacts are reproducible and actionable for release decisions.
+4. Public docs clearly distinguish implemented capabilities from research backlog.
+
 ## Proposed Backlog (Not Scheduled in Roadmap)
 
-1. Migration assurance toolkit proposal remains unscheduled and tracked via:
-   - `docs/adr/0007-migration-assurance-toolkit.md`
+1. Additional provider-native analog/non-gate-model workflow support remains unscheduled beyond v0.9.
+2. End-to-end quantum-native LLM architecture research remains outside short-to-medium execution scope and is tracked in `docs/quantum-llm-vision.md`.
