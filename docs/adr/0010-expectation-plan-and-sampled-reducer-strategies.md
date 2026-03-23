@@ -36,7 +36,7 @@ Positive:
 
 Tradeoff:
 
-1. `batch_obs_8q` gap narrowed but remains open; next material step likely requires fused multi-term kernel execution.
+1. `batch_obs_8q` gap narrowed and target improvement was reached, but a residual parity gap vs Qiskit remains for this workload shape.
 
 ## Contract Impact
 

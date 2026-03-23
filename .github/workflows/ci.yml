@@ -48,6 +48,13 @@ jobs:
       - name: Build package artifact
         run: mix hex.build
 
+      - name: Batch observable regression guard
+        env:
+          NXQ_BATCH_OBS_GUARD_ITERATIONS: "80"
+          NXQ_BATCH_OBS_GUARD_WARMUP: "15"
+          NXQ_BATCH_OBS_MAX_PER_OP_MS: "2.0281935"
+        run: mix bench.batch_obs_guard
+
   exla-smoke:
     name: exla-smoke
     runs-on: ubuntu-latest

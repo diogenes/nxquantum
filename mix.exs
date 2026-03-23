@@ -91,6 +91,7 @@ defmodule NxQuantum.MixProject do
       "test.provider_smoke": :test,
       "features.sync_glue": :test,
       "test.acceptance": :test,
+      "bench.batch_obs_guard": :test,
       ci: :test,
       "docs.build": :dev,
       credo: :test,
@@ -196,6 +197,7 @@ defmodule NxQuantum.MixProject do
       ],
       "features.sync_glue": ["cmd ./scripts/generate_cucumber_glue.sh"],
       "test.acceptance": ["test test/features/features_test.exs"],
+      "bench.batch_obs_guard": ["run bench/batch_obs_regression_guard.exs"],
       "docs.build": ["docs"],
       ci: ["quality", "dialyzer", "docs.build"]
     ]

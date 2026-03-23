@@ -142,28 +142,31 @@ This update reflects:
 3. `sampled_expval` decomposition into `ParsedCounts`, `MaskLookupCache`, and `CountsReducer`.
 4. Compact parsed-count caching and sparse-mask lookup-plan caching.
 5. Batch observable fast path improvements (duplicate term reuse, shared `X/Y` overlap reuse, shared `Z` probabilities reuse).
+6. Fused single-state/single-wire multi-observable kernel (`FusedSingleWire`) for high-term deterministic batches.
+7. Dedicated `batch_obs_8q` regression guard for CI reporting.
 
 ### Before/After (Nx `cpu_portable`)
 
 | Scenario | Before ms/op | After ms/op | Improvement |
 | --- | ---: | ---: | ---: |
-| `state_reuse_8q_xy` | 0.337249 | 0.061838 | 5.45x faster |
-| `sampled_counts_sparse_terms` | 0.143656 | 0.092153 | 1.56x faster |
-| `batch_obs_8q` | 4.056387 | 2.282450 | 1.78x faster |
+| `state_reuse_8q_xy` | 0.337249 | 0.063259 | 5.33x faster |
+| `sampled_counts_sparse_terms` | 0.143656 | 0.098181 | 1.46x faster |
+| `batch_obs_8q` | 4.056387 | 1.566033 | 2.59x faster |
 
 ### Qiskit Parity Snapshot (After)
 
 | Scenario | Nx `cpu_portable` ms/op | Qiskit ms/op | Nx vs Qiskit |
 | --- | ---: | ---: | ---: |
-| `state_reuse_8q_xy` | 0.061838 | 0.015315 | 4.04x slower |
-| `sampled_counts_sparse_terms` | 0.092153 | 0.115866 | 20.47% faster |
-| `batch_obs_8q` | 2.282450 | 0.770085 | 2.96x slower |
+| `state_reuse_8q_xy` | 0.063259 | 0.015843 | 3.99x slower |
+| `sampled_counts_sparse_terms` | 0.098181 | 0.127988 | 23.29% faster |
+| `batch_obs_8q` | 1.566033 | 0.769273 | 2.04x slower |
 
 ### Acceptance Check
 
-1. `state_reuse_8q_xy` target (`>=4x` improvement): met (`5.45x`).
+1. `state_reuse_8q_xy` target (`>=4x` improvement): met (`5.33x`).
 2. `sampled_counts_sparse_terms` target (within `+/-10%` of Qiskit): met (Nx is faster on this run set).
-3. `batch_obs_8q` target (`>=2x` improvement): partially met (`1.78x`, short of target).
+3. `batch_obs_8q` target (`>=2x` improvement): met (`2.59x`).
+4. `baseline_2q` and `deep_6q` non-regression checks: met (Nx remains faster than Qiskit in both scenarios).
 
 ### Commands (Update Run)
 
@@ -171,14 +174,19 @@ This update reflects:
 python bench/python_alternatives_benchmark.py --iterations 800 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario state_reuse_8q_xy
 python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario sampled_counts_sparse_terms
 python bench/python_alternatives_benchmark.py --iterations 100 --warmup 10 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario batch_obs_8q
+python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario baseline_2q
+python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --scenario deep_6q
+
+# CI guard
+mix bench.batch_obs_guard
 ```
 
 ### Raw Outputs (Update Run)
 
-`tmp/bench_runs_2026-03-23_post_opt_release/`
+`tmp/bench_runs_2026-03-23_fused_release/`
 
 ### Risks and Assumptions
 
-1. `batch_obs_8q` still carries a small-observable-kernel overhead gap versus Qiskit for this 8q/48-term shape.
+1. `batch_obs_8q` still has a residual gap versus Qiskit for this 8q/48-term shape, though the required improvement target is now met.
 2. `cpu_compiled` lane resolved to `cpu_portable` in these runs; comparisons above use measured lane outputs as reported by the harness.
-3. Further progress on `batch_obs_8q` likely requires an explicit fused multi-term expectation kernel (single tensor program for many terms), rather than incremental per-term orchestration reductions.
+3. The CI regression guard uses an absolute threshold (`2.0281935 ms/op`) tied to the 2x improvement target relative to the 2026-03-23 baseline, so host-class variance should be monitored.
