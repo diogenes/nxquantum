@@ -92,4 +92,58 @@ defmodule NxQuantum.ObservabilityTest do
     assert Map.keys(with_noop) == Map.keys(with_otlp)
     assert Map.keys(with_noop.result) == Map.keys(with_otlp.result)
   end
+
+  test "custom metadata policy redacts sensitive fields and preserves allowed correlation metadata" do
+    Observability.reset(adapter: OpenTelemetry)
+
+    assert {:ok, _} =
+             ProviderBridge.run_lifecycle(
+               IBMRuntime,
+               %{workflow: :sampler, shots: 64},
+               target: "ibm_backend",
+               provider_config: %{auth_token: "token", channel: "ibm_cloud", backend: "ibm_backend"},
+               observability: [
+                 enabled: true,
+                 adapter: OpenTelemetry,
+                 profile: :forensics,
+                 custom_metadata: %{"experiment.id" => "exp-1", "auth_token" => "secret"},
+                 correlation_metadata: %{request_id: "req-1"}
+               ]
+             )
+
+    snapshot = Observability.snapshot(adapter: OpenTelemetry)
+    log = List.last(snapshot.logs)
+
+    assert log.custom_metadata["experiment.id"] == "exp-1"
+    assert log.custom_metadata["auth_token"] == "[REDACTED]"
+    assert log.correlation_metadata["correlation.request_id"] == "req-1"
+  end
+
+  test "troubleshooting bundle exports machine-consumable contract keys" do
+    Observability.reset(adapter: OpenTelemetry)
+
+    assert {:ok, _} =
+             ProviderBridge.run_lifecycle(
+               IBMRuntime,
+               %{workflow: :sampler, shots: 64},
+               target: "ibm_backend",
+               provider_config: %{auth_token: "token", channel: "ibm_cloud", backend: "ibm_backend"},
+               observability: [enabled: true, adapter: OpenTelemetry, profile: :high_level]
+             )
+
+    bundle =
+      Observability.troubleshooting_bundle(
+        adapter: OpenTelemetry,
+        profile: :high_level,
+        correlation_id: "corr-bundle-1"
+      )
+
+    assert bundle.schema_version == :v1
+    assert bundle.redaction_policy_version == :v1
+    assert bundle.profile == :high_level
+    assert bundle.correlation_id == "corr-bundle-1"
+    assert is_list(bundle.traces)
+    assert is_list(bundle.logs)
+    assert is_list(bundle.metrics)
+  end
 end
