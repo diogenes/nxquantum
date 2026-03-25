@@ -458,7 +458,7 @@ def bench_cirq(iterations: int, warmup: int, scenario: str):
     return _bench(run_once, iterations, warmup)
 
 
-def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str, scenario: str):
+def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str, scenario: str, cache_mode: str):
     cmd = [
         "mise",
         "exec",
@@ -469,6 +469,7 @@ def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str, scen
         str(iterations),
         runtime_profile,
         scenario,
+        cache_mode,
     ]
 
     completed = subprocess.run(
@@ -500,6 +501,7 @@ def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str, scen
         "value": fields.get("value"),
         "requested_profile": fields.get("runtime_profile"),
         "resolved_profile": fields.get("resolved_profile"),
+        "cache_mode": fields.get("cache_mode"),
         "scenario": fields.get("scenario"),
     }
 
@@ -518,10 +520,10 @@ def validate_profile_resolution(result: dict, profile_resolution_policy: str):
 
 def print_table(results):
     print("\nBenchmark results (lower per_op_ms is better):")
-    print("framework,total_ms,per_op_ms,ops_s,value,requested_profile,resolved_profile")
+    print("framework,total_ms,per_op_ms,ops_s,value,requested_profile,resolved_profile,cache_mode")
     for name, data in results.items():
         print(
-            f"{name},{data['total_ms']:.6f},{data['per_op_ms']:.6f},{data['ops_s']:.6f},{data['value']},{data.get('requested_profile','')},{data.get('resolved_profile','')}"
+            f"{name},{data['total_ms']:.6f},{data['per_op_ms']:.6f},{data['ops_s']:.6f},{data['value']},{data.get('requested_profile','')},{data.get('resolved_profile','')},{data.get('cache_mode','')}"
         )
 
     fastest = min(results.items(), key=lambda x: x[1]["per_op_ms"])
@@ -547,6 +549,13 @@ def main():
     )
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument(
+        "--nx-cache-mode",
+        type=str,
+        default="hot",
+        choices=["hot", "cold"],
+        help="NxQuantum cache mode. hot=cache enabled, cold=cache disabled for estimator workloads.",
+    )
+    parser.add_argument(
         "--nx-profile-resolution-policy",
         type=str,
         default="require_exact",
@@ -562,7 +571,7 @@ def main():
     nx_profiles = [profile.strip() for profile in args.nx_runtime_profiles.split(",") if profile.strip()]
 
     for profile in nx_profiles:
-        result = bench_nxquantum(args.repo_root, args.iterations, profile, args.scenario)
+        result = bench_nxquantum(args.repo_root, args.iterations, profile, args.scenario, args.nx_cache_mode)
         validate_profile_resolution(result, args.nx_profile_resolution_policy)
         results[f"nxquantum[{profile}]"] = result
 

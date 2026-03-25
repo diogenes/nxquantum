@@ -34,6 +34,13 @@ parse_scenario = fn value ->
   end
 end
 
+parse_cache_mode = fn value ->
+  case String.trim(value) do
+    "cold" -> :cold
+    _ -> :hot
+  end
+end
+
 {iterations, runtime_profile} =
   case System.argv() do
     [iterations_arg, profile_arg, _scenario_arg | _rest] ->
@@ -50,6 +57,12 @@ scenario =
   case System.argv() do
     [_iterations_arg, _profile_arg, scenario_arg | _rest] -> parse_scenario.(scenario_arg)
     _ -> :baseline_2q
+  end
+
+cache_mode =
+  case System.argv() do
+    [_iterations_arg, _profile_arg, _scenario_arg, cache_mode_arg | _rest] -> parse_cache_mode.(cache_mode_arg)
+    _ -> :hot
   end
 
 resolved_profile =
@@ -214,23 +227,27 @@ sampled_parallel_mode =
   end
 
 run_once = fn ->
+  cache_opts =
+    case cache_mode do
+      :cold -> [cache_evolved_state: false]
+      :hot -> [cache_evolved_state: true]
+    end
+
   case scenario do
     :batch_obs_8q ->
-      case Estimator.run(circuit,
-             observables: batch_observables,
-             runtime_profile: runtime_profile,
-             fallback_policy: :allow_cpu_compiled,
-             parallel_observables: true,
-             max_concurrency: max_concurrency
-           ) do
+      batch_opts =
+        [
+          observables: batch_observables,
+          runtime_profile: runtime_profile,
+          fallback_policy: :allow_cpu_compiled,
+          parallel_observables: true,
+          max_concurrency: max_concurrency
+        ] ++ cache_opts
+
+      case Estimator.run(circuit, batch_opts) do
         {:ok, result} -> Nx.sum(result.values)
         {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
       end
-
-    :state_reuse_8q_xy ->
-      %{state: state, plan: plan} = state_reuse_payload
-      [x, y] = PauliExpval.expectations_with_reuse_cache(state, plan)
-      Nx.add(x, y)
 
     :sampled_counts_sparse_terms ->
       %{counts: counts, sparse_pauli: sparse_pauli} = sampled_counts_payload
@@ -244,13 +261,21 @@ run_once = fn ->
         {:error, reason} -> raise "NxQuantum sampled benchmark failed: #{inspect(reason)}"
       end
 
+    :state_reuse_8q_xy ->
+      %{state: state, plan: plan} = state_reuse_payload
+      [x, y] = PauliExpval.expectations_with_reuse_cache(state, plan)
+      Nx.add(x, y)
+
     _ ->
-      case Estimator.expectation_result(circuit,
-             observable: :pauli_z,
-             wire: if(scenario == :deep_6q, do: 5, else: 1),
-             runtime_profile: runtime_profile,
-             fallback_policy: :allow_cpu_compiled
-           ) do
+      estimator_opts =
+        [
+          observable: :pauli_z,
+          wire: if(scenario == :deep_6q, do: 5, else: 1),
+          runtime_profile: runtime_profile,
+          fallback_policy: :allow_cpu_compiled
+        ] ++ cache_opts
+
+      case Estimator.expectation_result(circuit, estimator_opts) do
         {:ok, value} -> value
         {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
       end
@@ -274,5 +299,5 @@ ops_s = iterations / (microseconds / 1_000_000.0)
 numeric_value = Nx.to_number(last_value)
 
 IO.puts(
-  "NXQ_BENCH scenario=#{scenario} runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} total_ms=#{Float.round(total_ms, 6)} per_op_ms=#{Float.round(per_op_ms, 6)} ops_s=#{Float.round(ops_s, 6)} value=#{Float.round(numeric_value, 10)}"
+  "NXQ_BENCH scenario=#{scenario} runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} cache_mode=#{cache_mode} total_ms=#{Float.round(total_ms, 6)} per_op_ms=#{Float.round(per_op_ms, 6)} ops_s=#{Float.round(ops_s, 6)} value=#{Float.round(numeric_value, 10)}"
 )

@@ -597,11 +597,11 @@ Release target: `v0.9.1` (additive hardening; no stable contract breakage).
 
 ### Phase D3 - Cache Policy + Hot/Cold Matrix
 
-1. `[ ]` Upgrade evolved-state cache with byte-aware cap + TTL + deterministic oldest-first eviction.
-2. `[ ]` Preserve `cache_evolved_state: false` bypass behavior.
-3. `[ ]` Add hot/cold cache modes in benchmark harness (`hot` default).
-4. `[ ]` Produce/report both modes for key scenarios (`batch_obs_8q`, `sampled_counts_sparse_terms`, `deep_6q`).
-5. `[ ]` Strategic Refactoring pass + full development-flow gates + D3 commit.
+1. `[x]` Upgrade evolved-state cache with byte-aware cap + TTL + deterministic oldest-first eviction.
+2. `[x]` Preserve `cache_evolved_state: false` bypass behavior.
+3. `[x]` Add hot/cold cache modes in benchmark harness (`hot` default).
+4. `[x]` Produce/report both modes for key scenarios (`batch_obs_8q`, `sampled_counts_sparse_terms`, `deep_6q`).
+5. `[x]` Strategic Refactoring pass + full development-flow gates + D3 commit.
 
 ### Phase D4 - Observability + CI Guard Tightening
 

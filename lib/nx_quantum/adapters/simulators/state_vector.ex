@@ -78,7 +78,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
   defp evolve_with_cache(%Circuit{} = circuit, opts) do
     if cache_evolved_state?(circuit, opts) do
       cache_key = evolved_state_cache_key(circuit, opts)
-      EvolvedStateCache.fetch(cache_key, fn -> EvolutionStrategy.evolve(circuit) end)
+      EvolvedStateCache.fetch(cache_key, fn -> EvolutionStrategy.evolve(circuit) end, opts)
     else
       EvolutionStrategy.evolve(circuit)
     end
