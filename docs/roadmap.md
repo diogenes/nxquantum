@@ -590,10 +590,10 @@ Release target: `v0.9.1` (additive hardening; no stable contract breakage).
 
 ### Phase D2 - Compiled Fused Kernel Cost Reduction
 
-1. `[ ]` Cache/reuse compiled fused per-wire tensor scaffolding (`indices`/mask-derived scaffolding) by qubits+wire.
-2. `[ ]` Preserve portable/compiled numeric parity under strict tolerances.
-3. `[ ]` Keep fused eligibility/fallback behavior unchanged.
-4. `[ ]` Strategic Refactoring pass + full development-flow gates + D2 commit.
+1. `[x]` Cache/reuse compiled fused per-wire tensor scaffolding (`indices`/mask-derived scaffolding) by qubits+wire.
+2. `[x]` Preserve portable/compiled numeric parity under strict tolerances.
+3. `[x]` Keep fused eligibility/fallback behavior unchanged.
+4. `[x]` Strategic Refactoring pass + full development-flow gates + D2 commit.
 
 ### Phase D3 - Cache Policy + Hot/Cold Matrix
 

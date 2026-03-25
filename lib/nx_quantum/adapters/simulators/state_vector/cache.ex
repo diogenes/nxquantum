@@ -78,6 +78,11 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Cache do
   rescue
     _ ->
       retry_table = ensure_table()
-      :ets.insert(retry_table, {key, value})
+
+      try do
+        :ets.insert(retry_table, {key, value})
+      rescue
+        _ -> :ok
+      end
   end
 end

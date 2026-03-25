@@ -3,6 +3,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
 
   import Bitwise
 
+  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.CompiledScaffoldCache
+
   defguardp unit_scale(scale) when abs(scale - 1.0) < 1.0e-12
   defguardp neg_unit_scale(scale) when abs(scale + 1.0) < 1.0e-12
 
@@ -113,18 +115,15 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
   defp apply_scale(value, scale), do: value * scale
 
   defp expectations_compiled(%Nx.Tensor{} = state, terms, qubits) do
-    dim = 1 <<< qubits
-    indices = Nx.iota({dim}, type: {:u, 64})
     probabilities = state |> Nx.multiply(Nx.conjugate(state)) |> Nx.real() |> Nx.as_type({:f, 64})
     wires = terms |> Enum.map(& &1.wire) |> Enum.uniq()
 
     wire_values =
       Enum.reduce(wires, %{}, fn wire, acc ->
-        mask = Nx.tensor(1 <<< wire, type: {:u, 64})
-        zeros = Nx.equal(Nx.bitwise_and(indices, mask), Nx.tensor(0, type: {:u, 64}))
-        selector = Nx.select(zeros, Nx.tensor(1.0, type: {:f, 64}), Nx.tensor(0.0, type: {:f, 64}))
-        signs = Nx.select(zeros, Nx.tensor(1.0, type: {:f, 64}), Nx.tensor(-1.0, type: {:f, 64}))
-        flipped = Nx.take(state, Nx.bitwise_xor(indices, mask))
+        %{selector: selector, signs: signs, flipped_indices: flipped_indices} =
+          CompiledScaffoldCache.fetch(qubits, wire)
+
+        flipped = Nx.take(state, flipped_indices)
         overlap = Nx.multiply(Nx.conjugate(state), flipped)
 
         x = Nx.multiply(2.0, Nx.sum(Nx.multiply(Nx.real(overlap), selector)))
