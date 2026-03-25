@@ -1,8 +1,15 @@
 # Skills Directory
 
-Skills are reusable workflows for contributors and coding agents.
+Skills are reusable workflows for autonomous and human contributors.
 
-- `quantum-kernel`: kernel design and optimization workflow.
-- `tdd-bdd`: behavior-first development workflow.
-- `docs-rfc`: architecture and documentation workflow.
+## Available Skills
+- `spec-feature`
+- `architecture-review`
+- `api-dx`
+- `verification`
+- `kernel-performance`
+- `refactor-ddd`
+- `docs-sync`
+- `release-readiness`
 
+Each skill is defined in `skills/<name>/SKILL.md` and follows Builder -> Critic -> Verifier discipline.

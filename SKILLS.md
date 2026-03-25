@@ -1,16 +1,14 @@
 # NxQuantum Skills
 
-This repository includes starter skill documents to keep collaboration consistent.
+## Active Skill Set
+- `skills/spec-feature/SKILL.md`
+- `skills/architecture-review/SKILL.md`
+- `skills/api-dx/SKILL.md`
+- `skills/verification/SKILL.md`
+- `skills/kernel-performance/SKILL.md`
+- `skills/refactor-ddd/SKILL.md`
+- `skills/docs-sync/SKILL.md`
+- `skills/release-readiness/SKILL.md`
 
-## Available Skills
-
-- `skills/quantum-kernel/SKILL.md`: implement and optimize Nx-based gate/state kernels.
-- `skills/tdd-bdd/SKILL.md`: drive behavior from Gherkin to unit/property tests.
-- `skills/docs-rfc/SKILL.md`: write ADRs, API docs, and design RFCs.
-
-## How to Use
-
-1. Pick one skill per focused task.
-2. Follow the checklist in that `SKILL.md`.
-3. Link the resulting files in your PR description.
-
+## Usage Rule
+Select skills based on change intent in `AGENTS.md` and include resulting evidence in the mandatory handoff block.
