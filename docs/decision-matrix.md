@@ -10,10 +10,15 @@ Status note (as of March 19, 2026):
 | Situation | Prefer NxQuantum | Prefer Python-first |
 | --- | --- | --- |
 | Team stack | Elixir/Nx/BEAM-native services | Python-heavy research + infra |
-| Determinism and typed contracts | High priority for production workflows | Lower priority or handled elsewhere |
+| Determinism and typed contracts | High priority for deterministic-by-default simulator/fixture workflows plus typed contracts | Lower priority or handled elsewhere |
 | Hardware-provider breadth needed today | Moderate requirements, staged adoption acceptable | Immediate broad provider support required |
 | Integration model | Keep training/serving in same BEAM runtime | Existing Python orchestration is strategic |
 | Migration appetite | Incremental migration with shadow runs | Continue optimizing current Python stack |
+
+Determinism scope note:
+
+1. In this matrix, deterministic refers to seeded simulator/fixture behavior and typed contract stability.
+2. Live provider/QPU measured outcomes are probabilistic and should be evaluated with statistical acceptance criteria.
 
 ## Honest Current Limits
 

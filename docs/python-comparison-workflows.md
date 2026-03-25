@@ -6,6 +6,7 @@ Status note (as of March 19, 2026):
 
 1. Python snippets here are conceptual workflow references, not API parity claims.
 2. Hardware-provider breadth is generally deeper in Python-first stacks today.
+3. Deterministic claims in this document refer to seeded simulator/fixture lanes and typed contract behavior, not guaranteed identical live QPU measurement outcomes.
 
 ## 1) Expectation Estimation
 
@@ -87,6 +88,6 @@ k = NxQuantum.Kernels.matrix(x, gamma: 0.7, seed: 1234)
 
 ## Practical Takeaway
 
-NxQuantum is strongest when your ML + serving stack already runs on Elixir/BEAM and you want deterministic, typed contracts without crossing language boundaries.
+NxQuantum is strongest when your ML + serving stack already runs on Elixir/BEAM and you want deterministic-by-default simulator/fixture workflows with typed contracts without crossing language boundaries.
 
 For broader hardware-provider coverage today, Python-first stacks are often ahead.

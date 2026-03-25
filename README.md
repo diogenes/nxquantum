@@ -5,7 +5,7 @@ It is built for ML engineers and researchers who want quantum primitives inside 
 
 ## Who It Is For
 
-- Teams building ML systems in Elixir/Nx that need deterministic quantum primitives in the same runtime.
+- Teams building ML systems in Elixir/Nx that need deterministic-by-default quantum workflows in the same runtime.
 - Researchers who want reproducible, typed contracts and BEAM-native integration patterns.
 - Not a primary fit (today) for teams whose top requirement is immediate broad hardware-provider coverage.
 
@@ -14,12 +14,18 @@ It is built for ML engineers and researchers who want quantum primitives inside 
 Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx community by providing:
 
 - Elixir-native primitives (`Estimator`, `Sampler`, `Kernels`, `Transpiler`).
-- Deterministic behavior with explicit runtime and seed contracts.
+- Deterministic-by-default behavior with explicit runtime and seed contracts.
 - A cleaner path from research code to BEAM production systems.
 
 See positioning and comparison details:
 
 - [docs/product-positioning.md](docs/product-positioning.md)
+
+## Determinism Scope (Important)
+
+- Deterministic means fixed inputs + fixed seed + fixed runtime profile/options produce stable outputs in simulator and fixture lanes.
+- Live provider/QPU execution remains physically probabilistic and can vary due to noise, calibration drift, and queue/runtime conditions.
+- For live lanes, NxQuantum guarantees typed lifecycle/error envelopes and reproducible request metadata; it does not guarantee bit-for-bit identical measured outcomes.
 
 ## Choose Your Path
 
@@ -51,7 +57,7 @@ For full setup and API walkthroughs and usage examples:
 ## Main Features (Current)
 
 - Circuit construction and expectation estimation.
-- Shot-based sampling with deterministic seeds.
+- Shot-based sampling with explicit seeds (deterministic in simulator/fixture lanes).
 - Batched estimator/sampler APIs.
 - Gradient modes (`backprop`, `parameter_shift`, `adjoint`).
 - Error mitigation pipeline (`readout`, `zne_linear`).
