@@ -9,7 +9,7 @@ defmodule NxQuantum.Estimator.SampledExpval.CountsReducer do
 
   @spec lookup(ParsedCounts.t(), [non_neg_integer()], keyword()) :: %{non_neg_integer() => float()}
   def lookup(%ParsedCounts{} = parsed, unique_masks, opts \\ []) when is_list(unique_masks) do
-    strategy = ExecutionStrategy.select(length(unique_masks), opts)
+    strategy = ExecutionStrategy.select(length(unique_masks), parsed.entry_count, opts)
     backend = select_backend(parsed, unique_masks, opts)
 
     unique_masks

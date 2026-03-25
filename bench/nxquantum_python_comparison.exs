@@ -231,8 +231,7 @@ run_once = fn ->
 
       case Estimator.sampled_expectation_from_counts(counts,
              sparse_pauli: sparse_pauli,
-             parallel_sampled_terms: true,
-             parallel_sampled_terms_threshold: 8,
+             sampled_parallel_mode: :auto,
              max_concurrency: max_concurrency
            ) do
         {:ok, value} -> value
