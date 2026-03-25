@@ -9,6 +9,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
   @behaviour NxQuantum.Ports.Simulator
 
   alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
+  alias NxQuantum.Adapters.Simulators.StateVector.EvolvedStateCache
+  alias NxQuantum.Adapters.Simulators.StateVector.KeyEncoder
   alias NxQuantum.Adapters.Simulators.StateVector.Matrices
   alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
   alias NxQuantum.Adapters.Simulators.StateVector.State
@@ -23,9 +25,9 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
     raise ArgumentError, "measurement not set; call Circuit.expectation/2 with observable and wire"
   end
 
-  def expectation(%Circuit{} = circuit, _opts) do
+  def expectation(%Circuit{} = circuit, opts) do
     %{observable: observable, wire: wire} = circuit.measurement
-    state = EvolutionStrategy.evolve(circuit)
+    state = evolve_with_cache(circuit, opts)
     value = expectation_for_observable(state, observable, wire, circuit.qubits)
     Nx.as_type(value, {:f, 32})
   end
@@ -36,7 +38,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
     if observable_specs == [] do
       Nx.tensor([], type: {:f, 32})
     else
-      state = EvolutionStrategy.evolve(circuit)
+      state = evolve_with_cache(circuit, opts)
       maybe_bitmask_terms = Enum.map(observable_specs, &PauliExpval.term_for_observable(&1.observable, &1.wire))
 
       values =
@@ -71,5 +73,29 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
   defp expectation_for_observable(state, observable, wire, qubits) do
     observable_matrix = Matrices.observable_matrix(observable, wire, qubits)
     State.expectation_from_state(state, observable_matrix)
+  end
+
+  defp evolve_with_cache(%Circuit{} = circuit, opts) do
+    if cache_evolved_state?(circuit, opts) do
+      cache_key = evolved_state_cache_key(circuit, opts)
+      EvolvedStateCache.fetch(cache_key, fn -> EvolutionStrategy.evolve(circuit) end)
+    else
+      EvolutionStrategy.evolve(circuit)
+    end
+  end
+
+  defp cache_evolved_state?(%Circuit{qubits: qubits}, opts) do
+    Keyword.get(opts, :cache_evolved_state, true) and qubits <= 10
+  end
+
+  defp evolved_state_cache_key(%Circuit{} = circuit, opts) do
+    profile_id =
+      case Keyword.get(opts, :runtime_profile) do
+        %{id: id} when is_atom(id) -> id
+        id when is_atom(id) -> id
+        _ -> :cpu_portable
+      end
+
+    {:evolved_state, profile_id, circuit.qubits, KeyEncoder.execution_plan_key(circuit.operations)}
   end
 end

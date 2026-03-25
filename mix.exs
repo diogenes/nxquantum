@@ -1,7 +1,7 @@
 defmodule NxQuantum.MixProject do
   use Mix.Project
 
-  @version "0.8.0"
+  @version "0.9.0"
   @source_url "https://github.com/diogenes/nxquantum"
 
   def project do
@@ -132,6 +132,7 @@ defmodule NxQuantum.MixProject do
         "docs/livebook-tutorials.md",
         "docs/python-alternatives-benchmark-2026-03-21.md",
         "docs/python-alternatives-benchmark-2026-03-23-rerun.md",
+        "docs/python-alternatives-benchmark-2026-03-25.md",
         "docs/observability.md",
         "docs/observability-dashboards.md",
         "docs/standalone-integration-profiles.md",
@@ -148,6 +149,9 @@ defmodule NxQuantum.MixProject do
         "docs/v0.8-compiler-implementation-plan.md",
         "docs/v0.8-compiler-agent-prompts.md",
         "docs/v0.9-high-value-performance-matrix.md",
+        "docs/v0.9-phase-a-sampled-scalar-plan.md",
+        "docs/v0.9-phase-b-fused-kernel-runtime-plan.md",
+        "docs/v0.9-phase-c-batch-gap-closure-plan.md",
         "docs/v0.9-quantum-ai-tool-contracts.md",
         "docs/v0.9-hybrid-quantum-ai-benchmark.md",
         "docs/v0.9-quantum-ai-rollout-playbook.md",

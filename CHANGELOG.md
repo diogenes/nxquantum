@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.9.0] - 2026-03-25
+
+### Added
+
+- v0.9 roadmap closure for Phases 19-21 (Quantum AI tool contracts, hybrid benchmark pack, rollout gates) with docs and acceptance coverage.
+- Phase A/B/C performance-gap closure plans and evidence docs:
+  - `docs/v0.9-phase-a-sampled-scalar-plan.md`
+  - `docs/v0.9-phase-b-fused-kernel-runtime-plan.md`
+  - `docs/v0.9-phase-c-batch-gap-closure-plan.md`
+  - `docs/python-alternatives-benchmark-2026-03-25.md`
+- Runtime-profile fused-kernel guard coverage:
+  - `test/nx_quantum/batch_fused_kernel_runtime_profile_guard_test.exs`
+
+### Improved
+
+- Sampled sparse-term benchmark lanes now make scalar vs helper strategy behavior explicit in `bench/nxquantum_python_comparison.exs`.
+- Deterministic state-vector adapter now reuses bounded evolved-state cache for repeated circuit workloads (small-qubit safety envelope), significantly reducing repeated estimation latency.
+- Roadmap Phase 18 closure tracker now includes phase-specific guard/evidence status updates for March 25, 2026.
+
+### References
+
+- [docs/roadmap.md](docs/roadmap.md)
+- [docs/v0.9-high-value-performance-matrix.md](docs/v0.9-high-value-performance-matrix.md)
+- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+
 ## [0.8.0] - 2026-03-24
 
 ### Added

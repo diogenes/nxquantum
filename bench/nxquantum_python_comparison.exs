@@ -207,6 +207,12 @@ sampled_counts_payload =
       nil
   end
 
+sampled_parallel_mode =
+  case resolved_profile do
+    :cpu_compiled -> :force_parallel
+    _ -> :force_scalar
+  end
+
 run_once = fn ->
   case scenario do
     :batch_obs_8q ->
@@ -231,7 +237,7 @@ run_once = fn ->
 
       case Estimator.sampled_expectation_from_counts(counts,
              sparse_pauli: sparse_pauli,
-             sampled_parallel_mode: :auto,
+             sampled_parallel_mode: sampled_parallel_mode,
              max_concurrency: max_concurrency
            ) do
         {:ok, value} -> value

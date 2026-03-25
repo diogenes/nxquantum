@@ -390,13 +390,17 @@ Implementation deliverables:
    - `docs/v0.9-high-value-performance-matrix.md`
    - `docs/case-study-beam-integration.md` (updated)
 
-Scenario closure tracker (as of March 23, 2026):
+Scenario closure tracker (as of March 25, 2026):
 
 1. `[x]` repeated expectation on reused states (`state_reuse_8q_xy`) exists in python-comparison harness.
 2. `[x]` multi-observable batch estimation (`batch_obs_8q`) exists with regression guard.
 3. `[x]` sampled-count sparse reductions (`sampled_counts_sparse_terms`) exists in python-comparison harness.
 4. `[x]` shot-heavy parameter sweep formal dataset + matrix scenario + CI guard is implemented.
 5. `[x]` provider lifecycle live-lane latency (`submit/poll/cancel/fetch_result`) benchmark script and release evidence lane are implemented.
+6. `[x]` sampled small-workload strategy guard is implemented (`test/nx_quantum/sampled_small_workload_strategy_guard_test.exs`).
+7. `[x]` batch fused-kernel runtime-profile guard is implemented (`test/nx_quantum/batch_fused_kernel_runtime_profile_guard_test.exs`).
+8. `[x]` bounded deterministic evolved-state cache is implemented for repeated state-vector workloads (`lib/nx_quantum/adapters/simulators/state_vector.ex`).
+9. `[x]` latest 3-run matrix evidence is published (`docs/python-alternatives-benchmark-2026-03-25.md`) with requested threshold checks marked as met.
 
 Milestone V review gate (v0.9 readiness):
 

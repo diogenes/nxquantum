@@ -55,6 +55,12 @@ python bench/python_alternatives_benchmark.py --iterations 800 --warmup 50 --nx-
 python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario sampled_counts_sparse_terms
 ```
 
+Sampled sparse-term lane semantics (`sampled_counts_sparse_terms`):
+
+- `nxquantum[cpu_portable]` => scalar reducer lane (`:force_scalar`)
+- `nxquantum[cpu_compiled]` => helper/parallel lane (`:force_parallel`)
+- This lane mapping is guaranteed under `--nx-profile-resolution-policy require_exact`; with fallback enabled, interpret lanes by `resolved_profile`.
+
 If you intentionally want fallback-lane measurements (requested profile may resolve to a different runtime profile), run with:
 
 ```bash
