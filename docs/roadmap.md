@@ -258,7 +258,7 @@ Goal:
 Implementation deliverables:
 
 1. Implement real transport execution paths for `IBM Runtime`, `AWS Braket`, and `Azure Quantum` adapters while preserving fixture-first defaults.
-2. Add explicit transport mode contract (`fixture`, `live_smoke`, `live`) with deterministic behavior guarantees and typed failure semantics.
+2. Add explicit transport mode contract (`fixture`, `live_smoke`, `live`) where `live_smoke` is readiness/contract-path validation and `live` is remote lifecycle execution, with typed failure semantics.
 3. Support actual remote lifecycle transitions (`submit`, `poll`, `cancel`, `fetch_result`) with provider-authenticated SDK/API calls.
 4. Add typed provider calibration/job metadata ingestion for live runs (queue context, provider job ids, terminal diagnostics).
 5. Add replay fixture capture tooling from live runs for deterministic regression lanes.

@@ -58,7 +58,7 @@ Goal:
 
 Core outcomes:
 
-1. Live provider execution with deterministic contract parity (`fixture`, `live_smoke`, `live`).
+1. Live provider execution with deterministic contract parity across lanes (`fixture`, `live_smoke` readiness, `live` remote execution).
 2. Competitive compiler/transpiler Pareto improvements.
 3. Deep observability and troubleshooting for provider lifecycle behavior.
 4. Migration assurance and benchmark evidence for adoption decisions.
