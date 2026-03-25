@@ -5,8 +5,16 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolvedStateCache do
   @default_max_bytes 16 * 1024 * 1024
   @default_ttl_ms 60_000
 
+  @type fetch_status :: :hit | :miss
+
   @spec fetch(term(), (-> term()), keyword()) :: term()
   def fetch(key, builder_fun, opts \\ []) when is_function(builder_fun, 0) do
+    {value, _status} = fetch_with_status(key, builder_fun, opts)
+    value
+  end
+
+  @spec fetch_with_status(term(), (-> term()), keyword()) :: {term(), fetch_status()}
+  def fetch_with_status(key, builder_fun, opts \\ []) when is_function(builder_fun, 0) do
     table = ensure_table()
     now_ms = now_ms()
     ttl_ms = ttl_ms(opts)
@@ -16,12 +24,12 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolvedStateCache do
 
     case safe_lookup(table, key, now_ms) do
       {:ok, value} ->
-        value
+        {value, :hit}
 
       :miss ->
         value = builder_fun.()
         store(table, key, value, ttl_ms, max_bytes, now_ms)
-        value
+        {value, :miss}
     end
   end
 

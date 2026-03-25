@@ -7,6 +7,7 @@ defmodule NxQuantum.Estimator.ResultBuilder do
   def build(values, observable_specs, opts) do
     resolved_runtime_profile = runtime_profile_id(opts)
     requested_runtime_profile = Keyword.get(opts, :runtime_profile_requested, resolved_runtime_profile)
+    selection_reason = Keyword.get(opts, :runtime_profile_selection_reason, :explicit_request)
 
     %Result{
       values: values,
@@ -18,13 +19,26 @@ defmodule NxQuantum.Estimator.ResultBuilder do
           requested_profile: requested_runtime_profile,
           selected_profile: Keyword.get(opts, :runtime_profile_resolved, resolved_runtime_profile),
           source: Keyword.get(opts, :runtime_profile_selection_source, :explicit),
-          reason: Keyword.get(opts, :runtime_profile_selection_reason, :explicit_request)
+          reason: selection_reason
+        },
+        strategy_observability: %{
+          requested_runtime_profile: requested_runtime_profile,
+          resolved_runtime_profile: resolved_runtime_profile,
+          selection_reason: selection_reason,
+          observable_strategy: Keyword.get(opts, :estimator_observable_strategy, :scalar),
+          runtime_lane: Keyword.get(opts, :estimator_runtime_lane, runtime_lane(resolved_runtime_profile)),
+          cache_mode: Keyword.get(opts, :estimator_cache_mode, :enabled),
+          cache_status: Keyword.get(opts, :estimator_cache_status, :unknown),
+          strategy_tags: Keyword.get(opts, :estimator_strategy_tags, [])
         },
         shots: Keyword.get(opts, :shots),
         seed: Keyword.get(opts, :seed)
       }
     }
   end
+
+  defp runtime_lane(profile) when profile in [:cpu_compiled, :nvidia_gpu_compiled], do: :compiled
+  defp runtime_lane(_profile), do: :portable
 
   defp runtime_profile_id(opts) do
     case Keyword.get(opts, :runtime_profile, :cpu_portable) do

@@ -100,6 +100,13 @@ Deterministic multi-observable estimator strategy benchmark
 mise exec -- mix run bench/nxquantum_estimator_batch_strategy.exs 2000 48 8
 ```
 
+Hot/cold guard lanes (`batch_obs_8q`):
+
+```bash
+mise exec -- mix run bench/batch_obs_regression_guard.exs
+mise exec -- mix run bench/batch_obs_hot_cold_guard.exs
+```
+
 ## Phase 20 Hybrid Quantum-AI (Planned)
 
 Implementation-ready benchmark/dataset/API contracts:

@@ -169,6 +169,13 @@ defmodule NxQuantum.EstimatorTest do
       assert result.metadata.runtime_selection.requested_profile == :auto
       assert result.metadata.runtime_selection.selected_profile == :cpu_portable
       assert result.metadata.runtime_selection.reason == :portable_preferred_fused_single_wire_batch
+      assert result.metadata.strategy_observability.requested_runtime_profile == :auto
+      assert result.metadata.strategy_observability.resolved_runtime_profile == :cpu_portable
+      assert result.metadata.strategy_observability.selection_reason == :portable_preferred_fused_single_wire_batch
+      assert result.metadata.strategy_observability.runtime_lane == :portable
+      assert result.metadata.strategy_observability.cache_mode == :enabled
+      assert result.metadata.strategy_observability.cache_status in [:hit, :miss]
+      assert :portable in result.metadata.strategy_observability.strategy_tags
     end
 
     test "runtime_profile auto prefers compiled for general deterministic workloads" do
@@ -186,6 +193,40 @@ defmodule NxQuantum.EstimatorTest do
       assert result.metadata.runtime_selection.requested_profile == :auto
       assert result.metadata.runtime_selection.selected_profile == :cpu_compiled
       assert result.metadata.runtime_selection.reason == :compiled_preferred_general
+      assert result.metadata.strategy_observability.resolved_runtime_profile == :cpu_compiled
+      assert result.metadata.strategy_observability.runtime_lane == :compiled
+      assert :compiled in result.metadata.strategy_observability.strategy_tags
+    end
+
+    test "strategy observability marks cache bypass when evolved-state cache is disabled" do
+      circuit = Circuit.new(qubits: 1)
+
+      assert {:ok, %Result{} = result} =
+               Estimator.run(circuit,
+                 observables: [:pauli_z],
+                 wire: 0,
+                 cache_evolved_state: false
+               )
+
+      assert result.metadata.strategy_observability.cache_mode == :disabled
+      assert result.metadata.strategy_observability.cache_status == :bypass
+    end
+
+    test "strategy observability emits hit-or-miss cache telemetry for repeated workloads" do
+      circuit =
+        [qubits: 2]
+        |> Circuit.new()
+        |> Gates.h(0)
+        |> Gates.cnot(control: 0, target: 1)
+        |> Gates.ry(1, theta: Nx.tensor(0.424_242))
+
+      opts = [observables: [:pauli_z], wire: 1, cache_evolved_state: true]
+
+      assert {:ok, %Result{} = first} = Estimator.run(circuit, opts)
+      assert {:ok, %Result{} = second} = Estimator.run(circuit, opts)
+
+      assert first.metadata.strategy_observability.cache_status in [:hit, :miss]
+      assert second.metadata.strategy_observability.cache_status in [:hit, :miss]
     end
   end
 

@@ -605,7 +605,7 @@ Release target: `v0.9.1` (additive hardening; no stable contract breakage).
 
 ### Phase D4 - Observability + CI Guard Tightening
 
-1. `[ ]` Add estimator strategy observability metadata (requested/resolved profile, strategy tags, cache status, selection reason).
-2. `[ ]` Add blocking hot-lane guard for `batch_obs_8q` and non-blocking cold-lane artifact/report validation.
-3. `[ ]` Update docs/roadmap evidence with dual-lane results and guard semantics.
-4. `[ ]` Strategic Refactoring pass + full development-flow gates + D4 commit.
+1. `[x]` Add estimator strategy observability metadata (requested/resolved profile, strategy tags, cache status, selection reason).
+2. `[x]` Add blocking hot-lane guard for `batch_obs_8q` and non-blocking cold-lane artifact/report validation.
+3. `[x]` Update docs/roadmap evidence with dual-lane results and guard semantics.
+4. `[x]` Strategic Refactoring pass + full development-flow gates + D4 commit.

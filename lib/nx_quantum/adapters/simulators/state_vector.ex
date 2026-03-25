@@ -78,8 +78,14 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
   defp evolve_with_cache(%Circuit{} = circuit, opts) do
     if cache_evolved_state?(circuit, opts) do
       cache_key = evolved_state_cache_key(circuit, opts)
-      EvolvedStateCache.fetch(cache_key, fn -> EvolutionStrategy.evolve(circuit) end, opts)
+
+      {state, cache_status} =
+        EvolvedStateCache.fetch_with_status(cache_key, fn -> EvolutionStrategy.evolve(circuit) end, opts)
+
+      Process.put(:nxq_estimator_cache_status, cache_status)
+      state
     else
+      Process.put(:nxq_estimator_cache_status, :bypass)
       EvolutionStrategy.evolve(circuit)
     end
   end
