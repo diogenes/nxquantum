@@ -504,6 +504,18 @@ def bench_nxquantum(repo_root: Path, iterations: int, runtime_profile: str, scen
     }
 
 
+def validate_profile_resolution(result: dict, profile_resolution_policy: str):
+    requested_profile = result.get("requested_profile")
+    resolved_profile = result.get("resolved_profile")
+
+    if profile_resolution_policy == "require_exact" and requested_profile != resolved_profile:
+        raise RuntimeError(
+            "NxQuantum runtime profile mismatch: "
+            f"requested={requested_profile} resolved={resolved_profile}. "
+            "Use --nx-profile-resolution-policy allow_fallback to keep fallback lanes."
+        )
+
+
 def print_table(results):
     print("\nBenchmark results (lower per_op_ms is better):")
     print("framework,total_ms,per_op_ms,ops_s,value,requested_profile,resolved_profile")
@@ -534,13 +546,25 @@ def main():
         ],
     )
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument(
+        "--nx-profile-resolution-policy",
+        type=str,
+        default="require_exact",
+        choices=["require_exact", "allow_fallback"],
+        help=(
+            "Controls whether NxQuantum rows are allowed to silently run on fallback profiles. "
+            "Use require_exact for apples-to-apples profile comparisons."
+        ),
+    )
     args = parser.parse_args()
 
     results = {}
     nx_profiles = [profile.strip() for profile in args.nx_runtime_profiles.split(",") if profile.strip()]
 
     for profile in nx_profiles:
-        results[f"nxquantum[{profile}]"] = bench_nxquantum(args.repo_root, args.iterations, profile, args.scenario)
+        result = bench_nxquantum(args.repo_root, args.iterations, profile, args.scenario)
+        validate_profile_resolution(result, args.nx_profile_resolution_policy)
+        results[f"nxquantum[{profile}]"] = result
 
     results["qiskit"] = bench_qiskit(args.iterations, args.warmup, args.scenario)
     results["pennylane"] = bench_pennylane(args.iterations, args.warmup, args.scenario)
