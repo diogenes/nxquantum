@@ -9,5 +9,4 @@
 *.ez
 /*.tar
 erl_crash.dump
-/tmp/bench_runs_*/
-/tmp/micro_*.exs
+/tmp/
