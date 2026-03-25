@@ -395,8 +395,8 @@ Scenario closure tracker (as of March 23, 2026):
 1. `[x]` repeated expectation on reused states (`state_reuse_8q_xy`) exists in python-comparison harness.
 2. `[x]` multi-observable batch estimation (`batch_obs_8q`) exists with regression guard.
 3. `[x]` sampled-count sparse reductions (`sampled_counts_sparse_terms`) exists in python-comparison harness.
-4. `[x]` shot-heavy parameter sweeps need a formal dataset + matrix scenario + CI guard.
-5. `[x]` provider lifecycle live-lane latency (`submit/poll/cancel/fetch_result`) needs benchmark script and release evidence lane.
+4. `[x]` shot-heavy parameter sweep formal dataset + matrix scenario + CI guard is implemented.
+5. `[x]` provider lifecycle live-lane latency (`submit/poll/cancel/fetch_result`) benchmark script and release evidence lane are implemented.
 
 Milestone V review gate (v0.9 readiness):
 
@@ -448,6 +448,22 @@ Implementation deliverables:
 6. Publish docs and runnable examples:
    - `docs/v0.9-quantum-ai-tool-contracts.md`
 
+Implementation status checklist (as of March 25, 2026):
+
+1. `[x]` AI contract modules and facade are implemented (`NxQuantum.AI`, request/result envelopes, tool runner).
+2. `[x]` Stable envelope contract with versioned `schema_version`, typed result/error/fallback shape, and trace/correlation metadata is implemented.
+3. `[x]` First two deterministic tool handlers are implemented (`quantum-kernel reranking`, `constrained optimization helper`) with explicit fallback policy behavior.
+4. `[x]` Acceptance/contract coverage is implemented:
+   - `features/quantum_ai_tool_contracts.feature`
+   - `test/features/steps/quantum_ai_tool_contracts_steps.ex`
+   - `test/nx_quantum/ai/tool_contract_test.exs`
+5. `[x]` Sync/async transport architecture contract is implemented behind ports/adapters:
+   - `docs/adr/0011-ai-tool-transport-sync-async-contract.md`
+   - `lib/nx_quantum/ports/ai_tool_transport.ex`
+   - `lib/nx_quantum/adapters/ai_tool_transport/mcp_json_rpc_sync.ex`
+   - `lib/nx_quantum/adapters/ai_tool_transport/cloud_events_async.ex`
+6. `[x]` v0.9 tool contract documentation is published (`docs/v0.9-quantum-ai-tool-contracts.md`).
+
 Milestone W review gate (before Phase 20):
 
 1. AI-tool contract envelopes are additive, versioned, and machine-consumable.
@@ -478,6 +494,21 @@ Implementation deliverables:
    - `docs/v0.9-hybrid-quantum-ai-benchmark.md`
    - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
 
+Implementation status checklist (as of March 25, 2026):
+
+1. `[x]` Hybrid benchmark harness scripts are implemented:
+   - `bench/hybrid_quantum_ai_benchmark.exs`
+   - `bench/hybrid_quantum_ai_baseline.exs`
+   - `bench/hybrid_quantum_ai_report.exs`
+2. `[x]` Scoped benchmark scenario families are implemented with pinned seed and explicit classical baseline fields:
+   - reranking-quality delta
+   - constrained optimization assistant
+   - fallback latency impact
+3. `[x]` CI-reportable benchmark guard coverage is implemented (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`).
+4. `[x]` Benchmark evidence docs are published:
+   - `docs/v0.9-hybrid-quantum-ai-benchmark.md`
+   - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+
 Milestone X review gate (before Phase 21):
 
 1. Hybrid benchmarks are reproducible and version-pinned.
@@ -493,7 +524,9 @@ Goal:
 
 Dependency:
 
-1. Requires Phase 17 (`NxQuantum.Migration.*`) and Phase 20 benchmark outputs.
+1. Requires Phase 20 benchmark outputs.
+2. `[ ]` Original dependency on the full Phase 17 Migration Assurance Toolkit remains deferred in this cycle.
+3. `[x]` This phase currently ships a scoped `NxQuantum.Migration.AI*` rollout-gate slice, pending full Phase 17 consolidation.
 
 Implementation deliverables:
 
@@ -511,6 +544,19 @@ Implementation deliverables:
    - `test/nx_quantum/migration/ai_gates_test.exs`
 5. Publish production rollout playbook:
    - `docs/v0.9-quantum-ai-rollout-playbook.md`
+
+Implementation status checklist (as of March 25, 2026):
+
+1. `[x]` AI promotion gate modules are implemented:
+   - `lib/nx_quantum/migration/ai_gates.ex`
+   - `lib/nx_quantum/migration/ai_report.ex`
+2. `[x]` Rollout gate flow with typed decision outputs is implemented (`promote`, `hold`, `rollback`).
+3. `[x]` Observability correlation coverage for AI tool lifecycle/decision metadata is implemented and tested (`test/nx_quantum/observability_ai_tool_calls_test.exs`).
+4. `[x]` Acceptance/contract coverage is implemented:
+   - `features/quantum_ai_rollout_gates.feature`
+   - `test/features/steps/quantum_ai_rollout_gates_steps.ex`
+   - `test/nx_quantum/migration/ai_gates_test.exs`
+5. `[x]` v0.9 rollout playbook is published (`docs/v0.9-quantum-ai-rollout-playbook.md`).
 
 Milestone Y review gate (v0.9 readiness):
 
