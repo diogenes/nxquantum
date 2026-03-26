@@ -13,6 +13,28 @@ defmodule NxQuantum.BatchFusedKernelRuntimeProfileGuardTest do
     assert FusedSingleWire.kernel_for_runtime(runtime_profile: %{id: :cpu_compiled}) == :compiled
   end
 
+  test "compiled runtime applies portable cost-model fallback for large fused batch shape" do
+    terms =
+      Enum.map(0..47, fn index ->
+        PauliExpval.term_for_observable(Enum.at([:pauli_x, :pauli_y, :pauli_z], rem(index, 3)), rem(index, 8))
+      end)
+
+    plan = PauliExpval.plan(terms, 8, parallel_observables: false)
+
+    state =
+      0
+      |> Nx.tensor(type: {:c, 64})
+      |> Nx.broadcast({256})
+      |> Nx.put_slice([0], Nx.tensor([1.0], type: {:c, 64}))
+
+    _ = FusedSingleWire.expectations_for_runtime(state, plan.terms, 8, runtime_profile: :cpu_compiled)
+    resolution = Process.get(:nxq_fused_kernel_resolution)
+
+    assert resolution.requested_kernel == :compiled
+    assert resolution.selected_kernel == :portable
+    assert resolution.reason == :portable_preferred_batch_shape_cost_model
+  end
+
   test "compiled and portable fused kernels remain numerically equivalent" do
     terms = [
       PauliExpval.term_for_observable(:pauli_x, 0),
@@ -39,6 +61,33 @@ defmodule NxQuantum.BatchFusedKernelRuntimeProfileGuardTest do
     |> Enum.each(fn {a, b} ->
       assert_in_delta(a, b, 1.0e-9)
     end)
+  end
+
+  test "compiled fused kernel keeps compiled backend when state is on EXLA" do
+    if Code.ensure_loaded?(EXLA.Backend) do
+      terms = [
+        PauliExpval.term_for_observable(:pauli_x, 0),
+        PauliExpval.term_for_observable(:pauli_y, 1),
+        PauliExpval.term_for_observable(:pauli_z, 0),
+        PauliExpval.term_for_observable(:pauli_z, 1)
+      ]
+
+      plan = PauliExpval.plan(terms, 2, parallel_observables: false)
+      state = Nx.tensor([0.5, 0.5, 0.5, -0.5], type: {:c, 64})
+      exla_state = Nx.backend_transfer(state, {EXLA.Backend, client: :host})
+
+      [compiled_first | _rest] =
+        FusedSingleWire.expectations_for_runtime(state, plan.terms, 2, runtime_profile: :cpu_compiled)
+
+      assert compiled_first.data.__struct__ in [EXLA.Backend, Nx.BinaryBackend]
+
+      [compiled_exla_first | _rest] =
+        FusedSingleWire.expectations_for_runtime(exla_state, plan.terms, 2, runtime_profile: :cpu_compiled)
+
+      assert compiled_exla_first.data.__struct__ == EXLA.Backend
+    else
+      assert true
+    end
   end
 
   test "runtime profile selection keeps fused results equivalent on adapter integration path" do

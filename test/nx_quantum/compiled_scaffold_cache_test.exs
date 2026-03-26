@@ -27,4 +27,16 @@ defmodule NxQuantum.CompiledScaffoldCacheTest do
 
     assert CompiledScaffoldCache.size() == 3
   end
+
+  test "fetch_batch reuses cached scaffold for same qubits and wire set" do
+    first = CompiledScaffoldCache.fetch_batch(8, [0, 2, 3])
+    assert CompiledScaffoldCache.size() >= 1
+
+    second = CompiledScaffoldCache.fetch_batch(8, [3, 2, 0])
+
+    assert Nx.to_flat_list(first.selector) == Nx.to_flat_list(second.selector)
+    assert Nx.to_flat_list(first.signs) == Nx.to_flat_list(second.signs)
+    assert Nx.to_flat_list(first.flipped_indices) == Nx.to_flat_list(second.flipped_indices)
+    assert first.wire_index == second.wire_index
+  end
 end

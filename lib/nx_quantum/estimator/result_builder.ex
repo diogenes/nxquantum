@@ -29,6 +29,9 @@ defmodule NxQuantum.Estimator.ResultBuilder do
           runtime_lane: Keyword.get(opts, :estimator_runtime_lane, runtime_lane(resolved_runtime_profile)),
           cache_mode: Keyword.get(opts, :estimator_cache_mode, :enabled),
           cache_status: Keyword.get(opts, :estimator_cache_status, :unknown),
+          fused_kernel_requested: Keyword.get(opts, :estimator_fused_kernel_requested, :unknown),
+          fused_kernel_selected: Keyword.get(opts, :estimator_fused_kernel_selected, :unknown),
+          fused_kernel_reason: Keyword.get(opts, :estimator_fused_kernel_reason, :not_applicable),
           strategy_tags: Keyword.get(opts, :estimator_strategy_tags, [])
         },
         shots: Keyword.get(opts, :shots),

@@ -3,19 +3,29 @@ defmodule NxQuantum.Estimator.StrategyObservability do
 
   @default_parallel_threshold 96
   @cache_status_key :nxq_estimator_cache_status
+  @fused_kernel_resolution_key :nxq_fused_kernel_resolution
 
   @spec apply(keyword(), map(), [map()], keyword()) :: keyword()
   def apply(opts, selection, observable_specs, apply_opts \\ []) do
     observable_strategy = observable_strategy(observable_specs, opts)
     runtime_lane = runtime_lane(selection.selected_profile)
     cache_status = cache_status(opts, apply_opts)
+    fused_kernel = fused_kernel_resolution()
 
     opts
     |> Keyword.put(:estimator_observable_strategy, observable_strategy)
     |> Keyword.put(:estimator_runtime_lane, runtime_lane)
     |> Keyword.put(:estimator_cache_mode, cache_mode(opts))
     |> Keyword.put(:estimator_cache_status, cache_status)
-    |> Keyword.put(:estimator_strategy_tags, [observable_strategy, runtime_lane, cache_status])
+    |> Keyword.put(:estimator_fused_kernel_requested, fused_kernel.requested_kernel)
+    |> Keyword.put(:estimator_fused_kernel_selected, fused_kernel.selected_kernel)
+    |> Keyword.put(:estimator_fused_kernel_reason, fused_kernel.reason)
+    |> Keyword.put(:estimator_strategy_tags, [
+      observable_strategy,
+      runtime_lane,
+      cache_status,
+      fused_kernel.selected_kernel
+    ])
   end
 
   defp observable_strategy(observable_specs, opts) do
@@ -66,5 +76,14 @@ defmodule NxQuantum.Estimator.StrategyObservability do
 
   defp consume_runtime_cache_status do
     Process.delete(@cache_status_key) || :unknown
+  end
+
+  defp fused_kernel_resolution do
+    Process.delete(@fused_kernel_resolution_key) ||
+      %{
+        requested_kernel: :unknown,
+        selected_kernel: :unknown,
+        reason: :not_applicable
+      }
   end
 end

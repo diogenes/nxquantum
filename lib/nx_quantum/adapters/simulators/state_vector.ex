@@ -80,13 +80,20 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
       cache_key = evolved_state_cache_key(circuit, opts)
 
       {state, cache_status} =
-        EvolvedStateCache.fetch_with_status(cache_key, fn -> EvolutionStrategy.evolve(circuit) end, opts)
+        EvolvedStateCache.fetch_with_status(
+          cache_key,
+          fn -> circuit |> EvolutionStrategy.evolve() |> maybe_apply_runtime_backend(opts) end,
+          opts
+        )
 
       Process.put(:nxq_estimator_cache_status, cache_status)
       state
     else
       Process.put(:nxq_estimator_cache_status, :bypass)
-      EvolutionStrategy.evolve(circuit)
+
+      circuit
+      |> EvolutionStrategy.evolve()
+      |> maybe_apply_runtime_backend(opts)
     end
   end
 
@@ -104,4 +111,53 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
 
     {:evolved_state, profile_id, circuit.qubits, KeyEncoder.execution_plan_key(circuit.operations)}
   end
+
+  defp maybe_apply_runtime_backend(%Nx.Tensor{} = state, opts) do
+    case runtime_backend(opts) do
+      nil ->
+        state
+
+      Nx.BinaryBackend ->
+        state
+
+      backend ->
+        Nx.backend_transfer(state, backend)
+    end
+  rescue
+    _ -> state
+  end
+
+  defp runtime_backend(opts) do
+    case Keyword.get(opts, :runtime_profile) do
+      %{backend: backend, id: id} ->
+        backend_with_client(id, backend)
+
+      %{id: id} when is_atom(id) ->
+        default_backend_for_profile(id)
+
+      id when is_atom(id) ->
+        default_backend_for_profile(id)
+
+      _ ->
+        Nx.BinaryBackend
+    end
+  end
+
+  defp default_backend_for_profile(:cpu_compiled), do: backend_with_client(:cpu_compiled, exla_backend_module())
+
+  defp default_backend_for_profile(:nvidia_gpu_compiled),
+    do: backend_with_client(:nvidia_gpu_compiled, exla_backend_module())
+
+  defp default_backend_for_profile(_profile_id), do: Nx.BinaryBackend
+
+  defp backend_with_client(profile_id, backend) when is_atom(backend) do
+    if backend == exla_backend_module() do
+      client = if profile_id == :nvidia_gpu_compiled, do: :cuda, else: :host
+      {backend, client: client}
+    else
+      backend
+    end
+  end
+
+  defp exla_backend_module, do: :"Elixir.EXLA.Backend"
 end

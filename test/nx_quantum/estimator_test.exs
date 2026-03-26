@@ -198,6 +198,38 @@ defmodule NxQuantum.EstimatorTest do
       assert :compiled in result.metadata.strategy_observability.strategy_tags
     end
 
+    test "compiled runtime uses portable fused kernel on batch cost-model shape with explicit reason" do
+      circuit =
+        [qubits: 8]
+        |> Circuit.new()
+        |> Gates.h(0)
+        |> Gates.cnot(control: 0, target: 1)
+        |> Gates.cnot(control: 1, target: 2)
+        |> Gates.cnot(control: 2, target: 3)
+        |> Gates.cnot(control: 3, target: 4)
+        |> Gates.cnot(control: 4, target: 5)
+        |> Gates.cnot(control: 5, target: 6)
+        |> Gates.cnot(control: 6, target: 7)
+
+      observable_cycle = [:pauli_x, :pauli_y, :pauli_z]
+
+      observables =
+        Enum.map(0..47, fn index ->
+          %{observable: Enum.at(observable_cycle, rem(index, 3)), wire: rem(index, 8)}
+        end)
+
+      assert {:ok, %Result{} = result} =
+               Estimator.run(circuit,
+                 observables: observables,
+                 runtime_profile: :cpu_compiled
+               )
+
+      assert result.metadata.strategy_observability.fused_kernel_requested == :compiled
+      assert result.metadata.strategy_observability.fused_kernel_selected == :portable
+      assert result.metadata.strategy_observability.fused_kernel_reason == :portable_preferred_batch_shape_cost_model
+      assert :portable in result.metadata.strategy_observability.strategy_tags
+    end
+
     test "strategy observability marks cache bypass when evolved-state cache is disabled" do
       circuit = Circuit.new(qubits: 1)
 

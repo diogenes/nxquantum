@@ -4,9 +4,11 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
   import Bitwise
 
   alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.CompiledScaffoldCache
+  alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedCompiledKernel
 
   defguardp unit_scale(scale) when abs(scale - 1.0) < 1.0e-12
   defguardp neg_unit_scale(scale) when abs(scale + 1.0) < 1.0e-12
+  @kernel_resolution_key :nxq_fused_kernel_resolution
 
   @type prepared_term :: map()
 
@@ -54,7 +56,10 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
   @spec expectations_for_runtime(Nx.Tensor.t(), [prepared_term()], pos_integer(), keyword()) ::
           [Nx.Tensor.t()]
   def expectations_for_runtime(%Nx.Tensor{} = state, terms, qubits, opts \\ []) do
-    case kernel_for_runtime(opts) do
+    {kernel, reason} = resolve_kernel(opts, qubits, length(terms))
+    Process.put(@kernel_resolution_key, kernel_resolution(opts, kernel, reason))
+
+    case kernel do
       :compiled -> expectations_compiled(state, terms, qubits)
       :portable -> expectations(state, terms, qubits)
     end
@@ -115,22 +120,30 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
   defp apply_scale(value, scale), do: value * scale
 
   defp expectations_compiled(%Nx.Tensor{} = state, terms, qubits) do
-    probabilities = state |> Nx.multiply(Nx.conjugate(state)) |> Nx.real() |> Nx.as_type({:f, 64})
     wires = terms |> Enum.map(& &1.wire) |> Enum.uniq()
+    backend = backend_from_state(state)
+
+    %{selector: selector, signs: signs, flipped_indices: flipped_indices, wire_index: wire_index} =
+      CompiledScaffoldCache.fetch_batch(qubits, wires, backend: backend)
+
+    {x_by_wire, y_by_wire, z_by_wire} =
+      FusedCompiledKernel.evaluate(
+        Nx.as_type(state, {:c, 64}),
+        selector,
+        signs,
+        flipped_indices
+      )
 
     wire_values =
       Enum.reduce(wires, %{}, fn wire, acc ->
-        %{selector: selector, signs: signs, flipped_indices: flipped_indices} =
-          CompiledScaffoldCache.fetch(qubits, wire)
+        index = Map.fetch!(wire_index, wire)
+        index_tensor = Nx.tensor(index, type: {:s, 64})
 
-        flipped = Nx.take(state, flipped_indices)
-        overlap = Nx.multiply(Nx.conjugate(state), flipped)
-
-        x = Nx.multiply(2.0, Nx.sum(Nx.multiply(Nx.real(overlap), selector)))
-        y = Nx.multiply(2.0, Nx.sum(Nx.multiply(Nx.imag(overlap), selector)))
-        z = Nx.sum(Nx.multiply(probabilities, signs))
-
-        Map.put(acc, wire, %{x: x, y: y, z: z})
+        Map.put(acc, wire, %{
+          x: Nx.take(x_by_wire, index_tensor),
+          y: Nx.take(y_by_wire, index_tensor),
+          z: Nx.take(z_by_wire, index_tensor)
+        })
       end)
 
     tensor_by_term =
@@ -161,4 +174,51 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
       _ -> nil
     end
   end
+
+  defp resolve_kernel(opts, qubits, term_count) do
+    requested = kernel_for_runtime(opts)
+
+    if requested == :compiled and portable_preferred_by_cost_model?(opts, qubits, term_count) do
+      {:portable, :portable_preferred_batch_shape_cost_model}
+    else
+      {requested, :runtime_profile}
+    end
+  end
+
+  defp portable_preferred_by_cost_model?(opts, qubits, term_count) do
+    policy = Keyword.get(opts, :fused_compiled_kernel_policy, :auto)
+
+    case policy do
+      :force_compiled ->
+        false
+
+      :force_portable ->
+        true
+
+      _ ->
+        qubits <= 12 and term_count >= 24
+    end
+  end
+
+  defp kernel_resolution(opts, selected_kernel, reason) do
+    requested_kernel = kernel_for_runtime(opts)
+
+    %{
+      requested_kernel: requested_kernel,
+      selected_kernel: selected_kernel,
+      reason: reason
+    }
+  end
+
+  defp backend_from_state(%Nx.Tensor{} = state) do
+    backend = state.data.__struct__
+
+    if backend == exla_backend_module() do
+      {backend, client: Map.get(state.data, :client, :host)}
+    else
+      backend
+    end
+  end
+
+  defp exla_backend_module, do: :"Elixir.EXLA.Backend"
 end

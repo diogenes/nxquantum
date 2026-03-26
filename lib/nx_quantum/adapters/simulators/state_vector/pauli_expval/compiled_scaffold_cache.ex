@@ -12,6 +12,13 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.CompiledScaffold
           flipped_indices: Nx.Tensor.t()
         }
 
+  @type batch_scaffold :: %{
+          selector: Nx.Tensor.t(),
+          signs: Nx.Tensor.t(),
+          flipped_indices: Nx.Tensor.t(),
+          wire_index: %{required(non_neg_integer()) => non_neg_integer()}
+        }
+
   @spec fetch(pos_integer(), non_neg_integer()) :: scaffold()
   def fetch(qubits, wire) when is_integer(qubits) and qubits > 0 and is_integer(wire) and wire >= 0 do
     key = {qubits, wire}
@@ -23,6 +30,24 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.CompiledScaffold
 
       :miss ->
         value = build_scaffold(qubits, wire)
+        store(table, key, value)
+        value
+    end
+  end
+
+  @spec fetch_batch(pos_integer(), [non_neg_integer()], keyword()) :: batch_scaffold()
+  def fetch_batch(qubits, wires, opts \\ []) when is_integer(qubits) and qubits > 0 and is_list(wires) do
+    normalized_wires = wires |> Enum.uniq() |> Enum.sort()
+    backend = Keyword.get(opts, :backend, Nx.BinaryBackend)
+    key = {:batch, qubits, normalized_wires, backend_key(backend)}
+    table = ensure_table()
+
+    case safe_lookup(table, key) do
+      {:ok, value} ->
+        value
+
+      :miss ->
+        value = build_batch_scaffold(qubits, normalized_wires, backend)
         store(table, key, value)
         value
     end
@@ -67,6 +92,40 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.CompiledScaffold
     flipped_indices = Nx.bitwise_xor(indices, mask)
 
     %{selector: selector, signs: signs, flipped_indices: flipped_indices}
+  end
+
+  defp build_batch_scaffold(qubits, wires, backend) do
+    wire_scaffolds = Enum.map(wires, &fetch(qubits, &1))
+
+    selector =
+      wire_scaffolds
+      |> Enum.map(& &1.selector)
+      |> Nx.stack()
+      |> maybe_transfer_backend(backend)
+
+    signs =
+      wire_scaffolds
+      |> Enum.map(& &1.signs)
+      |> Nx.stack()
+      |> maybe_transfer_backend(backend)
+
+    flipped_indices =
+      wire_scaffolds
+      |> Enum.map(& &1.flipped_indices)
+      |> Nx.stack()
+      |> maybe_transfer_backend(backend)
+
+    wire_index =
+      wires
+      |> Enum.with_index()
+      |> Map.new()
+
+    %{
+      selector: selector,
+      signs: signs,
+      flipped_indices: flipped_indices,
+      wire_index: wire_index
+    }
   end
 
   defp ensure_table do
@@ -120,4 +179,21 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.CompiledScaffold
   rescue
     _ -> :ok
   end
+
+  defp maybe_transfer_backend(tensor, Nx.BinaryBackend), do: tensor
+
+  defp maybe_transfer_backend(tensor, backend) do
+    Nx.backend_transfer(tensor, backend)
+  rescue
+    _ -> tensor
+  end
+
+  defp backend_key(Nx.BinaryBackend), do: :binary
+
+  defp backend_key({backend, opts}) when is_atom(backend) and is_list(opts) do
+    {backend, Enum.sort_by(opts, &elem(&1, 0))}
+  end
+
+  defp backend_key(backend) when is_atom(backend), do: backend
+  defp backend_key(backend), do: inspect(backend)
 end
