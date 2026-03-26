@@ -10,7 +10,7 @@ Status note (as of March 20, 2026):
 
 ## Why This Guide Exists
 
-NxQuantum is adding top-3 providers (`IBM Runtime`, `AWS Braket`, `Azure Quantum`).
+NxQuantum is adding the core provider set (`IBM Runtime`, `AWS Braket`, `Azure Quantum`).
 To keep operations and research reproducibility strong, we need:
 
 1. consistent traces, logs, and metrics across providers,

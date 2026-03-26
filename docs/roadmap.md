@@ -129,7 +129,7 @@ Milestone H review gate (positioning readiness):
 
 ## Known Gaps (Post-v0.4 Positioning)
 
-1. Top-3 provider production adapters are not yet implemented end-to-end (`IBM Runtime`, `AWS Braket`, `Azure Quantum`).
+1. Core provider set production adapters were not yet implemented end-to-end at this stage (`IBM Runtime`, `AWS Braket`, `Azure Quantum`).
 2. Provider-specific lifecycle differences (state models, cancellation semantics, calibration/result payloads) are not yet normalized in a public contract.
 3. Migration assets still require provider-specific implementation guidance and executable acceptance mapping.
 
@@ -162,7 +162,7 @@ Milestone I review gate (before Phase 10):
 - [x] Implement `NxQuantum.Adapters.Providers.AzureQuantum` behind `NxQuantum.Ports.Provider`.
 - [x] Normalize target-selection and capability-discovery contract across IBM/AWS/Azure.
 - [x] Add provider-specific cancellation/terminal-state policy handling with explicit metadata.
-- [x] Normalize calibration/result payload ingestion envelopes across top-3 providers.
+- [x] Normalize calibration/result payload ingestion envelopes across the core provider set.
 - [x] Add cross-provider contract scenarios for typed lifecycle equivalence and portability boundaries.
 - [x] Implement OpenTelemetry observability profile support (`high_level`, `granular`, `forensics`) for provider lifecycle traces, logs, and metrics.
 - [x] Add deterministic experiment fingerprint and portability-delta telemetry contracts for cross-provider comparability.
@@ -170,16 +170,16 @@ Milestone I review gate (before Phase 10):
 Milestone J review gate (before Phase 11):
 
 1. Azure Quantum lifecycle behavior is integrated with typed provider-specific caveat metadata.
-2. Capability discovery contract is stable and documented across all top-3 providers.
+2. Capability discovery contract is stable and documented across all providers in the core provider set.
 3. Cross-provider scenario suite validates deterministic typed behavior for equivalent workflows.
-4. CI includes provider smoke lanes and deterministic fixture lanes for all top-3 adapters.
+4. CI includes provider smoke lanes and deterministic fixture lanes for all adapters in the core provider set.
 5. OpenTelemetry schema/contracts are stable and profile-driven observability behavior is acceptance-covered.
 
 ## Phase 11 - v0.5 P2: Migration Packs, Adoption Assets, and Release Hardening
 
 - [x] Publish provider-specific migration packs (Qiskit Runtime -> NxQuantum, Braket workflows -> NxQuantum, Azure workflows -> NxQuantum).
   - `docs/v0.5-migration-packs.md`
-- [x] Publish runnable side-by-side tutorials for equivalent workloads on top-3 providers (estimation, sampling, transpilation constraints).
+- [x] Publish runnable side-by-side tutorials for equivalent workloads on the core provider set (estimation, sampling, transpilation constraints).
   - `examples/livebook/provider_bridge_side_by_side.livemd`
   - `docs/livebook-tutorials.md`
 - [x] Publish benchmark matrix with reproducible scripts and explicit provider caveats.
@@ -187,14 +187,14 @@ Milestone J review gate (before Phase 11):
   - `docs/v0.5-benchmark-matrix.md`
 - [x] Add support-tier policy (`stable`, `beta`, `experimental`) and release-note templates per provider adapter.
   - `docs/v0.5-provider-support-tiers.md`
-- [x] Publish observability conventions guide and starter dashboards for top-3 provider workflows.
+- [x] Publish observability conventions guide and starter dashboards for core provider set workflows.
   - `docs/observability.md`
   - `docs/observability-dashboards.md`
 - [x] Complete release-quality gates for v0.5 provider support path.
 
 Milestone K review gate (v0.5 readiness):
 
-1. Top-3 adapters are documented with explicit support tiers, limits, and typed failure contracts.
+1. Core provider set adapters are documented with explicit support tiers, limits, and typed failure contracts.
 2. Migration/tutorial assets are executable and traceable to acceptance scenarios.
 3. Benchmark and case-study evidence are reproducible and tied to exact runtime/provider profiles.
 4. v0.5 release checklist is green (`mix quality`, `mix dialyzer`, docs build, provider smoke lanes).
@@ -249,7 +249,7 @@ Milestone O/P/Q review gate (v0.7 readiness):
 3. Observability contracts are stable but troubleshooting depth (custom attributes, poll-phase diagnostics, retry/correlation detail) remains shallow for incident forensics.
 4. High-value cross-ecosystem performance evidence is still concentrated on simulator micro paths and does not yet cover full provider-lifecycle and production-like Q/ML rollout scenarios.
 
-## Phase 14 - v0.8 P0: Live Provider Execution (Top-3) Behind Stable Contracts
+## Phase 14 - v0.8 P0: Live Provider Execution (Core Provider Set) Behind Stable Contracts
 
 Goal:
 
