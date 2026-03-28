@@ -12,6 +12,7 @@ Feature: Hybrid quantum AI benchmark pack
       Examples:
         | scenario_family                   |
         | reranking quality delta           |
+        | reranking quality delta turboquant |
         | constrained optimization assistant |
         | fallback latency impact           |
 

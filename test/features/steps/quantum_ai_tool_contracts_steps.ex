@@ -5,7 +5,7 @@ defmodule NxQuantum.Features.Steps.QuantumAiToolContractsSteps do
 
   alias NxQuantum.Features.Steps.RoadmapContractSteps
 
-  @tool_handlers ["quantum-kernel reranking", "constrained optimization helper"]
+  @tool_handlers ["quantum-kernel reranking", "quantum_kernel_rerank.v1", "constrained optimization helper"]
   @transport_models ["sync request-response", "async event delivery"]
 
   @scenario_configs %{

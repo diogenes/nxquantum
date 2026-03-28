@@ -119,6 +119,14 @@ Planned benchmark scripts:
 - `bench/hybrid_quantum_ai_benchmark.exs`
 - `bench/hybrid_quantum_ai_baseline.exs`
 - `bench/hybrid_quantum_ai_report.exs`
+- `bench/turboquant_rerank_benchmark.exs`
+
+TurboQuant rerank lanes (deterministic fixture-first):
+
+```bash
+mise exec -- mix run bench/hybrid_quantum_ai_benchmark.exs rerank_quality_delta_turboquant
+mise exec -- mix run bench/turboquant_rerank_benchmark.exs
+```
 
 ## Phase 18 High-Value Performance Matrix
 

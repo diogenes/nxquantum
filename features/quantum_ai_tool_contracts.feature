@@ -20,6 +20,7 @@ Feature: Quantum AI tool contracts
       Examples:
         | tool_handler                    |
         | quantum-kernel reranking        |
+        | quantum_kernel_rerank.v1        |
         | constrained optimization helper |
 
     Scenario Outline: Transport model <transport_model> remains adapter-driven behind stable ports

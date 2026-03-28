@@ -7,6 +7,7 @@ defmodule NxQuantum.Features.Steps.HybridQuantumAiBenchmarkPackSteps do
 
   @scenario_families [
     "reranking quality delta",
+    "reranking quality delta turboquant",
     "constrained optimization assistant",
     "fallback latency impact"
   ]

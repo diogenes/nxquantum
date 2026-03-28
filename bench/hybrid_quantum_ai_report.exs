@@ -9,6 +9,14 @@ summary:
   - all metrics include classical baseline references
   - fallback behavior is explicitly tracked
   - caveats are required for every scenario
+  - turboquant rerank scenarios include memory-per-vector and bit-width evidence
+required_fields:
+  - scenario_id
+  - baseline_metrics
+  - hybrid_metrics
+  - delta_metrics
+  - fallback_rate
+  - caveats
 """
 
 File.mkdir_p!(Path.dirname(output))
