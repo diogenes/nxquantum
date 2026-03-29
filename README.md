@@ -1,25 +1,44 @@
 # NxQuantum
 
-NxQuantum is a pure-Elixir quantum ML library for the `Nx` ecosystem.
-It is built for ML engineers and researchers who want quantum primitives inside the same BEAM stack used for training loops, inference services, and production pipelines.
+Benchmark-backed quantum ML primitives for Elixir teams on BEAM.
+
+NxQuantum is a pure-Elixir quantum ML library for the `Nx` ecosystem. It keeps estimation, sampling, kernels, and transpilation in the same runtime as your ML training loops, inference services, and production pipelines.
 
 ## Who It Is For
 
 - Teams building ML systems in Elixir/Nx that need deterministic-by-default quantum workflows in the same runtime.
 - Researchers who want reproducible, typed contracts and BEAM-native integration patterns.
+- Product teams exploring hybrid quantum-AI workflows where runtime fit and reproducible evidence matter.
 - Not a primary fit (today) for teams whose top requirement is immediate broad hardware-provider coverage.
 
-## Why It Matters
+## Why Teams Choose NxQuantum
 
-Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx community by providing:
+Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx/BEAM community by providing:
 
-- Elixir-native primitives (`Estimator`, `Sampler`, `Kernels`, `Transpiler`).
+- Fast local workflow execution in the same BEAM runtime (no required cross-language service hop).
 - Deterministic-by-default behavior with explicit runtime and seed contracts.
-- A cleaner path from research code to BEAM production systems.
+- Elixir-native primitives (`Estimator`, `Sampler`, `Kernels`, `Transpiler`) built for production integration.
+- A practical path from experiments to hybrid quantum-AI production workflows.
 
 See positioning and comparison details:
 
 - [docs/product-positioning.md](docs/product-positioning.md)
+- [docs/quantum-llm-vision.md](docs/quantum-llm-vision.md)
+
+## Performance Value Proposition
+
+Evidence, not hype:
+
+- In the reproducible cross-framework benchmark (`docs/python-alternatives-benchmark-2026-03-25.md`), NxQuantum is faster than Qiskit on all 5 local simulator scenarios in the report (`baseline_2q`, `deep_6q`, `batch_obs_8q`, `state_reuse_8q_xy`, `sampled_counts_sparse_terms`).
+- The same report shows strong wins vs PennyLane and Cirq on the same machine and run configuration.
+- In the BEAM integration case-study throughput lane, throughput increases from `1333.333 ops/s` to `3030.303 ops/s` on `:cpu_portable`, and from `1666.667 ops/s` to `3787.879 ops/s` on `:cpu_compiled` as batch size increases (`8 -> 32`).
+
+Benchmark references:
+
+- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+- [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
+
+Caveat: these speed figures are from local simulator/fixture workflows on specific environments; they are not universal claims about remote provider/QPU execution latency.
 
 ## Determinism Scope (Important)
 
@@ -39,7 +58,7 @@ See positioning and comparison details:
 - Review hybrid benchmark/dataset/API spec (planned Phase 20): [docs/v1.0-hybrid-quantum-ai-benchmark.md](docs/v1.0-hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 - Review reproducible provider benchmark matrix: [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
-- Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-21.md](docs/python-alternatives-benchmark-2026-03-21.md)
+- Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
 - Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 ## Quick Start
@@ -111,7 +130,7 @@ Track status here:
 - [docs/v0.5-acceptance-criteria.md](docs/v0.5-acceptance-criteria.md)
 - [docs/v0.5-migration-packs.md](docs/v0.5-migration-packs.md)
 - [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
-- [docs/python-alternatives-benchmark-2026-03-21.md](docs/python-alternatives-benchmark-2026-03-21.md)
+- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
 - [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
 - [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 
