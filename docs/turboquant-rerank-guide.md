@@ -104,3 +104,21 @@ The TurboQuant-specific benchmark output includes:
 3. `compression_ratio_vs_fp32`
 4. deterministic top-k lane parity (`scalar` vs `parallel`)
 5. cache and strategy diagnostics in tool metadata (`cache_hit`, `strategy_reason`, `estimated_work`)
+
+## Rollout Gate Evidence Mapping
+
+For production promotion checks using `NxQuantum.Migration.AIGates.evaluate/2`, include:
+
+1. `fallback_rate`
+2. `typed_error_rate`
+3. `quality_delta`
+4. `quality_drop` (or omit and let gates derive from `quality_delta`)
+5. `memory_bytes_per_vector`
+6. `compression_ratio_vs_fp32`
+
+Recommended options:
+
+1. `require_turboquant_metrics: true`
+2. `max_quality_drop: 0.05`
+3. `max_memory_bytes_per_vector: 96`
+4. `min_compression_ratio: 4.0`

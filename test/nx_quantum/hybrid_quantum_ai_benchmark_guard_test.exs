@@ -25,11 +25,14 @@ defmodule NxQuantum.HybridQuantumAIBenchmarkGuardTest do
 
   test "hybrid benchmark report contract includes baseline and caveat fields" do
     content = File.read!(Path.join(@bench_dir, "hybrid_quantum_ai_benchmark.exs"))
+    report_content = File.read!(Path.join(@bench_dir, "hybrid_quantum_ai_report.exs"))
     assert content =~ "baseline_metrics"
     assert content =~ "delta_metrics"
     assert content =~ "fallback_rate"
     assert content =~ "caveats"
     assert content =~ "memory_bytes_per_vector"
+    assert content =~ "compression_ratio_vs_fp32"
+    assert report_content =~ "compression_ratio_vs_fp32"
   end
 
   test "rerank dataset files are present for benchmark and user dataset onboarding" do
@@ -40,7 +43,7 @@ defmodule NxQuantum.HybridQuantumAIBenchmarkGuardTest do
     assert File.exists?(Path.join(rerank_dir, "rq_medium_v1.manifest.json"))
 
     small_manifest = File.read!(Path.join(rerank_dir, "rq_small_v1.manifest.json"))
-    assert small_manifest =~ "\"dataset_id\": \"rq_small_v1\""
+    assert small_manifest =~ ~s("dataset_id": "rq_small_v1")
     assert small_manifest =~ "\"sha256\""
   end
 end

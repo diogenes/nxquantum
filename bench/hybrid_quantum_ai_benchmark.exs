@@ -100,8 +100,15 @@ run = fn
       dataset_id: Map.get(cli_opts, :dataset_id, "rq_small_v1"),
       seed: seed,
       baseline_metrics: %{ndcg_at_10: 0.72, memory_bytes_per_vector: 512},
-      hybrid_metrics: %{ndcg_at_10: 0.75, memory_bytes_per_vector: 64, latency_p95_ms: latency_ms},
+      hybrid_metrics: %{
+        ndcg_at_10: 0.75,
+        memory_bytes_per_vector: 64,
+        compression_ratio_vs_fp32: 8.0,
+        latency_p95_ms: latency_ms
+      },
       delta_metrics: %{ndcg_at_10: 0.03, memory_bytes_per_vector: -448},
+      quality_drop: 0.0,
+      compression_ratio_vs_fp32: 8.0,
       fallback_rate: if(result.status == :fallback, do: 1.0, else: 0.0),
       caveats: ["deterministic fixture embeddings", "turboquant-inspired codec"]
     }

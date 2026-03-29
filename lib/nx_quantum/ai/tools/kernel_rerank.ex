@@ -5,8 +5,8 @@ defmodule NxQuantum.AI.Tools.KernelRerank do
   alias NxQuantum.AI.Request
   alias NxQuantum.AI.Result
   alias NxQuantum.AI.Tools.KernelRerank.DatasetCSV
-  alias NxQuantum.AI.Tools.KernelRerank.QuantizedCache
   alias NxQuantum.AI.Tools.KernelRerank.ExecutionStrategy
+  alias NxQuantum.AI.Tools.KernelRerank.QuantizedCache
 
   @spec run(Request.t(), keyword()) :: {:ok, Result.t()} | {:error, map()}
   def run(%Request{} = request, opts) do
@@ -98,13 +98,13 @@ defmodule NxQuantum.AI.Tools.KernelRerank do
            parallel_mode: strategy.mode,
            strategy_reason: strategy.reason,
            estimated_work: strategy.estimated_work,
-            max_concurrency: strategy.max_concurrency,
-            chunk_size: strategy.chunk_size,
-            quantized_bytes_per_vector: bytes_per_vector(dim, Keyword.get(quantization_opts, :bit_width, 3)),
-            compression_ratio_vs_fp32: compression_ratio(dim, Keyword.get(quantization_opts, :bit_width, 3)),
-            vector_dim: dim,
-            dataset_source: Map.get(input, :dataset_source),
-            dataset_query_id: Map.get(input, :dataset_query_id)
+           max_concurrency: strategy.max_concurrency,
+           chunk_size: strategy.chunk_size,
+           quantized_bytes_per_vector: bytes_per_vector(dim, Keyword.get(quantization_opts, :bit_width, 3)),
+           compression_ratio_vs_fp32: compression_ratio(dim, Keyword.get(quantization_opts, :bit_width, 3)),
+           vector_dim: dim,
+           dataset_source: Map.get(input, :dataset_source),
+           dataset_query_id: Map.get(input, :dataset_query_id)
          }}
       end
     end

@@ -615,6 +615,49 @@ Milestone Z review gate (before next roadmap phase):
 3. Benchmark artifacts include quality, latency, and memory evidence for TurboQuant scenario lanes.
 4. Public docs describe capability boundaries and avoid claiming simulator-core quantization support.
 
+## Phase 23 - v1.0 P6: TurboQuant Production Gate Hardening + Dataset Onboarding
+
+Goal:
+
+1. Make TurboQuant rerank workflows production-usable by adding deterministic dataset onboarding and KPI-based rollout gates.
+
+Implementation deliverables:
+
+1. Extend kernel-rerank execution metadata for production diagnostics and deterministic cache signaling:
+   - `lib/nx_quantum/ai/tools/kernel_rerank.ex`
+   - `lib/nx_quantum/ai/tools/kernel_rerank/execution_strategy.ex`
+   - `lib/nx_quantum/ai/tools/kernel_rerank/quantized_cache.ex`
+2. Add user dataset ingestion for rerank workflows and benchmark lanes:
+   - `lib/nx_quantum/ai/tools/kernel_rerank/dataset_csv.ex`
+   - `bench/datasets/rerank/rq_small_v1.csv`
+   - `bench/datasets/rerank/rq_medium_v1.csv`
+   - `bench/hybrid_quantum_ai_benchmark.exs`
+   - `bench/turboquant_rerank_benchmark.exs`
+3. Extend AI promotion gates with TurboQuant KPI thresholds:
+   - `lib/nx_quantum/migration/ai_gates.ex`
+   - `test/nx_quantum/migration/ai_gates_test.exs`
+4. Publish docs/playbook updates for rollout operators and onboarding:
+   - `docs/turboquant-rerank-guide.md`
+   - `docs/v0.9-quantum-ai-rollout-playbook.md`
+   - `docs/v1.0-hybrid-quantum-ai-benchmark.md`
+   - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+   - `bench/README.md`
+
+Implementation status checklist (as of March 29, 2026):
+
+1. `[x]` Cache-aware TurboQuant rerank metadata and strategy diagnostics are implemented and deterministic.
+2. `[x]` CSV dataset ingestion path for `quantum_kernel_rerank.v1` is implemented with typed validation.
+3. `[x]` Benchmark scripts accept dataset-path/query-id lanes and include versioned rerank dataset manifests.
+4. `[x]` AI rollout gates include TurboQuant KPI threshold checks and typed decision codes.
+5. `[x]` User docs and rollout playbooks include dataset onboarding and promotion-gate KPI mapping.
+
+Milestone AA review gate (before next roadmap phase):
+
+1. Production promotion checks can enforce TurboQuant KPI budgets using deterministic typed outputs.
+2. User-provided rerank datasets can be consumed without custom adapter code or unstable input contracts.
+3. Benchmark and rollout docs remain aligned with implemented behavior and field names.
+4. Changes remain additive and preserve existing public API compatibility.
+
 ## Proposed Backlog (Not Scheduled in Roadmap)
 
 1. Additional provider-native analog/non-gate-model workflow support remains unscheduled beyond v0.9.

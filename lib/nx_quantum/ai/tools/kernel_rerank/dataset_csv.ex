@@ -34,8 +34,11 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
          {:ok, content} <- File.read(path) do
       parse_csv(content)
     else
-      false -> {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset file not found"}}
-      {:error, _} -> {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unable to read dataset file"}}
+      false ->
+        {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset file not found"}}
+
+      {:error, _} ->
+        {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unable to read dataset file"}}
     end
   end
 
@@ -49,9 +52,8 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
       [header_line | row_lines] ->
         headers = split_row(header_line)
 
-        with :ok <- validate_headers(headers),
-             {:ok, rows} <- parse_rows(headers, row_lines) do
-          {:ok, rows}
+        with :ok <- validate_headers(headers) do
+          parse_rows(headers, row_lines)
         end
 
       _ ->
@@ -63,7 +65,8 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
     if Enum.all?(@required_headers, &(&1 in headers)) do
       :ok
     else
-      {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset header missing required columns"}}
+      {:error,
+       %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset header missing required columns"}}
     end
   end
 
@@ -75,11 +78,13 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
     |> Enum.reduce_while({:ok, []}, fn {line, line_number}, {:ok, acc} ->
       cells = split_row(line)
 
-      if length(cells) != length(headers) do
-        {:halt, {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "invalid column count", line: line_number}}}
-      else
+      if length(cells) == length(headers) do
         row = Map.new(Enum.zip(headers, cells))
         {:cont, {:ok, [row | acc]}}
+      else
+        {:halt,
+         {:error,
+          %{code: :ai_tool_invalid_request, field: :dataset_path, message: "invalid column count", line: line_number}}}
       end
     end)
     |> case do
@@ -95,7 +100,8 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
       |> maybe_filter_candidates(candidate_ids)
 
     if filtered == [] do
-      {:error, %{code: :ai_tool_invalid_request, field: :query_id, message: "no dataset rows matched query_id/candidate_ids"}}
+      {:error,
+       %{code: :ai_tool_invalid_request, field: :query_id, message: "no dataset rows matched query_id/candidate_ids"}}
     else
       {:ok, filtered}
     end
@@ -143,8 +149,7 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
   end
 
   defp parse_candidate_map(rows) do
-    rows
-    |> Enum.reduce_while({:ok, %{}}, fn row, {:ok, acc} ->
+    Enum.reduce_while(rows, {:ok, %{}}, fn row, {:ok, acc} ->
       candidate_id = Map.get(row, "candidate_id")
 
       case parse_vector(Map.get(row, "candidate_embedding")) do
@@ -181,7 +186,7 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
   end
 
   defp resolve_candidate_ids(candidates_map, _requested_candidate_ids) do
-    ids = Map.keys(candidates_map) |> Enum.sort()
+    ids = candidates_map |> Map.keys() |> Enum.sort()
 
     if ids == [] do
       {:error, %{code: :ai_tool_invalid_request, field: :candidate_id, message: "dataset contained no candidate rows"}}

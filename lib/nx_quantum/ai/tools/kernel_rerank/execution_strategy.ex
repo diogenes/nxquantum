@@ -38,16 +38,7 @@ defmodule NxQuantum.AI.Tools.KernelRerank.ExecutionStrategy do
         parallel_strategy(candidate_count, max_concurrency, :forced_parallel, estimated_work)
 
       :auto ->
-        cond do
-          not parallel? ->
-            scalar_strategy(candidate_count, :parallel_disabled, estimated_work)
-
-          parallel_eligible? ->
-            parallel_strategy(candidate_count, max_concurrency, :parallel_threshold_met, estimated_work)
-
-          true ->
-            scalar_strategy(candidate_count, :below_parallel_threshold, estimated_work)
-        end
+        auto_strategy(candidate_count, max_concurrency, parallel?, parallel_eligible?, estimated_work)
 
       _unsupported ->
         scalar_strategy(candidate_count, :below_parallel_threshold, estimated_work)
@@ -56,6 +47,7 @@ defmodule NxQuantum.AI.Tools.KernelRerank.ExecutionStrategy do
 
   defp parallel_strategy(candidate_count, max_concurrency, reason, estimated_work) do
     chunk_size = (candidate_count + max_concurrency - 1) |> div(max_concurrency * 2) |> max(1)
+
     %{
       mode: :parallel,
       max_concurrency: max_concurrency,
@@ -81,6 +73,19 @@ defmodule NxQuantum.AI.Tools.KernelRerank.ExecutionStrategy do
     |> case do
       value when is_integer(value) and value > 0 -> value
       _ -> System.schedulers_online()
+    end
+  end
+
+  defp auto_strategy(candidate_count, max_concurrency, parallel?, parallel_eligible?, estimated_work) do
+    cond do
+      not parallel? ->
+        scalar_strategy(candidate_count, :parallel_disabled, estimated_work)
+
+      parallel_eligible? ->
+        parallel_strategy(candidate_count, max_concurrency, :parallel_threshold_met, estimated_work)
+
+      true ->
+        scalar_strategy(candidate_count, :below_parallel_threshold, estimated_work)
     end
   end
 end

@@ -33,6 +33,69 @@ defmodule NxQuantum.Migration.AIGatesTest do
     assert rollback.code == :typed_error_rate_exceeded
   end
 
+  test "evaluate/2 enforces TurboQuant production thresholds when metrics are required" do
+    promote_evidence = %{
+      fallback_rate: 0.02,
+      typed_error_rate: 0.0,
+      quality_delta: 0.01,
+      quantization_codec: :turboquant,
+      memory_bytes_per_vector: 64,
+      compression_ratio_vs_fp32: 8.0
+    }
+
+    assert {:ok, promote} = AIGates.evaluate(promote_evidence, require_turboquant_metrics: true)
+    assert promote.decision == :promote
+    assert promote.turboquant_metrics_required == true
+
+    hold_evidence = %{
+      fallback_rate: 0.02,
+      typed_error_rate: 0.0,
+      quality_delta: 0.01,
+      quality_drop: 0.06,
+      quantization_codec: :turboquant,
+      memory_bytes_per_vector: 64,
+      compression_ratio_vs_fp32: 8.0
+    }
+
+    assert {:ok, hold_quality} = AIGates.evaluate(hold_evidence, require_turboquant_metrics: true)
+    assert hold_quality.decision == :hold
+    assert hold_quality.code == :quality_drop_exceeded
+
+    assert {:ok, hold_memory} =
+             AIGates.evaluate(%{hold_evidence | quality_drop: 0.01, memory_bytes_per_vector: 192},
+               require_turboquant_metrics: true,
+               max_memory_bytes_per_vector: 96
+             )
+
+    assert hold_memory.decision == :hold
+    assert hold_memory.code == :memory_bytes_per_vector_exceeded
+
+    assert {:ok, hold_compression} =
+             AIGates.evaluate(
+               %{
+                 hold_evidence
+                 | quality_drop: 0.01,
+                   memory_bytes_per_vector: 64,
+                   compression_ratio_vs_fp32: 1.5
+               },
+               require_turboquant_metrics: true,
+               min_compression_ratio: 4.0
+             )
+
+    assert hold_compression.decision == :hold
+    assert hold_compression.code == :compression_ratio_below_threshold
+  end
+
+  test "evaluate/2 emits hold when required TurboQuant metrics are missing" do
+    assert {:ok, hold_missing} =
+             AIGates.evaluate(%{fallback_rate: 0.01, typed_error_rate: 0.0, quality_delta: 0.1},
+               require_turboquant_metrics: true
+             )
+
+    assert hold_missing.decision == :hold
+    assert hold_missing.code == :turboquant_metrics_missing
+  end
+
   test "AI report map is machine-readable and stable" do
     request = %{request_id: "req-99", correlation_id: "corr-99", tool_name: "quantum-kernel reranking"}
     evidence = %{fallback_rate: 0.02, typed_error_rate: 0.0, quality_delta: 0.12}

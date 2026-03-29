@@ -113,7 +113,7 @@ defmodule NxQuantum.AI.ToolContractTest do
           codec: :turboquant,
           mode: :prod_unbiased,
           bit_width: 4,
-          seed: 20260329,
+          seed: 20_260_329,
           calibration_id: "calib-rerank-v1"
         }
       },
@@ -164,7 +164,7 @@ defmodule NxQuantum.AI.ToolContractTest do
         dataset_path: dataset_path,
         query_id: "q-42",
         candidate_ids: ["d-2", "d-1", "d-3"],
-        quantization: %{codec: :turboquant, mode: :mse, bit_width: 3, seed: 20260329}
+        quantization: %{codec: :turboquant, mode: :mse, bit_width: 3, seed: 20_260_329}
       },
       execution_policy: %{fallback_policy: :strict}
     }

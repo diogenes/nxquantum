@@ -16,6 +16,9 @@ required_fields:
   - hybrid_metrics
   - delta_metrics
   - fallback_rate
+  - memory_bytes_per_vector (turboquant lanes)
+  - compression_ratio_vs_fp32 (turboquant lanes)
+  - quality_drop (or derivable from quality_delta)
   - caveats
 """
 
