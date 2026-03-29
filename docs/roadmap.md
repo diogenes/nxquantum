@@ -1,5 +1,15 @@
 # NxQuantum Roadmap
 
+## Versioning Policy Update (2026-03-29)
+
+1. `v1.0` is intentionally postponed until there is clear, reproducible evidence of production-grade workload adoption.
+2. Near-term releases continue on `0.x` (`v0.10`, `v0.11`, ...) while preserving stable-contract discipline.
+3. Existing document filenames that include `v1.0` are kept as artifact names; they do not imply a package major-version bump.
+4. `v1.0` promotion requires explicit release evidence beyond feature completion:
+   - production usage evidence,
+   - stability/operability evidence across release gates,
+   - benchmark and rollout evidence tied to real workload classes.
+
 ## Phase 0 - Foundation (current)
 
 - [x] Project scaffolding.
@@ -569,7 +579,7 @@ Milestone Y review gate (v0.9 readiness):
 3. Rollout artifacts are reproducible and actionable for release decisions.
 4. Public docs clearly distinguish implemented capabilities from research backlog.
 
-## Phase 22 - v1.0 P5: TurboQuant-Inspired Parallel Rerank Compression
+## Phase 22 - v0.10 P0: TurboQuant-Inspired Parallel Rerank Compression
 
 Goal:
 
@@ -615,7 +625,7 @@ Milestone Z review gate (before next roadmap phase):
 3. Benchmark artifacts include quality, latency, and memory evidence for TurboQuant scenario lanes.
 4. Public docs describe capability boundaries and avoid claiming simulator-core quantization support.
 
-## Phase 23 - v1.0 P6: TurboQuant Production Gate Hardening + Dataset Onboarding
+## Phase 23 - v0.11 P0: TurboQuant Production Gate Hardening + Dataset Onboarding
 
 Goal:
 

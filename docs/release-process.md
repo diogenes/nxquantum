@@ -6,6 +6,15 @@
 2. Ensure package and docs artifacts are built deterministically before publish.
 3. Keep release steps explicit and auditable.
 
+## Versioning Policy
+
+1. `v1.0` is deferred until explicit production-grade adoption evidence is documented.
+2. Continue additive release cadence on `0.x` (`0.9.1`, `0.10.0`, `0.11.0`, ...) while preserving stable public contracts.
+3. A major-version bump requires an explicit release note section summarizing:
+   - production workload adoption evidence,
+   - operational reliability evidence,
+   - reproducible benchmark/rollout evidence.
+
 ## Pre-Release Checklist
 
 1. `mix quality`
