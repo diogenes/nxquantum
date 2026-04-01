@@ -30,16 +30,51 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
   end
 
   defp read_rows(path) do
-    with true <- File.exists?(path),
-         {:ok, content} <- File.read(path) do
+    with {:ok, validated_path} <- validate_path(path),
+         true <- File.exists?(validated_path),
+         {:ok, content} <- File.read(validated_path) do
       parse_csv(content)
     else
+      {:error, :unauthorized} ->
+        {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unauthorized dataset path"}}
+
       false ->
         {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset file not found"}}
 
       {:error, _} ->
         {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unable to read dataset file"}}
     end
+  end
+
+  defp validate_path(path) do
+    expanded = Path.expand(path)
+    # Allowed directories: bench/datasets for production-like usage.
+    # We include System.tmp_dir() but ensure the expanded path is within it correctly.
+    allowed_dirs = [
+      Path.expand("bench/datasets"),
+      Path.expand(System.tmp_dir!())
+    ]
+
+    if Enum.any?(allowed_dirs, &is_path_contained?(&1, expanded)) do
+      {:ok, expanded}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  defp is_path_contained?(parent, child) do
+    parent = Path.expand(parent)
+    child = Path.expand(child)
+
+    # Ensure parent ends with a separator for prefix matching to avoid sibling directory bypass
+    parent_prefix =
+      if String.ends_with?(parent, "/") do
+        parent
+      else
+        parent <> "/"
+      end
+
+    child == parent or String.starts_with?(child, parent_prefix)
   end
 
   defp parse_csv(content) do
