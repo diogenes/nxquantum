@@ -243,10 +243,7 @@ defmodule NxQuantum.Observables.SparsePauli do
         ordered: true,
         timeout: :infinity
       )
-      |> Enum.map(fn
-        {:ok, result} -> result
-        {:exit, reason} -> raise "parallel sparse-pauli generation failed: #{inspect(reason)}"
-      end)
+      |> Enum.map(&unwrap_parallel_term_entries_result/1)
     else
       Enum.map(terms, &single_term_entries(&1, qubits))
     end
@@ -298,5 +295,12 @@ defmodule NxQuantum.Observables.SparsePauli do
       value when is_integer(value) and value > 0 -> value
       _ -> System.schedulers_online()
     end
+  end
+
+  @doc false
+  def unwrap_parallel_term_entries_result({:ok, result}), do: result
+
+  def unwrap_parallel_term_entries_result({:exit, reason}) do
+    raise "parallel sparse-pauli generation failed: #{inspect(reason)}"
   end
 end

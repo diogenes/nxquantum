@@ -34,10 +34,7 @@ defmodule NxQuantum.Estimator.SampledExpval.CountsReducer do
       ordered: true,
       timeout: :infinity
     )
-    |> Enum.flat_map(fn
-      {:ok, values} -> values
-      {:exit, reason} -> raise "parallel sampled expectation lookup failed: #{inspect(reason)}"
-    end)
+    |> Enum.flat_map(&unwrap_parallel_chunk_result/1)
   end
 
   defp expectation(parsed, z_mask, :elixir), do: expectation_elixir(parsed, z_mask)
@@ -95,4 +92,10 @@ defmodule NxQuantum.Estimator.SampledExpval.CountsReducer do
   defp popcount(value), do: popcount(value, 0)
   defp popcount(0, acc), do: acc
   defp popcount(value, acc), do: popcount(value &&& value - 1, acc + 1)
+
+  @doc false
+  def unwrap_parallel_chunk_result({:ok, values}), do: values
+
+  def unwrap_parallel_chunk_result({:exit, reason}),
+    do: raise("parallel sampled expectation lookup failed: #{inspect(reason)}")
 end

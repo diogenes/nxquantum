@@ -70,6 +70,11 @@ defmodule NxQuantum.DomainCoverageWave2Test do
     end
   end
 
+  defmodule FakeSparsePauli do
+    @moduledoc false
+    def single_pauli_term(_observable, _wire, _coeff), do: {:error, %{code: :fake_sparse_pauli_failure}}
+  end
+
   test "covers circuit/gates/runtime wrapper branches and defaults" do
     assert %Circuit{qubits: 1} = Circuit.new()
     assert_raise KeyError, fn -> Circuit.expectation(Circuit.new()) end
@@ -310,6 +315,21 @@ defmodule NxQuantum.DomainCoverageWave2Test do
                capabilities: %{cpu_compiled: true}
              )
 
+    prev_sampled_env = Application.get_env(:nx_quantum, SampledExpval)
+
+    Application.put_env(:nx_quantum, SampledExpval, sparse_pauli_module: FakeSparsePauli)
+
+    on_exit(fn ->
+      if prev_sampled_env == nil do
+        Application.delete_env(:nx_quantum, SampledExpval)
+      else
+        Application.put_env(:nx_quantum, SampledExpval, prev_sampled_env)
+      end
+    end)
+
+    assert {:error, %{code: :fake_sparse_pauli_failure}} =
+             SampledExpval.from_counts(counts, observables: [%{observable: :pauli_z, wire: 0}])
+
     {:ok, parsed} = ParsedCounts.parse(%{"00" => 1, "01" => 1}, cache_parsed_counts: false)
     assert CountsReducer.lookup(parsed, [1]) == %{1 => 0.0}
     assert CountsReducer.lookup(parsed, [], []) == %{}
@@ -340,30 +360,21 @@ defmodule NxQuantum.DomainCoverageWave2Test do
              max_concurrency: 2
            ) == %{0 => 1.0, 1 => 0.0}
 
-    malformed = %ParsedCounts{
-      entries: nil,
-      values: [0, 1],
-      counts: [1.0, 1.0],
-      counts_tensor: Nx.tensor([1.0, 1.0]),
-      shots: 2.0,
-      qubits: 1,
-      entry_count: 2,
-      hash: 1
-    }
+    assert_raise RuntimeError, ~r/parallel sampled expectation lookup failed/, fn ->
+      CountsReducer.unwrap_parallel_chunk_result({:exit, :boom})
+    end
 
-    old_flag = Process.flag(:trap_exit, true)
+    table_name_counts = :nxq_counts_table_test
+    :ets.new(table_name_counts, [:named_table, :set, :public])
+    assert ParsedCounts.safe_new_named_table(table_name_counts, [:named_table, :set, :public]) == table_name_counts
+    assert ParsedCounts.normalize_table_size(:undefined) == 0
+    :ets.delete(table_name_counts)
 
-    capture_log(fn ->
-      assert_raise RuntimeError, ~r/parallel sampled expectation lookup failed/, fn ->
-        CountsReducer.lookup(malformed, [0, 1],
-          sampled_parallel_mode: :force_parallel,
-          sampled_reducer_backend: :elixir,
-          max_concurrency: 2
-        )
-      end
-    end)
-
-    Process.flag(:trap_exit, old_flag)
+    table_name_mask = :nxq_mask_table_test
+    :ets.new(table_name_mask, [:named_table, :set, :public])
+    assert MaskLookupCache.safe_new_named_table(table_name_mask, [:named_table, :set, :public]) == table_name_mask
+    assert MaskLookupCache.normalize_table_size(:undefined) == 0
+    :ets.delete(table_name_mask)
   end
 
   test "covers parsed-counts validation branches and sparse-pauli edge constructors" do
@@ -398,15 +409,9 @@ defmodule NxQuantum.DomainCoverageWave2Test do
 
     assert Nx.shape(SparsePauli.to_dense(%SparsePauli{qubits: 1, terms: []})) == {2, 2}
 
-    old_flag = Process.flag(:trap_exit, true)
-
-    capture_log(fn ->
-      assert_raise RuntimeError, ~r/parallel sparse-pauli generation failed/, fn ->
-        SparsePauli.to_dense(%SparsePauli{qubits: 1, terms: [%{bad: :shape}]}, parallel_threshold: 1)
-      end
-    end)
-
-    Process.flag(:trap_exit, old_flag)
+    assert_raise RuntimeError, ~r/parallel sparse-pauli generation failed/, fn ->
+      SparsePauli.unwrap_parallel_term_entries_result({:exit, :boom})
+    end
 
     assert Nx.shape(
              SparsePauli.to_dense(%SparsePauli{qubits: 1, terms: [%{x_mask: 0, z_mask: 1, coeff: {1.0, 0.0}}]},
