@@ -36,16 +36,13 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
       parse_csv(content)
     else
       {:error, :unauthorized} ->
-        {:error,
-         %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unauthorized dataset path"}}
+        {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unauthorized dataset path"}}
 
       false ->
-        {:error,
-         %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset file not found"}}
+        {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "dataset file not found"}}
 
       {:error, _} ->
-        {:error,
-         %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unable to read dataset file"}}
+        {:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unable to read dataset file"}}
     end
   end
 
