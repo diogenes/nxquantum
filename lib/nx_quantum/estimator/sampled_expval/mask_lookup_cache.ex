@@ -45,8 +45,6 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
       [{^key, value}] -> {:ok, value}
       [] -> :miss
     end
-  rescue
-    _ -> :miss
   end
 
   defp store(key, value) do
@@ -58,8 +56,6 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
 
     :ets.insert(table, {key, value})
     :ok
-  rescue
-    _ -> :ok
   end
 
   defp ensure_table do
@@ -68,7 +64,7 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
         try do
           :ets.new(@table, [:named_table, :set, :public, read_concurrency: true, write_concurrency: true])
         rescue
-          _ -> @table
+          ArgumentError -> @table
         end
 
       _ ->
@@ -76,21 +72,15 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
     end
   end
 
-  defp table_size(table) do
-    case :ets.info(table, :size) do
-      size when is_integer(size) -> size
-      _ -> 0
-    end
-  rescue
-    _ -> 0
-  end
+  defp table_size(table), do: :ets.info(table, :size)
 
   defp evict_one(table) do
-    case :ets.first(table) do
-      :"$end_of_table" -> :ok
-      first_key -> :ets.delete(table, first_key)
+    first_key = :ets.first(table)
+
+    if first_key != :"$end_of_table" do
+      :ets.delete(table, first_key)
     end
-  rescue
-    _ -> :ok
+
+    :ok
   end
 end
