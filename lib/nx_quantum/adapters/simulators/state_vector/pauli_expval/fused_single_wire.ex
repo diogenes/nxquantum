@@ -120,7 +120,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
   defp apply_scale(value, scale), do: value * scale
 
   defp expectations_compiled(%Nx.Tensor{} = state, terms, qubits) do
-    wires = terms |> Enum.map(& &1.wire) |> Enum.uniq()
+    wires = terms |> Enum.uniq_by(& &1.wire) |> Enum.map(& &1.wire)
     backend = backend_from_state(state)
 
     %{selector: selector, signs: signs, flipped_indices: flipped_indices, wire_index: wire_index} =
