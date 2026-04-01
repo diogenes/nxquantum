@@ -13,6 +13,7 @@ defmodule NxQuantum.MixProject do
       deps: deps(),
       aliases: aliases(),
       test_ignore_filters: test_ignore_filters(),
+      test_coverage: test_coverage(),
       docs: docs(),
       dialyzer: dialyzer(),
       description: description(),
@@ -87,6 +88,7 @@ defmodule NxQuantum.MixProject do
       "test.unit": :test,
       "test.property": :test,
       "test.arch": :test,
+      "test.domain_coverage": :test,
       "test.features": :test,
       "test.provider_smoke": :test,
       "test.release_evidence": :test,
@@ -189,6 +191,12 @@ defmodule NxQuantum.MixProject do
     ]
   end
 
+  defp test_coverage do
+    [
+      summary: [threshold: 0]
+    ]
+  end
+
   defp description do
     "Pure-Elixir quantum circuit simulation and quantum machine learning primitives powered by Nx."
   end
@@ -208,10 +216,11 @@ defmodule NxQuantum.MixProject do
   defp aliases do
     [
       setup: ["local.hex --force", "local.rebar --force", "deps.get"],
-      quality: ["format --check-formatted", "credo --strict", "test.arch", "test"],
+      quality: ["format --check-formatted", "credo --strict", "test.arch", "test.domain_coverage"],
       "test.unit": ["test test/nx_quantum"],
       "test.property": ["test test/property"],
       "test.arch": ["test test/architecture"],
+      "test.domain_coverage": ["cmd elixir scripts/enforce_domain_coverage.exs"],
       "test.features": ["test test/features/features_test.exs"],
       "test.provider_smoke": [
         "test test/nx_quantum/providers_capabilities_test.exs test/nx_quantum/provider_adapters_test.exs test/nx_quantum/provider_bridge_test.exs test/nx_quantum/provider_azure_adapter_test.exs test/nx_quantum/provider_google_quantum_ai_adapter_test.exs test/nx_quantum/observability_test.exs",
