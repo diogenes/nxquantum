@@ -14,6 +14,7 @@ mix setup
 - `mix test.unit`
 - `mix test.property`
 - `mix test.arch`
+- `mix test.domain_coverage`
 - `mix test.features`
 - `mix test.provider_smoke`
 - `mix test.release_evidence`
@@ -43,8 +44,10 @@ mise exec -- mix ci
 ## 4) Deterministic Quality Gates
 - Baseline gate: `mix quality`
 - Contract gate: `mix test.arch` and relevant provider contract suites
-- Verification gate: `mix test.features`, `mix test.unit`, `mix test.property`
+- Verification gate: `mix test.features`, `mix test.unit`, `mix test.property`, `mix test.domain_coverage`
 - Release gate: `mix ci`
+
+`mix test.domain_coverage` is a hard gate: all configured domain modules must be at `100.00%` line coverage.
 
 Benchmark evidence is required for non-trivial performance work under `bench/` with fixed seeds and reproducible runtime settings.
 

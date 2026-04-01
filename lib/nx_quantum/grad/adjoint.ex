@@ -150,10 +150,6 @@ defmodule NxQuantum.Grad.Adjoint do
   defp full_gate_matrix(%GateOperation{name: :cnot, wires: [control, target]}, qubits),
     do: cnot_matrix(control, target, qubits)
 
-  defp full_gate_matrix(%GateOperation{name: name}, _qubits) do
-    raise Error.new(:unsupported_gradient_mode, %{operation: name, mode: :adjoint})
-  end
-
   defp d_gate_matrix(%GateOperation{name: :rx, wires: [wire], params: params}, qubits),
     do: full_single_wire_matrix(dr_x_matrix(Map.fetch!(params, :theta)), wire, qubits)
 
@@ -162,14 +158,6 @@ defmodule NxQuantum.Grad.Adjoint do
 
   defp d_gate_matrix(%GateOperation{name: :rz, wires: [wire], params: params}, qubits),
     do: full_single_wire_matrix(dr_z_matrix(Map.fetch!(params, :theta)), wire, qubits)
-
-  defp d_gate_matrix(%GateOperation{name: name}, _qubits) when name in [:h, :x, :y, :z, :cnot] do
-    Nx.tensor([[0.0]], type: {:c, 64})
-  end
-
-  defp d_gate_matrix(%GateOperation{name: name}, _qubits) do
-    raise Error.new(:unsupported_gradient_mode, %{operation: name, mode: :adjoint})
-  end
 
   defp initial_state(qubits) do
     size = trunc(:math.pow(2, qubits))

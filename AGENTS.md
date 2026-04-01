@@ -63,6 +63,7 @@ Stop immediately and report when any of these occurs:
 - failing `mix dialyzer` when contract-affecting code changed
 - missing acceptance coverage for user-visible behavior
 - missing contract tests for port/provider changes
+- failing `mix test.domain_coverage` (domain modules must remain at 100% line coverage)
 - missing benchmark delta for non-trivial performance work
 - docs drift between implementation and `README`/`docs/*`
 - missing mandatory handoff format
