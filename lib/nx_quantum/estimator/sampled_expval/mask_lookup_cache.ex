@@ -72,7 +72,12 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
     end
   end
 
-  defp table_size(table), do: :ets.info(table, :size)
+  defp table_size(table) do
+    case :ets.info(table, :size) do
+      size when is_integer(size) -> size
+      _ -> 0
+    end
+  end
 
   defp evict_one(table) do
     first_key = :ets.first(table)
