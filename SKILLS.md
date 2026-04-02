@@ -1,6 +1,7 @@
 # NxQuantum Skills
 
 ## Active Skill Set
+- `skills/principal-architect-product-strategy/SKILL.md`
 - `skills/spec-feature/SKILL.md`
 - `skills/architecture-review/SKILL.md`
 - `skills/api-dx/SKILL.md`

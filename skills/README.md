@@ -3,6 +3,7 @@
 Skills are reusable workflows for autonomous and human contributors.
 
 ## Available Skills
+- `principal-architect-product-strategy`
 - `spec-feature`
 - `architecture-review`
 - `api-dx`

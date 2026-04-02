@@ -32,14 +32,22 @@ mise exec -- mix ci
 ## 3) Core Behavior-First Loop
 1. Define or update behavior in `features/*.feature` with deterministic acceptance criteria.
 2. Map scenario ownership in `docs/bounded-context-map.md`.
-3. Write failing tests first:
+3. Run `principal-architect-product-strategy` on the implementation plan before Builder work.
+4. Write failing tests first:
    - feature steps in `test/features/steps/*_steps.ex`
    - unit/property/contract tests in `test/`
-4. Builder stage: implement minimal change in domain/application first.
-5. Critic stage: run architecture review for boundary and coupling violations.
-6. Verifier stage: run deterministic quality gates.
-7. Sync docs, examples, and roadmap references.
-8. Emit handoff using the required `AGENTS.md` format.
+5. Builder stage: implement minimal change in domain/application first.
+6. Critic stage: run architecture review for boundary and coupling violations.
+7. Verifier stage: run deterministic quality gates.
+8. Sync docs, examples, and roadmap references.
+9. Emit handoff using the required `AGENTS.md` format.
+
+### 3.1) Plan Review Gate Criteria (`principal-architect-product-strategy`)
+- Confirm user outcome and roadmap fit are explicit and measurable.
+- Confirm bounded-context ownership and dependency direction are explicit.
+- Confirm API stability impact and migration expectations are explicit.
+- Confirm deterministic verification and benchmark evidence strategy exists before implementation.
+- Record pass/fail plus risks in handoff `Plan review`.
 
 ## 4) Deterministic Quality Gates
 - Baseline gate: `mix quality`
@@ -53,6 +61,7 @@ Benchmark evidence is required for non-trivial performance work under `bench/` w
 
 ## 5) PR Expectations
 - State change intent (`feature`, `refactor`, `api change`, `performance`, `provider integration`, `release`).
+- Include `principal-architect-product-strategy` review outcome and risk notes.
 - List selected skills and resulting artifacts.
 - Include deterministic evidence (tests/benchmarks/docs).
 - Call out risks, assumptions, and next best step.

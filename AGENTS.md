@@ -25,29 +25,31 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 
 ## Default Execution Sequence
 1. Clarify behavior and acceptance criteria.
-2. Confirm architecture boundaries and owning bounded context.
-3. Write failing deterministic tests first.
-4. Implement the minimal solution.
-5. Wire adapters behind ports.
-6. Run quality gates.
-7. Update docs and examples.
-8. Produce handoff.
+2. Run `principal-architect-product-strategy` plan review (product quality + architecture quality).
+3. Confirm architecture boundaries and owning bounded context.
+4. Write failing deterministic tests first.
+5. Implement the minimal solution.
+6. Wire adapters behind ports.
+7. Run quality gates.
+8. Update docs and examples.
+9. Produce handoff.
 
-## Producer -> Critic -> Verifier Loop (Required)
-1. Builder: implement the smallest behavior-complete change.
-2. Critic: challenge boundary integrity, coupling, and API drift before merge.
-3. Verifier: prove determinism and coverage with acceptance/unit/property/contract checks.
-4. Docs Sync: align `README`, `docs/`, playbooks, and roadmap references.
+## Plan -> Producer -> Critic -> Verifier Loop (Required)
+1. Principal Architect + Product Strategist: review the plan for product-fit clarity, architecture boundary safety, API stability risk, and deterministic evidence strategy before code changes.
+2. Builder: implement the smallest behavior-complete change.
+3. Critic: challenge boundary integrity, coupling, and API drift before merge.
+4. Verifier: prove determinism and coverage with acceptance/unit/property/contract checks.
+5. Docs Sync: align `README`, `docs/`, playbooks, and roadmap references.
 
 ## Change-Intent Routing Matrix
 | Change intent | Required skills |
 | --- | --- |
-| feature | `spec-feature`, `verification`, `docs-sync` |
-| refactor | `refactor-ddd`, `architecture-review`, `verification`, `docs-sync` |
-| api change | `api-dx`, `verification`, `architecture-review`, `docs-sync` |
-| performance | `kernel-performance`, `verification`, `architecture-review`, `docs-sync` |
-| provider integration | `spec-feature`, `architecture-review`, `verification`, `docs-sync` |
-| release | `release-readiness`, `docs-sync` |
+| feature | `principal-architect-product-strategy`, `spec-feature`, `verification`, `docs-sync` |
+| refactor | `principal-architect-product-strategy`, `refactor-ddd`, `architecture-review`, `verification`, `docs-sync` |
+| api change | `principal-architect-product-strategy`, `api-dx`, `verification`, `architecture-review`, `docs-sync` |
+| performance | `principal-architect-product-strategy`, `kernel-performance`, `verification`, `architecture-review`, `docs-sync` |
+| provider integration | `principal-architect-product-strategy`, `spec-feature`, `architecture-review`, `verification`, `docs-sync` |
+| release | `principal-architect-product-strategy`, `release-readiness`, `docs-sync` |
 
 ## Stop Rules
 Stop immediately and report when any of these occurs:
@@ -57,6 +59,7 @@ Stop immediately and report when any of these occurs:
 - accidental API-breaking change without explicit `api change` intent
 - new dependency introduced without architecture ownership and justification
 - unclear bounded-context ownership
+- missing or failed `principal-architect-product-strategy` plan review before Builder stage
 
 ## Merge Blockers
 - failing `mix quality`
@@ -66,6 +69,7 @@ Stop immediately and report when any of these occurs:
 - failing `mix test.domain_coverage` (domain modules must remain at 100% line coverage)
 - missing benchmark delta for non-trivial performance work
 - docs drift between implementation and `README`/`docs/*`
+- missing plan-review evidence from `principal-architect-product-strategy` in handoff
 - missing mandatory handoff format
 
 ## HANDOFF
@@ -73,6 +77,7 @@ Stop immediately and report when any of these occurs:
 ### Changed files
 ### Behavior impact
 ### Architecture impact
+### Plan review
 ### Evidence
 - Commands run:
 - Tests:
