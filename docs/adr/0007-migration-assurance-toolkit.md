@@ -1,6 +1,6 @@
 # ADR 0007: Migration Assurance Toolkit (Additive Library APIs)
 
-- Status: Proposed
+- Status: Deferred (2026-10-19). Only the scoped `NxQuantum.Migration.AI*` rollout-gate slice shipped (0.9.0). The full toolkit is parked in `docs/vision.md` §11 until teams migrating Python workflows request it. The text below is kept as the design record.
 - Date: 2026-03-22
 
 ## Context

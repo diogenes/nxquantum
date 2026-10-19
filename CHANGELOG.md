@@ -19,8 +19,8 @@
 ### References
 
 - [docs/roadmap.md](docs/roadmap.md)
-- [docs/v1.0-hybrid-quantum-ai-benchmark.md](docs/v1.0-hybrid-quantum-ai-benchmark.md)
-- [docs/v1.0-hybrid-quantum-ai-integration-guide.md](docs/v1.0-hybrid-quantum-ai-integration-guide.md)
+- [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
+- [docs/hybrid-quantum-ai-integration-guide.md](docs/hybrid-quantum-ai-integration-guide.md)
 - [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 
 ## [0.9.1] - 2026-03-29
@@ -39,10 +39,10 @@
 ### References
 
 - [docs/roadmap.md](docs/roadmap.md)
-- [docs/v0.9-high-value-performance-matrix.md](docs/v0.9-high-value-performance-matrix.md)
-- [docs/v0.9-phase-a-sampled-scalar-plan.md](docs/v0.9-phase-a-sampled-scalar-plan.md)
-- [docs/v0.9-phase-b-fused-kernel-runtime-plan.md](docs/v0.9-phase-b-fused-kernel-runtime-plan.md)
-- [docs/v0.9-phase-c-batch-gap-closure-plan.md](docs/v0.9-phase-c-batch-gap-closure-plan.md)
+- [docs/performance-matrix.md](docs/performance-matrix.md)
+- [docs/archive/v0.9-phase-a-sampled-scalar-plan.md](docs/archive/v0.9-phase-a-sampled-scalar-plan.md)
+- [docs/archive/v0.9-phase-b-fused-kernel-runtime-plan.md](docs/archive/v0.9-phase-b-fused-kernel-runtime-plan.md)
+- [docs/archive/v0.9-phase-c-batch-gap-closure-plan.md](docs/archive/v0.9-phase-c-batch-gap-closure-plan.md)
 
 ## [0.9.0] - 2026-03-25
 
@@ -50,9 +50,9 @@
 
 - v0.9 roadmap closure for Phases 19-21 (Quantum AI tool contracts, hybrid benchmark pack, rollout gates) with docs and acceptance coverage.
 - Phase A/B/C performance-gap closure plans and evidence docs:
-  - `docs/v0.9-phase-a-sampled-scalar-plan.md`
-  - `docs/v0.9-phase-b-fused-kernel-runtime-plan.md`
-  - `docs/v0.9-phase-c-batch-gap-closure-plan.md`
+  - `docs/archive/v0.9-phase-a-sampled-scalar-plan.md`
+  - `docs/archive/v0.9-phase-b-fused-kernel-runtime-plan.md`
+  - `docs/archive/v0.9-phase-c-batch-gap-closure-plan.md`
   - `docs/python-alternatives-benchmark-2026-03-25.md`
 - Runtime-profile fused-kernel guard coverage:
   - `test/nx_quantum/batch_fused_kernel_runtime_profile_guard_test.exs`
@@ -66,7 +66,7 @@
 ### References
 
 - [docs/roadmap.md](docs/roadmap.md)
-- [docs/v0.9-high-value-performance-matrix.md](docs/v0.9-high-value-performance-matrix.md)
+- [docs/performance-matrix.md](docs/performance-matrix.md)
 - [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
 
 ## [0.8.0] - 2026-03-24
@@ -87,11 +87,11 @@
 
 ### References
 
-- [docs/v0.8-feature-spec.md](docs/v0.8-feature-spec.md)
-- [docs/v0.8-provider-live-execution-plan.md](docs/v0.8-provider-live-execution-plan.md)
-- [docs/v0.8-provider-capability-matrix.md](docs/v0.8-provider-capability-matrix.md)
-- [docs/v0.8-compiler-implementation-plan.md](docs/v0.8-compiler-implementation-plan.md)
-- [docs/v0.9-high-value-performance-matrix.md](docs/v0.9-high-value-performance-matrix.md)
+- [docs/archive/v0.8-feature-spec.md](docs/archive/v0.8-feature-spec.md)
+- [docs/archive/v0.8-provider-live-execution-plan.md](docs/archive/v0.8-provider-live-execution-plan.md)
+- [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
+- [docs/archive/v0.8-compiler-implementation-plan.md](docs/archive/v0.8-compiler-implementation-plan.md)
+- [docs/performance-matrix.md](docs/performance-matrix.md)
 
 ## [0.7.0] - 2026-03-23
 
@@ -110,10 +110,10 @@
 ### References
 
 - [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
-- [docs/python-alternatives-benchmark-2026-03-23-rerun.md](docs/python-alternatives-benchmark-2026-03-23-rerun.md)
-- [docs/v0.7-feature-spec.md](docs/v0.7-feature-spec.md)
-- [docs/v0.7-acceptance-criteria.md](docs/v0.7-acceptance-criteria.md)
-- [docs/v0.7-feature-to-step-mapping.md](docs/v0.7-feature-to-step-mapping.md)
+- [docs/archive/python-alternatives-benchmark-2026-03-23-rerun.md](docs/archive/python-alternatives-benchmark-2026-03-23-rerun.md)
+- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
+- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
+- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
 
 ## [0.5.0] - 2026-03-22
 
@@ -135,9 +135,9 @@
 
 ### References
 
-- [docs/v0.5-feature-spec.md](docs/v0.5-feature-spec.md)
-- [docs/v0.5-acceptance-criteria.md](docs/v0.5-acceptance-criteria.md)
-- [docs/v0.5-provider-implementation-plan.md](docs/v0.5-provider-implementation-plan.md)
-- [docs/v0.5-migration-packs.md](docs/v0.5-migration-packs.md)
-- [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
-- [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
+- [docs/archive/v0.5-feature-spec.md](docs/archive/v0.5-feature-spec.md)
+- [docs/archive/v0.5-acceptance-criteria.md](docs/archive/v0.5-acceptance-criteria.md)
+- [docs/archive/v0.5-provider-implementation-plan.md](docs/archive/v0.5-provider-implementation-plan.md)
+- [docs/migration-packs.md](docs/migration-packs.md)
+- [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
+- [docs/provider-support-catalog.md](docs/provider-support-catalog.md)

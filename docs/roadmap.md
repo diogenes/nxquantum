@@ -1,710 +1,416 @@
 # NxQuantum Roadmap
 
-## Versioning Policy Update (2026-03-29)
-
-1. `v1.0` is intentionally postponed until there is clear, reproducible evidence of production-grade workload adoption.
-2. Near-term releases continue on `0.x` (`v0.10`, `v0.11`, ...) while preserving stable-contract discipline.
-3. Existing document filenames that include `v1.0` are kept as artifact names; they do not imply a package major-version bump.
-4. `v1.0` promotion requires explicit release evidence beyond feature completion:
-   - production usage evidence,
-   - stability/operability evidence across release gates,
-   - benchmark and rollout evidence tied to real workload classes.
-
-## Phase 0 - Foundation (current)
-
-- [x] Project scaffolding.
-- [x] Architecture docs + ADR baseline.
-- [x] API and behavior skeletons.
-- [x] Feature spec definitions.
-- [x] v0.2 feature specification draft.
-- [x] v0.2 improvement plan draft.
-
-## Phase 1 - v0.2 P0: Correctness + Runtime Profiles
-
-- [x] Implement deterministic 1-2 qubit state-vector evolution with analytical reference scenarios.
-- [x] Implement expectation values for Pauli observables (`:pauli_x`, `:pauli_y`, `:pauli_z`).
-- [x] Add property tests for normalization and gate composition (1-2 qubits).
-- [x] Stabilize runtime profile contract (`cpu_portable`, `cpu_compiled`, `nvidia_gpu_compiled`, `torch_interop_runtime`).
-- [x] Implement deterministic fallback policy (`strict`, `allow_cpu_compiled`).
-- [x] Add executable feature scenarios for backend and hybrid-training deterministic behavior.
-
-Milestone A review gate (before Phase 2):
-
-1. Feature scenarios explicitly cover 1-2 qubit deterministic evolution and Pauli expectation references.
-2. Property coverage includes both gate-composition invariants and state normalization invariants.
-3. Runtime profile/fallback behaviors are covered by executable deterministic scenarios.
-
-## Phase 2 - v0.2 P1: Differentiation, Noise, and Optimization
-
-- [x] Move gate application path into `Nx.Defn` kernels.
-- [x] Add gradient modes (`backprop`, `parameter_shift`, optional `adjoint`).
-- [x] Add seeded shots and initial noise channels.
-- [x] Add deterministic circuit optimization pass pipeline.
-- [x] Add benchmark suite and baseline reports.
-
-Milestone B review gate (before Phase 3):
-
-1. Simulator gate application and expectation hot paths execute via explicit `Nx.Defn` kernels.
-2. Differentiation modes (`backprop`, `parameter_shift`, `adjoint`) are covered by deterministic acceptance tests.
-3. Seeded shot sampling and initial noise channels (depolarizing + amplitude damping) are covered by executable scenarios/tests.
-4. Optimization pipeline (`simplify`, `fuse`, `cancel`) preserves expectations and emits deterministic reduction reports.
-5. Benchmark suite and baseline report are committed under `bench/` with reproducible run instructions.
-
-## Phase 3 - v0.2 P2: Advanced ML Workflows
-
-- [x] Quantum kernel matrix generation API.
-- [x] Axon layer integration polish and end-to-end examples.
-- [x] Additional model recipes and tutorials.
-
-Milestone C review gate (before Phase 4):
-
-1. `NxQuantum.Kernels.matrix/2` provides deterministic, seed-aware kernel matrix generation.
-2. Kernel matrix workflows are validated by executable feature and unit coverage (shape, symmetry, PSD/reproducibility).
-3. Axon integration workflow is documented with end-to-end runnable examples.
-4. Additional model recipes/tutorial docs are published and linked from the README.
-
-## Phase 4 - Ecosystem Readiness
-
-- [x] API stabilization.
-- [x] HexDocs polish.
-- [x] CI/CD and release automation.
-
-Milestone D review gate (before Phase 5):
-
-1. Public stable/experimental API contract is documented and guarded by executable contract tests.
-2. HexDocs navigation includes advanced integration/recipe/release guidance.
-3. CI validates core quality gates and backend smoke lanes with deterministic environment toggles.
-4. Release automation workflow builds package/docs artifacts on tags/manual dispatch.
-
-## Phase 5 - v0.3: Hardware-Ready Primitives and Batch Workflows
-
-- [x] Ship stable `Estimator` and `Sampler` primitives with deterministic typed contracts.
-- [x] Add batched PQC execution as a first-class API path.
-- [x] Add pluggable mitigation pipeline (readout + ZNE baseline).
-- [x] Add topology-aware transpilation interface with deterministic shortest-path routing.
-- [x] Add dynamic-circuit IR foundation (validation + metadata) with explicit no-execution boundary.
-- [x] Publish v0.3 spec and feature-to-step mappings.
-
-Milestone E review gate (v0.3 foundation):
-
-1. Primitive facades (`Estimator`, `Sampler`) have deterministic typed contracts and API export guards.
-2. Batched estimator/sampler APIs are first-class and validated by executable feature and unit tests.
-3. Mitigation and transpilation facades are deterministic and feature-covered.
-4. Dynamic IR validation and explicit no-execution runtime boundary are implemented in `NxQuantum.DynamicIR`.
-5. v0.3 spec includes feature-to-step mapping and aligns with implemented foundation behavior.
-
-## Known Gaps (Post-v0.3 Foundation)
-
-1. Hardware-provider depth is still early (job lifecycle/calibration/provider-specific contracts need expansion).
-
-## Phase 6 - v0.4 P0: Dynamic Execution + Hardware Bridges
-
-- [x] Implement dynamic-circuit runtime execution for supported IR nodes (mid-circuit measurement + feed-forward branches).
-- [x] Add provider-facing job lifecycle contracts (`submit`, `poll`, `cancel`, typed result retrieval).
-- [x] Add first provider bridge adapter behind ports with deterministic typed error mapping.
-- [x] Extend mitigation hooks to accept hardware calibration payload contracts.
-
-Milestone F review gate (before Phase 7):
-
-1. Dynamic IR execution works for the approved v0.4 subset and remains typed/deterministic.
-2. Provider bridge integration is behind explicit ports/adapters and has contract tests.
-3. Hardware execution and mitigation calibration paths are covered by executable acceptance scenarios.
-
-## Phase 7 - v0.4 P1: Scale and Performance
-
-- [x] Add large-scale simulator fallback path (tensor-network/MPS-oriented strategy).
-- [x] Improve batched execution path for `batch >= 32` with deterministic shape/performance contracts.
-- [x] Publish cross-profile benchmark matrix (latency, throughput, memory) with reproducible scripts.
-- [x] Add regression thresholds for performance-sensitive paths in CI reporting.
-
-Milestone G review gate (before Phase 8):
-
-1. Large-scale simulator fallback is callable through stable facades.
-2. Benchmarks show measurable gains for targeted batch/size ranges versus current baseline.
-3. Performance reports are reproducible and versioned in-repo.
-
-## Phase 8 - v0.4 P2: Product Positioning vs Python-First Alternatives
-
-- [x] Publish side-by-side workflow docs for identical tasks (estimation, sampling, kernels, transpilation) vs Python-first stacks.
-- [x] Add migration playbooks from common Python quantum workflows into Elixir/NxQuantum patterns.
-- [x] Provide Livebook-first tutorials and runnable end-to-end recipe packs for ML teams.
-- [x] Publish a clear decision matrix: when NxQuantum is the better fit and when Python-first tooling is still preferable.
-- [x] Add at least one public case-study style benchmark narrative focused on BEAM integration value.
-
-Milestone H review gate (positioning readiness):
-
-1. Positioning docs make differentiators explicit without hiding current limitations.
-2. Migration guides and side-by-side examples are runnable and verified.
-3. Public narrative is backed by reproducible data (benchmarks and workflow evidence), not only claims.
-
-## Known Gaps (Post-v0.4 Positioning)
-
-1. Core provider set production adapters were not yet implemented end-to-end at this stage (`IBM Runtime`, `AWS Braket`, `Azure Quantum`).
-2. Provider-specific lifecycle differences (state models, cancellation semantics, calibration/result payloads) are not yet normalized in a public contract.
-3. Migration assets still require provider-specific implementation guidance and executable acceptance mapping.
-
-## Phase 9 - v0.5 P0: Production Provider Bridges (IBM Runtime + AWS Braket)
-
-- [x] Finalize provider capability contract (`supports_estimator`, `supports_sampler`, `supports_dynamic`, `supports_cancel_in_running`, `supports_calibration_payload`).
-- [x] Implement `NxQuantum.Adapters.Providers.IBMRuntime` behind `NxQuantum.Ports.Provider` with typed lifecycle/error mapping.
-- [x] Implement `NxQuantum.Adapters.Providers.AwsBraket` behind `NxQuantum.Ports.Provider` with typed lifecycle/error mapping.
-- [x] Add provider credential/config envelope with deterministic redaction and typed configuration diagnostics.
-- [x] Add deterministic fixture-backed contract tests for IBM Runtime and AWS Braket lifecycle transitions.
-- [x] Publish v0.5 specification and provider implementation playbook:
-  - `docs/v0.5-feature-spec.md`
-  - `docs/v0.5-provider-implementation-plan.md`
-- [x] Add provider architecture ADR set:
-  - `docs/adr/0002-provider-capability-contract-v1.md`
-  - `docs/adr/0003-ibm-runtime-provider-adapter.md`
-  - `docs/adr/0004-aws-braket-provider-adapter.md`
-  - `docs/adr/0005-azure-quantum-provider-adapter.md`
-  - `docs/adr/0006-opentelemetry-observability-standard.md`
-
-Milestone I review gate (before Phase 10):
-
-1. IBM Runtime and AWS Braket adapters execute `submit`, `poll`, `cancel`, and `fetch_result` through `NxQuantum.ProviderBridge`.
-2. Provider-specific statuses/errors are mapped into stable typed NxQuantum contracts.
-3. Unsupported capability requests fail fast with typed diagnostics (no silent fallback across providers).
-4. Feature/contract tests are reproducible via deterministic fixtures and CI smoke lanes.
-
-## Phase 10 - v0.5 P1: Azure Quantum + Cross-Provider Normalization
-
-- [x] Implement `NxQuantum.Adapters.Providers.AzureQuantum` behind `NxQuantum.Ports.Provider`.
-- [x] Normalize target-selection and capability-discovery contract across IBM/AWS/Azure.
-- [x] Add provider-specific cancellation/terminal-state policy handling with explicit metadata.
-- [x] Normalize calibration/result payload ingestion envelopes across the core provider set.
-- [x] Add cross-provider contract scenarios for typed lifecycle equivalence and portability boundaries.
-- [x] Implement OpenTelemetry observability profile support (`high_level`, `granular`, `forensics`) for provider lifecycle traces, logs, and metrics.
-- [x] Add deterministic experiment fingerprint and portability-delta telemetry contracts for cross-provider comparability.
-
-Milestone J review gate (before Phase 11):
-
-1. Azure Quantum lifecycle behavior is integrated with typed provider-specific caveat metadata.
-2. Capability discovery contract is stable and documented across all providers in the core provider set.
-3. Cross-provider scenario suite validates deterministic typed behavior for equivalent workflows.
-4. CI includes provider smoke lanes and deterministic fixture lanes for all adapters in the core provider set.
-5. OpenTelemetry schema/contracts are stable and profile-driven observability behavior is acceptance-covered.
-
-## Phase 11 - v0.5 P2: Migration Packs, Adoption Assets, and Release Hardening
-
-- [x] Publish provider-specific migration packs (Qiskit Runtime -> NxQuantum, Braket workflows -> NxQuantum, Azure workflows -> NxQuantum).
-  - `docs/v0.5-migration-packs.md`
-- [x] Publish runnable side-by-side tutorials for equivalent workloads on the core provider set (estimation, sampling, transpilation constraints).
-  - `examples/livebook/provider_bridge_side_by_side.livemd`
-  - `docs/livebook-tutorials.md`
-- [x] Publish benchmark matrix with reproducible scripts and explicit provider caveats.
-  - `bench/milestone_k.exs`
-  - `docs/v0.5-benchmark-matrix.md`
-- [x] Add support-tier policy (`stable`, `beta`, `experimental`) and release-note templates per provider adapter.
-  - `docs/v0.5-provider-support-tiers.md`
-- [x] Publish observability conventions guide and starter dashboards for core provider set workflows.
-  - `docs/observability.md`
-  - `docs/observability-dashboards.md`
-- [x] Complete release-quality gates for v0.5 provider support path.
-
-Milestone K review gate (v0.5 readiness):
-
-1. Core provider set adapters are documented with explicit support tiers, limits, and typed failure contracts.
-2. Migration/tutorial assets are executable and traceable to acceptance scenarios.
-3. Benchmark and case-study evidence are reproducible and tied to exact runtime/provider profiles.
-4. v0.5 release checklist is green (`mix quality`, `mix dialyzer`, docs build, provider smoke lanes).
-5. Observability artifacts (traces/logs/metrics conventions + dashboards) are published and validated.
-
-## Known Gaps (Post-v0.5 Provider Foundation)
-
-1. v0.5 post-foundation gaps were addressed in Phase 12 (v0.6) contract completion and adapter hardening.
-
-## Phase 12 - v0.6: Contract Completion and Adapter Hardening
-
-- [x] Harden provider adapter transport seams for optional live smoke lanes while preserving fixture-first deterministic defaults.
-- [x] Convert remaining scaffold-only provider scenario step modules into executable assertion-driven behavior checks.
-- [x] Add targeted unit/property checks for newly completed provider scenario families.
-- [x] Align v0.5/v0.6 docs and release evidence status wording for consistency.
-- [x] Publish v0.6 feature specification:
-  - `docs/v0.6-feature-spec.md`
-- [x] Publish v0.6 acceptance criteria and feature-to-step execution mapping:
-  - `docs/v0.6-acceptance-criteria.md`
-  - `docs/v0.6-feature-to-step-mapping.md`
-
-Milestone L/M/N review gate (v0.6 readiness):
-
-1. No scaffold-only provider step modules remain for scoped v0.6 scenarios.
-2. Fixture lanes remain deterministic and reproducible across repeated runs.
-3. Optional live smoke-lane readiness is validated without public API contract drift.
-4. Roadmap/spec/acceptance/release docs are internally consistent for v0.6 status.
-
-## Phase 13 - v0.7: Standalone Production Hardening + External Operations Interoperability
-
-- [x] Stabilize external operations integration contracts (capability/lifecycle/error envelope versioning + deterministic serialization).
-- [x] Harden observability schema governance and adapter strategy across `high_level`, `granular`, and `forensics`.
-- [x] Publish standalone production and external integration profile guidance with executable examples.
-- [x] Add release evidence checks for contract stability and schema compatibility.
-- [x] Publish v0.7 feature specification:
-  - `docs/v0.7-feature-spec.md`
-- [x] Publish v0.7 acceptance criteria and feature-to-step execution mapping:
-  - `docs/v0.7-acceptance-criteria.md`
-  - `docs/v0.7-feature-to-step-mapping.md`
-
-Milestone O/P/Q review gate (v0.7 readiness):
-
-1. Lifecycle/capability/error contracts are versioned, documented, and schema-tested.
-2. Observability schema and redaction/cardinality invariants are stable across profiles.
-3. Standalone production workflows remain green with no dependency on external orchestration systems.
-4. External clients can consume deterministic machine-readable contracts without undocumented parsing behavior.
-
-## Known Gaps (Post-v0.7 Standalone Hardening)
-
-1. Provider adapters remain fixture-first in practice; true remote execution on cloud hardware targets is not yet delivered behind the same typed contracts.
-2. Compilation/transpilation depth is still limited versus Python-first stacks for device-aware optimization and routing strategy breadth.
-3. Observability contracts are stable but troubleshooting depth (custom attributes, poll-phase diagnostics, retry/correlation detail) remains shallow for incident forensics.
-4. High-value cross-ecosystem performance evidence is still concentrated on simulator micro paths and does not yet cover full provider-lifecycle and production-like Q/ML rollout scenarios.
-
-## Phase 14 - v0.8 P0: Live Provider Execution (Core Provider Set) Behind Stable Contracts
-
-Goal:
-
-1. Deliver real cloud provider execution while preserving deterministic fixture parity and typed lifecycle contracts.
-
-Implementation deliverables:
-
-1. Implement real transport execution paths for `IBM Runtime`, `AWS Braket`, and `Azure Quantum` adapters while preserving fixture-first defaults.
-2. Add explicit transport mode contract (`fixture`, `live_smoke`, `live`) where `live_smoke` is readiness/contract-path validation and `live` is remote lifecycle execution, with typed failure semantics.
-3. Support actual remote lifecycle transitions (`submit`, `poll`, `cancel`, `fetch_result`) with provider-authenticated SDK/API calls.
-4. Add typed provider calibration/job metadata ingestion for live runs (queue context, provider job ids, terminal diagnostics).
-5. Add replay fixture capture tooling from live runs for deterministic regression lanes.
-6. Publish v0.8 provider execution spec and implementation plan:
-   - `docs/v0.8-feature-spec.md`
-   - `docs/v0.8-provider-live-execution-plan.md`
-7. Publish explicit capability status matrix for real hardware vs simulator execution paths:
-   - `docs/v0.8-provider-capability-matrix.md`
-
-Milestone R review gate (before Phase 15):
-
-1. Live-mode adapter paths execute remote tasks and return normalized typed envelopes.
-2. Fixture and live lanes share identical public contract shape (`schema_version`, `correlation_id`, `idempotency_key`).
-3. Provider-specific live failures map into stable typed NxQuantum error codes and metadata.
-4. CI keeps deterministic fixture gates mandatory and adds optional credentialed live verification lanes.
-
-## Phase 15 - v0.8 P1: Compilation and Transpilation Value Upgrade
-
-Goal:
-
-1. Deliver production-credible compiler/transpiler capabilities with deterministic diagnostics and measurable routing/optimization value.
-
-Implementation deliverables:
-
-1. Expand compiler/transpiler strategy set beyond deterministic shortest-path baseline (layout/routing/cost-model profiles).
-2. Add target-aware optimization profiles for depth-sensitive, latency-sensitive, and calibration-aware execution policies.
-3. Add deterministic compilation diagnostics for strategy decisions (selected heuristic, rejected alternatives, topology pressure indicators).
-4. Add provider-aware transpilation policy adapters that remain behind stable ports and explicit capability checks.
-5. Publish side-by-side compilation value narratives versus Qiskit/Cirq workflows (without parity theater).
-6. Add acceptance and property tests for semantic equivalence under new strategy profiles.
-7. Publish detailed compiler implementation and multi-agent handoff plan:
-   - `docs/v0.8-compiler-implementation-plan.md`
-
-Milestone S review gate (before Phase 16):
-
-1. New compilation profiles are selectable via stable public API contracts.
-2. Routing/optimization strategy decisions are reproducibly reported in machine-readable diagnostics.
-3. Scenario coverage includes topology-constrained circuits and confirms semantic preservation under all supported modes.
-4. Documentation clearly states where NxQuantum compiler value is stronger, equivalent, or currently behind alternatives.
-
-## Phase 16 - v0.8 P2: Observability and Troubleshooting 2.0
-
-Goal:
-
-1. Make provider and hybrid execution troubleshooting production-grade through richer deterministic observability contracts.
-
-Implementation deliverables:
-
-1. Add safe custom span/log attribute injection API with schema-governed allowlists and redaction enforcement.
-2. Expand lifecycle diagnostics to include poll-cycle summaries, retry metadata, terminal provider payload summaries, and queue/execution phase attribution.
-3. Add troubleshooting bundles for Q/ML engineers (single-run correlated trace/log/metric export with deterministic contract versioning).
-4. Add explicit support for user-provided correlation metadata propagation across provider bridge operations.
-5. Publish incident playbooks and updated dashboards for live-provider troubleshooting.
-6. Add acceptance tests for custom-attribute policy, cardinality guardrails, and redaction invariants.
-
-Milestone T review gate (before Phase 17):
-
-1. Users can add approved custom observability attributes without breaking schema/cardinality constraints.
-2. Troubleshooting output includes enough lifecycle context to isolate queue, execution, cancellation, and result-normalization failures.
-3. Redaction and sensitive-field protections remain deterministic under custom metadata paths.
-4. Observability adapter substitution still preserves lifecycle contract shape and deterministic behavior.
-
-## Phase 17 - v0.9 P0: Migration Assurance Toolkit (ADR 0007)
-
-Goal:
-
-1. Provide deterministic migration decision tooling for shadow-mode and promotion workflows.
-
-Implementation deliverables:
-
-1. Implement `NxQuantum.Migration.Manifest` for deterministic canonical workflow manifests and fingerprints.
-2. Implement `NxQuantum.Migration.Compare` with tolerance-budgeted output comparison contracts.
-3. Implement `NxQuantum.Migration.Gates` for CI-friendly promotion decisions.
-4. Implement `NxQuantum.Migration.Report` machine-readable export with explicit schema versioning.
-5. Add acceptance/property tests for manifest determinism, comparison correctness, and gate stability.
-6. Publish migration assurance docs and CI integration examples:
-   - `docs/v0.9-migration-assurance.md`
-
-Milestone U review gate (before Phase 18):
-
-1. Migration assurance APIs are additive and public-contract stable.
-2. Identical workflow inputs produce stable manifest/comparison/decision outputs.
-3. Tolerance gates support shadow-mode promotion decisions with typed failure reasons.
-4. Migration artifacts map cleanly to existing provider lifecycle and observability contracts.
-
-## Phase 18 - v0.9 P1: High-Value Performance Matrix for Q/ML Engineering Workloads
-
-Goal:
-
-1. Anchor performance claims in reproducible high-value workloads that match real Q/ML engineering decisions.
-
-Implementation deliverables:
-
-1. Establish benchmark tiers aligned to production-value use cases:
-   - repeated expectation on reused states,
-   - multi-observable batch estimation on medium qubit counts,
-   - sparse sampled-count expectation reduction,
-   - shot-heavy sampler throughput under batched parameter sweeps,
-   - provider-lifecycle latency under fixture and live lanes.
-2. Consolidate simulation-focused high-value scenarios into one deterministic harness:
-   - `bench/high_value_performance_matrix.exs`
-   - required scenario IDs:
-     - `state_reuse_8q_xy`
-     - `batch_obs_8q`
-     - `sampled_counts_sparse_terms`
-     - `shot_sweep_param_grid_v1`
-3. Add explicit shot-heavy parameter sweep scenario contracts and datasets:
-   - `bench/datasets/perf/shot_sweep_param_grid_v1.jsonl`
-   - `bench/datasets/perf/shot_sweep_param_grid_v1.manifest.json`
-   - include fixed shot tiers (`256`, `1024`, `4096`) and fixed parameter grid metadata.
-4. Split provider-lifecycle latency benchmarking into explicit lanes and scripts:
-   - fixture lane:
-     - `bench/provider_lifecycle_latency_fixture.exs` (can absorb/replace current `bench/milestone_k.exs`)
-   - live-smoke/live lanes:
-     - `bench/provider_lifecycle_latency_live.exs`
-   - required lifecycle phases:
-     - `submit`, `poll`, `cancel`, `fetch_result`.
-5. Add deterministic dataset/manifests for all Phase 18 scenarios:
-   - `bench/datasets/perf/state_reuse_8q_xy_v1.manifest.json`
-   - `bench/datasets/perf/batch_obs_8q_v1.manifest.json`
-   - `bench/datasets/perf/sampled_counts_sparse_terms_v1.manifest.json`
-   - manifest fields must include `dataset_id`, `schema_version`, `seed`, and `sha256`.
-6. Add explicit parity/position targets versus Qiskit/Cirq on prioritized scenarios with version-pinned reproducibility.
-7. Add CI regression guards for high-value scenarios (not only micro synthetic baselines):
-   - `test/nx_quantum/high_value_performance_guard_test.exs`
-   - `test/nx_quantum/provider_lifecycle_latency_guard_test.exs`
-8. Publish periodic benchmark reports and positioning summaries:
-   - `docs/python-alternatives-benchmark-YYYY-MM-DD.md`
-   - `docs/v0.9-high-value-performance-matrix.md`
-   - `docs/case-study-beam-integration.md` (updated)
-
-Scenario closure tracker (as of March 25, 2026):
-
-1. `[x]` repeated expectation on reused states (`state_reuse_8q_xy`) exists in python-comparison harness.
-2. `[x]` multi-observable batch estimation (`batch_obs_8q`) exists with regression guard.
-3. `[x]` sampled-count sparse reductions (`sampled_counts_sparse_terms`) exists in python-comparison harness.
-4. `[x]` shot-heavy parameter sweep formal dataset + matrix scenario + CI guard is implemented.
-5. `[x]` provider lifecycle live-lane latency (`submit/poll/cancel/fetch_result`) benchmark script and release evidence lane are implemented.
-6. `[x]` sampled small-workload strategy guard is implemented (`test/nx_quantum/sampled_small_workload_strategy_guard_test.exs`).
-7. `[x]` batch fused-kernel runtime-profile guard is implemented (`test/nx_quantum/batch_fused_kernel_runtime_profile_guard_test.exs`).
-8. `[x]` bounded deterministic evolved-state cache is implemented for repeated state-vector workloads (`lib/nx_quantum/adapters/simulators/state_vector.ex`).
-9. `[x]` latest 3-run matrix evidence is published (`docs/python-alternatives-benchmark-2026-03-25.md`) with requested threshold checks marked as met.
-
-Milestone V review gate (v0.9 readiness):
-
-1. Benchmark suite covers both simulator and provider-lifecycle workloads that reflect real Q/ML engineering tasks.
-2. Performance targets are explicit per scenario and tied to release gates.
-3. Reported comparisons are reproducible, version-pinned, and caveat-labeled.
-4. Roadmap/README/positioning docs consistently reflect measured strengths and remaining performance gaps.
+This is the execution source of truth: milestones, gates, and status.
+
+- Long-horizon direction, positioning, parked ideas, and non-goals live in [docs/vision.md](vision.md).
+- Release history lives in [CHANGELOG.md](../CHANGELOG.md).
+- NxQuantum is the execution engine. FluxQ, a separate project, is the control plane that consumes NxQuantum envelopes unchanged (see `docs/vision.md` §2).
+
+Restructured on 2026-10-18. The full pre-restructure phase text (Phases 0–23 and D1–D4) is preserved in git history (`git log -- docs/roadmap.md`, before this change).
+
+## Versioning Policy
+
+1. Releases continue on `0.x` while preserving stable-contract discipline. The latest published version is `0.11.0`.
+2. Filenames containing `v1.0` are artifact names, not version commitments. They are renamed in H1.1.
+3. `v1.0` promotion requires all of:
+   - at least one documented production user (direct or through FluxQ);
+   - envelope compatibility guarded by H1.2 and proven across two consecutive minor releases;
+   - release gates green (`mix quality`, `mix dialyzer`, `mix ci`, provider smoke lanes);
+   - every experimental public API either promoted to stable or explicitly excluded from the `v1.0` contract.
 
 ## Roadmap Scope Policy (Near-Term Execution Only)
 
-1. Roadmap entries must be short-to-medium horizon and have a clear implementation path.
-2. Long-horizon exploratory vision remains documented separately in:
-   - `docs/quantum-llm-vision.md`
+1. Detailed milestones cover Horizons 1 and 2 only. Each has a clear implementation path.
+2. Horizon 3 and parked ideas live in `docs/vision.md`. They enter this roadmap only through a decision gate or the research intake rule (`docs/vision.md` §12).
+3. Control-plane features (workflow state, queues, retries, persistence, scheduling or promotion policy, UI) are out of scope; they belong to FluxQ.
 
-## Milestone Template Policy (Required for All Unfinished Phases)
+## Milestone Template Policy (Required for All Unfinished Milestones)
 
-Every unfinished roadmap phase (currently Phase 14 onward) must include:
+Every unfinished milestone (`### H<horizon>.<n> - <name>`) must include:
 
-1. `Goal` section (explicit business/engineering outcome).
-2. `Implementation deliverables` section (concrete modules/files/features/tests/docs).
-3. Review gate with deterministic evidence criteria.
+1. Header fields: `Status`, `Intent` (from the AGENTS.md routing matrix), `Seats`, `Depends on`, `Target release`.
+2. `Goal:` section, with an explicit user or engineering outcome.
+3. `Implementation deliverables:` section, with concrete modules, files, tests, and docs. Paths marked *tentative* are fixed in the milestone's plan review or ADR.
+4. `Review gate:` section, with deterministic evidence criteria.
 
-## Phase 19 - v0.9 P2: Quantum AI Tool Interface Contracts
+Status values: `planned`, `in progress`, `done`.
+- `done` requires every deliverable to name its module, test, or CHANGELOG entry.
+- Seats refer to the agent-team roles in the process update of H1.1.
 
-Goal:
+## Current State (0.11.0)
 
-1. Ship a production-safe `NxQuantum.AI` tool-call contract layer so BEAM services/agents can invoke quantum workflows through deterministic typed envelopes.
+Strengths:
+- deterministic local simulation, fastest on 2–8 qubit workloads;
+- typed provider lifecycle across IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI (fixture, `live_smoke`, and `live` lanes);
+- OpenTelemetry observability;
+- AI tool contracts;
+- TurboQuant rerank.
 
-Implementation deliverables:
+Known gaps:
 
-1. Implement AI contract modules and facades:
-   - `lib/nx_quantum/ai.ex`
-   - `lib/nx_quantum/ai/request.ex`
-   - `lib/nx_quantum/ai/result.ex`
-   - `lib/nx_quantum/ai/tool_runner.ex`
-2. Define stable tool-call envelopes (`request`, `result`, `error`, `trace metadata`) and versioned serialization contract.
-3. Implement first two tool handlers with deterministic fallback behavior:
-   - quantum-kernel reranking request path,
-   - constrained optimization helper request path.
-4. Add acceptance/contract coverage:
-   - `features/quantum_ai_tool_contracts.feature`
-   - `test/features/steps/quantum_ai_tool_contracts_steps.ex`
-   - `test/nx_quantum/ai/tool_contract_test.exs`
-5. Add transport architecture contract for sync and async integration:
-   - `docs/adr/0011-ai-tool-transport-sync-async-contract.md`
-   - `lib/nx_quantum/ports/ai_tool_transport.ex`
-   - `lib/nx_quantum/adapters/ai_tool_transport/mcp_json_rpc_sync.ex`
-   - `lib/nx_quantum/adapters/ai_tool_transport/cloud_events_async.ex`
-6. Publish docs and runnable examples:
-   - `docs/v0.9-quantum-ai-tool-contracts.md`
+| ID | Gap | Addressed by |
+| --- | --- | --- |
+| KG-1 | `:tensor_network_fallback` is a routing label; no tensor-network engine executes it | Closed in H1.1: documented as routing-only (`docs/backend-support.md`, `Runtime` type comment); engine parked |
+| KG-2 | Phases 14–16 were never checked off | Closed in H1.1: audit recorded in Shipped History; partial items listed there |
+| KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Open: H1.4 |
+| KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
+| KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | H1.3 |
+| KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
+| KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
+| KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
+| KG-9 | No git tags for published versions | H1.1 (owner action) |
 
-Implementation status checklist (as of March 25, 2026):
+---
 
-1. `[x]` AI contract modules and facade are implemented (`NxQuantum.AI`, request/result envelopes, tool runner).
-2. `[x]` Stable envelope contract with versioned `schema_version`, typed result/error/fallback shape, and trace/correlation metadata is implemented.
-3. `[x]` First two deterministic tool handlers are implemented (`quantum-kernel reranking`, `constrained optimization helper`) with explicit fallback policy behavior.
-4. `[x]` Acceptance/contract coverage is implemented:
-   - `features/quantum_ai_tool_contracts.feature`
-   - `test/features/steps/quantum_ai_tool_contracts_steps.ex`
-   - `test/nx_quantum/ai/tool_contract_test.exs`
-5. `[x]` Sync/async transport architecture contract is implemented behind ports/adapters:
-   - `docs/adr/0011-ai-tool-transport-sync-async-contract.md`
-   - `lib/nx_quantum/ports/ai_tool_transport.ex`
-   - `lib/nx_quantum/adapters/ai_tool_transport/mcp_json_rpc_sync.ex`
-   - `lib/nx_quantum/adapters/ai_tool_transport/cloud_events_async.ex`
-6. `[x]` v0.9 tool contract documentation is published (`docs/v0.9-quantum-ai-tool-contracts.md`).
+## Horizon 1 - Honest, Evidenced, Embeddable (Q4 2026 – Q1 2027)
 
-Milestone W review gate (before Phase 20):
+Order: H1.1 first. H1.2, H1.3, and H1.4 then run in parallel. H1.5 comes after H1.3, because decision D1 shapes the messaging.
 
-1. AI-tool contract envelopes are additive, versioned, and machine-consumable.
-2. Deterministic fallback behavior is explicit and acceptance-covered.
-3. Integration consumers can parse typed responses without provider-specific coupling.
-4. Sync and async transport paths are both defined behind stable ports/adapters.
-5. Docs/examples are executable and aligned with public APIs.
+### H1.1 - Status Truth and Docs Consolidation
 
-## Phase 20 - v0.9 P3: Hybrid Quantum AI Evaluation and Benchmark Pack
+- Status: in progress (PR open; see Decision Log)
+- Intent: refactor (docs and process)
+- Seats: Lead, Docs sync (claims audit), Verifier
+- Depends on: owner approval of `docs/vision.md` and this roadmap
+- Target release: none
 
 Goal:
 
-1. Add a reproducible benchmark/evaluation pack that measures where hybrid quantum-AI workflows outperform, match, or underperform classical baselines.
+1. Every status claim in the repo matches the code.
+2. Living docs are findable without version-name archaeology.
+3. The agent team and quality gates are codified where contributors read them.
 
 Implementation deliverables:
 
-1. Implement benchmark harness scripts:
-   - `bench/hybrid_quantum_ai_benchmark.exs`
-   - `bench/hybrid_quantum_ai_baseline.exs`
-   - `bench/hybrid_quantum_ai_report.exs`
-2. Implement scoped benchmark scenarios with pinned datasets/seeds and explicit classical baselines:
-   - reranking-quality delta scenarios,
-   - constrained optimization assistant scenarios,
-   - latency and fallback impact scenarios.
-3. Add CI-reportable benchmark gate checks:
-   - `test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`
-4. Publish benchmark evidence and integration guide:
-   - `docs/v0.9-hybrid-quantum-ai-benchmark.md`
-   - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+1. Audit Phase 14–16 deliverables against the code. Record shipped items and gaps in the Shipped History table below and add gaps to Known Gaps.
+2. Document `:tensor_network_fallback` as routing-only (`docs/backend-support.md`; `NxQuantum.Runtime` type docs).
+3. Set ADR 0007 status to `Deferred`, with a pointer to `docs/vision.md` §11.
+4. Execute the Docs Consolidation Plan (below), updating every reference:
+   - `README.md`, `CHANGELOG.md` links, `mix.exs` extras;
+   - `AGENTS.md` required reading, `skills/*/SKILL.md`, `bench/README.md`;
+   - `test/features/steps/provider_cross_platform_rollout_steps.ex`;
+   - FluxQ `docs/architecture/fluxq-control-plane-monorepo-proposal.md`.
+5. Process update (owner approval required, because `AGENTS.md` changes):
+   - add activation-by-intent seats and the veto table to the `AGENTS.md` Plan → Producer → Critic → Verifier loop;
+   - add `skills/quantum-physics-verification/SKILL.md`;
+   - add the research-intake checklist to `skills/principal-architect-product-strategy/SKILL.md`;
+   - add the claims-audit checklist to `skills/docs-sync/SKILL.md`;
+   - Elixir code quality stays advisory (owner decision, 2026-10-18).
+6. Owner action (outward-facing): create git tags for published Hex versions.
 
-Implementation status checklist (as of March 25, 2026):
+Review gate:
 
-1. `[x]` Hybrid benchmark harness scripts are implemented:
-   - `bench/hybrid_quantum_ai_benchmark.exs`
-   - `bench/hybrid_quantum_ai_baseline.exs`
-   - `bench/hybrid_quantum_ai_report.exs`
-2. `[x]` Scoped benchmark scenario families are implemented with pinned seed and explicit classical baseline fields:
-   - reranking-quality delta
-   - constrained optimization assistant
-   - fallback latency impact
-3. `[x]` CI-reportable benchmark guard coverage is implemented (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`).
-4. `[x]` Benchmark evidence docs are published:
-   - `docs/v0.9-hybrid-quantum-ai-benchmark.md`
-   - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+1. Every `done` row in Shipped History names a module, test, or CHANGELOG entry.
+2. `mix docs.build`, `mix test.features`, and `mix test test/nx_quantum/roadmap_structure_test.exs` are green.
+3. Manual link check passes for changed docs, including FluxQ's links into NxQuantum.
 
-Milestone X review gate (before Phase 21):
+### H1.2 - FluxQ Integration Contract Guard
 
-1. Hybrid benchmarks are reproducible and version-pinned.
-2. Every reported gain includes a classical baseline and caveat notes.
-3. Fallback and failure-path behavior is measured and documented.
-4. Evidence is sufficient for migration-go/no-go decisions.
-
-## Phase 21 - v0.9 P4: Quantum AI Production Promotion Gates
+- Status: planned
+- Intent: api change (additive), provider integration
+- Seats: Lead, DX, Quantum engineering, Critic, Verifier
+- Depends on: H1.1
+- Target release: 0.12.0
 
 Goal:
 
-1. Ship deterministic rollout gates so teams can promote or block hybrid quantum-AI workflows in production using typed decisions and reproducible evidence.
-
-Dependency:
-
-1. Requires Phase 20 benchmark outputs.
-2. `[ ]` Original dependency on the full Phase 17 Migration Assurance Toolkit remains deferred in this cycle.
-3. `[x]` This phase currently ships a scoped `NxQuantum.Migration.AI*` rollout-gate slice, pending full Phase 17 consolidation.
+1. FluxQ can persist and later resume NxQuantum jobs from stored envelopes.
+2. Any envelope shape change is caught in NxQuantum CI before it reaches FluxQ.
 
 Implementation deliverables:
 
-1. Implement AI promotion gate modules:
-   - `lib/nx_quantum/migration/ai_gates.ex`
-   - `lib/nx_quantum/migration/ai_report.ex`
-2. Implement rollout gate flow with typed decision outputs:
-   - `promote`, `hold`, `rollback`.
-3. Extend observability for AI-tool calls with request correlation:
-   - `lib/nx_quantum/observability/profile_strategy/*` updates
-   - `test/nx_quantum/observability_ai_tool_calls_test.exs`
-4. Add acceptance/contract coverage:
-   - `features/quantum_ai_rollout_gates.feature`
-   - `test/features/steps/quantum_ai_rollout_gates_steps.ex`
-   - `test/nx_quantum/migration/ai_gates_test.exs`
-5. Publish production rollout playbook:
-   - `docs/v0.9-quantum-ai-rollout-playbook.md`
+1. Deterministic golden snapshots of serialized job, result, and error envelopes for every core provider in the fixture lane (*tentative*: `test/fixtures/contracts/envelopes/`).
+2. A snapshot test that fails on any shape change unless `schema_version` is bumped (*tentative*: `test/nx_quantum/contracts/envelope_snapshot_test.exs`).
+3. A rehydration path: decode a serialized job envelope and resume it through `ProviderBridge` `poll`/`fetch_result`. This is an additive decode function if none exists (KG-7).
+4. An envelope compatibility policy in `docs/api-stability.md`:
+   - `schema_version` semantics and deprecation window;
+   - the snapshot location that FluxQ's G2 gate consumes.
 
-Implementation status checklist (as of March 25, 2026):
+Review gate:
 
-1. `[x]` AI promotion gate modules are implemented:
-   - `lib/nx_quantum/migration/ai_gates.ex`
-   - `lib/nx_quantum/migration/ai_report.ex`
-2. `[x]` Rollout gate flow with typed decision outputs is implemented (`promote`, `hold`, `rollback`).
-3. `[x]` Observability correlation coverage for AI tool lifecycle/decision metadata is implemented and tested (`test/nx_quantum/observability_ai_tool_calls_test.exs`).
-4. `[x]` Acceptance/contract coverage is implemented:
-   - `features/quantum_ai_rollout_gates.feature`
-   - `test/features/steps/quantum_ai_rollout_gates_steps.ex`
-   - `test/nx_quantum/migration/ai_gates_test.exs`
-5. `[x]` v0.9 rollout playbook is published (`docs/v0.9-quantum-ai-rollout-playbook.md`).
+1. Snapshots are byte-identical across 3 runs.
+2. The serialize → decode → poll → fetch round-trip contract test is green for all core providers (fixture lane).
+3. `mix test.release_evidence` and `mix dialyzer` are green.
+4. FluxQ's G2 gate references the snapshot path; that change is tracked in the FluxQ roadmap.
 
-Milestone Y review gate (v0.9 readiness):
+### H1.3 - Evidence Refresh
 
-1. Hybrid AI promotion decisions are deterministic, typed, and CI-friendly.
-2. Observability provides enough context to isolate quantum-vs-classical path failures.
-3. Rollout artifacts are reproducible and actionable for release decisions.
-4. Public docs clearly distinguish implemented capabilities from research backlog.
-
-## Phase 22 - v0.10 P0: TurboQuant-Inspired Parallel Rerank Compression
+- Status: planned
+- Intent: performance (evidence only)
+- Seats: Lead, Quantum physics/math, Verifier, Product marketing (claims audit)
+- Depends on: H1.1
+- Target release: none (bench and docs)
 
 Goal:
 
-1. Deliver deterministic, BEAM-parallel, TurboQuant-inspired vector compression for AI reranking workflows behind stable typed contracts.
+1. Public speed and quality claims rest on current, version-pinned evidence with stated limits.
+2. Hybrid quantum-AI reranking gets a real-data verdict, which feeds D1.
 
 Implementation deliverables:
 
-1. Add vector quantization port and deterministic TurboQuant-inspired adapter:
-   - `lib/nx_quantum/ports/vector_quantizer.ex`
-   - `lib/nx_quantum/adapters/vector_quantization/turbo_quant.ex`
-2. Add dedicated kernel-rerank tool module with deterministic parallel execution strategy:
-   - `lib/nx_quantum/ai/tools/kernel_rerank.ex`
-   - `lib/nx_quantum/ai/tools/kernel_rerank/execution_strategy.ex`
-   - `lib/nx_quantum/ai/tool_runner.ex` delegation update
-3. Preserve backward compatibility and add versioned tool-name alias support:
-   - `quantum-kernel reranking`
-   - `quantum_kernel_rerank.v1`
-4. Add deterministic test coverage for quantization behavior and parallel/scalar parity:
-   - `test/nx_quantum/ai/tool_contract_test.exs`
-   - `test/nx_quantum/adapters/vector_quantization/turbo_quant_test.exs`
-   - `test/nx_quantum/ai/kernel_rerank_execution_strategy_test.exs`
-5. Add benchmark evidence lanes and guards:
-   - `bench/hybrid_quantum_ai_benchmark.exs` TurboQuant scenario
-   - `bench/turboquant_rerank_benchmark.exs`
-   - `test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`
-6. Publish user-facing docs and integration guidance:
-   - `docs/turboquant-rerank-guide.md`
-   - updates in `README.md`, `docs/v1.0-hybrid-quantum-ai-benchmark.md`, `docs/v1.0-hybrid-quantum-ai-integration-guide.md`, and `bench/README.md`
+1. Rerun `bench/python_alternatives_benchmark.py` against current pinned Qiskit 2.x, PennyLane, and Cirq releases (versions recorded in the report), using 3-run means.
+2. Add 12, 16, 20, and 24 qubit scenarios, and state the crossover point where NxQuantum stops winning.
+3. Publish `docs/python-alternatives-benchmark-<date>.md` and archive the 2026-03-25 report.
+4. Add a real-data rerank lane, BEIR SciFact first and NFCorpus second:
+   - verify licenses before use;
+   - commit a fetch script plus a provenance manifest (source URL, license, embedding model and version, dimensionality-reduction method, seed, `sha256`); raw data is not committed;
+   - decide the embedding-generation path in plan review. Bumblebee would be a dev-only dependency that needs architecture justification; the alternative is offline generation with a pinned model.
+5. Publish nDCG@10 against the classical baseline in the hybrid benchmark doc, regardless of outcome.
+6. Record decision D1 in the Decision Log.
 
-Implementation status checklist (as of March 28, 2026):
+Review gate:
 
-1. `[x]` Vector quantization port and deterministic TurboQuant-inspired adapter are implemented.
-2. `[x]` Kernel-rerank tool module supports quantized embedding mode with deterministic parallel strategy.
-3. `[x]` Legacy and versioned rerank tool names are both supported without API breakage.
-4. `[x]` Deterministic tests cover quantizer behavior and parallel/scalar parity.
-5. `[x]` Benchmark scripts and guards include TurboQuant rerank evidence lanes.
-6. `[x]` User docs and benchmark guidance are updated for TurboQuant usage.
+1. Reports are version-pinned, 3-run, and caveat-labeled.
+2. README speed claims cite the new report, including the crossover.
+3. The rerank result and its classical baseline are published.
+4. D1 is recorded with its rationale.
 
-Milestone Z review gate (before next roadmap phase):
+### H1.4 - Compiler Correctness Suite
 
-1. TurboQuant rerank path is deterministic for fixed seed and yields stable ranked outputs across repeated runs.
-2. Parallel and scalar lanes produce equivalent ranking outputs under the same inputs and seed.
-3. Benchmark artifacts include quality, latency, and memory evidence for TurboQuant scenario lanes.
-4. Public docs describe capability boundaries and avoid claiming simulator-core quantization support.
-
-## Phase 23 - v0.11 P0: TurboQuant Production Gate Hardening + Dataset Onboarding
+- Status: planned
+- Intent: feature (verification)
+- Seats: Quantum physics/math (acceptance owner), Critic, Verifier
+- Depends on: H1.1
+- Target release: 0.12.0 (only if fixes land)
 
 Goal:
 
-1. Make TurboQuant rerank workflows production-usable by adding deterministic dataset onboarding and KPI-based rollout gates.
+1. Every compiler and transpiler rewrite is proven semantics-preserving by deterministic property tests against analytic references. This closes KG-3.
 
 Implementation deliverables:
 
-1. Extend kernel-rerank execution metadata for production diagnostics and deterministic cache signaling:
-   - `lib/nx_quantum/ai/tools/kernel_rerank.ex`
-   - `lib/nx_quantum/ai/tools/kernel_rerank/execution_strategy.ex`
-   - `lib/nx_quantum/ai/tools/kernel_rerank/quantized_cache.ex`
-2. Add user dataset ingestion for rerank workflows and benchmark lanes:
-   - `lib/nx_quantum/ai/tools/kernel_rerank/dataset_csv.ex`
-   - `bench/datasets/rerank/rq_small_v1.csv`
-   - `bench/datasets/rerank/rq_medium_v1.csv`
-   - `bench/hybrid_quantum_ai_benchmark.exs`
-   - `bench/turboquant_rerank_benchmark.exs`
-3. Extend AI promotion gates with TurboQuant KPI thresholds:
-   - `lib/nx_quantum/migration/ai_gates.ex`
-   - `test/nx_quantum/migration/ai_gates_test.exs`
-4. Publish docs/playbook updates for rollout operators and onboarding:
-   - `docs/turboquant-rerank-guide.md`
-   - `docs/v0.9-quantum-ai-rollout-playbook.md`
-   - `docs/v1.0-hybrid-quantum-ai-benchmark.md`
-   - `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
-   - `bench/README.md`
+1. A gate-identity catalog as test support, with each identity tagged with the pass it justifies: `simplify`, `fuse`, `cancel`, `resynthesize_1q`, swap insertion (*tentative*: `test/support/gate_identities.ex`).
+2. A property test over random circuits of up to 6 qubits, with fixed seeds (*tentative*: `test/property/compiler_semantic_equivalence_property_test.exs`). Each pass and the full pipeline must preserve the unitary up to global phase.
+3. Routing equivalence: a routed circuit equals the original up to the reported qubit permutation.
+4. A QFT reference test: QFT built from gates matches `Nx.fft` on the state vector, up to normalization and sign convention.
 
-Implementation status checklist (as of March 29, 2026):
+Review gate:
 
-1. `[x]` Cache-aware TurboQuant rerank metadata and strategy diagnostics are implemented and deterministic.
-2. `[x]` CSV dataset ingestion path for `quantum_kernel_rerank.v1` is implemented with typed validation.
-3. `[x]` Benchmark scripts accept dataset-path/query-id lanes and include versioned rerank dataset manifests.
-4. `[x]` AI rollout gates include TurboQuant KPI threshold checks and typed decision codes.
-5. `[x]` User docs and rollout playbooks include dataset onboarding and promotion-gate KPI mapping.
+1. The suites are green across 3 fixed seed sets.
+2. Every defect found is fixed together with a regression test.
+3. `mix test.domain_coverage` stays at 100%.
 
-Milestone AA review gate (before next roadmap phase):
+### H1.5 - Adoption Launch
 
-1. Production promotion checks can enforce TurboQuant KPI budgets using deterministic typed outputs.
-2. User-provided rerank datasets can be consumed without custom adapter code or unstable input contracts.
-3. Benchmark and rollout docs remain aligned with implemented behavior and field names.
-4. Changes remain additive and preserve existing public API compatibility.
+- Status: planned
+- Intent: feature (DX and docs)
+- Seats: Product marketing (owner), DX, Product strategy, Docs sync
+- Depends on: H1.3 (D1)
+- Target release: none (docs)
 
-## Proposed Backlog (Not Scheduled in Roadmap)
+Goal:
 
-1. Additional provider-native analog/non-gate-model workflow support remains unscheduled beyond v0.9.
-2. End-to-end quantum-native LLM architecture research remains outside short-to-medium execution scope and is tracked in `docs/quantum-llm-vision.md`.
+1. Target users know NxQuantum exists and reach a first result within 10 minutes.
+2. The team learns which features users actually value.
 
-## v0.9.1 Follow-up Hardening (Phase D1-D4)
+Implementation deliverables:
 
-Release target: `v0.9.1` (additive hardening; no stable contract breakage).
+1. Refresh positioning according to D1:
+   - update `README.md` and `docs/getting-started.md`;
+   - merge `docs/decision-matrix.md` into `docs/product-positioning.md`, updating `AGENTS.md` and skill references.
+2. Three Livebooks:
+   - embedding NxQuantum in a supervised BEAM service;
+   - researcher reproducibility (fingerprints, seeded replay, classical-baseline comparison);
+   - hybrid rerank on real data if D1 keeps it as the lead message, otherwise provider lifecycle across lanes.
+3. A launch write-up and Elixir Forum post based on H1.3 evidence (owner publishes).
+4. A Kano survey of at least 10 target users (Elixir Forum, ElixirConf, FluxQ early users). Its results reclassify the hypotheses in `docs/vision.md` §6.
+5. A joint "FluxQ powered by NxQuantum" narrative, aligned with FluxQ's positioning docs.
 
-### Phase D1 - Runtime Auto-Selection (Opt-in, Estimator-first)
+Review gate:
 
-1. `[x]` Add `runtime_profile: :auto` support to estimator runtime resolution paths.
-2. `[x]` Implement deterministic auto-lane chooser:
-   - portable preferred for fused single-wire batch observable shapes;
-   - portable preferred for sampled scalar-small workloads;
-   - otherwise compiled preferred with deterministic portable fallback.
-3. `[x]` Expose requested/resolved runtime selection reason in estimator result metadata.
-4. `[x]` Strategic Refactoring pass + full development-flow gates + D1 commit.
+1. The claims audit passes.
+2. Time-to-first-result of 10 minutes or less is measured on a clean machine (the same KPI FluxQ uses).
+3. Survey results are recorded.
+4. At least one external user candidate is named.
 
-### Phase D2 - Compiled Fused Kernel Cost Reduction
+---
 
-1. `[x]` Cache/reuse compiled fused per-wire tensor scaffolding (`indices`/mask-derived scaffolding) by qubits+wire.
-2. `[x]` Preserve portable/compiled numeric parity under strict tolerances.
-3. `[x]` Keep fused eligibility/fallback behavior unchanged.
-4. `[x]` Strategic Refactoring pass + full development-flow gates + D2 commit.
+## Horizon 2 - Distributed Execution Engine (2027)
 
-### Phase D3 - Cache Policy + Hot/Cold Matrix
+Entry: H1.1 and H1.2 done. Distribution here is within a single job. Orchestration across jobs stays in FluxQ.
 
-1. `[x]` Upgrade evolved-state cache with byte-aware cap + TTL + deterministic oldest-first eviction.
-2. `[x]` Preserve `cache_evolved_state: false` bypass behavior.
-3. `[x]` Add hot/cold cache modes in benchmark harness (`hot` default).
-4. `[x]` Produce/report both modes for key scenarios (`batch_obs_8q`, `sampled_counts_sparse_terms`, `deep_6q`).
-5. `[x]` Strategic Refactoring pass + full development-flow gates + D3 commit.
+### H2.1 - Distributed Execution Core
 
-### Phase D4 - Observability + CI Guard Tightening
+- Status: planned
+- Intent: feature, api change (additive, experimental)
+- Seats: Lead, Critic (DDD/hexagonal), DX, Quantum physics/math (seed semantics), Verifier
+- Depends on: H1.1, H1.2
+- Target release: 0.13.0
 
-1. `[x]` Add estimator strategy observability metadata (requested/resolved profile, strategy tags, cache status, selection reason).
-2. `[x]` Add blocking hot-lane guard for `batch_obs_8q` and non-blocking cold-lane artifact/report validation.
-3. `[x]` Update docs/roadmap evidence with dual-lane results and guard semantics.
-4. `[x]` Strategic Refactoring pass + full development-flow gates + D4 commit.
+Goal:
+
+1. One NxQuantum job (parameter sweep, batched estimation, shot partitioning) fans out across BEAM nodes.
+2. It returns results identical to single-node execution for the same seed, and survives node loss.
+
+Implementation deliverables:
+
+1. ADR 0012, "Distributed execution context". It defines:
+   - bounded-context ownership and within-job scope;
+   - the ports;
+   - the determinism model: per-task seeds derived from the job seed and task index, plus a virtual-time mode for trace determinism.
+2. Ports for cluster membership, placement, and dispatch, and for virtual vs wall-clock time (*tentative*: `NxQuantum.Ports.Cluster`, `NxQuantum.Ports.Clock`).
+3. Adapters: single-node, and Erlang distribution (`:erpc`, `:pg`). Both are OTP built-ins, so no new dependency is needed.
+4. An experimental facade for distributed sweep and batch execution. Results carry per-task provenance: node, seed, attempt.
+5. Within-job fault handling: a lost task is re-dispatched with the same seed. There is no job-level persistence (FluxQ owns that).
+6. Fan-out telemetry spans with correlation ids, consumable by FluxQ.
+7. Tests:
+   - a feature file;
+   - a property test that the same seed gives identical results on 1 vs N nodes;
+   - a virtual-time test for identical event traces;
+   - a node-kill test using `:peer` nodes with identical results;
+   - `mix test.arch` boundary checks;
+   - a `docs/bounded-context-map.md` update.
+8. A throughput benchmark from 1 to 4 local peer nodes, with fixed seeds.
+
+Review gate:
+
+1. All deterministic tests above are green in CI.
+2. The benchmark delta is published.
+3. Decision D2 is recorded.
+
+### H2.2 - Distributed Circuit Cutting
+
+- Status: planned
+- Intent: feature
+- Seats: Quantum physics/math (owner), Quantum engineering, Critic, Verifier
+- Depends on: H2.1 (D2 passed)
+- Target release: 0.14.0
+
+Goal:
+
+1. Circuits larger than one simulator or device budget run as fragments across nodes and providers.
+2. Results are reconstructed with a stated sampling overhead.
+
+Implementation deliverables:
+
+1. A physics-owned acceptance spec covering:
+   - supported cut types (wire cuts first);
+   - quasi-probability reconstruction;
+   - the sampling-overhead formula.
+2. A deterministic cut planner for a restricted circuit class, fragment execution through H2.1, and reconstruction.
+3. Diagnostics: cut count, sampling overhead, per-fragment provenance.
+4. Docs that state that overhead grows exponentially with the number of cuts.
+
+Review gate:
+
+1. Reconstructed expectations match uncut dense results within analytic tolerance on fixed fixtures of up to 12 qubits.
+2. The physics seat has verified the overhead formula.
+3. A benchmark against single-node execution is published.
+
+### H2.3 - Distributed Runs in FluxQ and Launch
+
+- Status: planned
+- Intent: feature (DX and docs)
+- Seats: Lead, DX, Product marketing, Verifier
+- Depends on: H2.1; H2.2 for fragment views
+- Target release: 0.15.0
+
+Goal:
+
+1. Operators run and inspect distributed NxQuantum jobs through FluxQ.
+2. The first external team adopts distributed execution.
+
+Implementation deliverables:
+
+1. Fan-out task and fragment fields added to the H1.2 envelope snapshots, with a `schema_version` bump.
+2. A multi-node Livebook demo and `docs/distributed-execution-guide.md`.
+3. An external-user case study, with permission.
+4. FluxQ run-detail views for fan-out, tracked in the FluxQ roadmap.
+
+Review gate:
+
+1. FluxQ's G2 gate is green against the new snapshots.
+2. At least one external team runs distributed jobs.
+3. The claims audit passes.
+4. Decision D3 is recorded.
+
+---
+
+## Later - Horizon 3 (gated; see `docs/vision.md` §7)
+
+| Milestone | Owner | Entry gate |
+| --- | --- | --- |
+| H3.1 Systems twin alpha | NxQuantum | D3 |
+| H3.2 Policy testing on the twin | FluxQ | H3.1 exit |
+| H3.3 Twin to live | NxQuantum | H3.1 exit, plus vendor control hooks |
+| H3.4 Network control-plane exploration | FluxQ | Partner or testbed interest |
+
+## Decision Log
+
+| Gate | Question (see `docs/vision.md` §8) | Status | Decision and rationale |
+| --- | --- | --- | --- |
+| D1 | Hybrid quantum-AI stays the lead message? | pending (after H1.3) | — |
+| D2 | Determinism holds under distribution? | pending (after H2.1) | — |
+| D3 | Enter Horizon 3? | pending (after H2.3) | — |
+
+Decisions already taken (2026-10-18):
+- Elixir code quality is advisory, not a merge blocker.
+- v0.8 is published; the repo code is the final state.
+- The Qiskit C API adapter is opt-in only, and parked.
+- The Clifford simulator is demand-driven, and parked.
+- The control plane is FluxQ.
+
+## Docs Consolidation Plan (executed in H1.1, 2026-10-19)
+
+Every action requires updating references in the same change.
+
+**Delete** (redundant):
+
+| File | Reason |
+| --- | --- |
+| `docs/quantum-llm-vision.md` | Replaced by `docs/vision.md` |
+| `docs/roadmap-review-2026-10-18.md`, `docs/strategy-distributed-beam-2026-10-18.md` | Proposals absorbed into `docs/vision.md` and this roadmap |
+| `docs/v0.9-quantum-ai-tool-contracts.md`, `docs/v0.9-hybrid-quantum-ai-benchmark.md` | Pointer-only files (13–14 lines) |
+
+**Rename** (living docs carrying misleading version names):
+
+| From | To |
+| --- | --- |
+| `docs/v1.0-quantum-ai-tool-contracts.md` | `docs/quantum-ai-tool-contracts.md` |
+| `docs/v1.0-hybrid-quantum-ai-benchmark.md` | `docs/hybrid-quantum-ai-benchmark.md` |
+| `docs/v1.0-hybrid-quantum-ai-integration-guide.md` | `docs/hybrid-quantum-ai-integration-guide.md` |
+| `docs/v0.9-high-value-performance-matrix.md` | `docs/performance-matrix.md` |
+| `docs/v0.5-migration-packs.md` | `docs/migration-packs.md` |
+| `docs/v0.5-benchmark-matrix.md` | `docs/provider-benchmark-matrix.md` |
+| `docs/v0.9-quantum-ai-rollout-playbook.md` | `docs/playbooks/quantum-ai-rollout.md` |
+
+**Merge:**
+
+| From | Into |
+| --- | --- |
+| `docs/v0.5-provider-support-tiers.md`, `docs/v0.8-provider-capability-matrix.md` | `docs/provider-support-catalog.md` (name kept; FluxQ links to it) |
+| `docs/decision-matrix.md` | `docs/product-positioning.md` (in H1.5, after D1) |
+
+**Archive** to `docs/archive/` (history only). Deviation from plan: archived files stay in the HexDocs extras under their new paths, because CHANGELOG links to them would otherwise fail `mix docs.build`.
+- Feature specs and plans:
+  - `v0.2-feature-spec`, `v0.2-improvement-plan`, `v0.3-feature-spec`, `v0.4-feature-spec`;
+  - `v0.5-feature-spec`, `v0.5-acceptance-criteria`, `v0.5-provider-implementation-plan`;
+  - `v0.6-feature-spec`, `v0.6-acceptance-criteria`, `v0.6-feature-to-step-mapping`;
+  - `v0.7-feature-spec`, `v0.7-acceptance-criteria`, `v0.7-feature-to-step-mapping`;
+  - `v0.8-feature-spec`, `v0.8-provider-live-execution-plan`, `v0.8-compiler-implementation-plan`, `v0.8-compiler-agent-prompts`;
+  - `v0.9-phase-a-sampled-scalar-plan`, `v0.9-phase-b-fused-kernel-runtime-plan`, `v0.9-phase-c-batch-gap-closure-plan`.
+- Design notes and old benchmark runs:
+  - `kernel-optimization-design-2026-03-23`;
+  - `python-alternatives-benchmark-2026-03-21`, `-2026-03-23`, `-2026-03-23-rerun`.
+
+Outcome: about 60 docs become about 25 living docs, plus ADRs, playbooks, and the archive. HexDocs for already-published versions keep their old URLs.
+
+## Shipped History (condensed)
+
+Full phase text is in git history. Status per row is pending the H1.1 audit where noted.
+
+| Phases | Release | Theme | Status |
+| --- | --- | --- | --- |
+| 0–4 | pre-0.5.0 (no CHANGELOG entries) | Foundation, state-vector correctness, gradients, noise, kernels, Axon, API stabilization, CI | done |
+| 5–8 | pre-0.5.0 | Estimator/Sampler primitives, batching, mitigation, transpilation, dynamic IR, Python-alternative positioning | done, except Phase 7's tensor-network path (KG-1) |
+| 9–11 | 0.5.0 | Provider bridges (IBM, AWS, Azure), cross-provider normalization, OpenTelemetry, migration packs | done |
+| 12 | `v0.6` label (no CHANGELOG entry) | Contract completion, adapter hardening | done |
+| 13 | 0.7.0 | Versioned external contracts, observability schema governance | done |
+| 14 | 0.8.0 | Live provider transport (`:fixture`/`:live_smoke`/`:live`), replay fixture capture, lifecycle envelope parity | shipped (code audited 2026-10-19); live credentialed evidence not in repo |
+| 15 | 0.8.0 | Compiler `compile/2` diagnostics, routing strategies (`shortest_path`, `sabre_like`), calibration profiles, scheduling reports | partial: provider-aware transpilation adapters and side-by-side compiler narrative not found; semantic property tests missing (KG-3) |
+| 16 | 0.8.0 | Custom observability metadata validation (allowlist, cardinality, redaction), correlation metadata, troubleshooting bundles, dashboards | partial: `docs/playbooks/observability.md` is 26 lines; live-provider incident playbooks not yet written |
+| 17 | — | Migration Assurance Toolkit (ADR 0007) | not delivered; ADR set to Deferred; scoped `Migration.AI*` slice shipped (0.9.0) |
+| 18 | 0.8.0–0.9.0 | High-value performance matrix and guards | done |
+| 19–21 | 0.9.0 | AI tool contracts, hybrid benchmark pack, AI rollout gates | done (synthetic data, KG-5) |
+| D1–D4 | 0.9.1 | Runtime auto-selection, fused-kernel cost, cache policy, CI guards | done |
+| 22–23 | 0.11.0 (`v0.10` + `v0.11` labels) | TurboQuant rerank compression, dataset onboarding, KPI gates | done |

@@ -17,9 +17,9 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 | Feature delivery | `docs/roadmap.md`, `docs/development-flow.md`, `docs/bounded-context-map.md` |
 | Architecture/refactor | `docs/architecture.md`, `docs/bounded-context-map.md`, relevant `docs/adr/*.md` |
 | API/DX | `docs/api-stability.md`, `docs/development-flow.md`, `README.md` |
-| Positioning/docs | `README.md`, `docs/product-positioning.md`, `docs/quantum-llm-vision.md`, `docs/decision-matrix.md`, latest `docs/python-alternatives-benchmark-*.md` |
+| Positioning/docs | `README.md`, `docs/product-positioning.md`, `docs/vision.md`, `docs/decision-matrix.md`, latest `docs/python-alternatives-benchmark-*.md` |
 | Verification | `docs/testing-strategy.md`, `docs/development-flow.md` |
-| Kernel/performance | `docs/v0.9-high-value-performance-matrix.md`, `docs/python-alternatives-benchmark-2026-03-25.md`, `docs/axon-integration.md` |
+| Kernel/performance | `docs/performance-matrix.md`, `docs/python-alternatives-benchmark-2026-03-25.md`, `docs/axon-integration.md` |
 | Provider integration/contracts | `docs/playbooks/provider-contracts.md`, `docs/migration-python-playbook.md`, `docs/python-comparison-workflows.md` |
 | Release | `docs/release-process.md`, `docs/playbooks/provider-release-hardening.md`, `CHANGELOG.md` |
 
@@ -40,6 +40,28 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 3. Critic: challenge boundary integrity, coupling, and API drift before merge.
 4. Verifier: prove determinism and coverage with acceptance/unit/property/contract checks.
 5. Docs Sync: align `README`, `docs/`, playbooks, and roadmap references.
+
+### Agent Team (activation by intent)
+Seats advise in parallel; the Lead merges their notes into the single plan review. Builder starts only after that merge. Conflicts are decided by the Lead and recorded in the handoff `Plan review`. Evidence beats advocacy: a contested claim is cut back until evidence supports it.
+
+| Intent | Seats active |
+| --- | --- |
+| feature | Lead, Product strategy, DX, Critic, Verifier, Docs |
+| api change | Lead, DX, Critic, Verifier, Docs |
+| performance | Lead, Quantum physics/math, Critic, Verifier (benchmark), Docs |
+| provider integration | Lead, Quantum engineering, Critic, Verifier (contract tests), Docs |
+| refactor | Lead, Critic, Verifier |
+| release | Lead, Release readiness, Verifier, Docs |
+
+Vetoes (each maps to a stop rule or merge blocker):
+- Critic (architecture): domain or application depends on adapter or provider detail.
+- DX: public API change without `api change` intent.
+- Quantum physics/math: numerical claim without analytic reference or tolerance.
+- Quantum engineering: live-hardware outcome claimed as deterministic.
+- Verifier: `mix quality` or domain coverage fails; performance work lacks benchmark delta.
+- Docs sync (claims audit): claim lacks in-repo evidence.
+- Elixir code quality: advisory only (owner decision 2026-10-18); findings go to handoff `Risks`.
+
 
 ## Change-Intent Routing Matrix
 | Change intent | Required skills |

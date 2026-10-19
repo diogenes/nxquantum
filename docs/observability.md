@@ -305,6 +305,6 @@ CI gates (recommended):
 ## Related Docs
 
 1. `docs/adr/0006-opentelemetry-observability-standard.md`
-2. `docs/v0.5-feature-spec.md`
-3. `docs/v0.5-provider-implementation-plan.md`
+2. `docs/archive/v0.5-feature-spec.md`
+3. `docs/archive/v0.5-provider-implementation-plan.md`
 4. `docs/roadmap.md`

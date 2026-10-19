@@ -66,7 +66,7 @@ All timings below are `per_op_ms` (lower is better).
 
 ## Delta vs Previous Report (`2026-03-21`)
 
-Reference: `docs/python-alternatives-benchmark-2026-03-21.md`.
+Reference: `docs/archive/python-alternatives-benchmark-2026-03-21.md`.
 
 1. `baseline_2q`: NxQuantum (`cpu_portable`) improved from `0.032224` to `0.024738` ms/op (`-23.23%`).
 2. `deep_6q`: NxQuantum (`cpu_portable`) improved from `0.336410` to `0.181695` ms/op (`-45.99%`).

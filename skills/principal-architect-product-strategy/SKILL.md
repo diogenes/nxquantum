@@ -10,7 +10,7 @@ Use before Builder work for every change intent to validate plan quality across 
 - `docs/architecture.md`
 - `docs/bounded-context-map.md`
 - `docs/product-positioning.md`
-- `docs/quantum-llm-vision.md`
+- `docs/vision.md`
 - `docs/decision-matrix.md`
 - `docs/api-stability.md`
 
@@ -29,6 +29,9 @@ Use before Builder work for every change intent to validate plan quality across 
 - Architecture-quality summary: bounded context ownership, dependency direction, and contract impact.
 - Evidence plan: deterministic tests/benchmarks to run and expected artifacts.
 - Explicit risk list and required mitigation actions.
+
+## Research Intake (before a paper-derived idea enters the roadmap)
+Record, in the plan review: (1) the verified source with refereed and Lean-compiled status; (2) whether a competitor already ships it; (3) the user workflow it serves; (4) a falsifiable correctness or benchmark hypothesis. Source: `docs/vision.md` §12.
 
 ## Quality Criteria
 - Plan protects deterministic-by-default commitments and avoids unsupported public claims.

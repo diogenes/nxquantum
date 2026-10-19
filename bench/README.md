@@ -36,7 +36,7 @@ NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 mise exec -- mix run bench/milestone_k.exs
 
 Reference evidence:
 
-- `docs/v0.5-benchmark-matrix.md`
+- `docs/provider-benchmark-matrix.md`
 
 ## Python Alternatives Comparison
 
@@ -111,8 +111,8 @@ mise exec -- mix run bench/batch_obs_hot_cold_guard.exs
 
 Benchmark/dataset/API contracts:
 
-- `docs/v1.0-hybrid-quantum-ai-benchmark.md`
-- `docs/v1.0-hybrid-quantum-ai-integration-guide.md`
+- `docs/hybrid-quantum-ai-benchmark.md`
+- `docs/hybrid-quantum-ai-integration-guide.md`
 
 Benchmark scripts:
 

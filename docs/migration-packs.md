@@ -5,7 +5,7 @@ Status note (as of March 20, 2026):
 1. This document is the migration evidence pack for v0.5 Milestone K.
 2. Scope is deterministic fixture-first migration for top-3 providers.
 3. Acceptance mapping source of truth:
-   - `docs/v0.5-acceptance-criteria.md` (F6)
+   - `docs/archive/v0.5-acceptance-criteria.md` (F6)
    - `features/provider_cross_platform_rollout.feature`
 
 ## Shared Preflight Checklist
@@ -145,7 +145,7 @@ ProviderBridge.run_lifecycle(AzureQuantum, payload,
 2. Reproducible benchmark script:
    - `bench/milestone_k.exs`
 3. Benchmark evidence and caveats:
-   - `docs/v0.5-benchmark-matrix.md`
+   - `docs/provider-benchmark-matrix.md`
 
 ## Known Caveats (v0.5)
 

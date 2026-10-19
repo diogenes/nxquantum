@@ -16,6 +16,9 @@ defmodule NxQuantum.Runtime do
   @type support_tier :: :p0 | :p1
   @type fallback_policy :: :strict | :allow_cpu_compiled
   @type scale_strategy :: :auto | :dense_only | :large_scale_preferred
+  # `:tensor_network_fallback` is a routing label only: no tensor-network engine
+  # executes it yet. Selecting it reports the decision; execution stays dense.
+  # See docs/backend-support.md ("Simulation Paths").
   @type simulation_path :: :dense_state_vector | :tensor_network_fallback
   @type simulation_decision :: %{selected_path: simulation_path(), report: map()}
 

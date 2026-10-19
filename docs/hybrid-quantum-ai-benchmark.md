@@ -136,7 +136,7 @@ Breakdowns required:
 
 Benchmark harness must use contract envelopes from:
 
-- `docs/v1.0-quantum-ai-tool-contracts.md`
+- `docs/quantum-ai-tool-contracts.md`
 
 ## Sync Request Example (MCP/JSON-RPC profile intent)
 
@@ -196,7 +196,7 @@ mise exec -- mix run bench/hybrid_quantum_ai_benchmark.exs --scenario rerank_qua
 mise exec -- mix run bench/hybrid_quantum_ai_benchmark.exs --scenario rerank_quality_delta_turboquant --dataset rq_small_v1 --seed 20260323
 mise exec -- mix run bench/hybrid_quantum_ai_benchmark.exs --scenario constrained_optimization_assistant --dataset co_knapsack_v1 --seed 20260323
 mise exec -- mix run bench/hybrid_quantum_ai_baseline.exs --scenario latency_fallback_impact --dataset lf_mixed_v1 --seed 20260323
-mise exec -- mix run bench/hybrid_quantum_ai_report.exs --input tmp/hybrid_bench --output docs/v1.0-hybrid-quantum-ai-benchmark-report-YYYY-MM-DD.md
+mise exec -- mix run bench/hybrid_quantum_ai_report.exs --input tmp/hybrid_bench --output docs/hybrid-quantum-ai-benchmark-report-YYYY-MM-DD.md
 mise exec -- mix run bench/turboquant_rerank_benchmark.exs
 ```
 
@@ -220,5 +220,5 @@ Each benchmark run must emit:
 
 ## Non-Goals
 
-1. Defining quantum-native LLM training benchmarks (tracked in `docs/quantum-llm-vision.md`).
+1. Defining quantum-native LLM training benchmarks (tracked in `docs/vision.md`).
 2. Replacing existing v0.5 provider lifecycle benchmark matrix.

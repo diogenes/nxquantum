@@ -23,7 +23,7 @@ Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx
 See positioning and comparison details:
 
 - [docs/product-positioning.md](docs/product-positioning.md)
-- [docs/quantum-llm-vision.md](docs/quantum-llm-vision.md)
+- [docs/vision.md](docs/vision.md)
 
 ## Performance Value Proposition
 
@@ -50,14 +50,14 @@ Caveat: these speed figures are from local simulator/fixture workflows on specif
 
 - Evaluate vs Python-first workflows: [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md)
 - Plan migration from Python workflows: [docs/migration-python-playbook.md](docs/migration-python-playbook.md)
-- Use provider-specific migration packs: [docs/v0.5-migration-packs.md](docs/v0.5-migration-packs.md)
+- Use provider-specific migration packs: [docs/migration-packs.md](docs/migration-packs.md)
 - Start interactive tutorials: [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
-- Check provider support tiers and limits: [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
+- Check provider support tiers and limits: [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
 - Use standalone and external integration profiles: [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
-- Review Quantum AI tool contract strategy (sync + async): [docs/v1.0-quantum-ai-tool-contracts.md](docs/v1.0-quantum-ai-tool-contracts.md)
-- Review hybrid benchmark/dataset/API spec (planned Phase 20): [docs/v1.0-hybrid-quantum-ai-benchmark.md](docs/v1.0-hybrid-quantum-ai-benchmark.md)
+- Review Quantum AI tool contract strategy (sync + async): [docs/quantum-ai-tool-contracts.md](docs/quantum-ai-tool-contracts.md)
+- Review hybrid benchmark/dataset/API spec (planned Phase 20): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
-- Review reproducible provider benchmark matrix: [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
+- Review reproducible provider benchmark matrix: [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
 - Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
 - Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
@@ -93,14 +93,14 @@ For full setup and API walkthroughs and usage examples:
 Track status here:
 
 - [docs/roadmap.md](docs/roadmap.md)
-- [docs/v0.6-feature-spec.md](docs/v0.6-feature-spec.md)
-- [docs/v0.6-acceptance-criteria.md](docs/v0.6-acceptance-criteria.md)
-- [docs/v0.6-feature-to-step-mapping.md](docs/v0.6-feature-to-step-mapping.md)
-- [docs/v0.7-feature-spec.md](docs/v0.7-feature-spec.md)
-- [docs/v0.7-acceptance-criteria.md](docs/v0.7-acceptance-criteria.md)
-- [docs/v0.7-feature-to-step-mapping.md](docs/v0.7-feature-to-step-mapping.md)
-- [docs/v0.3-feature-spec.md](docs/v0.3-feature-spec.md)
-- [docs/v0.4-feature-spec.md](docs/v0.4-feature-spec.md)
+- [docs/archive/v0.6-feature-spec.md](docs/archive/v0.6-feature-spec.md)
+- [docs/archive/v0.6-acceptance-criteria.md](docs/archive/v0.6-acceptance-criteria.md)
+- [docs/archive/v0.6-feature-to-step-mapping.md](docs/archive/v0.6-feature-to-step-mapping.md)
+- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
+- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
+- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
+- [docs/archive/v0.3-feature-spec.md](docs/archive/v0.3-feature-spec.md)
+- [docs/archive/v0.4-feature-spec.md](docs/archive/v0.4-feature-spec.md)
 
 ## Docs
 
@@ -119,19 +119,19 @@ Track status here:
 - [docs/observability.md](docs/observability.md)
 - [docs/observability-dashboards.md](docs/observability-dashboards.md)
 - [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
-- [docs/v0.5-feature-spec.md](docs/v0.5-feature-spec.md)
-- [docs/v0.6-feature-spec.md](docs/v0.6-feature-spec.md)
-- [docs/v0.6-acceptance-criteria.md](docs/v0.6-acceptance-criteria.md)
-- [docs/v0.6-feature-to-step-mapping.md](docs/v0.6-feature-to-step-mapping.md)
-- [docs/v0.7-feature-spec.md](docs/v0.7-feature-spec.md)
-- [docs/v0.7-acceptance-criteria.md](docs/v0.7-acceptance-criteria.md)
-- [docs/v0.7-feature-to-step-mapping.md](docs/v0.7-feature-to-step-mapping.md)
-- [docs/v0.5-provider-implementation-plan.md](docs/v0.5-provider-implementation-plan.md)
-- [docs/v0.5-acceptance-criteria.md](docs/v0.5-acceptance-criteria.md)
-- [docs/v0.5-migration-packs.md](docs/v0.5-migration-packs.md)
-- [docs/v0.5-benchmark-matrix.md](docs/v0.5-benchmark-matrix.md)
+- [docs/archive/v0.5-feature-spec.md](docs/archive/v0.5-feature-spec.md)
+- [docs/archive/v0.6-feature-spec.md](docs/archive/v0.6-feature-spec.md)
+- [docs/archive/v0.6-acceptance-criteria.md](docs/archive/v0.6-acceptance-criteria.md)
+- [docs/archive/v0.6-feature-to-step-mapping.md](docs/archive/v0.6-feature-to-step-mapping.md)
+- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
+- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
+- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
+- [docs/archive/v0.5-provider-implementation-plan.md](docs/archive/v0.5-provider-implementation-plan.md)
+- [docs/archive/v0.5-acceptance-criteria.md](docs/archive/v0.5-acceptance-criteria.md)
+- [docs/migration-packs.md](docs/migration-packs.md)
+- [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
 - [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
-- [docs/v0.5-provider-support-tiers.md](docs/v0.5-provider-support-tiers.md)
+- [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
 - [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 
 ## Contributing
