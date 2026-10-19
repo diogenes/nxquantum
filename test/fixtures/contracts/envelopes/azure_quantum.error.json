@@ -1,0 +1,17 @@
+{
+  "capability": "nil",
+  "code": "provider_rate_limited",
+  "correlation_id": "corr-fixture-error",
+  "idempotency_key": "idem-fixture-error",
+  "metadata": {
+    "retry_after_ms": 500
+  },
+  "operation": "poll",
+  "provider": "azure_quantum",
+  "reason": "rate limit exceeded",
+  "request_id": "req-fixture-error",
+  "response": "nil",
+  "schema_version": "v1",
+  "state": "nil",
+  "type": "error"
+}

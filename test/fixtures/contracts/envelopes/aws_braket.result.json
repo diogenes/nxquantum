@@ -1,0 +1,65 @@
+{
+  "correlation_id": "corr_braket_task_0ccdc4fa00bc",
+  "idempotency_key": "idem_braket_task_0ccdc4fa00bc",
+  "job_id": "braket_task_0ccdc4fa00bc",
+  "metadata": {
+    "caveats": [],
+    "contract_schema_version": "v1",
+    "provider_payload_version": "braket.v1",
+    "raw_payload": {
+      "counts": {
+        "00": 64,
+        "11": 64
+      },
+      "metadata": {
+        "job_id": "braket_task_0ccdc4fa00bc",
+        "shots": 128,
+        "source": "fixture"
+      },
+      "workflow": "sampler"
+    },
+    "raw_state": "COMPLETED",
+    "transport": {
+      "downgraded_to_fixture?": "false",
+      "fixture_first?": "true",
+      "live": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_AWS_BRAKET",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": []
+      },
+      "live_smoke": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_SMOKE_AWS_BRAKET",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": []
+      },
+      "mode": "fixture",
+      "operation": "fetch_result",
+      "provider": "aws_braket",
+      "requested_mode": "fixture"
+    }
+  },
+  "payload": {
+    "counts": {
+      "00": 64,
+      "11": 64
+    },
+    "metadata": {
+      "job_id": "braket_task_0ccdc4fa00bc",
+      "shots": 128,
+      "source": "fixture"
+    },
+    "workflow": "sampler"
+  },
+  "provider": "aws_braket",
+  "request_id": "req_braket_task_0ccdc4fa00bc",
+  "schema_version": "v1",
+  "state": "completed",
+  "target": "arn:aws:braket:::device/quantum-simulator/amazon/sv1",
+  "type": "result"
+}

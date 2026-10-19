@@ -1,0 +1,65 @@
+{
+  "correlation_id": "corr_azure_job_9d5542445041",
+  "idempotency_key": "idem_azure_job_9d5542445041",
+  "job_id": "azure_job_9d5542445041",
+  "metadata": {
+    "caveats": [],
+    "contract_schema_version": "v1",
+    "provider_payload_version": "azure.v1",
+    "raw_payload": {
+      "counts": {
+        "00": 64,
+        "11": 64
+      },
+      "metadata": {
+        "job_id": "azure_job_9d5542445041",
+        "shots": 128,
+        "source": "fixture"
+      },
+      "workflow": "sampler"
+    },
+    "raw_state": "SUCCEEDED",
+    "transport": {
+      "downgraded_to_fixture?": "false",
+      "fixture_first?": "true",
+      "live": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_AZURE_QUANTUM",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": []
+      },
+      "live_smoke": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_SMOKE_AZURE_QUANTUM",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": []
+      },
+      "mode": "fixture",
+      "operation": "fetch_result",
+      "provider": "azure_quantum",
+      "requested_mode": "fixture"
+    }
+  },
+  "payload": {
+    "counts": {
+      "00": 64,
+      "11": 64
+    },
+    "metadata": {
+      "job_id": "azure_job_9d5542445041",
+      "shots": 128,
+      "source": "fixture"
+    },
+    "workflow": "sampler"
+  },
+  "provider": "azure_quantum",
+  "request_id": "req_azure_job_9d5542445041",
+  "schema_version": "v1",
+  "state": "completed",
+  "target": "azure.quantum.sim",
+  "type": "result"
+}

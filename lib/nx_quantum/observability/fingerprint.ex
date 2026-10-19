@@ -8,7 +8,7 @@ defmodule NxQuantum.Observability.Fingerprint do
     canonical =
       input
       |> canonicalize()
-      |> :erlang.term_to_binary()
+      |> :erlang.term_to_binary([:deterministic])
 
     hash = :sha256 |> :crypto.hash(canonical) |> Base.encode16(case: :lower)
     "#{version}:#{hash}"
