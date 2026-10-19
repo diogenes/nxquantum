@@ -65,6 +65,121 @@ defmodule NxQuantum.ProviderBridge.Serialization do
 
   def to_external_map(%{} = envelope), do: stringify_keys(envelope)
 
+  @job_states %{
+    "submitted" => :submitted,
+    "queued" => :queued,
+    "running" => :running,
+    "completed" => :completed,
+    "cancelled" => :cancelled,
+    "failed" => :failed
+  }
+
+  @error_codes %{
+    "provider_transport_error" => :provider_transport_error,
+    "provider_auth_error" => :provider_auth_error,
+    "provider_invalid_state" => :provider_invalid_state,
+    "provider_invalid_response" => :provider_invalid_response,
+    "provider_capability_mismatch" => :provider_capability_mismatch,
+    "provider_execution_error" => :provider_execution_error,
+    "provider_rate_limited" => :provider_rate_limited
+  }
+
+  @operations %{
+    "submit" => :submit,
+    "poll" => :poll,
+    "cancel" => :cancel,
+    "fetch_result" => :fetch_result
+  }
+
+  @doc """
+  Decodes a versioned external envelope map (as produced by `to_external_map/1`) back into a typed envelope.
+
+  Only `schema_version` `"v1"` is accepted. Unknown versions, envelope types, states, codes, and operations
+  return a typed error instead of creating atoms from input. The provider is kept as its external string id,
+  because the external form does not carry the adapter module.
+
+  Contract: `to_external_map(from_external_map(map)) == map` for every map this module emits.
+  """
+  @spec from_external_map(map()) ::
+          {:ok, Job.t() | Result.t() | ProviderError.t()} | {:error, map()}
+  def from_external_map(%{"schema_version" => "v1", "type" => "job"} = map) do
+    with {:ok, state} <- decode_state(map["state"]) do
+      {:ok,
+       %Job{
+         id: map["id"],
+         state: state,
+         provider: map["provider"],
+         target: map["target"],
+         submitted_at: map["submitted_at"],
+         schema_version: @schema_version,
+         request_id: map["request_id"],
+         correlation_id: map["correlation_id"],
+         idempotency_key: map["idempotency_key"],
+         metadata: map["metadata"] || %{}
+       }}
+    end
+  end
+
+  def from_external_map(%{"schema_version" => "v1", "type" => "result"} = map) do
+    with {:ok, state} <- decode_state(map["state"]) do
+      {:ok,
+       %Result{
+         job_id: map["job_id"],
+         state: state,
+         provider: map["provider"],
+         target: map["target"],
+         payload: map["payload"] || %{},
+         schema_version: @schema_version,
+         request_id: map["request_id"],
+         correlation_id: map["correlation_id"],
+         idempotency_key: map["idempotency_key"],
+         metadata: map["metadata"] || %{}
+       }}
+    end
+  end
+
+  def from_external_map(%{"schema_version" => "v1", "type" => "error"} = map) do
+    with {:ok, code} <- decode_enum(map["code"], @error_codes, :invalid_envelope_code),
+         {:ok, operation} <- decode_enum(map["operation"], @operations, :invalid_envelope_operation) do
+      {:ok,
+       %ProviderError{
+         code: code,
+         operation: operation,
+         provider: map["provider"],
+         reason: map["reason"],
+         state: map["state"],
+         capability: map["capability"],
+         response: map["response"],
+         schema_version: @schema_version,
+         request_id: map["request_id"],
+         correlation_id: map["correlation_id"],
+         idempotency_key: map["idempotency_key"],
+         metadata: map["metadata"] || %{}
+       }}
+    end
+  end
+
+  def from_external_map(%{"schema_version" => version}) when version != "v1" do
+    {:error, %{code: :unsupported_envelope_schema_version, schema_version: version, supported: ["v1"]}}
+  end
+
+  def from_external_map(%{"type" => type}) do
+    {:error, %{code: :unsupported_envelope_type, type: type}}
+  end
+
+  def from_external_map(_other) do
+    {:error, %{code: :invalid_envelope_shape}}
+  end
+
+  defp decode_state(state), do: decode_enum(state, @job_states, :invalid_envelope_state)
+
+  defp decode_enum(value, table, error_code) do
+    case Map.fetch(table, value) do
+      {:ok, atom} -> {:ok, atom}
+      :error -> {:error, %{code: error_code, value: value}}
+    end
+  end
+
   @spec serialize(Job.t() | Result.t() | ProviderError.t() | map()) :: {:ok, String.t()}
   def serialize(envelope) do
     encoded =
