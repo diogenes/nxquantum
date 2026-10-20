@@ -29,13 +29,13 @@ See positioning and comparison details:
 
 Evidence, not hype:
 
-- In the reproducible cross-framework benchmark (`docs/python-alternatives-benchmark-2026-03-25.md`), NxQuantum is faster than Qiskit on all 5 local simulator scenarios in the report (`baseline_2q`, `deep_6q`, `batch_obs_8q`, `state_reuse_8q_xy`, `sampled_counts_sparse_terms`).
-- The same report shows strong wins vs PennyLane and Cirq on the same machine and run configuration.
+- In the refreshed cross-framework benchmark (`docs/python-alternatives-benchmark-2026-10-19.md`), against Qiskit 2.6, PennyLane 0.45.1 and Cirq 1.7.0, NxQuantum's best lane is fastest on all 5 local simulator scenarios. Ratios to Qiskit range from 0.12x to 0.32x.
+- These are 2 to 8 qubit results on one machine. The margin is smaller than in the March 2026 run, and the crossover point beyond 8 qubits is not measured yet.
 - In the BEAM integration case-study throughput lane, throughput increases from `1333.333 ops/s` to `3030.303 ops/s` on `:cpu_portable`, and from `1666.667 ops/s` to `3787.879 ops/s` on `:cpu_compiled` as batch size increases (`8 -> 32`).
 
 Benchmark references:
 
-- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+- [docs/python-alternatives-benchmark-2026-10-19.md](docs/python-alternatives-benchmark-2026-10-19.md)
 - [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 Caveat: these speed figures are from local simulator/fixture workflows on specific environments; they are not universal claims about remote provider/QPU execution latency.
@@ -58,7 +58,7 @@ Caveat: these speed figures are from local simulator/fixture workflows on specif
 - Review hybrid benchmark/dataset/API spec (planned Phase 20): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 - Review reproducible provider benchmark matrix: [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+- Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-10-19.md](docs/python-alternatives-benchmark-2026-10-19.md)
 - Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 ## Quick Start
@@ -130,7 +130,7 @@ Track status here:
 - [docs/archive/v0.5-acceptance-criteria.md](docs/archive/v0.5-acceptance-criteria.md)
 - [docs/migration-packs.md](docs/migration-packs.md)
 - [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+- [docs/python-alternatives-benchmark-2026-10-19.md](docs/python-alternatives-benchmark-2026-10-19.md)
 - [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
 - [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 
