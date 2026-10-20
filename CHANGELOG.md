@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Transpiler `:insert_swaps` routing was incorrect: swaps were prepended and later gates kept their original wires, so routed circuits did not implement the original unitary. The router now tracks the logical-to-physical layout, rewrites each gate onto its current wires, emits explicit `:swap` operations, and reports `final_layout` in the transpilation report. `:swap` is executed as three CNOTs in the state-vector simulator. The reported `inserted_swaps`, `routed_edges`, and `added_swap_gates` are unchanged for existing cases.
+
 ### Changed
 
 - Competitor benchmark refreshed against Qiskit 2.6, PennyLane 0.45.1, and Cirq 1.7.0 (3-run means, 2 to 8 qubits, Apple M4). Report: `docs/python-alternatives-benchmark-2026-10-19.md`; raw outputs in `bench/results/2026-10-19/`. The March report moved to `docs/archive/`. README performance claims narrowed accordingly (smaller margin; no crossover claim yet).

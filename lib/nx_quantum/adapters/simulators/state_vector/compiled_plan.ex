@@ -9,8 +9,20 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.CompiledPlan do
   alias NxQuantum.Adapters.Simulators.StateVector.Operations.SingleQubit
   alias NxQuantum.GateOperation
 
+  # SWAP is executed as three CNOTs, so the simulator needs no separate kernel.
+  defp expand_swap_gates(operations) do
+    Enum.flat_map(operations, fn
+      %GateOperation{name: :swap, wires: [a, b]} ->
+        [GateOperation.new(:cnot, [a, b]), GateOperation.new(:cnot, [b, a]), GateOperation.new(:cnot, [a, b])]
+
+      operation ->
+        [operation]
+    end)
+  end
+
   @spec compiled_execution_plan([GateOperation.t()], pos_integer()) :: [struct()]
   def compiled_execution_plan(operations, qubits) when is_list(operations) do
+    operations = expand_swap_gates(operations)
     cache_key = {:execution_plan, qubits, KeyEncoder.execution_plan_key(operations)}
     process_key = {__MODULE__, cache_key}
 

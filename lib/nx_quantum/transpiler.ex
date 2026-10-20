@@ -14,7 +14,6 @@ defmodule NxQuantum.Transpiler do
   alias NxQuantum.Circuit
   alias NxQuantum.Transpiler.Report
   alias NxQuantum.Transpiler.Router
-  alias NxQuantum.Transpiler.SwapInsertion
   alias NxQuantum.Transpiler.Topology
 
   @type mode :: :strict | :insert_swaps
@@ -33,19 +32,20 @@ defmodule NxQuantum.Transpiler do
 
     case violations do
       [] ->
-        {:ok, attach_transpilation_metadata(circuit, topology), Report.base(mode, topology)}
+        report = Map.put(Report.base(mode, topology), :final_layout, identity_layout(circuit.qubits))
+        {:ok, attach_transpilation_metadata(circuit, topology), report}
 
       [first_edge | _] when mode == :strict ->
         {:error, %{code: :topology_violation, edge: first_edge, topology: topology}}
 
       _violations when mode == :insert_swaps ->
-        case Router.route_violations(violations, topology) do
-          {:ok, routing} ->
+        case Router.route_circuit(circuit, topology) do
+          {:ok, %{operations: operations, routing: routing, final_layout: final_layout}} ->
             swaps = Router.inserted_swaps(routing)
-            routed = SwapInsertion.prepend_swaps(circuit, swaps)
+            routed = %{circuit | operations: operations}
+            report = Map.put(Report.with_routing(mode, topology, violations, routing, swaps), :final_layout, final_layout)
 
-            {:ok, attach_transpilation_metadata(routed, topology),
-             Report.with_routing(mode, topology, violations, routing, swaps)}
+            {:ok, attach_transpilation_metadata(routed, topology), report}
 
           {:error, edge} ->
             {:error, %{code: :topology_violation, edge: edge, topology: topology}}
@@ -55,6 +55,8 @@ defmodule NxQuantum.Transpiler do
         {:error, %{code: :unsupported_transpiler_mode, mode: mode}}
     end
   end
+
+  defp identity_layout(qubits), do: Map.new(0..(qubits - 1), &{&1, &1})
 
   defp attach_transpilation_metadata(%Circuit{} = circuit, topology) do
     metadata = Map.put(circuit.metadata, :topology, topology)
