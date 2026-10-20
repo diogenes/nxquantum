@@ -52,7 +52,7 @@ Known gaps:
 | --- | --- | --- |
 | KG-1 | `:tensor_network_fallback` is a routing label; no tensor-network engine executes it | Closed in H1.1: documented as routing-only (`docs/backend-support.md`, `Runtime` type comment); engine parked |
 | KG-2 | Phases 14–16 were never checked off | Closed in H1.1: audit recorded in Shipped History; partial items listed there |
-| KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Open: H1.4 |
+| KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6) | Mostly closed in H1.4: property tests for every pass and the full pipeline, a gate-identity catalog, and a QFT reference. Open: routing equivalence under `compile/2` (`:shortest_path`, `:sabre_like`) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
 | KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | H1.3 |
 | KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
@@ -167,7 +167,7 @@ Review gate:
 
 ### H1.4 - Compiler Correctness Suite
 
-- Status: planned
+- Status: done for passes and QFT; routing equivalence (deliverable 3) not yet covered
 - Intent: feature (verification)
 - Seats: Quantum physics/math (acceptance owner), Critic, Verifier
 - Depends on: H1.1
