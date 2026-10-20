@@ -34,3 +34,17 @@ These are available but may evolve during v0.2:
 2. Experimental APIs may evolve, but must keep deterministic typed error behavior.
 3. Public API contract tests live in:
    - `test/nx_quantum/public_api_contract_test.exs`
+
+## Envelope Compatibility Policy (external provider envelopes)
+
+Applies to job, result, and error envelopes produced by `NxQuantum.ProviderBridge.Serialization.to_external_map/1`.
+
+1. Golden snapshots of every core provider's envelopes live in `test/fixtures/contracts/envelopes/`. Any byte change fails `test/nx_quantum/contracts/envelope_snapshot_test.exs`.
+2. A shape or meaning change requires a `schema_version` bump and a CHANGELOG entry. Regenerating snapshots without a version bump is a contract violation.
+3. Additive fields inside `v1` are allowed only when the snapshot is regenerated in the same change and the CHANGELOG lists the new field. Consumers must ignore unknown fields.
+4. Consumers resume persisted envelopes through `Serialization.from_external_map/1`. It accepts `v1` only and returns typed errors for unknown versions, types, states, codes, and operations. It never creates atoms from input.
+5. Round trip contract: `to_external_map(from_external_map(map)) == map` for every snapshot. Test: `test/nx_quantum/contracts/envelope_decode_test.exs`.
+6. The provider field is kept as its external string id. The adapter module is not part of the envelope; callers pass the adapter when resuming a job.
+7. To regenerate snapshots deliberately: `NXQ_UPDATE_SNAPSHOTS=1 mix test test/nx_quantum/contracts/envelope_snapshot_test.exs`.
+
+Known consumer: FluxQ (separate project) reads these envelopes unchanged and gates releases on the snapshot files (its G2 gate).

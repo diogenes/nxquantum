@@ -43,7 +43,7 @@ defmodule NxQuantum.Adapters.Providers.Common.LifecycleSupport do
     Keyword.get_lazy(opts, :job_id, fn ->
       digest =
         :sha256
-        |> :crypto.hash(:erlang.term_to_binary(%{payload: payload, target: target}))
+        |> :crypto.hash(:erlang.term_to_binary(%{payload: payload, target: target}, [:deterministic]))
         |> Base.encode16(case: :lower)
         |> binary_part(0, 12)
 

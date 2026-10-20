@@ -1,0 +1,65 @@
+{
+  "correlation_id": "corr_ibm_job_d54e9acb3f15",
+  "idempotency_key": "idem_ibm_job_d54e9acb3f15",
+  "job_id": "ibm_job_d54e9acb3f15",
+  "metadata": {
+    "caveats": [],
+    "contract_schema_version": "v1",
+    "provider_payload_version": "ibm.v1",
+    "raw_payload": {
+      "counts": {
+        "00": 64,
+        "11": 64
+      },
+      "metadata": {
+        "job_id": "ibm_job_d54e9acb3f15",
+        "shots": 128,
+        "source": "fixture"
+      },
+      "workflow": "sampler"
+    },
+    "raw_state": "COMPLETED",
+    "transport": {
+      "downgraded_to_fixture?": "false",
+      "fixture_first?": "true",
+      "live": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_IBM_RUNTIME",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": []
+      },
+      "live_smoke": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_SMOKE_IBM_RUNTIME",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": []
+      },
+      "mode": "fixture",
+      "operation": "fetch_result",
+      "provider": "ibm_runtime",
+      "requested_mode": "fixture"
+    }
+  },
+  "payload": {
+    "counts": {
+      "00": 64,
+      "11": 64
+    },
+    "metadata": {
+      "job_id": "ibm_job_d54e9acb3f15",
+      "shots": 128,
+      "source": "fixture"
+    },
+    "workflow": "sampler"
+  },
+  "provider": "ibm_runtime",
+  "request_id": "req_ibm_job_d54e9acb3f15",
+  "schema_version": "v1",
+  "state": "completed",
+  "target": "ibm_backend_simulator",
+  "type": "result"
+}

@@ -1,0 +1,56 @@
+{
+  "correlation_id": "corr_azure_job_9d5542445041",
+  "id": "azure_job_9d5542445041",
+  "idempotency_key": "idem_azure_job_9d5542445041",
+  "metadata": {
+    "contract_schema_version": "v1",
+    "provider_name": "microsoft",
+    "provider_payload_version": "azure.v1",
+    "raw_state": "SUBMITTED",
+    "shots": 128,
+    "target": "azure.quantum.sim",
+    "transport": {
+      "downgraded_to_fixture?": "false",
+      "fixture_first?": "true",
+      "live": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_AZURE_QUANTUM",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": [
+          "workspace",
+          "auth_context",
+          "target_id",
+          "provider_name"
+        ]
+      },
+      "live_smoke": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_SMOKE_AZURE_QUANTUM",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": [
+          "workspace",
+          "auth_context",
+          "target_id",
+          "provider_name"
+        ]
+      },
+      "mode": "fixture",
+      "operation": "submit",
+      "provider": "azure_quantum",
+      "requested_mode": "fixture"
+    },
+    "workflow": "sampler",
+    "workspace": "ws-1"
+  },
+  "provider": "azure_quantum",
+  "request_id": "req_azure_job_9d5542445041",
+  "schema_version": "v1",
+  "state": "submitted",
+  "submitted_at": null,
+  "target": "azure.quantum.sim",
+  "type": "job"
+}

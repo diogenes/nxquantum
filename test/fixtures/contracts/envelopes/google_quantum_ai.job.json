@@ -1,0 +1,54 @@
+{
+  "correlation_id": "corr_google_job_7f24dacda5ee",
+  "id": "google_job_7f24dacda5ee",
+  "idempotency_key": "idem_google_job_7f24dacda5ee",
+  "metadata": {
+    "contract_schema_version": "v1",
+    "provider_payload_version": "google_quantum_ai.v1",
+    "raw_state": "SUBMITTED",
+    "shots": 128,
+    "target": "projects/example/locations/us-central1/processors/rainbow",
+    "transport": {
+      "downgraded_to_fixture?": "false",
+      "fixture_first?": "true",
+      "live": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_GOOGLE_QUANTUM_AI",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": [
+          "auth_token",
+          "project_id",
+          "location",
+          "processor_id"
+        ]
+      },
+      "live_smoke": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_SMOKE_GOOGLE_QUANTUM_AI",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": [
+          "auth_token",
+          "project_id",
+          "location",
+          "processor_id"
+        ]
+      },
+      "mode": "fixture",
+      "operation": "submit",
+      "provider": "google_quantum_ai",
+      "requested_mode": "fixture"
+    },
+    "workflow": "sampler"
+  },
+  "provider": "google_quantum_ai",
+  "request_id": "req_google_job_7f24dacda5ee",
+  "schema_version": "v1",
+  "state": "submitted",
+  "submitted_at": null,
+  "target": "projects/example/locations/us-central1/processors/rainbow",
+  "type": "job"
+}

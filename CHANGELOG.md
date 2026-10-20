@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- External envelope golden snapshots for every core provider (job, result, error) under `test/fixtures/contracts/envelopes/`, with a byte-level snapshot test.
+- `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations.
+- Round-trip and rehydrate-and-poll contract tests (`test/nx_quantum/contracts/envelope_decode_test.exs`).
+- Envelope compatibility policy in `docs/api-stability.md`.
+
+### Fixed
+
+- Deterministic job ids and observability fingerprints are now hashed with `:erlang.term_to_binary(_, [:deterministic])`. Map encoding order is no longer left to the VM. Job ids and fingerprint values for the same input may differ from 0.11.0.
+
 ## [0.11.0] - 2026-03-29
 
 ### Added
