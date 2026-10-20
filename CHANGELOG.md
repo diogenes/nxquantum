@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Competitor benchmark refreshed against Qiskit 2.6, PennyLane 0.45.1, and Cirq 1.7.0 (3-run means, 2 to 8 qubits, Apple M4). Report: `docs/python-alternatives-benchmark-2026-10-19.md`; raw outputs in `bench/results/2026-10-19/`. The March report moved to `docs/archive/`. README performance claims narrowed accordingly (smaller margin; no crossover claim yet).
+
 ### Added
 
 - Compiler semantic equivalence: property tests (fixed seed) check that every pass and the full optimization pipeline preserve the unitary up to global phase (`test/property/compiler_semantic_equivalence_property_test.exs`).
@@ -70,7 +74,7 @@
   - `docs/archive/v0.9-phase-a-sampled-scalar-plan.md`
   - `docs/archive/v0.9-phase-b-fused-kernel-runtime-plan.md`
   - `docs/archive/v0.9-phase-c-batch-gap-closure-plan.md`
-  - `docs/python-alternatives-benchmark-2026-03-25.md`
+  - `docs/archive/python-alternatives-benchmark-2026-03-25.md`
 - Runtime-profile fused-kernel guard coverage:
   - `test/nx_quantum/batch_fused_kernel_runtime_profile_guard_test.exs`
 
@@ -84,7 +88,7 @@
 
 - [docs/roadmap.md](docs/roadmap.md)
 - [docs/performance-matrix.md](docs/performance-matrix.md)
-- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+- [docs/archive/python-alternatives-benchmark-2026-03-25.md](docs/archive/python-alternatives-benchmark-2026-03-25.md)
 
 ## [0.8.0] - 2026-03-24
 

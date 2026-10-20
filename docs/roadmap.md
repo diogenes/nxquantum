@@ -55,7 +55,7 @@ Known gaps:
 | KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6) | Mostly closed in H1.4: property tests for every pass and the full pipeline, a gate-identity catalog, and a QFT reference. Open: routing equivalence under `compile/2` (`:shortest_path`, `:sabre_like`) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
 | KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | H1.3 |
-| KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
+| KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | Partly closed in H1.3: rerun against Qiskit 2.6, PennyLane 0.45.1, Cirq 1.7.0. Open: 12–24 qubit crossover |
 | KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
@@ -135,7 +135,7 @@ Review gate:
 
 ### H1.3 - Evidence Refresh
 
-- Status: planned
+- Status: in progress. Done: competitor refresh with 3-run means on 2 to 8 qubits (`docs/python-alternatives-benchmark-2026-10-19.md`); README claims rewritten. Open: crossover scenarios (deliverable 2), real-data rerank (deliverables 4 and 5), D1 (deliverable 6)
 - Intent: performance (evidence only)
 - Seats: Lead, Quantum physics/math, Verifier, Product marketing (claims audit)
 - Depends on: H1.1
