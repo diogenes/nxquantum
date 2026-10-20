@@ -45,8 +45,6 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
       [{^key, value}] -> {:ok, value}
       [] -> :miss
     end
-  rescue
-    _ -> :miss
   end
 
   defp store(key, value) do
@@ -58,18 +56,12 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
 
     :ets.insert(table, {key, value})
     :ok
-  rescue
-    _ -> :ok
   end
 
   defp ensure_table do
     case :ets.whereis(@table) do
       :undefined ->
-        try do
-          :ets.new(@table, [:named_table, :set, :public, read_concurrency: true, write_concurrency: true])
-        rescue
-          _ -> @table
-        end
+        safe_new_named_table(@table, [:named_table, :set, :public, read_concurrency: true, write_concurrency: true])
 
       _ ->
         @table
@@ -77,20 +69,29 @@ defmodule NxQuantum.Estimator.SampledExpval.MaskLookupCache do
   end
 
   defp table_size(table) do
-    case :ets.info(table, :size) do
-      size when is_integer(size) -> size
-      _ -> 0
-    end
-  rescue
-    _ -> 0
+    table
+    |> :ets.info(:size)
+    |> normalize_table_size()
   end
 
   defp evict_one(table) do
-    case :ets.first(table) do
-      :"$end_of_table" -> :ok
-      first_key -> :ets.delete(table, first_key)
+    first_key = :ets.first(table)
+
+    if first_key != :"$end_of_table" do
+      :ets.delete(table, first_key)
     end
-  rescue
-    _ -> :ok
+
+    :ok
   end
+
+  @doc false
+  def safe_new_named_table(table_name, options) do
+    :ets.new(table_name, options)
+  rescue
+    ArgumentError -> table_name
+  end
+
+  @doc false
+  def normalize_table_size(size) when is_integer(size), do: size
+  def normalize_table_size(_), do: 0
 end

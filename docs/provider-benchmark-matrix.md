@@ -44,7 +44,7 @@ NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 mise exec -- mix run bench/milestone_k.exs
 
 ## Evidence Traceability
 
-1. Acceptance criteria: `docs/v0.5-acceptance-criteria.md` (F6).
+1. Acceptance criteria: `docs/archive/v0.5-acceptance-criteria.md` (F6).
 2. Feature linkage: `features/provider_cross_platform_rollout.feature`.
 3. Adapter contracts:
    - `docs/adr/0003-ibm-runtime-provider-adapter.md`

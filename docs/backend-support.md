@@ -35,6 +35,18 @@ Rationale:
 - Together, these 4 profiles cover the majority of expected local-dev + production setups with
   bounded maintenance cost.
 
+## Simulation Paths
+
+The internal scale selector (`Scale.select/3`, hidden from HexDocs) reports one of two simulation paths:
+
+1. `:dense_state_vector` (up to the dense threshold, 20 qubits by default): executed.
+2. `:tensor_network_fallback` (above the threshold, or `:large_scale_preferred`): **routing label only.**
+   No tensor-network engine executes it. Circuits still run through the dense path, and the report
+   is the only effect. Treat it as a decision record, not a capability.
+
+A tensor-network contraction engine is parked in `docs/vision.md` §11 until a benchmark shows a win over
+dense simulation at 20 qubits or below.
+
 ## Deferred Backends (Post-Foundation)
 
 - `EXLA` on `:rocm` (AMD GPU tuning and validation).

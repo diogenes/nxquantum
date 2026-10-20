@@ -56,4 +56,4 @@ NxQuantum is intentionally honest about current limits:
 References:
 
 - [docs/roadmap.md](roadmap.md)
-- [docs/v0.3-feature-spec.md](v0.3-feature-spec.md)
+- [docs/archive/v0.3-feature-spec.md](archive/v0.3-feature-spec.md)

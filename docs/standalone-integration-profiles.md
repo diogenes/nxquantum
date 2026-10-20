@@ -105,8 +105,8 @@ NxQuantum does not implement:
 
 References:
 
-1. `docs/v0.7-feature-spec.md`
-2. `docs/v0.7-acceptance-criteria.md`
-3. `docs/v0.7-feature-to-step-mapping.md`
+1. `docs/archive/v0.7-feature-spec.md`
+2. `docs/archive/v0.7-acceptance-criteria.md`
+3. `docs/archive/v0.7-feature-to-step-mapping.md`
 4. `docs/release-process.md`
 

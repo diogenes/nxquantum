@@ -73,9 +73,9 @@ Dry-run before publish:
 
 Include these references in the release PR or release note:
 
-1. `docs/v0.5-migration-packs.md`
-2. `docs/v0.5-benchmark-matrix.md`
-3. `docs/v0.5-provider-support-tiers.md`
+1. `docs/migration-packs.md`
+2. `docs/provider-benchmark-matrix.md`
+3. `docs/provider-support-catalog.md`
 4. `docs/observability.md`
 5. `docs/observability-dashboards.md`
 
@@ -83,9 +83,9 @@ Include these references in the release PR or release note:
 
 Include these references when releasing v0.6 docs/status updates:
 
-1. `docs/v0.6-feature-spec.md`
-2. `docs/v0.6-acceptance-criteria.md`
-3. `docs/v0.6-feature-to-step-mapping.md`
+1. `docs/archive/v0.6-feature-spec.md`
+2. `docs/archive/v0.6-acceptance-criteria.md`
+3. `docs/archive/v0.6-feature-to-step-mapping.md`
 4. `docs/roadmap.md`
 5. `docs/testing-strategy.md`
 
@@ -93,9 +93,9 @@ Include these references when releasing v0.6 docs/status updates:
 
 Include these references when releasing v0.7 standalone + integration profile work:
 
-1. `docs/v0.7-feature-spec.md`
-2. `docs/v0.7-acceptance-criteria.md`
-3. `docs/v0.7-feature-to-step-mapping.md`
+1. `docs/archive/v0.7-feature-spec.md`
+2. `docs/archive/v0.7-acceptance-criteria.md`
+3. `docs/archive/v0.7-feature-to-step-mapping.md`
 4. `docs/standalone-integration-profiles.md`
 5. `test/nx_quantum/provider_contract_serialization_test.exs`
 6. `test/nx_quantum/observability_test.exs`

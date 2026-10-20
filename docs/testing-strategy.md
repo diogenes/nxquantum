@@ -75,6 +75,24 @@ Add explicit contract tests for public APIs to prevent behavior drift:
   - ports do not depend on adapters/application,
   - adapters do not depend on application.
 
+## Domain Coverage Gate
+
+- Domain components must remain at `100.00%` line coverage.
+- Enforcement command: `mix test.domain_coverage`.
+- This command is part of `mix quality` and is merge-blocking.
+- Domain coverage scope is currently enforced for the core domain namespaces:
+  - `NxQuantum.Circuit*`, `NxQuantum.Gates`, `NxQuantum.GateOperation`
+  - `NxQuantum.Observables*`
+  - `NxQuantum.Runtime*`
+  - `NxQuantum.Estimator*`
+  - `NxQuantum.Sampler*`
+  - `NxQuantum.Mitigation*`
+  - `NxQuantum.Grad*`
+  - `NxQuantum.Compiler*`
+  - `NxQuantum.Transpiler*`
+  - `NxQuantum.DynamicIR*`
+  - `NxQuantum.Kernels`
+
 ## Numerical Testing Guidelines
 
 - Use tolerances for float comparisons (`assert_in_delta/4`).

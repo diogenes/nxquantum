@@ -5,8 +5,8 @@ Preparing provider-related release evidence, support-tier updates, and hardening
 
 ## Required Reading
 - `docs/release-process.md`
-- `docs/v0.5-provider-support-tiers.md`
-- `docs/v0.5-migration-packs.md`
+- `docs/provider-support-catalog.md`
+- `docs/migration-packs.md`
 - `docs/roadmap.md`
 
 ## Flow

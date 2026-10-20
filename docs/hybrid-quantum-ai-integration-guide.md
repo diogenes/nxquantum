@@ -12,9 +12,9 @@ Provide a deterministic integration recipe so teams can run hybrid benchmark sce
 ## Required Inputs
 
 1. Tool contract spec:
-   - `docs/v1.0-quantum-ai-tool-contracts.md`
+   - `docs/quantum-ai-tool-contracts.md`
 2. Benchmark scenario spec:
-   - `docs/v1.0-hybrid-quantum-ai-benchmark.md`
+   - `docs/hybrid-quantum-ai-benchmark.md`
 3. Dataset IDs/version metadata:
    - `rq_small_v1` / `rq_medium_v1`
    - `co_knapsack_v1`
@@ -120,7 +120,7 @@ Transport mode semantics:
 ## Outputs
 
 1. JSON report in `tmp/hybrid_bench/*.json`
-2. Markdown summary in `docs/v1.0-hybrid-quantum-ai-benchmark-report-YYYY-MM-DD.md`
+2. Markdown summary in `docs/hybrid-quantum-ai-benchmark-report-YYYY-MM-DD.md`
 3. Comparison deltas vs classical baseline.
 4. TurboQuant lane metrics include `memory_bytes_per_vector` and compression ratio evidence.
 5. Dataset lanes include `dataset_id` and source metadata for traceability.

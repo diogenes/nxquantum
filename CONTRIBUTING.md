@@ -57,6 +57,7 @@ Daily commands:
 
 - One coherent change per commit.
 - Include motivation + architectural impact in PR description.
+- Include `principal-architect-product-strategy` plan-review outcome in every PR.
 - Attach benchmark notes for performance-sensitive changes (`benchee` scripts under `bench/`).
 - For new behavior, update:
   - relevant `.feature` files,

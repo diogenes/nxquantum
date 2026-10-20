@@ -109,7 +109,13 @@ defmodule NxQuantum.Runtime.Detection do
     _kind, _reason -> :error
   end
 
-  defp exla_backend_module, do: :"Elixir.EXLA.Backend"
-  defp exla_client_module, do: :"Elixir.EXLA.Client"
-  defp torchx_backend_module, do: :"Elixir.Torchx.Backend"
+  defp exla_backend_module, do: configured_module(:exla_backend_module, :"Elixir.EXLA.Backend")
+  defp exla_client_module, do: configured_module(:exla_client_module, :"Elixir.EXLA.Client")
+  defp torchx_backend_module, do: configured_module(:torchx_backend_module, :"Elixir.Torchx.Backend")
+
+  defp configured_module(key, default) do
+    :nx_quantum
+    |> Application.get_env(__MODULE__, [])
+    |> Keyword.get(key, default)
+  end
 end

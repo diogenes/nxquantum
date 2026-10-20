@@ -69,9 +69,11 @@ defmodule NxQuantum.Estimator.SampledExpval do
   end
 
   defp observable_terms(observable_specs) do
+    sparse_pauli_module = sparse_pauli_module()
+
     observable_specs
     |> Enum.reduce_while({:ok, []}, fn %{observable: observable, wire: wire}, {:ok, acc} ->
-      case SparsePauli.single_pauli_term(observable, wire, 1.0) do
+      case sparse_pauli_module.single_pauli_term(observable, wire, 1.0) do
         {:ok, term} -> {:cont, {:ok, [term | acc]}}
         {:error, metadata} -> {:halt, {:error, metadata}}
       end
@@ -80,6 +82,12 @@ defmodule NxQuantum.Estimator.SampledExpval do
       {:ok, terms} -> {:ok, Enum.reverse(terms)}
       {:error, _} = error -> error
     end
+  end
+
+  defp sparse_pauli_module do
+    :nx_quantum
+    |> Application.get_env(__MODULE__, [])
+    |> Keyword.get(:sparse_pauli_module, SparsePauli)
   end
 
   defp evaluate_terms(parsed, terms, opts) do
