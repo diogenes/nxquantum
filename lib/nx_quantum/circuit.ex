@@ -49,20 +49,18 @@ defmodule NxQuantum.Circuit do
   def expectation(%__MODULE__{} = circuit, opts \\ []) do
     observable = Keyword.fetch!(opts, :observable)
     wire = Keyword.fetch!(opts, :wire)
-    measurement = normalize_measurement!(observable, wire, circuit.qubits)
+
+    measurement =
+      case Schema.measurement(observable, wire, circuit.qubits) do
+        {:ok, measurement} ->
+          measurement
+
+        {:error, %{code: code} = metadata} ->
+          raise Error.new(code, Map.delete(metadata, :code))
+      end
 
     circuit
     |> Map.put(:measurement, measurement)
     |> Estimator.expectation(opts)
-  end
-
-  defp normalize_measurement!(observable, wire, qubits) do
-    case Schema.measurement(observable, wire, qubits) do
-      {:ok, measurement} ->
-        measurement
-
-      {:error, %{code: code} = metadata} ->
-        raise Error.new(code, Map.delete(metadata, :code))
-    end
   end
 end
