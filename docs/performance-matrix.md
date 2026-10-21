@@ -59,4 +59,4 @@ Shot-sweep contracts additionally include:
 3. Phase C (batch gap closure): implemented with bounded deterministic evolved-state caching
    for repeated circuit workloads and explicit sampled scalar/helper benchmark lanes.
 4. Evidence report:
-   - `docs/python-alternatives-benchmark-2026-03-25.md`
+   - `docs/archive/python-alternatives-benchmark-2026-03-25.md`

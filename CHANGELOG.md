@@ -2,8 +2,16 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Competitor benchmark refreshed against Qiskit 2.6, PennyLane 0.45.1, and Cirq 1.7.0 (3-run means, 2 to 8 qubits, Apple M4). Report: `docs/python-alternatives-benchmark-2026-10-19.md`; raw outputs in `bench/results/2026-10-19/`. The March report moved to `docs/archive/`. README performance claims narrowed accordingly (smaller margin; no crossover claim yet).
+
 ### Added
 
+- Compiler semantic equivalence: property tests (fixed seed) check that every pass and the full optimization pipeline preserve the unitary up to global phase (`test/property/compiler_semantic_equivalence_property_test.exs`).
+- Gate-identity catalog tagged by pass, plus a reference identity correction: (I⊗H)·CNOT·(I⊗H) = CZ (`test/nx_quantum/compiler/gate_identities_test.exs`).
+- QFT reference test: QFT circuit equals the DFT up to phase and bit order, for 1 to 4 qubits (`test/nx_quantum/compiler/qft_reference_test.exs`).
+- `NxQuantum.TestSupport.Unitary` helper for up-to-phase unitary comparison.
 - External envelope golden snapshots for every core provider (job, result, error) under `test/fixtures/contracts/envelopes/`, with a byte-level snapshot test.
 - `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations.
 - Round-trip and rehydrate-and-poll contract tests (`test/nx_quantum/contracts/envelope_decode_test.exs`).
@@ -66,7 +74,7 @@
   - `docs/archive/v0.9-phase-a-sampled-scalar-plan.md`
   - `docs/archive/v0.9-phase-b-fused-kernel-runtime-plan.md`
   - `docs/archive/v0.9-phase-c-batch-gap-closure-plan.md`
-  - `docs/python-alternatives-benchmark-2026-03-25.md`
+  - `docs/archive/python-alternatives-benchmark-2026-03-25.md`
 - Runtime-profile fused-kernel guard coverage:
   - `test/nx_quantum/batch_fused_kernel_runtime_profile_guard_test.exs`
 
@@ -80,7 +88,7 @@
 
 - [docs/roadmap.md](docs/roadmap.md)
 - [docs/performance-matrix.md](docs/performance-matrix.md)
-- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
+- [docs/archive/python-alternatives-benchmark-2026-03-25.md](docs/archive/python-alternatives-benchmark-2026-03-25.md)
 
 ## [0.8.0] - 2026-03-24
 

@@ -19,7 +19,7 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 | API/DX | `docs/api-stability.md`, `docs/development-flow.md`, `README.md` |
 | Positioning/docs | `README.md`, `docs/product-positioning.md`, `docs/vision.md`, `docs/decision-matrix.md`, latest `docs/python-alternatives-benchmark-*.md` |
 | Verification | `docs/testing-strategy.md`, `docs/development-flow.md` |
-| Kernel/performance | `docs/performance-matrix.md`, `docs/python-alternatives-benchmark-2026-03-25.md`, `docs/axon-integration.md` |
+| Kernel/performance | `docs/performance-matrix.md`, `docs/python-alternatives-benchmark-2026-10-19.md`, `docs/axon-integration.md` |
 | Provider integration/contracts | `docs/playbooks/provider-contracts.md`, `docs/migration-python-playbook.md`, `docs/python-comparison-workflows.md` |
 | Release | `docs/release-process.md`, `docs/playbooks/provider-release-hardening.md`, `CHANGELOG.md` |
 
