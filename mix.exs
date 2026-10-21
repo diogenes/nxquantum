@@ -38,6 +38,7 @@ defmodule NxQuantum.MixProject do
       {:nx, "~> 0.10"},
       {:axon, "~> 0.8", optional: true},
       {:stream_data, "~> 1.3", only: :test},
+      {:jason, "~> 1.4", only: [:dev, :test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: [:dev, :test], runtime: false},

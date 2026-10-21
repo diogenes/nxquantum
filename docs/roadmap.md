@@ -68,7 +68,7 @@ Order: H1.1 first. H1.2, H1.3, and H1.4 then run in parallel. H1.5 comes after H
 
 ### H1.1 - Status Truth and Docs Consolidation
 
-- Status: in progress (PR open; see Decision Log)
+- Status: done (PR #4)
 - Intent: refactor (docs and process)
 - Seats: Lead, Docs sync (claims audit), Verifier
 - Depends on: owner approval of `docs/vision.md` and this roadmap
@@ -106,7 +106,7 @@ Review gate:
 
 ### H1.2 - FluxQ Integration Contract Guard
 
-- Status: planned
+- Status: done (PR open; FluxQ G2 wiring tracked in the FluxQ roadmap)
 - Intent: api change (additive), provider integration
 - Seats: Lead, DX, Quantum engineering, Critic, Verifier
 - Depends on: H1.1

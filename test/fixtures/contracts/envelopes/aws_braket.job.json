@@ -1,0 +1,52 @@
+{
+  "correlation_id": "corr_braket_task_0ccdc4fa00bc",
+  "id": "braket_task_0ccdc4fa00bc",
+  "idempotency_key": "idem_braket_task_0ccdc4fa00bc",
+  "metadata": {
+    "contract_schema_version": "v1",
+    "provider_payload_version": "braket.v1",
+    "raw_state": "CREATED",
+    "shots": 128,
+    "target": "arn:aws:braket:::device/quantum-simulator/amazon/sv1",
+    "transport": {
+      "downgraded_to_fixture?": "false",
+      "fixture_first?": "true",
+      "live": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_AWS_BRAKET",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": [
+          "region",
+          "credentials_profile",
+          "device_arn"
+        ]
+      },
+      "live_smoke": {
+        "env_enabled?": "false",
+        "env_key": "NXQ_PROVIDER_LIVE_SMOKE_AWS_BRAKET",
+        "missing_config_keys": [],
+        "ready?": "false",
+        "requested?": "false",
+        "required_config_keys": [
+          "region",
+          "credentials_profile",
+          "device_arn"
+        ]
+      },
+      "mode": "fixture",
+      "operation": "submit",
+      "provider": "aws_braket",
+      "requested_mode": "fixture"
+    },
+    "workflow": "sampler"
+  },
+  "provider": "aws_braket",
+  "request_id": "req_braket_task_0ccdc4fa00bc",
+  "schema_version": "v1",
+  "state": "submitted",
+  "submitted_at": null,
+  "target": "arn:aws:braket:::device/quantum-simulator/amazon/sv1",
+  "type": "job"
+}
