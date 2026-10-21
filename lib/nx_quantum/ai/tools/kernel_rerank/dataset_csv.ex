@@ -55,14 +55,14 @@ defmodule NxQuantum.AI.Tools.KernelRerank.DatasetCSV do
       Path.expand(System.tmp_dir!())
     ]
 
-    if Enum.any?(allowed_dirs, &is_path_contained?(&1, expanded)) do
+    if Enum.any?(allowed_dirs, &path_contained?(&1, expanded)) do
       {:ok, expanded}
     else
       {:error, :unauthorized}
     end
   end
 
-  defp is_path_contained?(parent, child) do
+  defp path_contained?(parent, child) do
     parent = Path.expand(parent)
     child = Path.expand(child)
 

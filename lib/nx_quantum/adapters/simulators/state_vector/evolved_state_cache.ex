@@ -114,7 +114,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolvedStateCache do
       evict_until_capacity(table, overflow, now_ms)
     end
 
-    :ets.insert(table, {key, value, now_ms, expires_at_ms, bytes})
+    :ets.insert(table, {key, value, insertion_sequence(), expires_at_ms, bytes})
     :ok
   rescue
     _ -> :ok
@@ -190,7 +190,7 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolvedStateCache do
       _ ->
         false
     end)
-    |> Enum.sort_by(fn {key, _value, inserted_at_ms, _expires_at_ms, _bytes} -> {inserted_at_ms, inspect(key)} end)
+    |> Enum.sort_by(fn {key, _value, sequence, _expires_at_ms, _bytes} -> {sequence, inspect(key)} end)
     |> Enum.map(fn {key, _value, _inserted_at_ms, _expires_at_ms, bytes} -> {key, bytes} end)
   end
 
@@ -233,4 +233,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolvedStateCache do
   end
 
   defp now_ms, do: System.monotonic_time(:millisecond)
+
+  # Strictly increasing insertion order. Millisecond timestamps tie within a fast burst of inserts, which made
+  # eviction order depend on machine speed (flaky on CI).
+  defp insertion_sequence, do: System.unique_integer([:monotonic, :positive])
 end
