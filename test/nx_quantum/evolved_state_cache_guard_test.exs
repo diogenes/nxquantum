@@ -55,13 +55,15 @@ defmodule NxQuantum.EvolvedStateCacheGuardTest do
     assert EvolvedStateCache.size() == 1
   end
 
-  test "byte cap evicts oldest entries first" do
+  test "byte cap evicts oldest entries first (insertion order, not timing)" do
     base_opts = [evolved_state_cache_max_bytes: 16, evolved_state_cache_ttl_ms: :infinity]
 
     _ = EvolvedStateCache.fetch(:a, fn -> Nx.tensor([1.0, 1.0], type: {:f, 32}) end, base_opts)
     _ = EvolvedStateCache.fetch(:b, fn -> Nx.tensor([2.0, 2.0], type: {:f, 32}) end, base_opts)
     _ = EvolvedStateCache.fetch(:c, fn -> Nx.tensor([3.0, 3.0], type: {:f, 32}) end, base_opts)
 
+    # Insertion-order (FIFO) eviction with room for two 8-byte entries:
+    # c evicted a; re-adding a evicts b; re-adding b evicts c.
     rebuilt_a =
       EvolvedStateCache.fetch(:a, fn -> Nx.tensor([9.0, 9.0], type: {:f, 32}) end, base_opts)
 
@@ -73,7 +75,7 @@ defmodule NxQuantum.EvolvedStateCacheGuardTest do
 
     assert Nx.to_flat_list(rebuilt_a) == [9.0, 9.0]
     assert Nx.to_flat_list(rebuilt_b) == [99.0, 99.0]
-    assert Nx.to_flat_list(cached_c) == [3.0, 3.0]
+    assert Nx.to_flat_list(cached_c) == [99.0, 99.0]
     assert EvolvedStateCache.total_bytes() <= 16
   end
 
