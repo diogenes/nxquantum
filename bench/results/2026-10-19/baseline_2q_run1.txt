@@ -1,0 +1,11 @@
+Matplotlib is building the font cache; this may take a moment.
+
+Benchmark results (lower per_op_ms is better):
+framework,total_ms,per_op_ms,ops_s,value,requested_profile,resolved_profile,cache_mode
+nxquantum[cpu_portable],9.869000,0.004934,202654.777586,0.0,cpu_portable,cpu_portable,hot
+nxquantum[cpu_compiled],160.103000,0.080051,12491.958302,0.0,cpu_compiled,cpu_compiled,hot
+qiskit,87.626292,0.043813,22824.199867,0.0,,,
+pennylane,461.569083,0.230785,4333.045852,0.0,,,
+cirq,446.943958,0.223472,4474.833956,0.0,,,
+
+Fastest by per_op_ms: nxquantum[cpu_portable] (0.004934 ms/op)

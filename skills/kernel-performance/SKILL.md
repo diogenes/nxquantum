@@ -6,7 +6,7 @@ Use for simulator kernels, Nx.Defn execution paths, hot loops, tensor/state-vect
 ## Required Reading
 - `AGENTS.md`
 - `docs/performance-matrix.md`
-- `docs/python-alternatives-benchmark-2026-03-25.md`
+- `docs/python-alternatives-benchmark-2026-10-19.md`
 - `docs/axon-integration.md`
 
 ## Step-by-Step Workflow

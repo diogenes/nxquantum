@@ -1,0 +1,10 @@
+
+Benchmark results (lower per_op_ms is better):
+framework,total_ms,per_op_ms,ops_s,value,requested_profile,resolved_profile,cache_mode
+nxquantum[cpu_portable],2.980000,0.001490,671140.939597,-1.3e-9,cpu_portable,cpu_portable,hot
+nxquantum[cpu_compiled],2.925000,0.001462,683760.683761,-1.3e-9,cpu_compiled,cpu_compiled,hot
+qiskit,23.873834,0.011937,83773.725036,1.0347862703426886e-16,,,
+pennylane,188.121708,0.094061,10631.415269,4.877131006995536e-17,,,
+cirq,179.473875,0.089737,11143.683163,3.5639029741488557e-09,,,
+
+Fastest by per_op_ms: nxquantum[cpu_compiled] (0.001462 ms/op)
