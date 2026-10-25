@@ -47,6 +47,32 @@ The internal scale selector (`Scale.select/3`, hidden from HexDocs) reports one 
 A tensor-network contraction engine is parked in `docs/vision.md` §11 until a benchmark shows a win over
 dense simulation at 20 qubits or below.
 
+## Numerical Precision
+
+Decision (2026-10-25, KG-10, option A): the state-vector simulator stays single precision. This section documents the floor.
+
+- Gate matrices and the state are `complex64` (`lib/nx_quantum/adapters/simulators/state_vector/matrix_library.ex`, `lib/nx_quantum/adapters/simulators/state_vector/state.ex`).
+- `NxQuantum.Circuit.expectation/2` and the `NxQuantum.Estimator` expectation outputs are returned as `{:f, 32}`.
+
+Measured against a float64 dense reference, with fixed seeds (reproduce with `MIX_ENV=test mix run bench/numerics_precision_floor.exs`; two runs were byte-identical; run date 2026-10-25, Elixir 1.19.5 on OTP 28, default BinaryBackend):
+
+| qubits | depth | circuits | observations | max abs error vs float64 | max abs error vs float32(reference) | exact after float32 rounding |
+| --- | --- | --- | --- | --- | --- | --- |
+| 4 | 18 | 10 | 120 | 3.18e-07 | 2.98e-07 | 45.8% |
+| 6 | 18 | 10 | 180 | 2.38e-07 | 2.38e-07 | 66.1% |
+| 6 | 200 | 5 | 90 | 4.40e-07 | 4.47e-07 | 2.2% |
+
+What this means:
+
+1. Expectation values agree with a float64 reference to about 5e-7 absolute, over the measured range (up to 6 qubits, depth up to 200). This is a measured bound, not a guarantee beyond that range.
+2. The error is float32 arithmetic inside the state, not only the output cast. Output rounding alone does not explain it.
+3. Determinism is unaffected: the same inputs and seed give the same bits. Precision only sets the accuracy floor.
+4. Comparisons with float64 frameworks (Qiskit, PennyLane, Cirq) need an absolute tolerance of at least 1e-6.
+5. `resynthesize_1q` reads its angles from these matrices, so its angles carry about 1e-7 error. Its documented `resynthesis_tolerance` is 1e-6 (`docs/roadmap.md`, KG-10).
+6. The dense reference used for the measurement is limited to 6 qubits. Larger-width accuracy claims need a cross-framework float64 reference.
+
+Changing the precision is a public contract change (the output dtype of `expectation/2`). Reopen KG-10 with an `api change` intent if an external user needs float64 agreement, or if a benchmark shows a cheap path to complex128.
+
 ## Deferred Backends (Post-Foundation)
 
 - `EXLA` on `:rocm` (AMD GPU tuning and validation).

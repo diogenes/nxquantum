@@ -32,6 +32,32 @@ defmodule NxQuantum.TranspilerTest do
     assert length(transpiled.operations) > length(circuit.operations)
   end
 
+  test "insert_swaps rewrites the CNOT onto the routed edge (regression: output was non-conformant)" do
+    circuit =
+      [qubits: 3]
+      |> Circuit.new()
+      |> Gates.cnot(control: 0, target: 2)
+
+    assert {:ok, transpiled, _report} =
+             Transpiler.run(circuit, topology: {:coupling_map, [{0, 1}, {1, 2}]}, mode: :insert_swaps)
+
+    assert Enum.map(transpiled.operations, &{&1.name, &1.wires}) == [{:swap, [0, 1]}, {:cnot, [1, 2]}]
+  end
+
+  test "gates after a routed interaction follow the final layout (regression: stale wires)" do
+    circuit =
+      [qubits: 3]
+      |> Circuit.new()
+      |> Gates.cnot(control: 0, target: 2)
+      |> Gates.h(0)
+
+    assert {:ok, transpiled, report} =
+             Transpiler.run(circuit, topology: {:coupling_map, [{0, 1}, {1, 2}]}, mode: :insert_swaps)
+
+    assert report.logical_to_physical_map == %{0 => 1, 1 => 0, 2 => 2}
+    assert List.last(transpiled.operations).wires == [1]
+  end
+
   test "all_to_all topology incurs no routing overhead" do
     circuit =
       [qubits: 3]

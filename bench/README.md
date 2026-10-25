@@ -82,6 +82,14 @@ NxQuantum benchmark scripts used by the Python harness:
 
 - `bench/nxquantum_python_comparison.exs`
 
+## Numerical Precision Floor (KG-10)
+
+Measures production expectation error against a float64 dense reference over fixed-seed random circuits. Results are documented in `docs/backend-support.md` ("Numerical Precision"):
+
+```bash
+MIX_ENV=test mix run bench/numerics_precision_floor.exs
+```
+
 ## Parallel Opportunity Scripts
 
 Estimator and sampler batch/parallel opportunity probes:

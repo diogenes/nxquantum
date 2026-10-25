@@ -8,8 +8,18 @@
 - `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations.
 - Round-trip and rehydrate-and-poll contract tests (`test/nx_quantum/contracts/envelope_decode_test.exs`).
 - Envelope compatibility policy in `docs/api-stability.md`.
+- Compiler semantic-equivalence property suites (H1.4): gate-identity catalogue, random circuits up to 6 qubits over three fixed seed sets, and routing equivalence. The oracle is an independent dense reference (`test/support/dense_reference.ex`).
+- QFT reference test: the circuit matches the analytic DFT in float64 and `Nx.ifft` within a measured bound.
+- `logical_to_physical_map` key in the `Transpiler` report: the final logical-to-physical wire map after routing (`nil` when no routing ran).
+
+### Changed
+
+- The single-precision numerics floor is documented in `docs/backend-support.md` ("Numerical Precision"). Decision recorded in roadmap KG-10: precision stays `complex64`, and the output dtype of `Circuit.expectation/2` is unchanged. Measured error against a float64 reference is at most 4.5e-7 over up to 6 qubits and depth 200 (`bench/numerics_precision_floor.exs`).
 
 ### Fixed
+
+- `Transpiler.run/2` with `mode: :insert_swaps` now routes correctly. The CNOT is rewritten onto the routed coupled edge, and later gates follow the updated layout. Before, the output could keep a CNOT on an uncoupled edge, and gates after a routed interaction used stale wires. Callers that inspected the SWAP-prepend ordering or the original CNOT wires will see different operations. Use `report.logical_to_physical_map` to map observables onto physical wires.
+- `NxQuantum.Compiler.optimize/2` with the `simplify` pass no longer raises on batched (non-scalar) rotation angles. A batched rotation is removed only when every angle is negligible.
 
 - Deterministic job ids and observability fingerprints are now hashed with `:erlang.term_to_binary(_, [:deterministic])`. Map encoding order is no longer left to the VM. Job ids and fingerprint values for the same input may differ from 0.11.0.
 

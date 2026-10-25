@@ -159,19 +159,22 @@ defmodule NxQuantum.Features.Steps.TopologyTranspilationSteps do
       text =~ ~r/^routing path / ->
         assert {:ok, _c, report} = ctx.transpile_result
         path = text |> Helpers.parse_quoted() |> Helpers.parse_list_of_ints()
-        assert report[:routing_path] == path or report[:routing_path] == nil
+        assert report[:routing_path] == path
         {:handled, ctx}
 
       text =~ ~r/^inserted swaps are exactly / ->
         assert {:ok, _c, report} = ctx.transpile_result
         expected = text |> Helpers.parse_quoted() |> Helpers.parse_edge_list()
-        assert report[:inserted_swaps] == expected or report[:inserted_swaps] == nil
+        assert report[:inserted_swaps] == expected
         {:handled, ctx}
 
       text =~ ~r/^routed interaction edge becomes / ->
-        assert {:ok, _c, report} = ctx.transpile_result
-        _expected = text |> Helpers.parse_quoted() |> Helpers.parse_edge()
-        assert Map.has_key?(report, :violations)
+        assert {:ok, transpiled, _report} = ctx.transpile_result
+        {control, target} = text |> Helpers.parse_quoted() |> Helpers.parse_edge()
+
+        assert Enum.any?(transpiled.operations, &(&1.name == :cnot and &1.wires == [control, target])),
+               "expected a CNOT on routed edge (#{control},#{target})"
+
         {:handled, ctx}
 
       text =~ ~r/^transpilation report added_swap_gates is / ->

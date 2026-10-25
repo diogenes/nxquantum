@@ -14,7 +14,6 @@ defmodule NxQuantum.Transpiler do
   alias NxQuantum.Circuit
   alias NxQuantum.Transpiler.Report
   alias NxQuantum.Transpiler.Router
-  alias NxQuantum.Transpiler.SwapInsertion
   alias NxQuantum.Transpiler.Topology
 
   @type mode :: :strict | :insert_swaps
@@ -39,13 +38,13 @@ defmodule NxQuantum.Transpiler do
         {:error, %{code: :topology_violation, edge: first_edge, topology: topology}}
 
       _violations when mode == :insert_swaps ->
-        case Router.route_violations(violations, topology) do
-          {:ok, routing} ->
+        case Router.route_operations(circuit.operations, circuit.qubits, topology) do
+          {:ok, operations, routing, final_layout} ->
             swaps = Router.inserted_swaps(routing)
-            routed = SwapInsertion.prepend_swaps(circuit, swaps)
+            routed = %{circuit | operations: operations}
 
             {:ok, attach_transpilation_metadata(routed, topology),
-             Report.with_routing(mode, topology, violations, routing, swaps)}
+             Report.with_routing(mode, topology, violations, routing, swaps, final_layout)}
 
           {:error, edge} ->
             {:error, %{code: :topology_violation, edge: edge, topology: topology}}
