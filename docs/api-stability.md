@@ -8,7 +8,7 @@ These modules/functions are expected to remain contract-stable through v0.2:
 
 1. `NxQuantum.Circuit.new/1`
 2. `NxQuantum.Circuit.bind/2`
-3. `NxQuantum.Circuit.expectation/2`
+3. `NxQuantum.Circuit.expectation/2` (returns `{:f, 32}`; accuracy floor in `docs/backend-support.md`, "Numerical Precision")
 4. `NxQuantum.Gates` pipe-friendly gate constructors (`h`, `x`, `y`, `z`, `rx`, `ry`, `rz`, `cnot`)
 5. `NxQuantum.Runtime.supported_profiles/0`
 6. `NxQuantum.Runtime.profile!/1`

@@ -23,6 +23,17 @@ defmodule NxQuantum.CompilerTest do
     assert_in_delta Map.fetch!(hd(optimized.operations).params, :theta), 0.3, 1.0e-8
   end
 
+  test "simplify keeps batched rotations unless every angle is negligible (regression: crashed)" do
+    batched = [qubits: 1] |> Circuit.new() |> Gates.rx(0, theta: Nx.tensor([0.1, 0.2]))
+    zeros = [qubits: 1] |> Circuit.new() |> Gates.rx(0, theta: Nx.tensor([0.0, 0.0]))
+
+    assert {kept, _} = Compiler.optimize(batched, passes: [:simplify])
+    assert length(kept.operations) == 1
+
+    assert {removed, _} = Compiler.optimize(zeros, passes: [:simplify])
+    assert removed.operations == []
+  end
+
   test "resynthesize_1q reduces run cost while preserving expectations" do
     circuit =
       [qubits: 1]

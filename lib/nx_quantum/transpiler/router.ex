@@ -1,6 +1,8 @@
 defmodule NxQuantum.Transpiler.Router do
   @moduledoc false
 
+  alias NxQuantum.GateOperation
+  alias NxQuantum.Transpiler.SwapInsertion
   alias NxQuantum.Transpiler.Topology
 
   @type routing_result :: %{
@@ -10,35 +12,41 @@ defmodule NxQuantum.Transpiler.Router do
           routed_edge: NxQuantum.Transpiler.coupling_edge() | nil
         }
 
-  @spec route_violations([NxQuantum.Transpiler.coupling_edge()], NxQuantum.Transpiler.topology()) ::
-          {:ok, [routing_result()]} | {:error, NxQuantum.Transpiler.coupling_edge()}
-  def route_violations(violations, topology) do
+  @type layout :: %{non_neg_integer() => non_neg_integer()}
+
+  @doc """
+  Routes operations in place, starting from the identity layout.
+
+  A CNOT whose current physical wires are not coupled is brought onto a coupled
+  edge by SWAPs along the shortest physical path, and the CNOT is rewritten onto
+  the routed edge. Every later gate is rewritten through the updated layout, so
+  the routed operations equal the input up to the returned final layout
+  (logical wire -> physical wire).
+  """
+  @spec route_operations(
+          [GateOperation.t()],
+          pos_integer(),
+          NxQuantum.Transpiler.topology()
+        ) ::
+          {:ok, [GateOperation.t()], [routing_result()], layout()}
+          | {:error, NxQuantum.Transpiler.coupling_edge()}
+  def route_operations(operations, qubits, topology) do
     edges = Topology.coupling_edges(topology)
+    identity = Map.new(0..(qubits - 1), &{&1, &1})
 
-    violations
-    |> Enum.reduce_while({:ok, []}, fn edge, {:ok, acc} ->
-      case shortest_path(edge, edges) do
-        nil ->
-          {:halt, {:error, edge}}
+    operations
+    |> Enum.reduce_while({:ok, {[], [], identity}}, fn op, {:ok, {emitted, routing, layout}} ->
+      case route_operation(op, layout, topology, edges) do
+        {:ok, ops, records, next_layout} ->
+          {:cont, {:ok, {Enum.reverse(ops, emitted), Enum.reverse(records, routing), next_layout}}}
 
-        path ->
-          path_edges = path_to_edges(path)
-          inserted_swaps = Enum.drop(path_edges, -1)
-          routed_edge = List.last(path_edges)
-
-          routed = %{
-            from: edge,
-            path: path,
-            inserted_swaps: inserted_swaps,
-            routed_edge: routed_edge
-          }
-
-          {:cont, {:ok, [routed | acc]}}
+        {:error, _edge} = error ->
+          {:halt, error}
       end
     end)
     |> case do
-      {:ok, routing} -> {:ok, Enum.reverse(routing)}
-      other -> other
+      {:ok, {emitted, routing, layout}} -> {:ok, Enum.reverse(emitted), Enum.reverse(routing), layout}
+      {:error, _edge} = error -> error
     end
   end
 
@@ -55,6 +63,60 @@ defmodule NxQuantum.Transpiler.Router do
   def shortest_path({start, target}, edges) do
     adjacency = build_adjacency(edges)
     bfs([[start]], MapSet.new([start]), target, adjacency)
+  end
+
+  defp route_operation(%GateOperation{name: :cnot, wires: [control, target]} = op, layout, topology, edges) do
+    if Topology.supported_edge?(topology, {layout[control], layout[target]}) do
+      {:ok, [remap(op, layout)], [], layout}
+    else
+      route_cnot(control, target, layout, edges)
+    end
+  end
+
+  defp route_operation(op, layout, _topology, _edges), do: {:ok, [remap(op, layout)], [], layout}
+
+  defp route_cnot(control, target, layout, edges) do
+    case shortest_path({layout[control], layout[target]}, edges) do
+      nil ->
+        {:error, {control, target}}
+
+      path ->
+        path_edges = path_to_edges(path)
+        swaps = Enum.drop(path_edges, -1)
+        routed_edge = List.last(path_edges)
+
+        {moved_layout, swap_ops} =
+          Enum.reduce(swaps, {layout, []}, fn {a, b}, {current, acc} ->
+            {swap_layout(current, a, b), [SwapInsertion.swap_operation(a, b) | acc]}
+          end)
+
+        cnot = %GateOperation{
+          name: :cnot,
+          wires: [moved_layout[control], moved_layout[target]],
+          params: %{}
+        }
+
+        record = %{
+          from: {control, target},
+          path: path,
+          inserted_swaps: swaps,
+          routed_edge: routed_edge
+        }
+
+        {:ok, Enum.reverse([cnot | swap_ops]), [record], moved_layout}
+    end
+  end
+
+  defp remap(%GateOperation{wires: wires} = op, layout) do
+    %{op | wires: Enum.map(wires, &layout[&1])}
+  end
+
+  defp swap_layout(layout, a, b) do
+    Map.new(layout, fn
+      {logical, ^a} -> {logical, b}
+      {logical, ^b} -> {logical, a}
+      pair -> pair
+    end)
   end
 
   defp path_to_edges(path) do

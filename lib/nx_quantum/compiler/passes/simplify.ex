@@ -8,7 +8,7 @@ defmodule NxQuantum.Compiler.Passes.Simplify do
   def run(operations) do
     Enum.reject(operations, fn
       %GateOperation{name: name} = op when name in [:rx, :ry, :rz] ->
-        op |> Theta.value() |> Theta.to_number() |> abs() < 1.0e-12
+        op |> Theta.value() |> Theta.negligible?(1.0e-12)
 
       _ ->
         false

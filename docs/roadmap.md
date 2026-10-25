@@ -36,6 +36,21 @@ Every unfinished milestone (`### H<horizon>.<n> - <name>`) must include:
 Status values: `planned`, `in progress`, `done`.
 - `done` requires every deliverable to name its module, test, or CHANGELOG entry.
 - Seats refer to the agent-team roles in the process update of H1.1.
+- Seat names map to agent files in `.claude/agents/` (see its README):
+
+| Roadmap seat | Agent |
+| --- | --- |
+| Lead | `engineering-manager` |
+| Product strategy | `product-strategist` |
+| Principal architect (plan review) | `principal-architect` |
+| DX | `api-dx` |
+| Critic, Critic (DDD/hexagonal) | `architecture-critic` |
+| Verifier | `verifier` |
+| Docs sync (claims audit), Docs sync | `docs-sync` |
+| Quantum physics/math | `quantum-physics-verifier` |
+| Quantum engineering | `quantum-engineering` |
+| Release readiness | `release-readiness` |
+| Product marketing | owner (no agent) |
 
 ## Current State (0.11.0)
 
@@ -52,13 +67,14 @@ Known gaps:
 | --- | --- | --- |
 | KG-1 | `:tensor_network_fallback` is a routing label; no tensor-network engine executes it | Closed in H1.1: documented as routing-only (`docs/backend-support.md`, `Runtime` type comment); engine parked |
 | KG-2 | Phases 14–16 were never checked off | Closed in H1.1: audit recorded in Shipped History; partial items listed there |
-| KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Open: H1.4 |
+| KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Closed in H1.4: property suites and dense reference (see H1.4 Evidence) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
 | KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | H1.3 |
 | KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
 | KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
+| KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement |
 
 ---
 
@@ -106,7 +122,7 @@ Review gate:
 
 ### H1.2 - FluxQ Integration Contract Guard
 
-- Status: done (PR open; FluxQ G2 wiring tracked in the FluxQ roadmap)
+- Status: done (merged as PR #9; FluxQ G2 wiring tracked in the FluxQ roadmap)
 - Intent: api change (additive), provider integration
 - Seats: Lead, DX, Quantum engineering, Critic, Verifier
 - Depends on: H1.1
@@ -167,11 +183,11 @@ Review gate:
 
 ### H1.4 - Compiler Correctness Suite
 
-- Status: planned
+- Status: done (fixes landed; see CHANGELOG `[Unreleased]`)
 - Intent: feature (verification)
 - Seats: Quantum physics/math (acceptance owner), Critic, Verifier
 - Depends on: H1.1
-- Target release: 0.12.0 (only if fixes land)
+- Target release: 0.12.0
 
 Goal:
 
@@ -189,6 +205,19 @@ Review gate:
 1. The suites are green across 3 fixed seed sets.
 2. Every defect found is fixed together with a regression test.
 3. `mix test.domain_coverage` stays at 100%.
+
+Evidence (2026-10-25):
+
+- Acceptance suites: `test/property/gate_identity_property_test.exs`, `test/property/compiler_semantic_equivalence_property_test.exs`, `test/property/transpiler_routing_equivalence_property_test.exs`, `test/nx_quantum/qft_reference_test.exs`.
+- Gate-identity catalogue (deliverable 1): `test/support/gate_identities.ex`, one entry per pass.
+- Oracle: `test/support/dense_reference.ex`, a dense unitary reference that does not reuse the production matrix library. It is validated by the identity catalogue and by the QFT test.
+- Three fixed seed sets per suite (`test/support/random_circuits.ex`). Circuits have up to 6 qubits.
+- Defects found and fixed, each with a regression test:
+  1. `insert_swaps` left a non-native CNOT on an uncoupled edge and did not rewrite later gates through the qubit layout. Routing now rewrites the CNOT onto the routed edge and reports `logical_to_physical_map` (`lib/nx_quantum/transpiler/router.ex`; `test/nx_quantum/transpiler_test.exs`).
+  2. `simplify` raised on batched (non-scalar) rotation angles (`lib/nx_quantum/compiler/theta.ex`; `test/nx_quantum/compiler_test.exs`).
+  3. The routing feature steps asserted only key presence or accepted `nil`. They now check the routed CNOT wires and the routing path (`test/features/steps/topology_transpilation_steps.ex`).
+- Gates: `mix quality`, `mix dialyzer`, `mix test.domain_coverage` (100.00%), and `mix test` (350 tests, 0 failures) were green.
+- Precision limit found: `resynthesize_1q` is held to its documented `resynthesis_tolerance` (1e-6), not 1e-9. See KG-10.
 
 ### H1.5 - Adoption Launch
 
@@ -407,7 +436,7 @@ Full phase text is in git history. Status per row is pending the H1.1 audit wher
 | 12 | `v0.6` label (no CHANGELOG entry) | Contract completion, adapter hardening | done |
 | 13 | 0.7.0 | Versioned external contracts, observability schema governance | done |
 | 14 | 0.8.0 | Live provider transport (`:fixture`/`:live_smoke`/`:live`), replay fixture capture, lifecycle envelope parity | shipped (code audited 2026-10-19); live credentialed evidence not in repo |
-| 15 | 0.8.0 | Compiler `compile/2` diagnostics, routing strategies (`shortest_path`, `sabre_like`), calibration profiles, scheduling reports | partial: provider-aware transpilation adapters and side-by-side compiler narrative not found; semantic property tests missing (KG-3) |
+| 15 | 0.8.0 | Compiler `compile/2` diagnostics, routing strategies (`shortest_path`, `sabre_like`), calibration profiles, scheduling reports | partial: provider-aware transpilation adapters and side-by-side compiler narrative not found; semantic property tests added in H1.4 (KG-3 closed) |
 | 16 | 0.8.0 | Custom observability metadata validation (allowlist, cardinality, redaction), correlation metadata, troubleshooting bundles, dashboards | partial: `docs/playbooks/observability.md` is 26 lines; live-provider incident playbooks not yet written |
 | 17 | — | Migration Assurance Toolkit (ADR 0007) | not delivered; ADR set to Deferred; scoped `Migration.AI*` slice shipped (0.9.0) |
 | 18 | 0.8.0–0.9.0 | High-value performance matrix and guards | done |

@@ -99,8 +99,10 @@ defmodule NxQuantum.DomainCoreCoverageTest do
       op = %GateOperation{name: :rx, wires: [0], params: %{theta: 0.2}}
       assert Theta.value(op) == 0.2
       assert Theta.value(%{op | params: %{}}) == 0.0
-      assert Theta.to_number(Nx.tensor(0.5)) == 0.5
-      assert Theta.to_number(0.7) == 0.7
+      assert Theta.negligible?(0.0, 1.0e-12)
+      refute Theta.negligible?(0.5, 1.0e-12)
+      assert Theta.negligible?(Nx.tensor([0.0, 0.0]), 1.0e-12)
+      refute Theta.negligible?(Nx.tensor([0.0, 0.5]), 1.0e-12)
       assert Theta.put(op, 1.2).params.theta == 1.2
 
       assert Theta.add(0.1, 0.2) == 0.30000000000000004
@@ -256,11 +258,25 @@ defmodule NxQuantum.DomainCoreCoverageTest do
       assert Router.shortest_path({2, 2}, [{0, 1}]) == [2]
       assert Router.shortest_path({0, 2}, [{0, 1}]) == nil
 
-      assert {:error, {0, 3}} =
-               Router.route_violations([{0, 3}], {:coupling_map, [{0, 1}, {1, 2}]})
+      topology = {:coupling_map, [{0, 1}, {1, 2}]}
+      cnot = fn a, b -> GateOperation.new(:cnot, [a, b]) end
 
-      assert {:ok, [%{inserted_swaps: [{0, 1}], routed_edge: {1, 2}, path: [0, 1, 2]}]} =
-               Router.route_violations([{0, 2}], {:coupling_map, [{0, 1}, {1, 2}]})
+      assert {:error, {0, 3}} = Router.route_operations([cnot.(0, 3)], 4, topology)
+
+      assert {:ok, [swap, routed], [%{inserted_swaps: [{0, 1}], routed_edge: {1, 2}, path: [0, 1, 2]}],
+              %{0 => 1, 1 => 0, 2 => 2}} = Router.route_operations([cnot.(0, 2)], 3, topology)
+
+      assert {swap.name, swap.wires} == {:swap, [0, 1]}
+      assert {routed.name, routed.wires} == {:cnot, [1, 2]}
+
+      h = GateOperation.new(:h, [0])
+
+      assert {:ok, [%{name: :h, wires: [0]}, _swap, _cnot], _routing, _layout} =
+               Router.route_operations([h, cnot.(0, 2)], 3, topology)
+
+      # A CNOT already on a coupled edge passes through unchanged.
+      assert {:ok, [%{name: :cnot, wires: [0, 1]}], [], %{0 => 0, 1 => 1, 2 => 2}} =
+               Router.route_operations([cnot.(0, 1)], 3, topology)
     end
 
     test "transpiler unsupported mode branch returns typed error" do

@@ -6,9 +6,15 @@ defmodule NxQuantum.Compiler.Theta do
   @spec value(GateOperation.t()) :: number() | Nx.Tensor.t()
   def value(%GateOperation{params: params}), do: Map.get(params, :theta, 0.0)
 
-  @spec to_number(number() | Nx.Tensor.t()) :: number()
-  def to_number(%Nx.Tensor{} = theta), do: Nx.to_number(theta)
-  def to_number(theta) when is_number(theta), do: theta
+  @doc false
+  # A tensor angle is negligible only when every element is, so a batched
+  # rotation with one non-zero angle is never removed.
+  @spec negligible?(number() | Nx.Tensor.t(), number()) :: boolean()
+  def negligible?(%Nx.Tensor{} = theta, epsilon) do
+    theta |> Nx.abs() |> Nx.reduce_max() |> Nx.to_number() |> Kernel.<(epsilon)
+  end
+
+  def negligible?(theta, epsilon) when is_number(theta), do: abs(theta) < epsilon
 
   @spec put(GateOperation.t(), number() | Nx.Tensor.t()) :: GateOperation.t()
   def put(%GateOperation{} = op, theta) do

@@ -14,6 +14,7 @@ defmodule NxQuantum.Transpiler.Report do
       routed_edges: [],
       routing_path: nil,
       inserted_swaps: nil,
+      logical_to_physical_map: nil,
       topology_id: Topology.topology_id(topology)
     }
   end
@@ -23,9 +24,10 @@ defmodule NxQuantum.Transpiler.Report do
           NxQuantum.Transpiler.topology(),
           [NxQuantum.Transpiler.coupling_edge()],
           [map()],
-          [NxQuantum.Transpiler.coupling_edge()]
+          [NxQuantum.Transpiler.coupling_edge()],
+          %{non_neg_integer() => non_neg_integer()}
         ) :: map()
-  def with_routing(mode, topology, violations, routing, swaps) do
+  def with_routing(mode, topology, violations, routing, swaps, final_layout) do
     mode
     |> base(topology)
     |> Map.merge(%{
@@ -35,6 +37,7 @@ defmodule NxQuantum.Transpiler.Report do
       routed_edges: Enum.map(routing, & &1.routed_edge),
       routing_path: routing |> List.first() |> Map.get(:path),
       inserted_swaps: routing |> List.first() |> Map.get(:inserted_swaps),
+      logical_to_physical_map: final_layout,
       topology_id: Topology.topology_id(topology)
     })
   end
