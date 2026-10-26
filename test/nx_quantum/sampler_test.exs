@@ -16,6 +16,17 @@ defmodule NxQuantum.SamplerTest do
     assert Nx.to_flat_list(a.probabilities) == Nx.to_flat_list(b.probabilities)
   end
 
+  test "Sampler.run counts are pinned for RY(1.1), seed 13, 1024 shots" do
+    circuit = [qubits: 1] |> Circuit.new() |> Gates.ry(0, theta: 1.1)
+
+    assert {:ok, %Result{counts: counts}} =
+             Sampler.run(circuit, shots: 1024, seed: 13, observable: :pauli_z, wire: 0)
+
+    # Expected p1 = (1 - cos 1.1)/2 = 0.2732, observed 0.2656 (0.54 sigma).
+    # A change needs a named OTP cause and a D2 re-baseline.
+    assert counts == %{"0" => 752, "1" => 272}
+  end
+
   test "run/2 validates shots" do
     circuit = Circuit.new(qubits: 1)
 
