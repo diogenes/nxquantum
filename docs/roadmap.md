@@ -152,7 +152,7 @@ Review gate:
 
 ### H1.3 - Evidence Refresh
 
-- Status: planned
+- Status: in progress
 - Intent: performance (evidence only)
 - Seats: Lead, Quantum physics/math, Verifier, Product marketing (claims audit)
 - Depends on: H1.1
@@ -161,25 +161,22 @@ Review gate:
 Goal:
 
 1. Public speed and quality claims rest on current, version-pinned evidence with stated limits.
-2. Hybrid quantum-AI reranking gets a real-data verdict, which feeds D1.
+2. The in-repo hybrid rerank evidence is labeled synthetic, and D1 is recorded.
 
 Implementation deliverables:
 
 1. Rerun `bench/python_alternatives_benchmark.py` against current pinned Qiskit 2.x, PennyLane, and Cirq releases (versions recorded in the report), using 3-run means.
 2. Add 12, 16, 20, and 24 qubit scenarios, and state the crossover point where NxQuantum stops winning.
 3. Publish `docs/python-alternatives-benchmark-<date>.md` and archive the 2026-03-25 report.
-4. Add a real-data rerank lane, BEIR SciFact first and NFCorpus second:
-   - verify licenses before use;
-   - commit a fetch script plus a provenance manifest (source URL, license, embedding model and version, dimensionality-reduction method, seed, `sha256`); raw data is not committed;
-   - decide the embedding-generation path in plan review. Bumblebee would be a dev-only dependency that needs architecture justification; the alternative is offline generation with a pinned model.
-5. Publish nDCG@10 against the classical baseline in the hybrid benchmark doc, regardless of outcome.
-6. Record decision D1 in the Decision Log.
+4. Parked 2026-10-26 (D1); see `docs/vision.md` §11.
+5. Parked 2026-10-26 (D1); see `docs/vision.md` §11.
+6. Record decision D1 in the Decision Log (done 2026-10-26; see the D1 row).
 
 Review gate:
 
 1. Reports are version-pinned, 3-run, and caveat-labeled.
 2. README speed claims cite the new report, including the crossover.
-3. The rerank result and its classical baseline are published.
+3. Parked 2026-10-26 (D1); rerank datasets and hybrid figures carry the synthetic/placeholder label instead.
 4. D1 is recorded with its rationale.
 
 ### H1.4 - Compiler Correctness Suite
@@ -241,7 +238,7 @@ Implementation deliverables:
 2. Three Livebooks:
    - embedding NxQuantum in a supervised BEAM service;
    - researcher reproducibility (fingerprints, seeded replay, classical-baseline comparison);
-   - hybrid rerank on real data if D1 keeps it as the lead message, otherwise provider lifecycle across lanes.
+   - provider lifecycle across lanes (fixture lane; live lanes stay env-gated).
 3. A launch write-up and Elixir Forum post based on H1.3 evidence (owner publishes).
 4. A Kano survey of at least 10 target users (Elixir Forum, ElixirConf, FluxQ early users). Its results reclassify the hypotheses in `docs/vision.md` §6.
 5. A joint "FluxQ powered by NxQuantum" narrative, aligned with FluxQ's positioning docs.
@@ -369,7 +366,7 @@ Review gate:
 
 | Gate | Question (see `docs/vision.md` §8) | Status | Decision and rationale |
 | --- | --- | --- | --- |
-| D1 | Hybrid quantum-AI stays the lead message? | pending (after H1.3) | — |
+| D1 | Hybrid quantum-AI stays the lead message? | decided 2026-10-26 (owner): no | Hybrid quantum-AI becomes an application of the pillars and the lead becomes "deterministic quantum execution on BEAM", because the primary audience is BEAM/Nx teams embedding quantum workloads in their services (`docs/vision.md` §4), whom the Trust and Contracts pillars (§5) serve directly. Decided before H1.3 finished: no real-data evaluation was run, and "no" is the branch taken without that evidence. The in-repo rerank datasets are synthetic (KG-5), benchmarks are internal performance references rather than official results (owner, 2026-10-26), and the real-data rerank lane is parked (`docs/vision.md` §11); D1 reopens on that row's trigger. FluxQ needs no change: its `AGENTS.md` has no hybrid quantum-AI invariant (checked 2026-10-26). The vision §13 item 6 competitor recheck moves to the H1.3 benchmark refresh. |
 | D2 | Determinism holds under distribution? | pending (after H2.1) | — |
 | D3 | Enter Horizon 3? | pending (after H2.3) | — |
 
