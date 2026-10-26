@@ -205,6 +205,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
     - NxQuantum.ProviderBridge.Result
     - NxQuantum.ProviderBridge.ProviderError
     - NxQuantum.ProviderBridge.CapabilityContract
+    - `lib/nx_quantum/provider_bridge/serialization.ex` (external envelope encode/decode)
   - provider lifecycle port contract (NxQuantum.Ports.Provider)
   - capability preflight domain contract (NxQuantum.Providers.Capabilities)
   - provider config/redaction contracts (NxQuantum.Providers.Config, NxQuantum.Providers.Redaction)
@@ -230,6 +231,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - NxQuantum.Observability.ProfileStrategy.Forensics
   - NxQuantum.Observability.Fingerprint
   - NxQuantum.Observability.PortabilityDelta
+  - `lib/nx_quantum/observability/schema.ex` (snapshot schema validation; `validate_snapshot/2` is user-facing per `docs/standalone-integration-profiles.md:86-89` but has no stability tier in `docs/api-stability.md`; observation only, no tier assigned)
 - Invariants:
   - deterministic dynamic branch execution for supported subset
   - typed provider lifecycle and capability/error diagnostics

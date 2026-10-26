@@ -63,7 +63,7 @@ Caveat: these speed figures are from local simulator/fixture workflows on specif
 
 ## Requirements
 
-- Elixir `~> 1.19` on OTP 28 or newer.
+- Elixir `~> 1.19` on OTP 28 or newer. CI tests two toolchain pairs: Elixir 1.19.1 / OTP 28.1 (the supported floor; optional backends off) and Elixir 1.20.4 / OTP 29.1.2. The optional EXLA and Torchx backends are tested on the 1.20.4 / OTP 29.1.2 pair only (`.github/workflows/ci.yml`).
 - Nx `~> 1.0`.
 - Optional EXLA and Torchx backends, `~> 1.0`.
 
