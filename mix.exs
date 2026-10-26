@@ -36,13 +36,13 @@ defmodule NxQuantum.MixProject do
   defp deps do
     [
       {:nx, "~> 1.0"},
-      {:stream_data, "~> 1.3", only: :test},
+      {:stream_data, "~> 1.4", only: :test},
       {:jason, "~> 1.4", only: [:dev, :test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: [:dev, :test], runtime: false},
       {:benchee, "~> 1.5", only: :dev},
-      {:styler, "~> 1.11", only: [:dev, :test], runtime: false}
+      {:styler, "~> 1.12", only: [:dev, :test], runtime: false}
     ] ++ optional_backend_deps()
   end
 
