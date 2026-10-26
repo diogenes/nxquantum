@@ -10,7 +10,7 @@
   "fixture_spec": {
     "rng": "numpy.random.Generator(PCG64(seed))",
     "seed_formula": "20261026 + 100*family_index + qubits",
-    "prefix_parity_seed_formula": "20261026 + 10000 + 100*family_index + qubits",
+    "prefix_parity_angles": "theta_w=(w+1)/64 (k=16(w+1)); complex phi_w=2theta_w (k=32(w+1)); deterministic",
     "family_index": {
       "real": 0,
       "complex": 1
@@ -31,8 +31,8 @@
     }
   },
   "prefix_parity": {
-    "real": "RY(j, theta_j) on every wire, then CNOT(j,j+1) for j = 0..n-2 in ascending order; <Z_k> = prod_{j<=k} cos(theta_j)",
-    "complex": "RX(j, theta_j) then RZ(j, phi_j) on every wire, then the same CNOT chain; <Z_k> = prod_{j<=k} cos(theta_j)"
+    "real": "RY(w, theta_w) on every wire, then CNOT(j,j+1) for j = 0..n-2 in ascending order; <Z_k> = prod_{j<=k} cos(theta_j)",
+    "complex": "RX(w, theta_w) then RZ(w, phi_w) on every wire, then the same CNOT chain; <Z_k> = prod_{j<=k} cos(theta_j)"
   },
   "lanes": {
     "nxquantum_cpu_portable": {
@@ -93,7 +93,7 @@
     "sampled_counts_exact_rational": 1e-06,
     "prefix_parity_exunit": {
       "real": 2.1e-06,
-      "complex": 1.1e-05,
+      "complex": 1.2e-05,
       "qubits": 12
     }
   },

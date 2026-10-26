@@ -13,7 +13,10 @@ Spec:
 - one angle set per timed-loop iteration (warmup + iterations), in the order the
   timed loop uses them, so cold mode never repeats an input (R1);
 - ZZ pairs (0, 1) and (n/2 - 1, n/2);
-- prefix-parity analytic circuits with seed 20261026 + 10000 + 100 * family_index + qubits.
+- prefix-parity analytic circuits are deterministic, not drawn: theta_w = (w + 1) / 64
+  (k = 16 * (w + 1)) and, for the complex family, phi_w = 2 * theta_w (k = 32 * (w + 1)).
+  This keeps every <Z_k> = prod_{j<=k} cos(theta_j) at or above 0.5 in magnitude up to
+  24 qubits, so the analytic check discriminates.
 
 Run as:  .venv-bench/bin/python -I bench/scenarios/generate_python_alternatives_fixture.py
 Output is byte-identical across runs for the pinned NumPy.
@@ -100,12 +103,12 @@ def build(table: dict) -> dict:
     prefix = {"real": {}, "complex": {}}
     for family in FAMILY_INDEX:
         for qubits in PREFIX_PARITY_WIDTHS:
-            seed = BASE_SEED + 10000 + 100 * FAMILY_INDEX[family] + qubits
-            rows = 1 if family == "real" else 2
-            drawn = draw(seed, rows, qubits)
-            entry = {"seed": seed, "theta_k": drawn[0]}
+            entry = {
+                "rule": "theta_w=(w+1)/64; phi_w=2*theta_w",
+                "theta_k": [16 * (w + 1) for w in range(qubits)],
+            }
             if family == "complex":
-                entry["phi_k"] = drawn[1]
+                entry["phi_k"] = [32 * (w + 1) for w in range(qubits)]
             prefix[family][str(qubits)] = entry
 
     return {

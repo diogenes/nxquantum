@@ -46,6 +46,7 @@ TABLE_PATH = ROOT / "bench" / "scenarios" / "python_alternatives.json"
 THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "VECLIB_MAXIMUM_THREADS")
 NX_SCRIPT = "bench/nxquantum_python_comparison.exs"
 REQUIREMENTS = ROOT / "bench" / "requirements-python-alternatives.txt"
+PREFIX_PARITY_MIN_ABS = 0.5
 
 
 def _pin_threads() -> None:
@@ -850,6 +851,7 @@ def selfcheck_dense(args, table, fixture):
 
 def selfcheck_prefix_parity(table, fixture, max_qubits):
     worst, detail = 0.0, {}
+    min_abs = float("inf")
     for family in ("real", "complex"):
         for width, entry in fixture["prefix_parity"][family].items():
             n = int(width)
@@ -857,12 +859,17 @@ def selfcheck_prefix_parity(table, fixture, max_qubits):
                 continue
             psi = ref_state(n, prefix_parity_gates(family, n, entry))
             got = ref_expectations(psi, [("Z", k) for k in range(n)])
-            err = max(abs(a - b) for a, b in zip(got, prefix_parity_expected(entry)))
+            expected = prefix_parity_expected(entry)
+            err = max(abs(a - b) for a, b in zip(got, expected))
             detail[f"{family}_{n}"] = err
             worst = max(worst, err)
+            min_abs = min(min_abs, min(abs(v) for v in expected))
     bound = table["selfcheck_bounds"]["reference_selfcheck_prefix_parity"]
-    return emit("reference_selfcheck_prefix_parity", "pass" if worst <= bound else "fail", max_err=repr(worst), bound=bound,
-                widths_max=max_qubits), detail
+    # The identity only discriminates while |expected| stays well away from 0.
+    discriminates = min_abs >= PREFIX_PARITY_MIN_ABS
+    ok = worst <= bound and discriminates
+    return emit("reference_selfcheck_prefix_parity", "pass" if ok else "fail", max_err=repr(worst), bound=bound,
+                min_abs_expected=repr(min_abs), min_abs_bound=PREFIX_PARITY_MIN_ABS, widths_max=max_qubits), detail
 
 
 def selfcheck_consensus(table, fixture, max_qubits):
