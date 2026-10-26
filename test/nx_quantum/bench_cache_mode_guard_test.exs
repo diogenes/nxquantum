@@ -5,11 +5,11 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
   @script "bench/nxquantum_python_comparison.exs"
 
   test "benchmark harness emits sampled lane output with cache_mode" do
-    {output, status} = run_bench("sampled_counts_sparse_terms")
+    {output, status} = run_bench("sampled_counts_z_wires_8q")
 
     assert status == 0
     assert output =~ "NXQ_BENCH"
-    assert output =~ "scenario=sampled_counts_sparse_terms"
+    assert output =~ "scenario=sampled_counts_z_wires_8q"
     assert output =~ "cache_mode=cold"
   end
 
@@ -23,7 +23,22 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
   end
 
   defp run_bench(scenario) do
-    args = ["run", @script, "1", "cpu_portable", scenario, "cold"]
+    args = [
+      "run",
+      @script,
+      "--mode",
+      "values",
+      "--profile",
+      "cpu_portable",
+      "--warmup",
+      "1",
+      "--iterations",
+      "2",
+      "--scenario",
+      scenario,
+      "--cache-mode",
+      "cold"
+    ]
 
     {cmd, cmd_args} =
       if System.find_executable("mise") do
