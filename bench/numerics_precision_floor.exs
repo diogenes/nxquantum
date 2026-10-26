@@ -7,47 +7,16 @@
 # Run from the repository root:
 #   MIX_ENV=test mix run bench/numerics_precision_floor.exs
 
-alias NxQuantum.Circuit
-alias NxQuantum.GateOperation
-alias NxQuantum.TestSupport.DenseReference
-alias NxQuantum.TestSupport.RandomCircuits
+alias NxQuantum.TestSupport.NumericsCases
 
 Code.require_file("test/support/dense_reference.ex")
 Code.require_file("test/support/random_circuits.ex")
-
-# {qubits, depth, circuits, seed}. The dense reference is limited to 6 qubits.
-cases = [
-  {4, 18, 10, {4, 1, 1}},
-  {6, 18, 10, {6, 1, 1}},
-  {6, 200, 5, {6, 2, 2}}
-]
-
-paulis = [pauli_x: :x, pauli_y: :y, pauli_z: :z]
+Code.require_file("test/support/numerics_cases.ex")
 
 # Each entry is {|production - float64 reference|, |production - float32(reference)|}.
 measure_circuit = fn qubits, ops ->
-  psi =
-    qubits
-    |> DenseReference.unitary(ops)
-    |> Nx.slice([0, 0], [Integer.pow(2, qubits), 1])
-    |> Nx.reshape({Integer.pow(2, qubits)})
-
-  for wire <- 0..(qubits - 1), {observable, gate} <- paulis do
-    m = DenseReference.unitary(qubits, [GateOperation.new(gate, [wire])])
-
-    reference =
-      psi
-      |> then(&Nx.dot(m, &1))
-      |> then(&Nx.multiply(Nx.conjugate(psi), &1))
-      |> Nx.real()
-      |> Nx.sum()
-      |> Nx.to_number()
-
-    production =
-      %Circuit{qubits: qubits, operations: ops}
-      |> Circuit.expectation(observable: observable, wire: wire)
-      |> Nx.to_number()
-
+  for {value, reference} <- NumericsCases.measure(qubits, ops) do
+    production = Nx.to_number(value)
     reference32 = reference |> Nx.tensor(type: {:f, 32}) |> Nx.to_number()
 
     {abs(production - reference), abs(production - reference32)}
@@ -72,12 +41,8 @@ IO.puts(
 
 IO.puts("| --- | --- | --- | --- | --- | --- | --- |")
 
-for {qubits, depth, circuits, seed} <- cases do
-  {errors, _state} =
-    Enum.map_reduce(1..circuits, RandomCircuits.seeded(seed), fn _, state ->
-      {ops, state} = RandomCircuits.operations(state, qubits, depth)
-      {measure_circuit.(qubits, ops), state}
-    end)
+for {qubits, depth, circuits, _seed} = spec <- NumericsCases.cases() do
+  errors = spec |> NumericsCases.circuits() |> Enum.map(&measure_circuit.(qubits, &1))
 
   s = errors |> List.flatten() |> summarize.()
 
