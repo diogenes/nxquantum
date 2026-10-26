@@ -53,7 +53,7 @@ The joint value is a control plane whose policies are tested against a determini
 2. **Contracts.** Stable, versioned, typed envelopes that hosts (FluxQ and user apps) can build on without breakage.
 3. **Scale-out.** Distributed execution within a job, then deterministic simulation of distributed quantum systems.
 
-Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an application of these pillars. Decision D1 (2026-10-26, `docs/roadmap.md` Decision Log) demotes it from the lead message; NxQuantum's `AGENTS.md` messaging invariant still names it until the owner approves new wording. FluxQ's `AGENTS.md` has no such invariant (checked 2026-10-26).
+Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an application of these pillars, not the lead message. Decision D1 (2026-10-26, `docs/roadmap.md` Decision Log) set the lead to "deterministic quantum execution on BEAM". The in-repo rerank datasets are synthetic (KG-5), so no real-data quality claim is made, and the real-data rerank lane is parked (§11).
 
 ## 6. Strategy Frame
 

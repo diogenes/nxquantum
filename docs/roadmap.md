@@ -238,7 +238,7 @@ Goal:
 Implementation deliverables:
 
 1. Refresh positioning according to D1:
-   - update `README.md` and `docs/getting-started.md`;
+   - update `README.md` and `docs/getting-started.md` (the `README.md` and `docs/product-positioning.md` lead were updated in the D1 slice, 2026-10-26; `docs/getting-started.md` and the decision-matrix merge stay open here);
    - merge `docs/decision-matrix.md` into `docs/product-positioning.md`, updating `AGENTS.md` and skill references.
 2. Three Livebooks:
    - embedding NxQuantum in a supervised BEAM service;

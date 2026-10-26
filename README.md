@@ -1,24 +1,28 @@
 # NxQuantum
 
-Benchmark-backed quantum ML primitives for Elixir teams on BEAM.
+Deterministic quantum execution on BEAM for Elixir and Nx teams.
 
-NxQuantum is a pure-Elixir quantum ML library for the `Nx` ecosystem. It keeps estimation, sampling, kernels, and transpilation in the same runtime as your ML training loops, inference services, and production pipelines.
+NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simulation, estimation, sampling, kernels, and transpilation inside your BEAM application, with no separate Python service. With fixed inputs, seed, and runtime profile, simulator and fixture runs return the same outputs every time. Jobs for IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI go through one typed lifecycle with versioned envelopes ([support tiers](docs/provider-support-catalog.md)); live hardware results remain probabilistic (see Determinism Scope).
 
 ## Who It Is For
 
-- Teams building ML systems in Elixir/Nx that need deterministic-by-default quantum workflows in the same runtime.
-- Researchers who want reproducible, typed contracts and BEAM-native integration patterns.
-- Product teams exploring hybrid quantum-AI workflows where runtime fit and reproducible evidence matter.
-- Not a primary fit (today) for teams whose top requirement is immediate broad hardware-provider coverage.
+- Elixir and Nx teams embedding quantum workloads in BEAM services, who need seeded, reproducible results and typed contracts in the same runtime.
+- Teams building host applications or control planes on NxQuantum's versioned job, result, and error envelopes and structured telemetry.
+- Researchers who need reproducible runs: fixed seeds, experiment fingerprints, and Livebook tutorials.
+- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically today, and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
+- Not a primary fit (today) for teams whose top requirement is broad hardware-provider coverage, compiler depth, or large-scale GPU simulation.
 
 ## Why Teams Choose NxQuantum
 
 Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx/BEAM community by providing:
 
-- Fast local workflow execution in the same BEAM runtime (no required cross-language service hop).
-- Deterministic-by-default behavior with explicit runtime and seed contracts.
-- Elixir-native primitives (`Estimator`, `Sampler`, `Kernels`, `Transpiler`) built for production integration.
-- A practical path from experiments to hybrid quantum-AI production workflows.
+- Deterministic-by-default execution: fixed inputs, seed, and runtime profile give the same outputs in simulator and fixture lanes, so CI and regression checks are reproducible.
+- Quantum execution in the same BEAM runtime as your services and `Nx` code, with no required cross-language service hop.
+- Typed, versioned contracts: one provider job lifecycle (`submit_job`, `poll_job`, `cancel_job`, `fetch_result`) with typed errors, plus explicit runtime-profile fallback.
+- Envelope compatibility guarded in CI: golden snapshots of job, result, and error envelopes fail the build on any byte change, and a deliberate change requires a `schema_version` bump (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
+- Verified physics with stated limits: compiler and transpiler passes are property-tested against an independent dense reference, and the single-precision accuracy floor is documented. (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
+- Telemetry with OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled adapter records in-process; no OpenTelemetry exporter ships), plus experiment fingerprints for comparing runs. VM-independent fingerprint hashing is unreleased (on `main`, see CHANGELOG `[Unreleased]`).
+- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically today.
 
 See positioning and comparison details:
 
