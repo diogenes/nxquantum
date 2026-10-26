@@ -152,7 +152,7 @@ defmodule NxQuantum.Features.Steps.ProviderMitigationCalibrationContractsSteps d
   defp normalize_calibration(payload) do
     case CalibrationPayload.validate(payload) do
       {:ok, normalized} ->
-        provenance = Map.get(normalized, :provenance, %{provider: "provider-x", target: "selected-target"})
+        provenance = %{provider: "provider-x", target: "selected-target"}
 
         {:ok,
          Map.merge(
