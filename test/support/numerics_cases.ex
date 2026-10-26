@@ -1,3 +1,8 @@
+# Files under test/support are loaded alphabetically with Code.require_file, so
+# numerics_cases.ex would compile before random_circuits.ex. require_file is
+# idempotent per absolute path, so this is safe alongside test_helper.exs.
+Code.require_file("random_circuits.ex", __DIR__)
+
 defmodule NxQuantum.TestSupport.NumericsCases do
   @moduledoc """
   Fixed-seed circuit cases and the float64 dense reference shared by the
