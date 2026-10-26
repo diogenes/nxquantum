@@ -69,12 +69,13 @@ Known gaps:
 | KG-2 | Phases 14–16 were never checked off | Closed in H1.1: audit recorded in Shipped History; partial items listed there |
 | KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Closed in H1.4: property suites and dense reference (see H1.4 Evidence) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
-| KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | H1.3 |
+| KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | Closed 2026-10-26 by D1. Manifests carry `provenance: synthetic`, the guard test (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`) checks provenance and CSV sha256 on both, and the docs are labeled |
 | KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
 | KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
 | KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement |
+| KG-11 | Hybrid benchmark scripts emit fixed quality figures, not measurements; the TurboQuant lane reports `rq_small_v1` while using generated embeddings | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
 
 ---
 

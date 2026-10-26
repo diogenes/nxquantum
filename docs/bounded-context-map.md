@@ -293,6 +293,9 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 - Features:
   - `features/quantum_ai_tool_contracts.feature`
   - `features/quantum_ai_rollout_gates.feature`
+  - `features/hybrid_quantum_ai_benchmark_pack.feature`
+- Datasets (synthetic fixtures; KG-5):
+  - `bench/datasets/rerank/`
 - Planned public entrypoints:
   - `NxQuantum.AI`
 - Domain/application modules:

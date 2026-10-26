@@ -16,7 +16,7 @@ Provide a deterministic integration recipe so teams can run hybrid benchmark sce
 2. Benchmark scenario spec:
    - `docs/hybrid-quantum-ai-benchmark.md`
 3. Dataset IDs/version metadata:
-   - `rq_small_v1` / `rq_medium_v1`
+   - `rq_small_v1` / `rq_medium_v1` (synthetic, 6- and 8-row hand-authored fixtures; contract and regression smoke checks only; not evidence of rerank quality)
    - `co_knapsack_v1`
    - `lf_mixed_v1`
 
