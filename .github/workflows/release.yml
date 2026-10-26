@@ -19,10 +19,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Erlang/Elixir
+        id: beam
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "28.1"
-          elixir-version: "1.19.1"
+          otp-version: "29.1.2"
+          elixir-version: "1.20.4"
 
       - name: Cache deps and build
         uses: actions/cache@v4
@@ -30,10 +31,10 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-release-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-release-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-release-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-release-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
 
       - name: Install deps
         run: mix deps.get
