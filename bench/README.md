@@ -42,12 +42,12 @@ Reference evidence:
 
 Run NxQuantum against Qiskit, PennyLane, and Cirq on equivalent local workloads:
 
+Python pins: `bench/requirements-python-alternatives.txt` is the exact `pip freeze` of the comparison environment (Python 3.13.16, qiskit 2.6.1, pennylane 0.45.1, cirq-core 1.7.0, numpy 2.5.4 and their transitive closure only), taken from the latest stable PyPI releases on 2026-10-26; pinning makes competitor versions reproducible and recorded with every result. The environment lives outside `mix.exs`, CI and Hex. Always run it as `.venv-bench/bin/python -I`.
+
 ```bash
-python3 -m venv .venv-bench
-source .venv-bench/bin/activate
-python -m pip install --upgrade pip
-python -m pip install 'qiskit>=1.2,<2' 'pennylane>=0.38,<0.40' 'cirq-core>=1.3,<1.5'
-python -m pip install 'autoray<0.7'
+mise exec python@3.13.16 -- python -m venv .venv-bench
+.venv-bench/bin/python -I -m pip install -r bench/requirements-python-alternatives.txt
+.venv-bench/bin/python -I -m pip freeze | diff - bench/requirements-python-alternatives.txt   # must be empty
 python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact
 python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario deep_6q
 python bench/python_alternatives_benchmark.py --iterations 100 --warmup 10 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario batch_obs_8q
