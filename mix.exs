@@ -35,15 +35,14 @@ defmodule NxQuantum.MixProject do
 
   defp deps do
     [
-      {:nx, "~> 0.10"},
-      {:axon, "~> 0.8", optional: true},
-      {:stream_data, "~> 1.3", only: :test},
+      {:nx, "~> 1.0"},
+      {:stream_data, "~> 1.4", only: :test},
       {:jason, "~> 1.4", only: [:dev, :test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: [:dev, :test], runtime: false},
       {:benchee, "~> 1.5", only: :dev},
-      {:styler, "~> 1.11", only: [:dev, :test], runtime: false}
+      {:styler, "~> 1.12", only: [:dev, :test], runtime: false}
     ] ++ optional_backend_deps()
   end
 
@@ -55,7 +54,7 @@ defmodule NxQuantum.MixProject do
 
   defp maybe_add_exla(deps) do
     if feature_enabled?("NXQ_ENABLE_EXLA", default: true) do
-      [{:exla, "~> 0.10", optional: true} | deps]
+      [{:exla, "~> 1.0", optional: true} | deps]
     else
       deps
     end
@@ -63,7 +62,7 @@ defmodule NxQuantum.MixProject do
 
   defp maybe_add_torchx(deps) do
     if feature_enabled?("NXQ_ENABLE_TORCHX", default: false) do
-      [{:torchx, "~> 0.10", optional: true} | deps]
+      [{:torchx, "~> 1.0", optional: true} | deps]
     else
       deps
     end

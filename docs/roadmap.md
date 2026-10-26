@@ -83,7 +83,7 @@ Known gaps:
 
 ## Horizon 1 - Honest, Evidenced, Embeddable (Q4 2026 – Q1 2027)
 
-Order: H1.1 first. H1.2, H1.3, and H1.4 then run in parallel. H1.5 comes after H1.3, because decision D1 shapes the messaging.
+Order: H1.1 first. H1.2, H1.3, and H1.4 then run in parallel. H1.5 comes after H1.3, because decision D1 shapes the messaging. H1.6 merges before any H1.3 benchmark run, so H1.3 evidence describes the upgraded stack.
 
 ### H1.1 - Status Truth and Docs Consolidation
 
@@ -157,7 +157,7 @@ Review gate:
 - Status: in progress
 - Intent: performance (evidence only)
 - Seats: Lead, Quantum physics/math, Verifier, Product marketing (claims audit)
-- Depends on: H1.1
+- Depends on: H1.1, H1.6
 - Target release: none (bench and docs)
 
 Goal:
@@ -252,6 +252,40 @@ Review gate:
 2. Time-to-first-result of 10 minutes or less is measured on a clean machine (the same KPI FluxQ uses).
 3. Survey results are recorded.
 4. At least one external user candidate is named.
+
+### H1.6 - Dependency Currency
+
+- Status: in progress
+- Intent: api change (PR-A: dependency floor `nx ~> 1.0`; no function, type, or envelope change intended), refactor (PR-B: toolchain)
+- Seats: Lead, Principal architect (plan review), DX, Critic, Verifier, Docs sync, Quantum physics/math
+- Depends on: H1.1
+- Target release: 0.12.0 (together with the H1.2 and H1.4 changes in `[Unreleased]`)
+
+Goal:
+
+1. NxQuantum builds, tests, and releases against the latest stable Nx ecosystem and Elixir/OTP toolchain.
+2. Numerics, determinism, and envelope contracts are unchanged within the tolerances in the review gate.
+
+Implementation deliverables:
+
+1. PR-A, dependencies, on the current toolchain (Elixir 1.19 / OTP 28):
+   - first commit, before the bump: make the backprop finite-difference check in `test/nx_quantum/grad_test.exs` compare against the analytic derivative (−sin θ) with a well-conditioned step; the physics seat confirms step and tolerance from an error measurement on the current lock (proposed: ε = 1e-3, tolerance 1e-4; the physics seat set ε = 3e-3, tolerance 1e-4);
+   - `mix.exs`: `nx ~> 1.0`; optional `axon` removed (no call site; critic R3), optional `exla ~> 1.0`, `torchx ~> 1.0`; dev and test dependencies at latest stable; `mix.lock` regenerated;
+   - Styler reformatting in its own commit (not needed: no reformatting was required, so no such commit exists);
+   - `bench/numerics_digest.exs`: bit digests of optimized ops, expectations, the float64 reference, sampler counts, gradients, and the kernel.
+2. PR-B, toolchain: `mise.toml`, `.github/workflows/ci.yml`, and `.github/workflows/release.yml` move to Elixir 1.20.4 / OTP 29.1.2; fix new compiler and type-checker warnings; keep a CI floor leg on Elixir 1.19 / OTP 28 (compile with warnings as errors, `mix test`) while `mix.exs` declares `elixir: "~> 1.19"`.
+3. Evidence: `bench/results/<run-date>-h1.6/` holds digests and precision-floor outputs for three states (before, after PR-A, after PR-B), two runs each, plus a summary table (artifact, reference, pre SHA, post SHA, identical, max abs Δ, tolerance). Rerun the `docs/backend-support.md` "Numerical Precision" table with the new date and versions.
+4. Docs: a CHANGELOG `[Unreleased]` "Changed" entry with a migration note for consumers on Nx 0.x; a "Dependency Policy" section in `docs/api-stability.md`; a "Requirements" line in `README.md`; a release-cut check in `docs/release-process.md` (`mix hex.outdated` shows no runtime dependency behind latest stable).
+5. FluxQ: `mix test` green against PR-A, run on a scratch copy of FluxQ with its path dependency pointed at PR-A. The FluxQ lock update (Nx 1.0, complex 1.x) is tracked in the FluxQ roadmap.
+
+Review gate:
+
+1. For both PRs: `mix quality`, `mix dialyzer`, `mix test`, `NXQ_ENABLE_EXLA=1 mix test`, `mix test.property`, `mix test.features`, `mix test.domain_coverage` (100%), `mix test.provider_smoke`, `mix test.release_evidence`, `mix docs.build`, and `mix hex.build` are green. The `mix bench.batch_obs_guard` before/after delta is recorded.
+2. Envelope snapshots pass unchanged, without regeneration. Ids are hashed from `:erlang.term_to_binary(_, [:deterministic])`, which OTP keeps stable only within a major release; any id or envelope byte change stops the work as an envelope contract change.
+3. BinaryBackend numerics: digests and the precision table are byte-identical. If bits move, the cause is named, and every row stays at or below 1e-6 absolute against the float64 reference; a row above 5.0e-7 updates the documented floor. Parameter-shift and adjoint gradients stay within 1e-6 of the analytic value. `expectation/2` output stays `{:f, 32}`. Two runs per state are byte-identical.
+4. Seeded sampling counts are byte-identical. A change needs a named OTP cause and a documented D2 re-baseline.
+5. A diff audit shows no loosened test tolerance, no changed seed, and no regenerated snapshot.
+6. Fresh-clone first-compile time with EXLA 1.0 is recorded (input to the H1.5 time-to-first-result target).
 
 ---
 
@@ -379,6 +413,9 @@ Decisions already taken (2026-10-18):
 - The Qiskit C API adapter is opt-in only, and parked.
 - The Clifford simulator is demand-driven, and parked.
 - The control plane is FluxQ.
+
+Decisions already taken (2026-10-25):
+- Dependency policy: track the latest stable Nx ecosystem and Elixir/OTP releases, checked at each minor release cut (H1.6; `docs/api-stability.md`).
 
 ## Docs Consolidation Plan (executed in H1.1, 2026-10-19)
 

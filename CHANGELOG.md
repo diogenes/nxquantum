@@ -15,6 +15,19 @@
 ### Changed
 
 - The single-precision numerics floor is documented in `docs/backend-support.md` ("Numerical Precision"). Decision recorded in roadmap KG-10: precision stays `complex64`, and the output dtype of `Circuit.expectation/2` is unchanged. Measured error against a float64 reference is at most 4.5e-7 over up to 6 qubits and depth 200 (`bench/numerics_precision_floor.exs`).
+- Dependency currency (H1.6 PR-A, `api change`: the runtime dependency floor moved). Migration note:
+  - What changed:
+    - Runtime dependency `nx ~> 0.10` is now `nx ~> 1.0`.
+    - Optional backends are `exla ~> 1.0` and `torchx ~> 1.0`. Env gating (`NXQ_ENABLE_EXLA`, `NXQ_ENABLE_TORCHX`) is unchanged.
+    - The optional `axon` dependency is dropped. NxQuantum never called Axon; `docs/axon-integration.md` uses plain Nx. Axon users declare `axon` in their own `mix.exs`.
+    - `complex` 1.x comes in through `nx` (was 0.6).
+    - The Elixir requirement stays `~> 1.19`.
+  - What did not change:
+    - No NxQuantum function, type, option, error, or envelope changed. Envelope snapshots were not regenerated.
+    - On the default `Nx.BinaryBackend`, the numerics digests and the precision table are bit-identical before and after (`bench/results/2026-10-26-h1.6/SUMMARY.md`). This bit-identity claim covers BinaryBackend only. EXLA and Torchx are covered by the tolerance-based tests, not by bit-identity.
+  - A consumer on Nx 0.x fails at dependency resolution, not at runtime. With `{:nx_quantum, "~> 0.11"}` and `nx` held at 0.x, `mix deps.update` stays on 0.11.0. Requiring the next release fails version solving on `nx`.
+  - To migrate: bump `nx` (and `exla` / `torchx`, if used) to `~> 1.0`, then run `mix deps.update nx exla torchx complex nx_quantum`. Fix your own code for the Nx 1.0 removals listed in the [Nx changelog](https://hexdocs.pm/nx/changelog.html). NxQuantum used none of them.
+  - To stay on Nx 0.x: pin `{:nx_quantum, "~> 0.11.0"}`. No 0.11.x maintenance line is promised.
 
 ### Fixed
 

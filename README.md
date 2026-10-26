@@ -61,6 +61,12 @@ Caveat: these speed figures are from local simulator/fixture workflows on specif
 - Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
 - Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
+## Requirements
+
+- Elixir `~> 1.19` on OTP 28 or newer.
+- Nx `~> 1.0`.
+- Optional EXLA and Torchx backends, `~> 1.0`.
+
 ## Quick Start
 
 ```bash

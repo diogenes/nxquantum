@@ -1,0 +1,14 @@
+Fresh-clone first-compile time with EXLA 1.0 (H1.6 review gate item 6)
+
+date:        2026-10-26
+state:       after PR-A (fresh clone of branch HEAD abcce8b, "deps: update dev and test tooling")
+machine:     Apple M4, macOS 26.6.2, Elixir 1.19.5 / OTP 28.4.1
+command:     git clone <worktree> fresh && cd fresh && mix deps.get && NXQ_ENABLE_EXLA=1 mix compile
+env:         XLA_CACHE_DIR pointed at an empty directory (no cached XLA archive or libexla.so)
+result:      28 s wall clock (exit 0, no warnings)
+
+Caveat: this includes downloading the precompiled XLA archive (xla 0.10.0,
+aarch64-darwin-cpu) and building libexla.so from C++ source (EXLA 1.0
+compiles it locally). On a different network, a slower CPU, or a platform
+without a precompiled archive the time differs. Single measurement, not a
+benchmark distribution.

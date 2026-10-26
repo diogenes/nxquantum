@@ -1,0 +1,18 @@
+fixture_ops_sha=4902308d83e6ea8e
+production_expval_bits_sha=2037cbb5885a8334 (390 obs)
+float64_reference_bits_sha=c2b64561992b31cd
+sampler_run_ry_sha=f650fb5b1fedf895 sample=[%{"0" => 738, "1" => 286}, %{"0" => 739, "1" => 285}, %{"0" => 752, "1" => 272}]
+sampler_run_e2e_sha=c12ff1c80a535413 (144 runs)
+estimator_shots_sha=071d09fb48ff3f2e
+compiler_optimize_ops_sha=e204c003826cb734
+readout_mitigation_sha=e079699b3f218434 probs=[0.35776180028915405, 0.6422381401062012]
+grad_values=[-0.8791685104370117, -0.8912073969841003, -0.9438182711601257] analytic_ps=-0.8912073600614354 analytic_adj=-0.9438182093746337
+grad_bits_sha=651300ce18dd8669
+kernel_bits_sha=bc0f4c5635e84de1
+complex_prims {:c, 64} multiply=4454b3248f818788 conjugate=f1cc870b6f53c90b divide=26352d62bcf49cdb add=13e571ea54104551 exp=cfde1558156d4c17 abs=6c17e22bff9f546e sqrt=f14489af5c08ca5f phase=6947ef7e17c1051a real=b90a23ae65447395 imag=3df8a530c0d13c5f dot=e6bf3d99bf8fe008 dot_mm=4ce666a42f9f02fb sum=7091ee8754b7e004 cos=ec71bf7861dd3fc4 sin=fe799ff16e9e3056 as_c64=703133a9b9b98c57
+complex_prims {:c, 128} multiply=7de9cb9276aba575 conjugate=dcdab7020fad8996 divide=11ac36e4a337d592 add=1a50473feb077580 exp=1db6f1cbc9fde22f abs=3ad8cb17ed4af81b sqrt=9b7d8eef0524039a phase=fe93147613f5dc5e real=09b465585ce77cfe imag=990bd0627a20fdef dot=64174357eeddf6ab dot_mm=a05c8d3dc39461a5 sum=9a83a65e05376217 cos=43acaa87ff5c69eb sin=a67de61461a4f0ff as_c64=703133a9b9b98c57
+expectation_types=[f: 32]
+max_abs_delta_vs_float64=4.3983212272280525e-7
+grad_abs_err_parameter_shift=3.692266492549834e-8
+grad_abs_err_adjoint=6.178549205593242e-8
+grad_abs_err_backprop_eps1e-3=1.2886202052087015e-6

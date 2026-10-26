@@ -1,0 +1,1 @@
+NXQ_BATCH_OBS_GUARD cache_mode=hot guard_mode=blocking status=ok per_op_ms=0.15455 max_per_op_ms=2.028193 iterations=100 warmup=20

@@ -1,0 +1,15 @@
+date_utc: 2026-10-26
+os: macOS 26.6.2
+cpu: Apple M4
+elixir: 1.19.5
+otp_release: 28
+otp_version: 28.4.1
+nx: 0.11.0
+exla: 0.11.0
+torchx: not present
+complex: 0.6.0
+NXQ_ENABLE_EXLA: unset
+NXQ_ENABLE_TORCHX: unset
+MIX_ENV: test
+git_head: 058a38849febba5ad740800c1573cff60359f582
+backend: {Nx.BinaryBackend, []}
