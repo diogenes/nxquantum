@@ -10,3 +10,6 @@
 /*.tar
 erl_crash.dump
 /tmp/
+
+# Python bytecode
+__pycache__/

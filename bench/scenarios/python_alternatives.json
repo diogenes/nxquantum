@@ -424,6 +424,7 @@
         ["cnot", 1, 5]
       ],
       "observables": [["X", 5], ["Y", 5]],
+      "state_reuse": true,
       "lane_labels": {
         "nxquantum_cpu_portable": "public Estimator.run with cache_evolved_state: true",
         "nxquantum_cpu_compiled": "public Estimator.run with cache_evolved_state: true",

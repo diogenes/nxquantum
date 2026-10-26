@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import platform
 import resource
@@ -47,6 +48,10 @@ THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "VE
 NX_SCRIPT = "bench/nxquantum_python_comparison.exs"
 REQUIREMENTS = ROOT / "bench" / "requirements-python-alternatives.txt"
 PREFIX_PARITY_MIN_ABS = 0.5
+DEFAULT_MAX_QUBITS = 8
+CPU_WALL_LABEL_ABOVE = 1.1
+SAMPLED_HELPER_DTYPE = "float64 Python helper (no framework API)"
+INF = float("inf")
 
 
 def _pin_threads() -> None:
@@ -315,10 +320,17 @@ def _qiskit_label(qubits: int, wire: int, axis: str) -> str:
     return "".join(chars)[::-1]  # Qiskit labels are little-endian
 
 
+def _state_expectations(qubits, observables):
+    """Timed region of the state-reuse scenario for PennyLane and Cirq: the NumPy reference helper
+    on an already simulated state (wire 0 is axis 0 in both frameworks)."""
+    shape = (2,) * qubits
+    return lambda state: ref_expectations(np.asarray(state).reshape(shape), observables)
+
+
 class QiskitLane:
     name = "qiskit"
 
-    def build(self, qubits, gates):
+    def build(self, qubits, gates, observables=None):
         from qiskit import QuantumCircuit
 
         circuit = QuantumCircuit(qubits)
@@ -342,6 +354,18 @@ class QiskitLane:
 
         return run
 
+    def state_reuse_runner(self, qubits, observables, gate_sets):
+        """Statevector.from_instruction once per distinct circuit, untimed; timed: expectation_value per Pauli."""
+        from qiskit.quantum_info import Pauli, Statevector
+
+        paulis = [Pauli(_qiskit_label(qubits, wire, axis)) for axis, wire in observables]
+        states, tokens = {}, []
+        for gates in gate_sets:
+            if id(gates) not in states:
+                states[id(gates)] = Statevector.from_instruction(self.build(qubits, gates))
+            tokens.append(states[id(gates)])
+        return (lambda state: [float(state.expectation_value(p).real) for p in paulis]), tokens
+
     def sampled_runner(self, scenario):
         from qiskit.quantum_info import Pauli, SparsePauliOp
         from qiskit.result import sampled_expectation_value
@@ -360,7 +384,8 @@ class QiskitLane:
 class PennyLaneLane:
     name = "pennylane"
 
-    def build(self, qubits, gates):
+    def build(self, qubits, gates, observables=None):
+        """A QuantumScript built before the timed loop (no QNode); `observables=None` builds state-only ops."""
         import pennylane as qml
 
         ops = []
@@ -371,23 +396,37 @@ class PennyLaneLane:
                 ops.append(qml.Hadamard(wires=gate[1]))
             else:
                 ops.append({"rx": qml.RX, "ry": qml.RY, "rz": qml.RZ}[gate[0]](gate[2], wires=gate[1]))
-        return ops
+        make = {"X": qml.PauliX, "Y": qml.PauliY, "Z": qml.PauliZ}
+        measurements = [qml.state()] if observables is None else [
+            qml.expval(make[axis](wires=wire)) for axis, wire in observables]
+        return qml.tape.QuantumScript(ops, measurements)
 
     def runner(self, qubits, observables):
         import pennylane as qml
 
         device = qml.device("default.qubit", wires=qubits)
-        make = {"X": qml.PauliX, "Y": qml.PauliY, "Z": qml.PauliZ}
-        measurements = [qml.expval(make[axis](wires=wire)) for axis, wire in observables]
+        single = len(observables) == 1
 
-        def run(ops):
-            tape = qml.tape.QuantumScript(ops, measurements)
-            result = qml.execute([tape], device)[0]
-            if len(measurements) == 1 and not isinstance(result, (tuple, list)):
+        def run(tape):
+            result = qml.execute([tape], device, cache=False)[0]
+            if single and not isinstance(result, (tuple, list)):
                 result = (result,)
             return [float(v) for v in result]
 
         return run
+
+    def state_reuse_runner(self, qubits, observables, gate_sets):
+        """State from qml.execute(qml.state()) (complex128) once, untimed; timed: the NumPy helper on it."""
+        import pennylane as qml
+
+        device = qml.device("default.qubit", wires=qubits)
+        states, tokens = {}, []
+        for gates in gate_sets:
+            if id(gates) not in states:
+                tape = self.build(qubits, gates, None)
+                states[id(gates)] = np.asarray(qml.execute([tape], device, cache=False)[0])
+            tokens.append(states[id(gates)])
+        return _state_expectations(qubits, observables), tokens
 
     def sampled_runner(self, scenario):
         counts = scenario["counts"]
@@ -413,7 +452,12 @@ class CirqLane:
         self.name = name
         self.dtype = dtype  # None = cirq.Simulator() default (complex64)
 
-    def build(self, qubits, gates):
+    def _simulator(self):
+        import cirq
+
+        return cirq.Simulator() if self.dtype is None else cirq.Simulator(dtype=self.dtype)
+
+    def build(self, qubits, gates, observables=None):
         import cirq
 
         q = cirq.LineQubit.range(qubits)
@@ -433,12 +477,22 @@ class CirqLane:
         q = cirq.LineQubit.range(qubits)
         make = {"X": cirq.X, "Y": cirq.Y, "Z": cirq.Z}
         obs = [make[axis](q[wire]) for axis, wire in observables]
-        simulator = cirq.Simulator() if self.dtype is None else cirq.Simulator(dtype=self.dtype)
+        simulator = self._simulator()
 
         def run(circuit):
             return [float(v.real) for v in simulator.simulate_expectation_values(circuit, observables=obs)]
 
         return run
+
+    def state_reuse_runner(self, qubits, observables, gate_sets):
+        """final_state_vector once per distinct circuit, untimed (dtype of this lane); timed: the NumPy helper."""
+        simulator = self._simulator()
+        states, tokens = {}, []
+        for gates in gate_sets:
+            if id(gates) not in states:
+                states[id(gates)] = simulator.simulate(self.build(qubits, gates)).final_state_vector
+            tokens.append(states[id(gates)])
+        return _state_expectations(qubits, observables), tokens
 
     def sampled_runner(self, scenario):
         return PennyLaneLane().sampled_runner(scenario)  # same pure-Python helper, no framework API
@@ -549,21 +603,72 @@ def reference_values(prep: Prepared):
     return out
 
 
+def abs_error(got, ref) -> float:
+    """|got - ref|, or inf if got is not a finite real number (NaN never compares as a pass)."""
+    try:
+        value = float(got)
+    except (TypeError, ValueError):
+        return INF
+    if not math.isfinite(value):
+        return INF
+    err = float(abs(Fraction(value) - ref)) if isinstance(ref, Fraction) else abs(value - ref)
+    return err if math.isfinite(err) else INF
+
+
+def worse(current: float, candidate: float) -> float:
+    """NaN-safe running maximum: a NaN or infinite candidate makes the result inf."""
+    if not math.isfinite(candidate):
+        return INF
+    return max(current, candidate)
+
+
 def max_error(values, refs) -> float:
+    """Largest |value - reference| over all rows; inf when the two do not agree in shape.
+
+    inf covers a missing or extra row, a row of the wrong length, nothing to compare, and any
+    value that is not finite (NaN included), so none of these can pass a gate.
+    """
+    if len(values) != len(refs) or len(refs) == 0:
+        return INF
     worst = 0.0
     for got_row, ref_row in zip(values, refs):
-        if len(got_row) != len(ref_row):
-            return float("inf")
+        if len(got_row) != len(ref_row) or len(ref_row) == 0:
+            return INF
         for got, ref in zip(got_row, ref_row):
-            err = float(abs(Fraction(got) - ref)) if isinstance(ref, Fraction) else abs(got - ref)
-            worst = max(worst, err)
+            worst = worse(worst, abs_error(got, ref))
+            if worst == INF:
+                return INF
     return worst
+
+
+def vec_error(got, ref) -> float:
+    return max_error([list(got)], [list(ref)])
+
+
+def array_error(got, ref) -> float:
+    got, ref = np.asarray(got), np.asarray(ref)
+    if got.shape != ref.shape or not np.all(np.isfinite(got)):
+        return INF
+    return float(np.max(np.abs(got - ref))) if got.size else INF
 
 
 def verdict(max_err: float, tolerance):
     if tolerance is None:
         return "ungated"
-    return "pass" if max_err <= tolerance else "fail"
+    return "pass" if (math.isfinite(max_err) and max_err <= tolerance) else "fail"
+
+
+def discrimination(refs, tolerance):
+    """(max |ref|, observables whose |ref| stays >= 10 * tolerance in every iteration, observables)."""
+    if not refs:
+        return None, None, 0
+    floats = [[float(v) for v in row] for row in refs]
+    count = len(floats[0])
+    biggest = max(abs(v) for row in floats for v in row)
+    if tolerance is None:
+        return biggest, None, count
+    strong = sum(1 for j in range(count) if min(abs(row[j]) for row in floats) >= 10.0 * tolerance)
+    return biggest, strong, count
 
 
 # --------------------------------------------------------------------------------------
@@ -643,13 +748,15 @@ def run_python_lane(lane_id: str, prep: Prepared, timed: bool):
     if prep.kind.startswith("sampled"):
         runner = lane.sampled_runner(prep.scenario)
         tokens = [None] * prep.total
+    elif prep.scenario.get("state_reuse"):
+        runner, tokens = lane.state_reuse_runner(prep.qubits, prep.observables, prep.gate_sets)
     else:
         runner = lane.runner(prep.qubits, prep.observables)
         built = {}
         tokens = []
         for gates in prep.gate_sets:  # built before the timed loop, one per iteration
             if id(gates) not in built:
-                built[id(gates)] = lane.build(prep.qubits, gates)
+                built[id(gates)] = lane.build(prep.qubits, gates, prep.observables)
             tokens.append(built[id(gates)])
     if timed:
         values, times = time_runner(runner, tokens, prep.warmup)
@@ -666,8 +773,9 @@ def python_zz(lane_id: str, prep: Prepared, fixture):
     entry = fixture["families"][prep.scenario["family"]]["widths"][str(prep.qubits)]
     out = {}
     for a, b in entry["zz_pairs"]:
-        runner = lane.runner(prep.qubits, [("Z", b)])
-        out[f"{a},{b}"] = runner(lane.build(prep.qubits, prep.gate_sets[0] + [("cnot", a, b)]))[0]
+        observables = [("Z", b)]
+        runner = lane.runner(prep.qubits, observables)
+        out[f"{a},{b}"] = runner(lane.build(prep.qubits, prep.gate_sets[0] + [("cnot", a, b)], observables))[0]
     return out
 
 
@@ -690,6 +798,28 @@ def lane_enabled_for(table, lane_id, prep: Prepared, timed_mode: bool):
     return True, None
 
 
+def cpu_seconds(who) -> float:
+    usage = resource.getrusage(who)
+    return usage.ru_utime + usage.ru_stime
+
+
+def one_line(text: str, limit: int = 300) -> str:
+    flat = " ".join(str(text).split())
+    return flat if len(flat) <= limit else flat[: limit - 3] + "..."
+
+
+def execute_lane(args, table, fixture, lane_id, lane_cfg, prep, zz_ref, timed_mode):
+    """Run one lane on one prepared scenario. Returns values, times, zz values, extra row fields."""
+    if lane_cfg["framework"] == "nxquantum":
+        tail = nx_args(args, prep, lane_cfg, "timed" if timed_mode else "values", zz_ref != {})
+        out = parse_nx(run_nx(args, table, tail))
+        extra = {"resolved_profile": out["bench"].get("resolved_profile"), "nx_flags": out["bench"].get("flags")}
+        return out["values"], out["times_ms"], out["zz"], extra
+    out = run_python_lane(lane_id, prep, timed=lane_cfg.get("timed", True))
+    zz_values = python_zz(lane_id, prep, fixture) if zz_ref else {}
+    return out["values"], out["times_ms"], zz_values, {}
+
+
 def execute_scenario(args, table, fixture, sid, cache_mode, lanes, timed_mode, check_counts, report):
     scenario = scenario_or_raise(table, sid)
     warmup = iterations = None
@@ -707,9 +837,12 @@ def execute_scenario(args, table, fixture, sid, cache_mode, lanes, timed_mode, c
         if lane_id == "cirq_c128_equivalence" and prep.kind.startswith("sampled"):
             continue
         ok, reason = lane_enabled_for(table, lane_id, prep, timed_mode)
+        dtype = lane_cfg["dtype"]
+        if prep.kind.startswith("sampled") and lane_id in ("pennylane", "cirq_c64"):
+            dtype = SAMPLED_HELPER_DTYPE  # pure-Python counts helper, not a framework API
         row = {
             "scenario": sid, "family": scenario.get("family"), "qubits": prep.qubits, "cache_mode": cache_mode,
-            "lane": lane_id, "dtype": lane_cfg["dtype"], "label": scenario.get("lane_labels", {}).get(lane_id),
+            "lane": lane_id, "dtype": dtype, "label": scenario.get("lane_labels", {}).get(lane_id),
             "warmup": prep.warmup, "iterations": prep.iterations, "scenario_labels": scenario.get("labels", []),
             "synthetic": scenario.get("synthetic", False),
         }
@@ -718,32 +851,58 @@ def execute_scenario(args, table, fixture, sid, cache_mode, lanes, timed_mode, c
             rows.append(row)
             continue
 
-        started = time.perf_counter()
-        if lane_cfg["framework"] == "nxquantum":
-            out = parse_nx(run_nx(args, table, nx_args(args, prep, lane_cfg, "timed" if timed_mode else "values", zz_ref != {})))
-            values, times = out["values"], out["times_ms"]
-            row["resolved_profile"] = out["bench"].get("resolved_profile")
-            row["nx_flags"] = out["bench"].get("flags")
-            zz_values = out["zz"]
-        else:
-            out = run_python_lane(lane_id, prep, timed=lane_cfg.get("timed", True))
-            values, times = out["values"], out["times_ms"]
-            zz_values = python_zz(lane_id, prep, fixture) if zz_ref else {}
-        row["wall_s"] = time.perf_counter() - started
-
         tolerance = tolerance_for(table, scenario, lane_id)
+        who = resource.RUSAGE_CHILDREN if lane_cfg["framework"] == "nxquantum" else resource.RUSAGE_SELF
+        cpu_before, started = cpu_seconds(who), time.perf_counter()
+        try:
+            values, times, zz_values, extra = execute_lane(args, table, fixture, lane_id, lane_cfg, prep, zz_ref, timed_mode)
+            error = None
+        except Exception as exc:  # noqa: BLE001  (a lane failure is a row result, not a crash)
+            values, times, zz_values, extra = [], [], {}, {}
+            error = f"{type(exc).__name__}: {one_line(exc)}"
+        wall = time.perf_counter() - started
+        cpu = cpu_seconds(who) - cpu_before
+        row.update(extra)
+        row["wall_s"] = wall
+        row["cpu_s"] = cpu
+        row["cpu_wall"] = (cpu / wall) if wall > 0 else None
+        row["cpu_wall_label"] = (
+            f"cpu/wall above {CPU_WALL_LABEL_ABOVE} (not single-threaded)"
+            if row["cpu_wall"] is not None and row["cpu_wall"] > CPU_WALL_LABEL_ABOVE else None)
+        discrim_tol = tolerance if tolerance is not None else tolerance_for(table, scenario, "cirq_c128_equivalence")
+        biggest, strong, count = discrimination(refs, discrim_tol)
+        row.update(max_abs_ref=biggest, n_discriminating=strong, n_observables=count, discrimination_tolerance=discrim_tol)
+
+        if error is not None:
+            row.update(status="error", error=error, max_err=INF, tolerance=tolerance, beyond_kg10_floor=None,
+                       values=[], times_ms=[], per_op_ms=None, gated=tolerance is not None)
+            rows.append(row)
+            report(row, prep)
+            continue
+
         err = max_error(values, refs)
+        status = verdict(err, tolerance)
         row.update(
-            max_err=err, tolerance=tolerance, status=verdict(err, tolerance),
-            beyond_kg10_floor=bool(err > 1e-6),
+            max_err=err, tolerance=tolerance, status=status, gated=tolerance is not None,
+            beyond_kg10_floor=bool(err > 1e-6 or not math.isfinite(err)),
             values=[[repr(v) for v in rowvals] for rowvals in values],
             times_ms=times,
             per_op_ms=(sum(times) / len(times)) if times else None,
         )
         if zz_ref:
-            zz_err = max(abs(zz_values[key] - ref) for key, ref in zz_ref.items()) if zz_values else float("inf")
-            row["zz"] = {"values": {k: repr(v) for k, v in zz_values.items()}, "max_err": zz_err,
-                         "status": verdict(zz_err, tolerance)}
+            zz_err = INF
+            if zz_values and set(zz_values) == set(zz_ref):
+                zz_err = 0.0
+                for key, ref in zz_ref.items():
+                    zz_err = worse(zz_err, abs_error(zz_values[key], ref))
+            zz_status = verdict(zz_err, tolerance)
+            row["zz"] = {"values": {k: repr(v) for k, v in zz_values.items()}, "max_err": zz_err, "status": zz_status}
+            if zz_status == "fail" and row["status"] == "pass":
+                # RF7: a failed ZZ check fails the whole row and withholds its timing
+                row["status"] = "fail"
+                row["fail_reason"] = "zz"
+        if row["status"] == "fail":
+            row.update(per_op_ms=None, times_ms=[], timing_withheld=True)
         rows.append(row)
         report(row, prep)
     return rows
@@ -784,7 +943,14 @@ def environment_lines(args, table, fixture_sha, mode):
                                          "beam_schedulers": table["threads"]["beam_schedulers"],
                                          "max_concurrency": table["threads"]["max_concurrency"]}, sort_keys=True),
         "lane_dtypes: " + json.dumps({k: v["dtype"] for k, v in table["lanes"].items()}, sort_keys=True),
+        f"nxquantum_child_elixir_erl_options: {child_env(table)['ELIXIR_ERL_OPTIONS']}",
+        f"cpu_wall: per row, RUSAGE_SELF delta for Python lanes and RUSAGE_CHILDREN delta for the NxQuantum "
+        f"subprocess over the whole lane call (startup included for NxQuantum); rows above {CPU_WALL_LABEL_ABOVE} are labelled",
     ]
+    for lane, text in table["disclosures"].items():
+        if lane != "methods":
+            lines.append(f"disclosure_{lane}: {text}")
+    lines += [f"methods: {text}" for text in table["disclosures"]["methods"]]
     for pkg in ("qiskit", "pennylane", "cirq"):
         try:
             module = __import__(pkg)
@@ -838,12 +1004,12 @@ def selfcheck_dense(args, table, fixture):
         flat = psi.reshape(-1)
         got = exported[name]
         elixir_state = np.array(got["re"]) + 1j * np.array(got["im"])
-        err_state = float(np.max(np.abs(flat - elixir_state)))
+        err_state = array_error(elixir_state, flat)
         obs = [(axis, w) for axis in ("X", "Y", "Z") for w in range(n)]
         ref_vals = ref_expectations(psi, obs)
-        err_obs = max(abs(a - b) for a, b in zip(ref_vals, got["expectations"]))
-        detail[name] = max(err_state, err_obs)
-        worst = max(worst, detail[name])
+        err_obs = vec_error(got["expectations"], ref_vals)
+        detail[name] = worse(err_state, err_obs)
+        worst = worse(worst, detail[name])
     bound = table["selfcheck_bounds"]["reference_selfcheck_dense_le6q"]
     return emit("reference_selfcheck_dense_le6q", "pass" if worst <= bound else "fail", max_err=repr(worst), bound=bound,
                 cases=",".join(cases)), detail
@@ -860,9 +1026,9 @@ def selfcheck_prefix_parity(table, fixture, max_qubits):
             psi = ref_state(n, prefix_parity_gates(family, n, entry))
             got = ref_expectations(psi, [("Z", k) for k in range(n)])
             expected = prefix_parity_expected(entry)
-            err = max(abs(a - b) for a, b in zip(got, expected))
+            err = vec_error(got, expected)
             detail[f"{family}_{n}"] = err
-            worst = max(worst, err)
+            worst = worse(worst, err)
             min_abs = min(min_abs, min(abs(v) for v in expected))
     bound = table["selfcheck_bounds"]["reference_selfcheck_prefix_parity"]
     # The identity only discriminates while |expected| stays well away from 0.
@@ -894,10 +1060,10 @@ def selfcheck_consensus(table, fixture, max_qubits):
         ref = ref_expectations(ref_state(n, gates), observables)
         for lane_id in ("qiskit", "pennylane", "cirq_c128_equivalence"):
             lane = PY_LANES[lane_id]()
-            got = lane.runner(n, observables)(lane.build(n, gates))
-            err = max(abs(a - b) for a, b in zip(got, ref))
+            got = lane.runner(n, observables)(lane.build(n, gates, observables))
+            err = vec_error(got, ref)
             detail[f"{name}:{lane_id}"] = err
-            worst = max(worst, err)
+            worst = worse(worst, err)
     return emit("reference_consensus_f64", "pass" if worst <= bound else "fail", max_err=repr(worst), bound=bound,
                 cases=len(cases), lanes="qiskit,pennylane,cirq_c128_equivalence"), detail
 
@@ -922,9 +1088,47 @@ def selfcheck_sampled(args, table, nx=True):
                 values = run_python_lane(lane_id, prep, timed=False)["values"]
             err = max_error(values, refs)
             results[f"{sid}:{lane_id}"] = err
-            worst = max(worst, err)
+            worst = worse(worst, err)
     return emit("sampled_counts_exact_rational", "pass" if worst <= bound else "fail", max_err=repr(worst), bound=bound,
                 rows=len(results)), results
+
+
+def selfcheck_agreement_negatives():
+    """RF8: the agreement gate must fail on NaN, inf, a missing or extra row and a short row.
+
+    Each case is built to be wrong; the check passes only if every one of them is a verdict of fail
+    and the matching positive controls still pass."""
+    nan = float("nan")
+    tol = 1e-6
+    refs = [[0.25, -0.5], [0.125, 0.75]]
+    good = [[0.25, -0.5], [0.125, 0.75]]
+    negatives = {
+        "nan_value": max_error([[nan, -0.5], [0.125, 0.75]], refs),
+        "nan_in_last_row": max_error([[0.25, -0.5], [0.125, nan]], refs),
+        "inf_value": max_error([[0.25, -0.5], [0.125, INF]], refs),
+        "missing_row": max_error(good[:1], refs),
+        "extra_row": max_error(good + [[0.0, 0.0]], refs),
+        "short_row": max_error([[0.25], [0.125, 0.75]], refs),
+        "no_rows": max_error([], []),
+        "non_numeric": max_error([[None, -0.5], [0.125, 0.75]], refs),
+        "nan_vs_exact_fraction": max_error([[nan]], [[Fraction(1, 4)]]),
+        "nan_vector": vec_error([0.0, nan], [0.0, 0.0]),
+        "nan_array": array_error(np.array([0.0, nan]), np.array([0.0, 0.0])),
+        "array_shape": array_error(np.zeros(3), np.zeros(4)),
+    }
+    positives = {
+        "exact": max_error(good, refs),
+        "within_tolerance": max_error([[0.25 + 5e-7, -0.5], [0.125, 0.75]], refs),
+        "fraction": max_error([[0.25]], [[Fraction(1, 4)]]),
+    }
+    verdicts = {name: verdict(err, tol) for name, err in negatives.items()}
+    controls = {name: verdict(err, tol) for name, err in positives.items()}
+    running = worse(0.0, nan)
+    ok = (all(v == "fail" for v in verdicts.values()) and all(v == "pass" for v in controls.values())
+          and running == INF and verdict(nan, tol) == "fail" and verdict(nan, None) == "ungated")
+    return emit("harness_agreement_negative_cases", "pass" if ok else "fail",
+                gate_verdicts=",".join(f"{k}:{v}" for k, v in verdicts.items()),
+                controls=",".join(f"{k}:{v}" for k, v in controls.items()), nan_safe_running_max=running)
 
 
 def compare_values(path_a: str, path_b: str):
@@ -943,8 +1147,10 @@ def select_scenarios(args, table):
     ids = args.scenario or [sid for sid, sc in table["scenarios"].items()]
     for sid in ids:
         scenario_or_raise(table, sid)
-    if args.max_qubits is not None:
-        ids = [sid for sid in ids if table["scenarios"][sid]["qubits"] <= args.max_qubits]
+    # The default width cap protects an unqualified run; naming a scenario is a deliberate choice.
+    cap = args.max_qubits if args.max_qubits is not None else (None if args.scenario else DEFAULT_MAX_QUBITS)
+    if cap is not None:
+        ids = [sid for sid in ids if table["scenarios"][sid]["qubits"] <= cap]
     return ids
 
 
@@ -966,6 +1172,33 @@ def modes_for(args, scenario):
     return chosen
 
 
+CONSENSUS_LANES = ("qiskit", "pennylane", "cirq_c128_equivalence")
+
+
+def consensus_rows(table, rows) -> int:
+    """RF9: per (family, width) max error of the qiskit, pennylane and cirq_c128_equivalence rows, bound 1e-8.
+
+    Emitted only when all three lanes produced a row for that width. Returns the number of failures."""
+    bound = table["selfcheck_bounds"]["reference_consensus_f64"]
+    groups: dict = {}
+    for row in rows:
+        if row["status"] == "not_run" or row["lane"] not in CONSENSUS_LANES or not row.get("family"):
+            continue
+        groups.setdefault((row["family"], row["qubits"]), {}).setdefault(row["lane"], []).append(row["max_err"])
+    failed = 0
+    for (family, qubits), by_lane in sorted(groups.items(), key=lambda kv: (kv[0][0], kv[0][1])):
+        if set(by_lane) != set(CONSENSUS_LANES):
+            continue
+        worst = 0.0
+        for errs in by_lane.values():
+            for err in errs:
+                worst = worse(worst, err)
+        status = emit(f"reference_consensus_f64_{family}_{qubits}", "pass" if worst <= bound else "fail",
+                      max_err=repr(worst), bound=bound, lanes=",".join(CONSENSUS_LANES))
+        failed += status == "fail"
+    return failed
+
+
 def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
     if timed_mode and not table["tolerances_confirmed"]:
         raise SystemExit(
@@ -978,26 +1211,33 @@ def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
     if out_dir:
         write_environment(args, table, fixture_sha, args.mode, out_dir)
 
-    all_rows, failures = [], 0
+    all_rows, failures, errors = [], 0, 0
     scenarios = select_scenarios(args, table)
     lanes = select_lanes(args, table)
 
     def report(row, prep):
-        nonlocal failures
+        nonlocal failures, errors
         status = row["status"]
-        if status == "fail":
-            failures += 1
-        emit(check_name(row), status, max_err=repr(row["max_err"]), tol=row["tolerance"],
-             beyond_kg10_floor=row["beyond_kg10_floor"], rows=prep.iterations)
+        name = check_name(row)
+        if status == "error":
+            errors += 1
+            failures += 1 if row["gated"] else 0
+            emit(name, "error", error=json.dumps(row["error"]), gated=row["gated"], tol=row["tolerance"])
+        else:
+            failures += status == "fail"
+            emit(name, status, max_err=repr(row["max_err"]), tol=row["tolerance"],
+                 beyond_kg10_floor=row["beyond_kg10_floor"], rows=prep.iterations, discrim_tol=row["discrimination_tolerance"],
+                 **{"max_abs_ref": repr(row["max_abs_ref"]), "discriminating": f"{row['n_discriminating']}/{row['n_observables']}"})
         if "zz" in row:
             zz = row["zz"]
-            if zz["status"] == "fail":
-                failures += 1
-            emit("zz_" + check_name(row)[len("agreement_"):], zz["status"], max_err=repr(zz["max_err"]), tol=row["tolerance"])
-        published = "published" if timed_mode and status in ("pass",) else "not_published"
+            emit("zz_" + name[len("agreement_"):], zz["status"], max_err=repr(zz["max_err"]), tol=row["tolerance"])
+        published = "published" if timed_mode and status == "pass" else "not_published"
         per_op = row["per_op_ms"]
+        cpu_wall = row["cpu_wall"]
+        label = f" LABEL={row['cpu_wall_label']!r}" if row["cpu_wall_label"] else ""
         print(f"ROW scenario={row['scenario']} cache={row['cache_mode']} lane={row['lane']} per_op_ms="
-              f"{'n/a' if per_op is None else format(per_op, '.6f')} timing={published}", flush=True)
+              f"{'n/a' if per_op is None else format(per_op, '.6f')} timing={published} "
+              f"cpu_wall={'n/a' if cpu_wall is None else format(cpu_wall, '.3f')}{label}", flush=True)
 
     for sid in scenarios:
         scenario = table["scenarios"][sid]
@@ -1012,18 +1252,34 @@ def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
     sampled_rows = [r for r in all_rows if r["scenario"] in table["scenarios"]
                     and table["scenarios"][r["scenario"]]["kind"].startswith("sampled") and r["status"] != "not_run"]
     if sampled_rows:
-        worst = max(r["max_err"] for r in sampled_rows)
+        worst = 0.0
+        for r in sampled_rows:
+            worst = worse(worst, r["max_err"])
         bound = table["selfcheck_bounds"]["sampled_counts_exact_rational"]
         status = emit("sampled_counts_exact_rational", "pass" if worst <= bound else "fail", max_err=repr(worst), bound=bound,
                       rows=len(sampled_rows), data="synthetic")
         failures += status == "fail"
 
-    # Cirq c64 publication rule (R5)
+    # RF9: per-width consensus of the three complex128/float64 reference lanes
+    failures += consensus_rows(table, all_rows)
+
+    # Publication: a row is publishable iff its own status is pass, except the ungated state-based cirq_c64
+    # rows (R5), which also need their untimed complex128 run to pass. Sampled kinds are never ungated.
     for row in all_rows:
-        if row["lane"] == "cirq_c64" and row["status"] != "not_run":
+        if row["status"] == "not_run":
+            continue
+        sampled = table["scenarios"][row["scenario"]]["kind"].startswith("sampled")
+        has_timing = bool(row.get("times_ms"))
+        if row["lane"] == "cirq_c64" and not sampled:
             equiv = [r for r in all_rows if r["lane"] == "cirq_c128_equivalence" and r["scenario"] == row["scenario"]
                      and r["cache_mode"] == row["cache_mode"]]
-            row["cirq_publishable"] = bool(equiv) and equiv[0]["status"] == "pass"
+            row["cirq_publishable"] = bool(equiv) and equiv[0]["status"] == "pass" and row["status"] == "ungated"
+            row["publishable"] = row["cirq_publishable"] and has_timing
+        else:
+            row["publishable"] = row["status"] == "pass" and has_timing
+        if timed_mode and row["lane"] == "cirq_c64" and not sampled:
+            print(f"PUBLISH scenario={row['scenario']} cache={row['cache_mode']} lane=cirq_c64 "
+                  f"publishable={row['publishable']}", flush=True)
 
     if args.values_out:
         values = {}
@@ -1031,7 +1287,8 @@ def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
             if row["status"] == "not_run":
                 continue
             values[f"{row['scenario']}|{row['cache_mode']}|{row['lane']}"] = {
-                "values": row["values"], "zz": row.get("zz", {}).get("values", {})}
+                "values": row["values"], "zz": row.get("zz", {}).get("values", {}),
+                **({"error": row["error"]} if row["status"] == "error" else {})}
         Path(args.values_out).write_text(json.dumps(values, sort_keys=True, separators=(",", ":")) + "\n")
 
     if out_dir:
@@ -1039,7 +1296,7 @@ def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
             "mode": args.mode, "timing_published": bool(timed_mode), "fixture_sha256": fixture_sha,
             "rss_max_kb_self": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
             "rows": all_rows}, indent=1) + "\n")
-    print(f"SUMMARY rows={len(all_rows)} failures={failures} timing_published={timed_mode}", flush=True)
+    print(f"SUMMARY rows={len(all_rows)} failures={failures} errors={errors} timing_published={timed_mode}", flush=True)
     return 1 if failures else 0
 
 
@@ -1100,6 +1357,7 @@ def run_selfcheck(args, table, fixture, fixture_sha):
     statuses.append(status)
     status, _ = selfcheck_sampled(args, table)
     statuses.append(status)
+    statuses.append(selfcheck_agreement_negatives())
     print(f"SUMMARY selfchecks={len(statuses)} failures={statuses.count('fail')}")
     return 1 if "fail" in statuses else 0
 
@@ -1110,8 +1368,9 @@ def build_parser():
     parser.add_argument("--scenario", action="append", help="scenario id (repeatable); default: all within --max-qubits")
     parser.add_argument("--cache-mode", choices=["hot", "cold", "both"], default="both")
     parser.add_argument("--lanes", type=str, default=None, help="comma list; default: the committed lane order")
-    parser.add_argument("--max-qubits", type=int, default=8,
-                        help="largest width to run (default 8: this phase runs no wider lanes)")
+    parser.add_argument("--max-qubits", type=int, default=None,
+                        help="largest width to run (default 8 when no --scenario is named; this phase runs no wider "
+                             "lanes unless a scenario is named explicitly)")
     parser.add_argument("--check-warmup", type=int, default=1)
     parser.add_argument("--check-iterations", type=int, default=3)
     parser.add_argument("--out-dir", type=str, default=None)
