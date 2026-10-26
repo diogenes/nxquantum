@@ -44,6 +44,20 @@ Run NxQuantum against Qiskit, PennyLane, and Cirq on equivalent local workloads:
 
 Python pins: `bench/requirements-python-alternatives.txt` is the exact `pip freeze` of the comparison environment (Python 3.13.16, qiskit 2.6.1, pennylane 0.45.1, cirq-core 1.7.0, numpy 2.5.4 and their transitive closure only), taken from the latest stable PyPI releases on 2026-10-26; pinning makes competitor versions reproducible and recorded with every result. The environment lives outside `mix.exs`, CI and Hex. Always run it as `.venv-bench/bin/python -I`.
 
+### Scenario table and fixture (H1.3)
+
+- `bench/scenarios/python_alternatives.json` is the single source of scenario ids, warmup and iteration counts, lane agreement states, tolerances, thread counts and the fixed-angle circuits. Both `bench/python_alternatives_benchmark.py` and `bench/nxquantum_python_comparison.exs` read it with stdlib JSON; an unknown scenario id raises in both.
+- Agreement is gated per lane (`pass` or `fail`); only `cirq_c64` (the `cirq.Simulator()` default complex64) is `ungated`, and its untimed complex128 run `cirq_c128_equivalence` is gated at 1e-6.
+- `"tolerances_confirmed": false` means timed mode refuses to run. The flag flips only after the owner confirms the tolerance reading and the physics seat signs off, in a separate commit.
+- Width families `real_zbatch_<n>q` and `complex_zbatch_<n>q` (n = 4, 8, 12, 16, 20, 24; 8 layers) time a Z batch over every wire. Their structure is written in the table (`families`).
+- `bench/scenarios/python_alternatives_fixture.json` (with `.sha256`) holds the angles as integers `k` (angle = k/1024, exact in float32 and float64): one distinct angle set per warmup and timed iteration, drawn with `numpy.random.Generator(PCG64(seed))`, seed = 20261026 + 100 * family_index + qubits. It also holds the prefix-parity analytic circuits and a 6-qubit self-check instance. Regenerate and verify byte identity:
+
+```bash
+.venv-bench/bin/python -I bench/scenarios/generate_python_alternatives_fixture.py
+sha256sum -c bench/scenarios/python_alternatives_fixture.sha256   # run inside bench/scenarios
+```
+
+
 ```bash
 mise exec python@3.13.16 -- python -m venv .venv-bench
 .venv-bench/bin/python -I -m pip install -r bench/requirements-python-alternatives.txt

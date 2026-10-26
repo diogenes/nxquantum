@@ -1,0 +1,685 @@
+{
+  "schema_version": 1,
+  "tolerances_confirmed": false,
+  "tolerances_note": "Committed values follow the plan formula (tol = max(1e-6, B); u = 2^-24, G1 = 9n real / 17n complex, L = 8). Timed mode refuses to run while tolerances_confirmed is false. The owner confirmation (R3: 'at least 1e-6' means tol >= 1e-6) and the physics seat sign-off flip it in a separate commit. Values for n = 4 and 8 are the Lead's arithmetic (R6) and are not yet signed off.",
+  "fixture": {
+    "path": "bench/scenarios/python_alternatives_fixture.json",
+    "sha256_path": "bench/scenarios/python_alternatives_fixture.sha256",
+    "generator": "bench/scenarios/generate_python_alternatives_fixture.py"
+  },
+  "fixture_spec": {
+    "rng": "numpy.random.Generator(PCG64(seed))",
+    "seed_formula": "20261026 + 100*family_index + qubits",
+    "prefix_parity_seed_formula": "20261026 + 10000 + 100*family_index + qubits",
+    "family_index": {
+      "real": 0,
+      "complex": 1
+    },
+    "angle": "k/1024",
+    "k_range": [1, 6433],
+    "layers": 8,
+    "selfcheck_only_widths": [6]
+  },
+  "families": {
+    "real": {
+      "structure": "H on every wire; then for layer l in 0..L-1: RY(w, angle[l*n+w]) for w in 0..n-1, then CNOT(i,i+1) for i = l mod 2, l mod 2 + 2, ... while i+1 < n",
+      "angles_per_set": "L*n"
+    },
+    "complex": {
+      "structure": "for layer l in 0..L-1: RX(w, angle[l*2n+w]) for w in 0..n-1, RZ(w, angle[l*2n+n+w]) for w in 0..n-1, then CNOT(i,i+1) for i = l mod 2, l mod 2 + 2, ... while i+1 < n; no H layer",
+      "angles_per_set": "2*L*n"
+    }
+  },
+  "prefix_parity": {
+    "real": "RY(j, theta_j) on every wire, then CNOT(j,j+1) for j = 0..n-2 in ascending order; <Z_k> = prod_{j<=k} cos(theta_j)",
+    "complex": "RX(j, theta_j) then RZ(j, phi_j) on every wire, then the same CNOT chain; <Z_k> = prod_{j<=k} cos(theta_j)"
+  },
+  "lanes": {
+    "nxquantum_cpu_portable": {
+      "framework": "nxquantum",
+      "runtime_profile": "cpu_portable",
+      "agreement": "gated",
+      "tolerance_class": "nxquantum",
+      "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+      "max_timed_qubits": null
+    },
+    "nxquantum_cpu_compiled": {
+      "framework": "nxquantum",
+      "runtime_profile": "cpu_compiled",
+      "agreement": "gated",
+      "tolerance_class": "nxquantum",
+      "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+      "max_timed_qubits": 16,
+      "above_limit_note": "not run (same evolution path as cpu_portable; see Known Gap)"
+    },
+    "qiskit": {
+      "framework": "qiskit",
+      "agreement": "gated",
+      "tolerance_class": "f64",
+      "dtype": "complex128 state, float64 values",
+      "max_timed_qubits": null
+    },
+    "pennylane": {
+      "framework": "pennylane",
+      "agreement": "gated",
+      "tolerance_class": "f64",
+      "dtype": "complex128 state, float64 values",
+      "max_timed_qubits": null
+    },
+    "cirq_c64": {
+      "framework": "cirq",
+      "agreement": "ungated",
+      "tolerance_class": "none",
+      "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+      "equivalence_lane": "cirq_c128_equivalence",
+      "max_timed_qubits": null
+    },
+    "cirq_c128_equivalence": {
+      "framework": "cirq",
+      "agreement": "gated",
+      "tolerance_class": "f64",
+      "timed": false,
+      "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit object",
+      "max_timed_qubits": null
+    }
+  },
+  "lane_order": ["nxquantum_cpu_portable", "qiskit", "pennylane", "cirq_c64", "nxquantum_cpu_compiled"],
+  "agreement_states": ["pass", "fail", "ungated"],
+  "agreement_note": "Gated lanes end a check as pass or fail. Only cirq_c64 is ungated (R5); its equivalence run cirq_c128_equivalence is gated at 1e-6 and decides whether a Cirq row is published.",
+  "selfcheck_bounds": {
+    "reference_selfcheck_dense_le6q": 1e-12,
+    "reference_selfcheck_prefix_parity": 1e-08,
+    "reference_consensus_f64": 1e-08,
+    "sampled_counts_exact_rational": 1e-06,
+    "prefix_parity_exunit": {
+      "real": 2.1e-06,
+      "complex": 1.1e-05,
+      "qubits": 12
+    }
+  },
+  "threads": {
+    "beam_schedulers": 4,
+    "max_concurrency": 4,
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "budget": {
+    "per_lane_width_hours": 2.0,
+    "campaign_hours": 8.0,
+    "runs": 3
+  },
+  "tolerances": {
+    "real": {
+      "4": {
+        "nxquantum_cpu_portable": 6.2e-06,
+        "nxquantum_cpu_compiled": 6.2e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "8": {
+        "nxquantum_cpu_portable": 1.3e-05,
+        "nxquantum_cpu_compiled": 1.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "12": {
+        "nxquantum_cpu_portable": 1.9e-05,
+        "nxquantum_cpu_compiled": 1.9e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "16": {
+        "nxquantum_cpu_portable": 2.5e-05,
+        "nxquantum_cpu_compiled": 2.5e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "20": {
+        "nxquantum_cpu_portable": 3.1e-05,
+        "nxquantum_cpu_compiled": 3.1e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "24": {
+        "nxquantum_cpu_portable": 3.7e-05,
+        "nxquantum_cpu_compiled": 3.7e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      }
+    },
+    "complex": {
+      "4": {
+        "nxquantum_cpu_portable": 3.2e-05,
+        "nxquantum_cpu_compiled": 3.2e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "8": {
+        "nxquantum_cpu_portable": 6.3e-05,
+        "nxquantum_cpu_compiled": 6.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "12": {
+        "nxquantum_cpu_portable": 9.4e-05,
+        "nxquantum_cpu_compiled": 9.4e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "16": {
+        "nxquantum_cpu_portable": 0.00013,
+        "nxquantum_cpu_compiled": 0.00013,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "20": {
+        "nxquantum_cpu_portable": 0.00016,
+        "nxquantum_cpu_compiled": 0.00016,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "24": {
+        "nxquantum_cpu_portable": 0.00019,
+        "nxquantum_cpu_compiled": 0.00019,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      }
+    }
+  },
+  "scenarios": {
+    "baseline_2q": {
+      "kind": "fixed",
+      "qubits": 2,
+      "warmup": 100,
+      "iterations": 2000,
+      "cache_modes": ["hot", "cold"],
+      "headline": false,
+      "labels": ["angle-keyed plan memo warm", "continuity scenario (fixed angles), not a headline row"],
+      "gates": [["h", 0], ["cnot", 0, 1], ["ry", 1, 0.3]],
+      "observables": [["Z", 1]],
+      "tolerance": {
+        "nxquantum_cpu_portable": 6.2e-06,
+        "nxquantum_cpu_compiled": 6.2e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "real-family n=4 value (nearest width at or above 2); Lead-derived by analogy, physics seat to confirm"
+    },
+    "deep_6q": {
+      "kind": "fixed",
+      "qubits": 6,
+      "warmup": 50,
+      "iterations": 500,
+      "cache_modes": ["hot", "cold"],
+      "headline": false,
+      "labels": ["angle-keyed plan memo warm", "continuity scenario (fixed angles), not a headline row"],
+      "gates": [
+        ["h", 0],
+        ["cnot", 0, 1],
+        ["cnot", 1, 2],
+        ["cnot", 2, 3],
+        ["cnot", 3, 4],
+        ["cnot", 4, 5],
+        ["ry", 0, 0.11],
+        ["ry", 1, 0.22],
+        ["ry", 2, 0.33],
+        ["ry", 3, 0.44],
+        ["ry", 4, 0.55],
+        ["ry", 5, 0.66],
+        ["cnot", 0, 3],
+        ["cnot", 2, 5],
+        ["cnot", 1, 4]
+      ],
+      "observables": [["Z", 5]],
+      "tolerance": {
+        "nxquantum_cpu_portable": 1.3e-05,
+        "nxquantum_cpu_compiled": 1.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "real-family n=8 value (nearest width at or above 6); Lead-derived by analogy, physics seat to confirm"
+    },
+    "batch_obs_8q": {
+      "kind": "fixed",
+      "qubits": 8,
+      "warmup": 10,
+      "iterations": 100,
+      "cache_modes": ["hot", "cold"],
+      "headline": false,
+      "labels": ["angle-keyed plan memo warm", "continuity scenario (fixed angles), not a headline row"],
+      "gates": [
+        ["h", 0],
+        ["cnot", 0, 1],
+        ["cnot", 1, 2],
+        ["cnot", 2, 3],
+        ["cnot", 3, 4],
+        ["cnot", 4, 5],
+        ["cnot", 5, 6],
+        ["cnot", 6, 7],
+        ["ry", 0, 0.11],
+        ["ry", 1, 0.22],
+        ["ry", 2, 0.33],
+        ["ry", 3, 0.44],
+        ["ry", 4, 0.55],
+        ["ry", 5, 0.66],
+        ["ry", 6, 0.77],
+        ["ry", 7, 0.88],
+        ["rx", 2, 0.19],
+        ["rz", 3, 0.29],
+        ["cnot", 0, 4],
+        ["cnot", 2, 6],
+        ["cnot", 1, 5]
+      ],
+      "observables": [
+        ["X", 0],
+        ["Y", 1],
+        ["Z", 2],
+        ["X", 3],
+        ["Y", 4],
+        ["Z", 5],
+        ["X", 6],
+        ["Y", 7],
+        ["Z", 0],
+        ["X", 1],
+        ["Y", 2],
+        ["Z", 3],
+        ["X", 4],
+        ["Y", 5],
+        ["Z", 6],
+        ["X", 7],
+        ["Y", 0],
+        ["Z", 1],
+        ["X", 2],
+        ["Y", 3],
+        ["Z", 4],
+        ["X", 5],
+        ["Y", 6],
+        ["Z", 7],
+        ["X", 0],
+        ["Y", 1],
+        ["Z", 2],
+        ["X", 3],
+        ["Y", 4],
+        ["Z", 5],
+        ["X", 6],
+        ["Y", 7],
+        ["Z", 0],
+        ["X", 1],
+        ["Y", 2],
+        ["Z", 3],
+        ["X", 4],
+        ["Y", 5],
+        ["Z", 6],
+        ["X", 7],
+        ["Y", 0],
+        ["Z", 1],
+        ["X", 2],
+        ["Y", 3],
+        ["Z", 4],
+        ["X", 5],
+        ["Y", 6],
+        ["Z", 7]
+      ],
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 6.3e-05,
+        "nxquantum_cpu_compiled": 6.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "complex-family n=8 value (circuit contains RX/RZ and X/Y observables); Lead-derived by analogy, physics seat to confirm"
+    },
+    "state_reuse_8q_xy": {
+      "kind": "fixed",
+      "qubits": 8,
+      "warmup": 50,
+      "iterations": 800,
+      "cache_modes": ["hot"],
+      "headline": false,
+      "labels": ["hot-only state-reuse micro-benchmark", "angle-keyed plan memo warm"],
+      "gates": [
+        ["h", 0],
+        ["cnot", 0, 1],
+        ["cnot", 1, 2],
+        ["cnot", 2, 3],
+        ["cnot", 3, 4],
+        ["cnot", 4, 5],
+        ["cnot", 5, 6],
+        ["cnot", 6, 7],
+        ["ry", 0, 0.11],
+        ["ry", 1, 0.22],
+        ["ry", 2, 0.33],
+        ["ry", 3, 0.44],
+        ["ry", 4, 0.55],
+        ["ry", 5, 0.66],
+        ["ry", 6, 0.77],
+        ["ry", 7, 0.88],
+        ["rx", 2, 0.19],
+        ["rz", 3, 0.29],
+        ["cnot", 0, 4],
+        ["cnot", 2, 6],
+        ["cnot", 1, 5]
+      ],
+      "observables": [["X", 5], ["Y", 5]],
+      "lane_labels": {
+        "nxquantum_cpu_portable": "public Estimator.run with cache_evolved_state: true",
+        "nxquantum_cpu_compiled": "public Estimator.run with cache_evolved_state: true",
+        "qiskit": "Statevector built once; expectation_value per Pauli",
+        "pennylane": "Python helper (no framework API)",
+        "cirq_c64": "Python helper (no framework API)"
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 6.3e-05,
+        "nxquantum_cpu_compiled": 6.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "complex-family n=8 value; Lead-derived by analogy, physics seat to confirm"
+    },
+    "sampled_counts_sparse_terms": {
+      "kind": "sampled_sparse",
+      "qubits": 8,
+      "warmup": 100,
+      "iterations": 2000,
+      "cache_modes": ["cold"],
+      "headline": false,
+      "synthetic": true,
+      "labels": ["synthetic counts", "parse inside the timed region in every lane", "kept out of the width headline"],
+      "counts": {
+        "00000000": 900,
+        "00000011": 420,
+        "00011100": 330,
+        "00110011": 270,
+        "01010101": 510,
+        "01100110": 340,
+        "10011001": 290,
+        "10101010": 470,
+        "11000011": 280,
+        "11111111": 286
+      },
+      "terms": {
+        "count": 48,
+        "mask_multiplier": 37,
+        "magnitude_step": 0.02,
+        "magnitude_cycle": 5,
+        "rule": "z_mask = (i*mask_multiplier mod (2^qubits-1)) + 1; coeff = (-1)^i * magnitude_step*((i mod magnitude_cycle)+1)"
+      },
+      "nx_cold_flags": {
+        "cache_parsed_counts": false,
+        "cache_mask_lookup_plan": false
+      },
+      "nx_public_api": false,
+      "nx_public_api_note": "Known Gap: the weighted multi-wire Z-mask workload needs NxQuantum.Observables.SparsePauli (@moduledoc false); no public facade exists, so the NxQuantum lane is not run for this scenario. Competitor lanes still run for the exact-rational check.",
+      "lane_labels": {
+        "qiskit": "sampled_expectation_value (parses counts per call)",
+        "pennylane": "Python helper",
+        "cirq_c64": "Python helper"
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 1e-06,
+        "nxquantum_cpu_compiled": 1e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      }
+    },
+    "sampled_counts_z_wires_8q": {
+      "kind": "sampled_z_wires",
+      "qubits": 8,
+      "warmup": 100,
+      "iterations": 2000,
+      "cache_modes": ["cold"],
+      "headline": false,
+      "synthetic": true,
+      "labels": ["synthetic counts", "parse inside the timed region in every lane", "kept out of the width headline", "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"],
+      "counts": {
+        "00000000": 900,
+        "00000011": 420,
+        "00011100": 330,
+        "00110011": 270,
+        "01010101": 510,
+        "01100110": 340,
+        "10011001": 290,
+        "10101010": 470,
+        "11000011": 280,
+        "11111111": 286
+      },
+      "observables": [["Z", 0], ["Z", 1], ["Z", 2], ["Z", 3], ["Z", 4], ["Z", 5], ["Z", 6], ["Z", 7]],
+      "nx_cold_flags": {
+        "cache_parsed_counts": false,
+        "cache_mask_lookup_plan": false
+      },
+      "nx_public_api": true,
+      "lane_labels": {
+        "qiskit": "sampled_expectation_value (parses counts per call)",
+        "pennylane": "Python helper",
+        "cirq_c64": "Python helper"
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 1e-06,
+        "nxquantum_cpu_compiled": 1e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      }
+    },
+    "real_zbatch_4q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 4,
+      "warmup": 20,
+      "iterations": 200,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "4"]
+    },
+    "real_zbatch_8q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 8,
+      "warmup": 10,
+      "iterations": 100,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "8"]
+    },
+    "real_zbatch_12q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 12,
+      "warmup": 3,
+      "iterations": 20,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "12"]
+    },
+    "real_zbatch_16q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 16,
+      "warmup": 2,
+      "iterations": 10,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "16"]
+    },
+    "real_zbatch_20q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 20,
+      "warmup": 1,
+      "iterations": 5,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "20"]
+    },
+    "real_zbatch_24q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 24,
+      "warmup": 1,
+      "iterations": 3,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "24"]
+    },
+    "complex_zbatch_4q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 4,
+      "warmup": 20,
+      "iterations": 200,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "4"]
+    },
+    "complex_zbatch_8q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 8,
+      "warmup": 10,
+      "iterations": 100,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "8"]
+    },
+    "complex_zbatch_12q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 12,
+      "warmup": 3,
+      "iterations": 20,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "12"]
+    },
+    "complex_zbatch_16q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 16,
+      "warmup": 2,
+      "iterations": 10,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "16"]
+    },
+    "complex_zbatch_20q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 20,
+      "warmup": 1,
+      "iterations": 5,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "20"]
+    },
+    "complex_zbatch_24q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 24,
+      "warmup": 1,
+      "iterations": 3,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "24"]
+    }
+  }
+}
