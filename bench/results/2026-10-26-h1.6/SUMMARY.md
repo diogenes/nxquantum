@@ -18,7 +18,7 @@ one date for all states.
 
 Each SHA is the first 16 hex digits of SHA-256 over a canonical encoding (gate names, integer
 wires, params sorted by key, floats as float-64, tensors as type + shape + `Nx.to_binary`).
-Lines without a `_sha` token show the sha256 of the whole digest line.
+Lines without a `_sha` token show the sha256 of the whole digest line, taken WITHOUT its trailing newline.
 
 | Line | before | after-pr-a | Identical (y/n) | after-pr-b | Note |
 | --- | --- | --- | --- | --- | --- |
