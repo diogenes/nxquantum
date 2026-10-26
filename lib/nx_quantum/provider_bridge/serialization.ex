@@ -207,6 +207,5 @@ defmodule NxQuantum.ProviderBridge.Serialization do
   defp stringify_value(%{} = map), do: stringify_keys(map)
   defp stringify_value(list) when is_list(list), do: Enum.map(list, &stringify_value/1)
   defp stringify_value(value) when is_atom(value), do: Atom.to_string(value)
-  defp stringify_value(%Nx.Tensor{} = tensor), do: inspect(tensor)
   defp stringify_value(value), do: value
 end

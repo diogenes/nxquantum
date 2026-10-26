@@ -1,0 +1,5 @@
+| qubits | depth | circuits | observations | max abs error vs float64 | max abs error vs float32(reference) | exact after float32 rounding |
+| --- | --- | --- | --- | --- | --- | --- |
+| 4 | 18 | 10 | 120 | 3.18e-07 | 2.98e-07 | 45.8% |
+| 6 | 18 | 10 | 180 | 2.38e-07 | 2.38e-07 | 66.1% |
+| 6 | 200 | 5 | 90 | 4.40e-07 | 4.47e-07 | 2.2% |

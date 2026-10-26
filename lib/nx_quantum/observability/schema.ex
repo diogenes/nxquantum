@@ -79,8 +79,6 @@ defmodule NxQuantum.Observability.Schema do
     end
   end
 
-  defp validate_redaction(_), do: {:error, %{code: :observability_invalid_snapshot, field: :redaction}}
-
   defp validate_profile_constraints(%{metrics: metrics}, :high_level) do
     case Enum.find(metrics, fn metric ->
            labels = Map.get(metric, :labels, %{})

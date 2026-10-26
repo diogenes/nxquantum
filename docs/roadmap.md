@@ -78,6 +78,8 @@ Known gaps:
 | KG-11 | Hybrid benchmark scripts emit fixed figures, not measurements: quality (`ndcg_at_10`, `map_at_10`, `objective_gap_to_known_best`), the TurboQuant KPIs in `bench/hybrid_quantum_ai_benchmark.exs` (`quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`), and every `latency_fallback_impact` metric. Lanes report dataset ids they do not load: both rerank lanes report `rq_small_v1` (inline scores, or generated sin/cos embeddings unless `--dataset-path` is given), and `constrained_optimization_assistant` reports the nonexistent `co_knapsack_v1`. `bench/turboquant_rerank_benchmark.exs` computes memory and compression from the tool result | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
 | KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | unassigned (owner decision) |
 | KG-13 | The OpenTelemetry-named observability adapter (`lib/nx_quantum/adapters/observability/open_telemetry.ex`) records spans, metrics, and logs in the process dictionary; there is no OpenTelemetry dependency or exporter, and `docs/observability.md` calls it the production emitter adapter | unassigned (owner decision) |
+| KG-14 | `ProviderBridge.Serialization` raises on struct values (`Nx.Tensor`, `DateTime`, `MapSet`) in envelope payload, metadata, reason, or response (`lib/nx_quantum/provider_bridge/serialization.ex`, `stringify_value/1` → `stringify_keys/1`), contrary to `serialize/1`'s `{:ok, String.t()}` spec. A fix needs a v1 encoding decision under the Envelope Compatibility Policy | unassigned (owner decision) |
+| KG-15 | The acceptance scenario 'Calibration payload provenance is normalized' (`features/provider_mitigation_calibration_contracts.feature`) asserts a constant its own step injects; `CalibrationPayload.validate/1` drops provenance | unassigned (owner decision) |
 
 ---
 
@@ -255,7 +257,7 @@ Review gate:
 
 ### H1.6 - Dependency Currency
 
-- Status: in progress
+- Status: done
 - Intent: api change (PR-A: dependency floor `nx ~> 1.0`; no function, type, or envelope change intended), refactor (PR-B: toolchain)
 - Seats: Lead, Principal architect (plan review), DX, Critic, Verifier, Docs sync, Quantum physics/math
 - Depends on: H1.1

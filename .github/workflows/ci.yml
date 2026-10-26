@@ -20,10 +20,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Erlang/Elixir
+        id: beam
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "28.1"
-          elixir-version: "1.19.1"
+          otp-version: "29.1.2"
+          elixir-version: "1.20.4"
 
       - name: Cache deps and build
         uses: actions/cache@v4
@@ -31,10 +32,10 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-core-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-core-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-core-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-core-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
 
       - name: Install deps
         run: mix deps.get
@@ -55,6 +56,43 @@ jobs:
           NXQ_BATCH_OBS_MAX_PER_OP_MS: "2.0281935"
         run: mix bench.batch_obs_guard
 
+  floor-elixir-1-19-otp-28:
+    name: floor-elixir-1.19-otp-28
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+      NXQ_ENABLE_EXLA: "0"
+      NXQ_ENABLE_TORCHX: "0"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Erlang/Elixir (supported floor)
+        id: beam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28.1"
+          elixir-version: "1.19.1"
+
+      - name: Cache deps and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-floor-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-floor-
+
+      - name: Install deps
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile --warnings-as-errors
+
+      - name: Test
+        run: mix test
+
   exla-smoke:
     name: exla-smoke
     runs-on: ubuntu-latest
@@ -67,10 +105,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Erlang/Elixir
+        id: beam
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "28.1"
-          elixir-version: "1.19.1"
+          otp-version: "29.1.2"
+          elixir-version: "1.20.4"
 
       - name: Cache deps and build
         uses: actions/cache@v4
@@ -78,10 +117,10 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-exla-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-exla-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-exla-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-exla-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
 
       - name: Install deps
         run: mix deps.get
@@ -106,10 +145,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Erlang/Elixir
+        id: beam
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "28.1"
-          elixir-version: "1.19.1"
+          otp-version: "29.1.2"
+          elixir-version: "1.20.4"
 
       - name: Cache deps and build
         uses: actions/cache@v4
@@ -117,10 +157,10 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-provider-smoke-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-provider-smoke-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-provider-smoke-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-provider-smoke-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
 
       - name: Install deps
         run: mix deps.get
@@ -144,10 +184,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Erlang/Elixir
+        id: beam
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "28.1"
-          elixir-version: "1.19.1"
+          otp-version: "29.1.2"
+          elixir-version: "1.20.4"
 
       - name: Cache deps and build
         uses: actions/cache@v4
@@ -155,10 +196,10 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-torchx-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-torchx-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-torchx-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-torchx-
+            ${{ runner.os }}-mix-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
 
       - name: Install deps
         run: mix deps.get

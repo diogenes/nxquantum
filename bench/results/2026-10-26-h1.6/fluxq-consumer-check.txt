@@ -1,0 +1,60 @@
+H1.6 deliverable 5: FluxQ consumer check against PR-A
+=====================================================
+
+run_date_utc:        2026-10-26
+nxquantum_commit:    6b007c9 (branch h1.6-toolchain; contains PR-A merged as 0348517, plus PR-B)
+fluxq_commit:        5191159e5eb497238afeb8ab8e9b32d7b810e921
+fluxq_working_tree:  local changes present (untracked files only, none under apps/ or lib code):
+                       docs/process/development-plan-milestones-v1.md
+                       docs/process/roadmap-improvement-proposal-v1.md
+                       docs/product/fluxq-blue-ocean-strategy-v1.md
+                       node_modules/   (excluded from the copy)
+                     No modified tracked files. FluxQ itself was not modified by this run.
+toolchain:           Elixir 1.19.5 (compiled with Erlang/OTP 28), OTP 28.4.1
+                     This is the toolchain FluxQ pins in .mise.toml (erlang 28.4.1, elixir 1.19.5-otp-28).
+                     Hex 2.6.0 was installed into a throwaway MIX_HOME inside <scratch> (needed by deps.get).
+
+Method
+------
+Scratch copy of FluxQ (rsync, excluding _build, deps, .git, node_modules) and a fresh
+`git clone` of the NxQuantum worktree checked out at 6b007c9, both under <scratch>.
+Only the copy's apps/fluxq/mix.exs was edited. FluxQ's own mix.lock was not used as-is:
+the copy's mix.lock was updated by deps.get.
+
+path-dep edit (apps/fluxq/mix.exs, copy only):
+  - {:nx_quantum, path: "../../../nxquantum"}
+  + {:nx_quantum, path: "<scratch>/nxq"}
+
+Commands (from the FluxQ copy root, umbrella root):
+  export PATH=<mise>/elixir/1.19.5-otp-28/bin:<mise>/erlang/28.4.1/bin:$PATH
+  export MIX_HOME=<scratch>/mixhome MIX_ARCHIVES=<scratch>/mixhome/archives
+  elixir --version
+  mix local.hex --force
+  mix deps.get
+  mix test
+`mix deps.update nx complex` was NOT needed: deps.get resolved on its own.
+
+Resolver result (mix deps.get)
+  complex 0.7.0 => 1.0.0 (major)
+  nx      0.13.1 => 1.0.0 (major)
+  telemetry 1.4.1 => 1.4.2
+  (FluxQ's committed mix.lock had nx 0.13.1 / complex 0.7.0; the scratch lock has nx 1.0.0 / complex 1.0.0.)
+  deps.get also printed Hex security advisories for unrelated FluxQ dependencies (for example bandit,
+  swoosh); they are not part of this check.
+
+Test results (mix test, seed 339826, max_cases 20)
+  app          tests  doctests  failures
+  fluxq          11       0         0
+  fluxq_web       5       0         0
+  fluxq_cli       1       1         0      (ExUnit reports "1 doctest, 1 test")
+  fluxq_infra     1       1         0      (ExUnit reports "1 doctest, 1 test")
+  total          18 tests + 2 doctests = 20 ExUnit tests
+  failures: 0
+  (The earlier unrecorded run reported 18 tests; that figure excludes the 2 doctests.)
+
+Compile: nx_quantum compiled as a path dependency without errors; no compiler warnings were
+printed for nx_quantum.
+
+Tests that could not run: none. No skipped or excluded tests were reported.
+
+Result: GREEN.

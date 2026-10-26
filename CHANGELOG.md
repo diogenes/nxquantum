@@ -29,6 +29,9 @@
   - To migrate: bump `nx` (and `exla` / `torchx`, if used) to `~> 1.0`, then run `mix deps.update nx exla torchx complex nx_quantum`. Fix your own code for the Nx 1.0 removals listed in the [Nx changelog](https://hexdocs.pm/nx/changelog.html). NxQuantum used none of them.
   - To stay on Nx 0.x: pin `{:nx_quantum, "~> 0.11.0"}`. No 0.11.x maintenance line is promised.
 
+- Toolchain currency (H1.6 PR-B). Development and CI move to Elixir 1.20.4 / OTP 29.1.2 (`mise.toml`, `.github/workflows/ci.yml`, `.github/workflows/release.yml`). The supported floor stays `elixir: "~> 1.19"` on OTP 28, tested by a new CI floor job (Elixir 1.19.1 / OTP 28.1, optional backends off). No public API change. Two clauses the 1.20 type checker proves unreachable were removed (`ProviderBridge.Serialization.stringify_value/1` for `Nx.Tensor`, `Observability.Schema.validate_redaction/1` catch-all); behavior is unchanged. BinaryBackend numerics and envelope snapshots are byte-identical on OTP 29 (`bench/results/2026-10-26-h1.6/SUMMARY.md`).
+- CI and internal: the release workflow now builds docs in the dev env (`ex_doc` is not available in prod).
+
 ### Fixed
 
 - `Transpiler.run/2` with `mode: :insert_swaps` now routes correctly. The CNOT is rewritten onto the routed coupled edge, and later gates follow the updated layout. Before, the output could keep a CNOT on an uncoupled edge, and gates after a routed interaction used stale wires. Callers that inspected the SWAP-prepend ordering or the original CNOT wires will see different operations. Use `report.logical_to_physical_map` to map observables onto physical wires.
