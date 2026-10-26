@@ -117,7 +117,7 @@ mise exec -- mix run bench/batch_obs_hot_cold_guard.exs
 
 ## Phase 20 Hybrid Quantum-AI
 
-Evidence limits (2026-10-26): the in-repo rerank datasets (`rq_small_v1`, `rq_medium_v1`) are synthetic, 6- and 8-row hand-authored fixtures; contract and regression smoke checks only; not evidence of rerank quality. The quality figures (nDCG, MAP, objective gap) emitted by `bench/hybrid_quantum_ai_benchmark.exs` and `bench/hybrid_quantum_ai_baseline.exs` are fixed values written into the scripts: placeholders, not measurements. The TurboQuant lane reports `dataset_id: "rq_small_v1"` while it uses generated sin/cos embeddings (KG-11 in `docs/roadmap.md`). These are internal references, not official benchmark results.
+Evidence limits (2026-10-26): the in-repo rerank datasets (`rq_small_v1`, `rq_medium_v1`) are synthetic, 6- and 8-row hand-authored fixtures; contract and regression smoke checks only; not evidence of rerank quality. Quality and KPI figures (nDCG, MAP, objective gap, `quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`) and all `latency_fallback_impact` metrics emitted by `bench/hybrid_quantum_ai_benchmark.exs` and `bench/hybrid_quantum_ai_baseline.exs` are fixed values written into the scripts: placeholders, not measurements. The rerank lanes of `bench/hybrid_quantum_ai_benchmark.exs` report `dataset_id: "rq_small_v1"` without loading it; the TurboQuant lane loads data only when `--dataset-path` is given (KG-11 in `docs/roadmap.md`). These are internal references, not official benchmark results.
 
 Benchmark/dataset/API contracts:
 

@@ -75,7 +75,9 @@ Known gaps:
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
 | KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement |
-| KG-11 | Hybrid benchmark scripts emit fixed quality figures, not measurements; the TurboQuant lane reports `rq_small_v1` while using generated embeddings | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
+| KG-11 | Hybrid benchmark scripts emit fixed figures, not measurements: quality (`ndcg_at_10`, `map_at_10`, `objective_gap_to_known_best`), the TurboQuant KPIs in `bench/hybrid_quantum_ai_benchmark.exs` (`quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`), and every `latency_fallback_impact` metric. Lanes report dataset ids they do not load: both rerank lanes report `rq_small_v1` (inline scores, or generated sin/cos embeddings unless `--dataset-path` is given), and `constrained_optimization_assistant` reports the nonexistent `co_knapsack_v1`. `bench/turboquant_rerank_benchmark.exs` computes memory and compression from the tool result | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
+| KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | unassigned (owner decision) |
+| KG-13 | The OpenTelemetry-named observability adapter (`lib/nx_quantum/adapters/observability/open_telemetry.ex`) records spans, metrics, and logs in the process dictionary; there is no OpenTelemetry dependency or exporter, and `docs/observability.md` calls it the production emitter adapter | unassigned (owner decision) |
 
 ---
 
@@ -178,6 +180,7 @@ Review gate:
 2. README speed claims cite the new report, including the crossover.
 3. Parked 2026-10-26 (D1); rerank datasets and hybrid figures carry the synthetic/placeholder label instead.
 4. D1 is recorded with its rationale.
+5. Competitor facts in `docs/vision.md` §6 are rechecked and dated (vision §13 item 6; deferred from D1).
 
 ### H1.4 - Compiler Correctness Suite
 
