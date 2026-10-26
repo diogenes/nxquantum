@@ -9,7 +9,7 @@ Two runs per state are byte-identical (`cmp digest_run1.txt digest_run2.txt`, sa
 | --- | --- | --- | --- | --- | --- |
 | before | `before/` | 2026-10-26 | Elixir 1.19.5 / OTP 28.4.1 | 0.11.0 / 0.11.0 / 0.11.0 / 0.6.0 | recorded |
 | after-pr-a | `after-pr-a/` | 2026-10-26 | Elixir 1.19.5 / OTP 28.4.1 | 1.0.0 / 1.0.0 / 1.0.0 / 1.0.0 | recorded |
-| after-pr-b | `after-pr-b/` | pending | pending | pending | pending |
+| after-pr-b | `after-pr-b/` | 2026-10-26 | Elixir 1.20.4 / OTP 29.1.2 | 1.0.0 / 1.0.0 / 1.0.0 / 1.0.0 | recorded |
 
 The run date of each state is the `date_utc` line of its `environment.txt`; do not assume
 one date for all states.
@@ -22,32 +22,32 @@ Lines without a `_sha` token show the sha256 of the whole digest line, taken WIT
 
 | Line | before | after-pr-a | Identical (y/n) | after-pr-b | Note |
 | --- | --- | --- | --- | --- | --- |
-| `fixture_ops_sha` | 4902308d83e6ea8e | 4902308d83e6ea8e | y | pending |  |
-| `production_expval_bits_sha` | 2037cbb5885a8334 | 2037cbb5885a8334 | y | pending |  |
-| `float64_reference_bits_sha` | c2b64561992b31cd | c2b64561992b31cd | y | pending |  |
-| `sampler_run_ry_sha` | f650fb5b1fedf895 | f650fb5b1fedf895 | y | pending |  |
-| `sampler_run_e2e_sha` | c12ff1c80a535413 | c12ff1c80a535413 | y | pending |  |
-| `estimator_shots_sha` | 071d09fb48ff3f2e | 071d09fb48ff3f2e | y | pending |  |
-| `compiler_optimize_ops_sha` | e204c003826cb734 | e204c003826cb734 | y | pending |  |
-| `readout_mitigation_sha` | e079699b3f218434 | e079699b3f218434 | y | pending |  |
-| `grad_values` | 8c314dbc7e9cdbfe (sha256 of line) | 8c314dbc7e9cdbfe (sha256 of line) | y | pending | backprop eps 1e-6 value (first of three): bit canary, not an accuracy figure |
-| `grad_bits_sha` | 651300ce18dd8669 | 651300ce18dd8669 | y | pending |  |
-| `kernel_bits_sha` | bc0f4c5635e84de1 | bc0f4c5635e84de1 | y | pending |  |
-| `complex_prims {:c, 64}` | 60e757e174efc568 (sha256 of line) | 60e757e174efc568 (sha256 of line) | y | pending |  |
-| `complex_prims {:c, 128}` | 8c19b7f43889c283 (sha256 of line) | 8c19b7f43889c283 (sha256 of line) | y | pending |  |
-| `expectation_types` | [f: 32] | [f: 32] | y | pending |  |
-| `max_abs_delta_vs_float64` | 4.3983212272280525e-7 | 4.3983212272280525e-7 | y | pending |  |
-| `grad_abs_err_parameter_shift` | 3.692266492549834e-8 | 3.692266492549834e-8 | y | pending |  |
-| `grad_abs_err_adjoint` | 6.178549205593242e-8 | 6.178549205593242e-8 | y | pending |  |
-| `grad_abs_err_backprop_eps1e-3` | 1.2886202052087015e-6 | 1.2886202052087015e-6 | y | pending |  |
+| `fixture_ops_sha` | 4902308d83e6ea8e | 4902308d83e6ea8e | y | 4902308d83e6ea8e |  |
+| `production_expval_bits_sha` | 2037cbb5885a8334 | 2037cbb5885a8334 | y | 2037cbb5885a8334 |  |
+| `float64_reference_bits_sha` | c2b64561992b31cd | c2b64561992b31cd | y | c2b64561992b31cd |  |
+| `sampler_run_ry_sha` | f650fb5b1fedf895 | f650fb5b1fedf895 | y | f650fb5b1fedf895 |  |
+| `sampler_run_e2e_sha` | c12ff1c80a535413 | c12ff1c80a535413 | y | c12ff1c80a535413 |  |
+| `estimator_shots_sha` | 071d09fb48ff3f2e | 071d09fb48ff3f2e | y | 071d09fb48ff3f2e |  |
+| `compiler_optimize_ops_sha` | e204c003826cb734 | e204c003826cb734 | y | e204c003826cb734 |  |
+| `readout_mitigation_sha` | e079699b3f218434 | e079699b3f218434 | y | e079699b3f218434 |  |
+| `grad_values` | 8c314dbc7e9cdbfe (sha256 of line) | 8c314dbc7e9cdbfe (sha256 of line) | y | 8c314dbc7e9cdbfe (sha256 of line) | backprop eps 1e-6 value (first of three): bit canary, not an accuracy figure |
+| `grad_bits_sha` | 651300ce18dd8669 | 651300ce18dd8669 | y | 651300ce18dd8669 |  |
+| `kernel_bits_sha` | bc0f4c5635e84de1 | bc0f4c5635e84de1 | y | bc0f4c5635e84de1 |  |
+| `complex_prims {:c, 64}` | 60e757e174efc568 (sha256 of line) | 60e757e174efc568 (sha256 of line) | y | 60e757e174efc568 (sha256 of line) |  |
+| `complex_prims {:c, 128}` | 8c19b7f43889c283 (sha256 of line) | 8c19b7f43889c283 (sha256 of line) | y | 8c19b7f43889c283 (sha256 of line) |  |
+| `expectation_types` | [f: 32] | [f: 32] | y | [f: 32] |  |
+| `max_abs_delta_vs_float64` | 4.3983212272280525e-7 | 4.3983212272280525e-7 | y | 4.3983212272280525e-7 |  |
+| `grad_abs_err_parameter_shift` | 3.692266492549834e-8 | 3.692266492549834e-8 | y | 3.692266492549834e-8 |  |
+| `grad_abs_err_adjoint` | 6.178549205593242e-8 | 6.178549205593242e-8 | y | 6.178549205593242e-8 |  |
+| `grad_abs_err_backprop_eps1e-3` | 1.2886202052087015e-6 | 1.2886202052087015e-6 | y | 1.2886202052087015e-6 |  |
 
 ## Other artifacts
 
 | Artifact | before | after-pr-a | Identical (y/n) | after-pr-b |
 | --- | --- | --- | --- | --- |
-| sha256 of precision_run1.txt (prefix) | a80e871246840cbd | a80e871246840cbd | y | pending |
-| contract envelope fixtures, git tree id of `test/fixtures/contracts/envelopes` (12 files) | 802aae3c4410e99d4cf8cbaee832158edf0c7a77 | 802aae3c4410e99d4cf8cbaee832158edf0c7a77 | y | pending |
-| `batch_obs_guard.txt` per_op_ms (timing, not compared) | 0.15455 | 0.16167 | n/a | pending |
+| sha256 of precision_run1.txt (prefix) | a80e871246840cbd | a80e871246840cbd | y | a80e871246840cbd |
+| contract envelope fixtures, git tree id of `test/fixtures/contracts/envelopes` (12 files) | 802aae3c4410e99d4cf8cbaee832158edf0c7a77 | 802aae3c4410e99d4cf8cbaee832158edf0c7a77 | y | 802aae3c4410e99d4cf8cbaee832158edf0c7a77 |
+| `batch_obs_guard.txt` per_op_ms (timing, not compared) | 0.15455 | 0.16167 | n/a | 0.15784 |
 
 ## Commands
 
@@ -75,5 +75,8 @@ Run from the repository root of the state being recorded.
 
 ## after-pr-b
 
-Pending. PR-B fills `after-pr-b/` (Elixir 1.20 / OTP 29 lane) with the same files and the
-`after-pr-b` columns above.
+Recorded on Elixir 1.20.4 / OTP 29.1.2 (same host, same lock as after-pr-a). Every `_sha` line,
+every display line and the precision file are byte-identical to `after-pr-a/`; the two runs
+per state are byte-identical. The only differences between the two `environment.txt` files are
+the `elixir`, `otp_release`, `otp_version` and `git_head` lines. The envelope fixture tree id is
+unchanged, so no snapshot was regenerated.
