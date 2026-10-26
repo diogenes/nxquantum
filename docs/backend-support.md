@@ -54,13 +54,15 @@ Decision (2026-10-25, KG-10, option A): the state-vector simulator stays single 
 - Gate matrices and the state are `complex64` (`lib/nx_quantum/adapters/simulators/state_vector/matrix_library.ex`, `lib/nx_quantum/adapters/simulators/state_vector/state.ex`).
 - `NxQuantum.Circuit.expectation/2` and the `NxQuantum.Estimator` expectation outputs are returned as `{:f, 32}`.
 
-Measured against a float64 dense reference, with fixed seeds (reproduce with `MIX_ENV=test mix run bench/numerics_precision_floor.exs`; two runs were byte-identical; run date 2026-10-25, Elixir 1.19.5 on OTP 28, default BinaryBackend):
+Measured against a float64 dense reference, with fixed seeds (reproduce with `MIX_ENV=test mix run bench/numerics_precision_floor.exs`; two runs were byte-identical; run date 2026-10-26, Elixir 1.19.5 on OTP 28, Nx 1.0.0 and complex 1.0.0, default BinaryBackend; evidence `bench/results/2026-10-26-h1.6/after-pr-a/precision_run1.txt` and `precision_run2.txt`):
 
 | qubits | depth | circuits | observations | max abs error vs float64 | max abs error vs float32(reference) | exact after float32 rounding |
 | --- | --- | --- | --- | --- | --- | --- |
 | 4 | 18 | 10 | 120 | 3.18e-07 | 2.98e-07 | 45.8% |
 | 6 | 18 | 10 | 180 | 2.38e-07 | 2.38e-07 | 66.1% |
 | 6 | 200 | 5 | 90 | 4.40e-07 | 4.47e-07 | 2.2% |
+
+A rerun on Elixir 1.20.4 / OTP 29.1.2 is pending H1.6 PR-B.
 
 What this means:
 

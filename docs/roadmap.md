@@ -254,7 +254,7 @@ Review gate:
 
 ### H1.6 - Dependency Currency
 
-- Status: planned
+- Status: in progress
 - Intent: api change (PR-A: dependency floor `nx ~> 1.0`; no function, type, or envelope change intended), refactor (PR-B: toolchain)
 - Seats: Lead, Principal architect (plan review), DX, Critic, Verifier, Docs sync, Quantum physics/math
 - Depends on: H1.1
@@ -268,9 +268,9 @@ Goal:
 Implementation deliverables:
 
 1. PR-A, dependencies, on the current toolchain (Elixir 1.19 / OTP 28):
-   - first commit, before the bump: make the backprop finite-difference check in `test/nx_quantum/grad_test.exs` compare against the analytic derivative (−sin θ) with a well-conditioned step; the physics seat confirms step and tolerance from an error measurement on the current lock (proposed: ε = 1e-3, tolerance 1e-4);
-   - `mix.exs`: `nx ~> 1.0`; optional `axon ~> 0.9`, `exla ~> 1.0`, `torchx ~> 1.0`; dev and test dependencies at latest stable; `mix.lock` regenerated;
-   - Styler reformatting in its own commit;
+   - first commit, before the bump: make the backprop finite-difference check in `test/nx_quantum/grad_test.exs` compare against the analytic derivative (−sin θ) with a well-conditioned step; the physics seat confirms step and tolerance from an error measurement on the current lock (proposed: ε = 1e-3, tolerance 1e-4; the physics seat set ε = 3e-3, tolerance 1e-4);
+   - `mix.exs`: `nx ~> 1.0`; optional `axon` removed (no call site; critic R3), optional `exla ~> 1.0`, `torchx ~> 1.0`; dev and test dependencies at latest stable; `mix.lock` regenerated;
+   - Styler reformatting in its own commit (not needed: no reformatting was required, so no such commit exists);
    - `bench/numerics_digest.exs`: bit digests of optimized ops, expectations, the float64 reference, sampler counts, gradients, and the kernel.
 2. PR-B, toolchain: `mise.toml`, `.github/workflows/ci.yml`, and `.github/workflows/release.yml` move to Elixir 1.20.4 / OTP 29.1.2; fix new compiler and type-checker warnings; keep a CI floor leg on Elixir 1.19 / OTP 28 (compile with warnings as errors, `mix test`) while `mix.exs` declares `elixir: "~> 1.19"`.
 3. Evidence: `bench/results/<run-date>-h1.6/` holds digests and precision-floor outputs for three states (before, after PR-A, after PR-B), two runs each, plus a summary table (artifact, reference, pre SHA, post SHA, identical, max abs Δ, tolerance). Rerun the `docs/backend-support.md` "Numerical Precision" table with the new date and versions.

@@ -48,3 +48,10 @@ Applies to job, result, and error envelopes produced by `NxQuantum.ProviderBridg
 7. To regenerate snapshots deliberately: `NXQ_UPDATE_SNAPSHOTS=1 mix test test/nx_quantum/contracts/envelope_snapshot_test.exs`.
 
 Known consumer: FluxQ (separate project) reads these envelopes unchanged and gates releases on the snapshot files (its G2 gate).
+
+## Dependency Policy
+
+1. NxQuantum tracks the latest stable Nx ecosystem and Elixir/OTP releases. This is checked at each minor release cut (`docs/release-process.md`).
+2. Raising the major floor of a runtime dependency is an `api change`, with a CHANGELOG migration note (example: `nx ~> 1.0` in `[Unreleased]`).
+3. Removing an unused optional dependency relaxes constraints and is not breaking (example: `axon`, dropped in H1.6 PR-A).
+4. Optional backend requirements (`exla`, `torchx`) are env-gated in `mix.exs` when `mix hex.build` runs. A package built with `NXQ_ENABLE_EXLA=0` carries no `exla` requirement, and one built with `NXQ_ENABLE_TORCHX` unset or `0` carries no `torchx` requirement (`torchx` defaults off, `exla` defaults on). `.github/workflows/release.yml` sets both to `"0"` for its dry run, so that dry-run package carries neither. The effective version floor reaches consumers through `nx`. Do not assume an optional requirement is published.

@@ -256,7 +256,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - deterministic cache behavior under bounded eviction
   - deterministic seeded behavior for estimator/sampler/kernel entrypoints
 
-### 11) Scale and Performance Context (Planned v0.4)
+### 11) Scale and Performance Context (implemented)
 
 - Features:
   - `features/scale_and_performance.feature`
@@ -267,6 +267,12 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - large-scale fallback strategy contracts
   - benchmark matrix/report builders
   - regression threshold evaluators
+- Implemented in: `lib/nx_quantum/runtime/scale.ex`, `lib/nx_quantum/performance.ex`, and `lib/nx_quantum/performance/` (benchmark matrix, gates, report, batch-obs guard). Acceptance steps: `test/features/steps/scale_and_performance_steps.ex`.
+- Evidence tooling:
+  - `bench/**` and `bench/results/<date>[-<milestone>]/`.
+  - It is not shipped in the Hex package (`files:` in `mix.exs` lists `lib` only).
+  - It may read public facades and `test/support`.
+  - It must never be referenced from `lib/`.
 - Invariants:
   - deterministic fallback selection
   - reproducible benchmark evidence

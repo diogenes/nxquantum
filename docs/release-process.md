@@ -24,6 +24,7 @@
 5. `mix hex.build`
 6. `mix test.release_evidence`
 7. Update roadmap/spec status and release notes summary.
+8. At each minor release cut, `mix hex.outdated` shows no runtime dependency behind its latest stable version. Record any exception, with its reason, in the release notes (`docs/api-stability.md`, "Dependency Policy").
 
 ### Optional Live-Smoke Provider Gates
 

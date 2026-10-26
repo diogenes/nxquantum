@@ -90,6 +90,27 @@ Measures production expectation error against a float64 dense reference over fix
 MIX_ENV=test mix run bench/numerics_precision_floor.exs
 ```
 
+## Numerics Digest (H1.6)
+
+`bench/numerics_digest.exs` prints SHA-256 prefixes over a canonical encoding of fixed-seed outputs (optimized ops, expectations, the float64 reference, sampler counts, gradients, the kernel matrix, raw Nx complex primitives). Two runs on the same toolchain and lock must be byte-identical. Compare states by diffing the outputs. Only public APIs are called.
+
+`--env-out <path>` also writes the environment block (date, OS, CPU, toolchain, dependency versions, env flags, git HEAD, default backend) to that file. The environment never goes to stdout.
+
+```bash
+MIX_ENV=test mix run bench/numerics_digest.exs --env-out bench/results/<run-date>-<milestone>/<state>/environment.txt > bench/results/<run-date>-<milestone>/<state>/digest_run1.txt
+```
+
+## Results Convention
+
+Evidence runs are stored in `bench/results/<first-run-date>-<milestone>/<state>/`. Each state directory holds:
+
+- `digest_run1.txt` and `digest_run2.txt` (two digest runs),
+- `precision_run1.txt` and `precision_run2.txt` (two `numerics_precision_floor.exs` runs),
+- `environment.txt` (generated with `--env-out`),
+- `batch_obs_guard.txt`.
+
+The milestone directory also holds a `SUMMARY.md`. Each state records its own run date in its `environment.txt`; do not assume one date for all states. Example: `bench/results/2026-10-26-h1.6/`.
+
 ## Parallel Opportunity Scripts
 
 Estimator and sampler batch/parallel opportunity probes:
