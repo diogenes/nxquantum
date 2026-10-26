@@ -56,6 +56,8 @@ jobs:
         run: mix hex.build
 
       - name: Build docs
+        env:
+          MIX_ENV: dev
         run: mix docs.build
 
       - name: Upload package artifact
