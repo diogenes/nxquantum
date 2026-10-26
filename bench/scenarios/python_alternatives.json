@@ -126,8 +126,9 @@
     }
   },
   "threads": {
-    "beam_schedulers": 4,
-    "max_concurrency": 4,
+    "beam_schedulers": 1,
+    "max_concurrency": 1,
+    "note": "single-threaded headline: NxQuantum runs at +S 1:1 with max_concurrency 1 and every Python lane at 1 BLAS thread; a row whose CPU/wall exceeds 1.1 is labelled",
     "OMP_NUM_THREADS": "1",
     "OPENBLAS_NUM_THREADS": "1",
     "MKL_NUM_THREADS": "1",

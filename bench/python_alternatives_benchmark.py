@@ -813,6 +813,12 @@ def execute_lane(args, table, fixture, lane_id, lane_cfg, prep, zz_ref, timed_mo
     if lane_cfg["framework"] == "nxquantum":
         tail = nx_args(args, prep, lane_cfg, "timed" if timed_mode else "values", zz_ref != {})
         out = parse_nx(run_nx(args, table, tail))
+        threads = table["threads"]
+        seen = {k: out["bench"].get(k) for k in ("schedulers", "max_concurrency", "dirty_cpu_schedulers")}
+        want = {"schedulers": str(threads["beam_schedulers"]), "max_concurrency": str(threads["max_concurrency"]),
+                "dirty_cpu_schedulers": str(threads["beam_schedulers"])}
+        if seen != want:
+            raise RuntimeError(f"NxQuantum ran with {seen}, the table wants {want}")
         extra = {"resolved_profile": out["bench"].get("resolved_profile"), "nx_flags": out["bench"].get("flags")}
         return out["values"], out["times_ms"], out["zz"], extra
     out = run_python_lane(lane_id, prep, timed=lane_cfg.get("timed", True))

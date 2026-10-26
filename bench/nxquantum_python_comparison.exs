@@ -138,6 +138,7 @@ if mode == "env" do
     "git_dirty: #{run.("git", ["status", "--porcelain"]) != ""}",
     "backend: #{inspect(Nx.default_backend())}",
     "beam_schedulers_online: #{System.schedulers_online()}",
+    "beam_dirty_cpu_schedulers_online: #{:erlang.system_info(:dirty_cpu_schedulers_online)}",
     "beam_schedulers_expected: #{table["threads"]["beam_schedulers"]}",
     "beam_max_concurrency: #{table["threads"]["max_concurrency"]}",
     "ELIXIR_ERL_OPTIONS: #{flag.("ELIXIR_ERL_OPTIONS")}"
@@ -364,7 +365,7 @@ IO.puts(
     "cache_mode=#{cache_mode} mode=#{mode} warmup=#{warmup} iterations=#{iterations} " <>
     "total_ms=#{BenchPlan.shortest(total_ms)} per_op_ms=#{BenchPlan.shortest(per_op_ms)} ops_s=#{BenchPlan.shortest(ops_s)} " <>
     "value=#{BenchPlan.shortest(last_sum)} fixture_sha256=#{fixture_sha} schedulers=#{System.schedulers_online()} " <>
-    "max_concurrency=#{max_concurrency} observables=#{length(last_values)} dtype=f32 " <>
+    "max_concurrency=#{max_concurrency} dirty_cpu_schedulers=#{:erlang.system_info(:dirty_cpu_schedulers_online)} observables=#{length(last_values)} dtype=f32 " <>
     "flags=#{BenchPlan.flags_string(cache_flags)}"
 )
 
