@@ -80,3 +80,9 @@ every display line and the precision file are byte-identical to `after-pr-a/`; t
 per state are byte-identical. The only differences between the two `environment.txt` files are
 the `elixir`, `otp_release`, `otp_version` and `git_head` lines. The envelope fixture tree id is
 unchanged, so no snapshot was regenerated.
+
+## FluxQ consumer check
+
+`fluxq-consumer-check.txt`: FluxQ `mix test` (Elixir 1.19.5 / OTP 28.4.1, FluxQ's pin) against a
+clone of NxQuantum at 6b007c9 via path dependency, in a scratch copy. Resolver moved nx 0.13.1 to
+1.0.0 and complex 0.7.0 to 1.0.0. 18 tests + 2 doctests, 0 failures, nothing skipped.

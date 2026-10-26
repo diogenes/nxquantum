@@ -257,7 +257,7 @@ Review gate:
 
 ### H1.6 - Dependency Currency
 
-- Status: in progress
+- Status: done
 - Intent: api change (PR-A: dependency floor `nx ~> 1.0`; no function, type, or envelope change intended), refactor (PR-B: toolchain)
 - Seats: Lead, Principal architect (plan review), DX, Critic, Verifier, Docs sync, Quantum physics/math
 - Depends on: H1.1
