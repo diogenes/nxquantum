@@ -42,8 +42,20 @@ defmodule NxQuantum.HybridQuantumAIBenchmarkGuardTest do
     assert File.exists?(Path.join(rerank_dir, "rq_small_v1.manifest.json"))
     assert File.exists?(Path.join(rerank_dir, "rq_medium_v1.manifest.json"))
 
-    small_manifest = File.read!(Path.join(rerank_dir, "rq_small_v1.manifest.json"))
-    assert small_manifest =~ ~s("dataset_id": "rq_small_v1")
-    assert small_manifest =~ "\"sha256\""
+    for id <- ["rq_small_v1", "rq_medium_v1"] do
+      manifest = rerank_dir |> Path.join("#{id}.manifest.json") |> File.read!() |> JSON.decode!()
+
+      assert manifest["dataset_id"] == id
+      assert manifest["provenance"] == "synthetic"
+
+      csv_sha256 =
+        rerank_dir
+        |> Path.join("#{id}.csv")
+        |> File.read!()
+        |> then(&:crypto.hash(:sha256, &1))
+        |> Base.encode16(case: :lower)
+
+      assert manifest["sha256"] == csv_sha256
+    end
   end
 end

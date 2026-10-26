@@ -55,7 +55,7 @@ Caveat: these speed figures are from local simulator/fixture workflows on specif
 - Check provider support tiers and limits: [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
 - Use standalone and external integration profiles: [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
 - Review Quantum AI tool contract strategy (sync + async): [docs/quantum-ai-tool-contracts.md](docs/quantum-ai-tool-contracts.md)
-- Review hybrid benchmark/dataset/API spec (planned Phase 20): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
+- Review hybrid benchmark/dataset/API spec (rerank datasets are synthetic; figures are placeholders): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 - Review reproducible provider benchmark matrix: [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
 - Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)

@@ -12,7 +12,7 @@ Operate deterministic rollout decisions for hybrid quantum-AI tool paths using t
 
 ## Required inputs
 
-1. Hybrid benchmark evidence (`fallback_rate`, `typed_error_rate`, `quality_delta`).
+1. Hybrid benchmark evidence (`fallback_rate`, `typed_error_rate`, `quality_delta`). Use evidence from your own data. In-repo hybrid benchmark outputs are synthetic or placeholder and are not promotion evidence.
 2. TurboQuant production KPI evidence for rerank promotion lanes (`quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`).
 3. Request correlation metadata (`request_id`, `correlation_id`).
 4. Decision thresholds snapshot.

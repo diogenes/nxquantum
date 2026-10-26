@@ -53,7 +53,7 @@ The joint value is a control plane whose policies are tested against a determini
 2. **Contracts.** Stable, versioned, typed envelopes that hosts (FluxQ and user apps) can build on without breakage.
 3. **Scale-out.** Distributed execution within a job, then deterministic simulation of distributed quantum systems.
 
-Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an application of these pillars. It is the current public lead message in both NxQuantum's and FluxQ's AGENTS.md invariants. Decision gate D1 decides whether it stays the lead message.
+Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an application of these pillars. Decision D1 (2026-10-26, `docs/roadmap.md` Decision Log) demotes it from the lead message; NxQuantum's `AGENTS.md` messaging invariant still names it until the owner approves new wording. FluxQ's `AGENTS.md` has no such invariant (checked 2026-10-26).
 
 ## 6. Strategy Frame
 
@@ -95,7 +95,7 @@ Execution detail for H1 and H2 lives in `docs/roadmap.md`. H3 is detailed here b
   - docs match code;
   - envelope snapshots guard FluxQ compatibility;
   - benchmarks refreshed with crossover points;
-  - real-data rerank verdict published;
+  - D1 recorded; rerank datasets labeled synthetic;
   - compiler equivalence suite green;
   - Kano survey done.
 
@@ -116,7 +116,7 @@ Execution detail for H1 and H2 lives in `docs/roadmap.md`. H3 is detailed here b
 
 | Gate | When | Question | If no |
 | --- | --- | --- | --- |
-| D1 | After H1.3 | Does real-data evidence support hybrid quantum-AI as the lead message? | Demote it to an application and lead with "deterministic quantum execution on BEAM". The AGENTS.md messaging invariants in NxQuantum and FluxQ change only with owner approval. |
+| D1 | After H1.3 | Does real-data evidence support hybrid quantum-AI as the lead message? | Demote it to an application and lead with "deterministic quantum execution on BEAM". The NxQuantum AGENTS.md messaging invariant changes only with owner approval (FluxQ's AGENTS.md has none). Decided 2026-10-26 (owner): no, before H1.3 finished; see the `docs/roadmap.md` Decision Log. |
 | D2 | After H2.1 | Does the same seed give identical results on 1 vs N nodes, and identical traces in virtual-time mode? | Keep result-determinism only. Cancel H3.1, which depends on trace determinism. |
 | D3 | After H2.3 | Do D2 pass, one external distributed-run user, and visible multi-QPU hardware signals all hold? | Stay in H2. Revisit yearly. |
 
@@ -148,6 +148,7 @@ Rebalance only after a decision gate passes. Announce only what is shipped and e
 | Migration assurance toolkit (ADR 0007) | Teams migrating Python workflows ask for it | Scoped `Migration.AI*` slice already shipped |
 | New promotion-gate features in `Migration.AIGates` | — | Frozen: keep the API stable; promotion policy grows in FluxQ (P3) |
 | Analog/non-gate-model provider workflows | Provider demand | — |
+| Real-data hybrid rerank lane (BEIR SciFact; NFCorpus dropped) | A named user needs hybrid rerank quality evidence on real data, or D1 is reopened | Parked by D1 (2026-10-26). In-repo datasets are synthetic (KG-5). License notes from the 2026-10-25 intake (SciFact upstream LICENSE.md: CC BY 4.0 claims, ODC-By 1.0 abstracts, fetch-only and aggregates-only; NFCorpus: academic use only) and the Bumblebee path (0.8 needs nx ~> 1.0, axon ~> 0.9) are unverified in-repo; recheck at un-park. Bumblebee needs dependency justification and an architecture owner. |
 | Lean-verified gate identities | Research only | H1.4 covers identities with property tests |
 
 ## 12. Research Intake Rule

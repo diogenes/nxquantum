@@ -4,5 +4,7 @@
   "format": "csv",
   "query_embedding_encoding": "pipe-delimited float list",
   "seed": 20260329,
-  "sha256": "6be6441adfe8a9541d90f0fd611f411924ae586f0eb7b1de9a055b623153491b"
+  "sha256": "6be6441adfe8a9541d90f0fd611f411924ae586f0eb7b1de9a055b623153491b",
+  "provenance": "synthetic",
+  "generator_note": "Hand-authored in commit 31913ec; no generator exists in this repository, and seed does not regenerate this data. Not real-data evidence (KG-5)."
 }

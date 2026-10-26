@@ -4,6 +4,7 @@ Status note (as of March 29, 2026):
 
 1. This benchmark specification is active for Phase 20+ execution.
 2. Benchmark scripts are implemented in `bench/hybrid_quantum_ai_*.exs` and `bench/turboquant_rerank_benchmark.exs`.
+3. Evidence limits (2026-10-26, decision D1 and KG-5 in `docs/roadmap.md`): the in-repo rerank datasets are synthetic, 6- and 8-row hand-authored fixtures; contract and regression smoke checks only; not evidence of rerank quality. Quality and KPI figures (nDCG, MAP, objective gap, `quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`) and all `latency_fallback_impact` metrics emitted by `bench/hybrid_quantum_ai_benchmark.exs` and `bench/hybrid_quantum_ai_baseline.exs` are fixed values written into the scripts. They are placeholders, not measurements. The rerank lanes of `bench/hybrid_quantum_ai_benchmark.exs` report `dataset_id: "rq_small_v1"` without loading it; the TurboQuant lane loads data only when `--dataset-path` is given (tracked as KG-11). These are internal references, not official benchmark results. A real-data rerank lane is parked (`docs/vision.md` §11).
 
 ## Goal
 
@@ -35,6 +36,8 @@ All datasets must be version-pinned and loaded via explicit manifest metadata.
    - canonical files:
      - `bench/datasets/rerank/rq_small_v1.csv`
      - `bench/datasets/rerank/rq_medium_v1.csv`
+   - provenance: synthetic, 6- and 8-row hand-authored fixtures; contract and regression smoke checks only; not evidence of rerank quality. Manifests (`bench/datasets/rerank/*.manifest.json`) carry `provenance: synthetic` and the CSV `sha256`; `test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs` checks both.
+   - manifest `schema_version` goes to `v2` on a removed or renamed key, a change in meaning, or the first parser with a closed schema. Additive keys keep `v1`.
    - row schema:
      - `query_id: string`
      - `candidate_id: string`

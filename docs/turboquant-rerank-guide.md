@@ -47,6 +47,8 @@ request = %{
 
 ## Bring Your Own Dataset (CSV)
 
+The in-repo `rq_small_v1` / `rq_medium_v1` CSVs are synthetic, 6- and 8-row hand-authored fixtures; contract and regression smoke checks only; not evidence of rerank quality. Use your own data for any quality evaluation.
+
 You can supply a local CSV dataset instead of in-memory embedding maps.
 
 Required columns:

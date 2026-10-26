@@ -69,12 +69,15 @@ Known gaps:
 | KG-2 | Phases 14–16 were never checked off | Closed in H1.1: audit recorded in Shipped History; partial items listed there |
 | KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Closed in H1.4: property suites and dense reference (see H1.4 Evidence) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
-| KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | H1.3 |
+| KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | Closed 2026-10-26 by D1. Manifests carry `provenance: synthetic`, the guard test (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`) checks provenance and CSV sha256 on both, and the docs are labeled |
 | KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
 | KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
 | KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement |
+| KG-11 | Hybrid benchmark scripts emit fixed figures, not measurements: quality (`ndcg_at_10`, `map_at_10`, `objective_gap_to_known_best`), the TurboQuant KPIs in `bench/hybrid_quantum_ai_benchmark.exs` (`quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`), and every `latency_fallback_impact` metric. Lanes report dataset ids they do not load: both rerank lanes report `rq_small_v1` (inline scores, or generated sin/cos embeddings unless `--dataset-path` is given), and `constrained_optimization_assistant` reports the nonexistent `co_knapsack_v1`. `bench/turboquant_rerank_benchmark.exs` computes memory and compression from the tool result | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
+| KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | unassigned (owner decision) |
+| KG-13 | The OpenTelemetry-named observability adapter (`lib/nx_quantum/adapters/observability/open_telemetry.ex`) records spans, metrics, and logs in the process dictionary; there is no OpenTelemetry dependency or exporter, and `docs/observability.md` calls it the production emitter adapter | unassigned (owner decision) |
 
 ---
 
@@ -151,7 +154,7 @@ Review gate:
 
 ### H1.3 - Evidence Refresh
 
-- Status: planned
+- Status: in progress
 - Intent: performance (evidence only)
 - Seats: Lead, Quantum physics/math, Verifier, Product marketing (claims audit)
 - Depends on: H1.1
@@ -160,26 +163,24 @@ Review gate:
 Goal:
 
 1. Public speed and quality claims rest on current, version-pinned evidence with stated limits.
-2. Hybrid quantum-AI reranking gets a real-data verdict, which feeds D1.
+2. The in-repo hybrid rerank evidence is labeled synthetic, and D1 is recorded.
 
 Implementation deliverables:
 
 1. Rerun `bench/python_alternatives_benchmark.py` against current pinned Qiskit 2.x, PennyLane, and Cirq releases (versions recorded in the report), using 3-run means.
 2. Add 12, 16, 20, and 24 qubit scenarios, and state the crossover point where NxQuantum stops winning.
 3. Publish `docs/python-alternatives-benchmark-<date>.md` and archive the 2026-03-25 report.
-4. Add a real-data rerank lane, BEIR SciFact first and NFCorpus second:
-   - verify licenses before use;
-   - commit a fetch script plus a provenance manifest (source URL, license, embedding model and version, dimensionality-reduction method, seed, `sha256`); raw data is not committed;
-   - decide the embedding-generation path in plan review. Bumblebee would be a dev-only dependency that needs architecture justification; the alternative is offline generation with a pinned model.
-5. Publish nDCG@10 against the classical baseline in the hybrid benchmark doc, regardless of outcome.
-6. Record decision D1 in the Decision Log.
+4. Parked 2026-10-26 (D1); see `docs/vision.md` §11.
+5. Parked 2026-10-26 (D1); see `docs/vision.md` §11.
+6. Record decision D1 in the Decision Log (done 2026-10-26; see the D1 row).
 
 Review gate:
 
 1. Reports are version-pinned, 3-run, and caveat-labeled.
 2. README speed claims cite the new report, including the crossover.
-3. The rerank result and its classical baseline are published.
+3. Parked 2026-10-26 (D1); rerank datasets and hybrid figures carry the synthetic/placeholder label instead.
 4. D1 is recorded with its rationale.
+5. Competitor facts in `docs/vision.md` §6 are rechecked and dated (vision §13 item 6; deferred from D1).
 
 ### H1.4 - Compiler Correctness Suite
 
@@ -240,7 +241,7 @@ Implementation deliverables:
 2. Three Livebooks:
    - embedding NxQuantum in a supervised BEAM service;
    - researcher reproducibility (fingerprints, seeded replay, classical-baseline comparison);
-   - hybrid rerank on real data if D1 keeps it as the lead message, otherwise provider lifecycle across lanes.
+   - provider lifecycle across lanes (fixture lane; live lanes stay env-gated).
 3. A launch write-up and Elixir Forum post based on H1.3 evidence (owner publishes).
 4. A Kano survey of at least 10 target users (Elixir Forum, ElixirConf, FluxQ early users). Its results reclassify the hypotheses in `docs/vision.md` §6.
 5. A joint "FluxQ powered by NxQuantum" narrative, aligned with FluxQ's positioning docs.
@@ -368,7 +369,7 @@ Review gate:
 
 | Gate | Question (see `docs/vision.md` §8) | Status | Decision and rationale |
 | --- | --- | --- | --- |
-| D1 | Hybrid quantum-AI stays the lead message? | pending (after H1.3) | — |
+| D1 | Hybrid quantum-AI stays the lead message? | decided 2026-10-26 (owner): no | Hybrid quantum-AI becomes an application of the pillars and the lead becomes "deterministic quantum execution on BEAM", because the primary audience is BEAM/Nx teams embedding quantum workloads in their services (`docs/vision.md` §4), whom the Trust and Contracts pillars (§5) serve directly. Decided before H1.3 finished: no real-data evaluation was run, and "no" is the branch taken without that evidence. The in-repo rerank datasets are synthetic (KG-5), benchmarks are internal performance references rather than official results (owner, 2026-10-26), and the real-data rerank lane is parked (`docs/vision.md` §11); D1 reopens on that row's trigger. FluxQ needs no change: its `AGENTS.md` has no hybrid quantum-AI invariant (checked 2026-10-26). The vision §13 item 6 competitor recheck moves to the H1.3 benchmark refresh. |
 | D2 | Determinism holds under distribution? | pending (after H2.1) | — |
 | D3 | Enter Horizon 3? | pending (after H2.3) | — |
 
