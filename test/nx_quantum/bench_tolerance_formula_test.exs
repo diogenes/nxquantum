@@ -10,9 +10,26 @@ defmodule NxQuantum.BenchToleranceFormulaTest do
   #   B   = (2 * kappa * G1 + c0 + xy_units) * u,   u = 2^-24, kappa = a * sqrt(2) + b
   #
   # and asserts it equals the table value, so a hand edit of a tolerance cannot
-  # drift from its derivation.
+  # drift from its derivation. Inputs are hard-coded below.
   @lanes ["nxquantum_cpu_portable", "nxquantum_cpu_compiled"]
+
+  # Formula inputs are pinned HERE, not read from the table, so editing an input
+  # and the derived values in one commit to the table still fails this test.
   @u :math.pow(2, -24)
+  @floor 1.0e-6
+  @real %{kappa: [1, 0], g1_per_qubit: 9, c0: 1}
+  @complex %{kappa: [2, 1], g1_per_qubit: 16, c0: 3}
+  @families %{"real" => @real, "complex" => @complex}
+
+  # Continuity scenarios: kappa path, G1, c0 and the X/Y float32 sum units per lane.
+  # 131 = 2^(n-1) + 3 for n = 8 (cpu_compiled X/Y sum on EXLA); 3 is the portable sum;
+  # the +1 in the basis strings is c0.
+  @continuity %{
+    "baseline_2q" => %{kappa: [1, 0], g1: 2, c0: 1, xy: [0, 0]},
+    "deep_6q" => %{kappa: [1, 0], g1: 7, c0: 1, xy: [0, 0]},
+    "batch_obs_8q" => %{kappa: [2, 1], g1: 11, c0: 1, xy: [3, 2 ** 7 + 3]},
+    "state_reuse_8q_xy" => %{kappa: [2, 1], g1: 11, c0: 1, xy: [3, 2 ** 7 + 3]}
+  }
 
   setup_all do
     %{table: BenchScenarios.table()}
@@ -20,24 +37,55 @@ defmodule NxQuantum.BenchToleranceFormulaTest do
 
   defp kappa([a, b]), do: a * :math.sqrt(2) + b
 
-  defp bound(formula, g1, xy_units) do
-    (2 * kappa(formula["kappa"]) * g1 + formula["c0"] + xy_units) * @u
+  defp bound(spec, g1, xy_units) do
+    (2 * kappa(spec.kappa) * g1 + spec.c0 + xy_units) * @u
   end
 
-  defp tolerance(b, floor) do
+  defp tolerance(b) do
     exponent = trunc(Float.floor(:math.log10(b))) - 1
     quantum = :math.pow(10, exponent)
-    max(floor, Float.ceil(b / quantum) * quantum)
+    max(@floor, Float.ceil(b / quantum) * quantum)
+  end
+
+  test "the xy unit constant 131 is 2^(n-1)+3 at n = 8" do
+    assert 2 ** (8 - 1) + 3 == 131
+  end
+
+  test "the table's tolerance_formula block matches the pinned constants", %{table: table} do
+    formula = table["tolerance_formula"]
+    assert formula["u"] == "2^-24"
+    assert formula["floor"] == @floor
+    assert formula["rounding"] == "ceil to 2 significant figures"
+
+    for {name, spec} <- @families do
+      assert formula["families"][name] == %{
+               "kappa" => spec.kappa,
+               "g1_per_qubit" => spec.g1_per_qubit,
+               "c0" => spec.c0
+             }
+    end
+
+    assert formula["continuity"] |> Map.keys() |> Enum.sort() == @continuity |> Map.keys() |> Enum.sort()
+
+    for {id, spec} <- @continuity do
+      [portable, compiled] = spec.xy
+
+      assert formula["continuity"][id] == %{
+               "kappa" => spec.kappa,
+               "g1" => spec.g1,
+               "c0" => spec.c0,
+               "xy_units" => %{"cpu_portable" => portable, "cpu_compiled" => compiled}
+             }
+    end
   end
 
   for family <- ["real", "complex"], width <- [4, 8, 12, 16, 20, 24] do
     test "#{family} family tolerance at #{width} qubits follows the formula", %{table: table} do
       family = unquote(family)
       width = unquote(width)
-      formula = table["tolerance_formula"]
-      spec = formula["families"][family]
+      spec = Map.fetch!(@families, family)
 
-      expected = tolerance(bound(spec, spec["g1_per_qubit"] * width, 0), formula["floor"])
+      expected = tolerance(bound(spec, spec.g1_per_qubit * width, 0))
       tolerances = table["tolerances"][family][Integer.to_string(width)]
 
       for lane <- @lanes do
@@ -49,16 +97,9 @@ defmodule NxQuantum.BenchToleranceFormulaTest do
   for scenario <- ["baseline_2q", "deep_6q", "batch_obs_8q", "state_reuse_8q_xy"] do
     test "continuity tolerance of #{scenario} follows the formula", %{table: table} do
       scenario_id = unquote(scenario)
-      formula = table["tolerance_formula"]
-      spec = formula["continuity"][scenario_id]
+      spec = Map.fetch!(@continuity, scenario_id)
 
-      worst =
-        spec["xy_units"]
-        |> Map.values()
-        |> Enum.map(&bound(spec, spec["g1"], &1))
-        |> Enum.max()
-
-      expected = tolerance(worst, formula["floor"])
+      expected = spec.xy |> Enum.map(&bound(spec, spec.g1, &1)) |> Enum.max() |> tolerance()
 
       for lane <- @lanes do
         assert_in_delta table["scenarios"][scenario_id]["tolerance"][lane], expected, 1.0e-12, "#{scenario_id} #{lane}"
