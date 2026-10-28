@@ -18,6 +18,11 @@ Modes (--mode):
             "tolerances_confirmed": false.
   pretime   times ONE untimed iteration per (lane, family, width) and writes it
             (budget rule R4).
+  pins      queries `pip index versions` for qiskit, pennylane, cirq-core and numpy and
+            compares the latest with the committed pins; prints a pins_current line.
+  consensus --results A/results.json B/results.json ...: RF9 per-width f64 consensus
+            across per-invocation results files (one lane per invocation); fails when
+            qiskit, pennylane or cirq_c128_equivalence is missing for a width with rows.
   selfcheck reference self-checks: dense reference (<=6q), prefix-parity analytic
             identity, f64 consensus, exact-rational sampled counts; or
             --compare-values A B for byte identity of two value files.
@@ -819,7 +824,11 @@ def execute_lane(args, table, fixture, lane_id, lane_cfg, prep, zz_ref, timed_mo
                 "dirty_cpu_schedulers": str(threads["beam_schedulers"])}
         if seen != want:
             raise RuntimeError(f"NxQuantum ran with {seen}, the table wants {want}")
-        extra = {"resolved_profile": out["bench"].get("resolved_profile"), "nx_flags": out["bench"].get("flags")}
+        bench = out["bench"]
+        extra = {"resolved_profile": bench.get("resolved_profile"), "nx_flags": bench.get("flags"),
+                 "timed_loop_cpu_ms": float(bench["timed_loop_cpu_ms"]),
+                 "timed_loop_wall_ms": float(bench["timed_loop_wall_ms"]),
+                 "cpu_wall_timed_loop": float(bench["timed_loop_cpu_wall"])}
         return out["values"], out["times_ms"], out["zz"], extra
     out = run_python_lane(lane_id, prep, timed=lane_cfg.get("timed", True))
     zz_values = python_zz(lane_id, prep, fixture) if zz_ref else {}
@@ -871,7 +880,8 @@ def execute_scenario(args, table, fixture, sid, cache_mode, lanes, timed_mode, c
         row.update(extra)
         row["wall_s"] = wall
         row["cpu_s"] = cpu
-        row["cpu_wall"] = (cpu / wall) if wall > 0 else None
+        row["cpu_wall"] = (cpu / wall) if wall > 0 else None  # whole lane call (subprocess incl. startup for NxQuantum)
+        row.setdefault("cpu_wall_timed_loop", None)  # NxQuantum rows only: timed loop, no startup
         row["cpu_wall_label"] = (
             f"cpu/wall above {CPU_WALL_LABEL_ABOVE} (not single-threaded)"
             if row["cpu_wall"] is not None and row["cpu_wall"] > CPU_WALL_LABEL_ABOVE else None)
@@ -950,8 +960,10 @@ def environment_lines(args, table, fixture_sha, mode):
                                          "max_concurrency": table["threads"]["max_concurrency"]}, sort_keys=True),
         "lane_dtypes: " + json.dumps({k: v["dtype"] for k, v in table["lanes"].items()}, sort_keys=True),
         f"nxquantum_child_elixir_erl_options: {child_env(table)['ELIXIR_ERL_OPTIONS']}",
-        f"cpu_wall: per row, RUSAGE_SELF delta for Python lanes and RUSAGE_CHILDREN delta for the NxQuantum "
-        f"subprocess over the whole lane call (startup included for NxQuantum); rows above {CPU_WALL_LABEL_ABOVE} are labelled",
+        f"cpu_wall_lane_call: per row, RUSAGE_SELF delta for Python lanes and RUSAGE_CHILDREN delta for the NxQuantum "
+        f"subprocess over the whole lane call (VM startup and compile included for NxQuantum); rows above {CPU_WALL_LABEL_ABOVE} are labelled",
+        "cpu_wall_timed_loop: NxQuantum rows only; :erlang.statistics(:runtime) delta (process CPU across all OS threads, "
+        "ms resolution) over the :timer.tc wall time of the timed loop alone (no startup)",
     ]
     for lane, text in table["disclosures"].items():
         if lane != "methods":
@@ -1205,6 +1217,81 @@ def consensus_rows(table, rows) -> int:
     return failed
 
 
+def consensus_across(table, rows):
+    """Strict RF9 variant for merged per-invocation rows: fail when any of the three lanes is missing for a width."""
+    bound = table["selfcheck_bounds"]["reference_consensus_f64"]
+    groups: dict = {}
+    for row in rows:
+        if row.get("status") == "not_run" or row.get("lane") not in CONSENSUS_LANES or not row.get("family"):
+            continue
+        groups.setdefault((row["family"], row["qubits"]), {}).setdefault(row["lane"], []).append(row["max_err"])
+    failed = 0
+    for (family, qubits), by_lane in sorted(groups.items()):
+        name = f"reference_consensus_f64_{family}_{qubits}"
+        missing = [lane for lane in CONSENSUS_LANES if lane not in by_lane]
+        if missing:
+            emit(name, "fail", reason="missing lane rows", missing=",".join(missing), bound=bound)
+            failed += 1
+            continue
+        worst = 0.0
+        for errs in by_lane.values():
+            for err in errs:
+                worst = worse(worst, err)
+        status = emit(name, "pass" if worst <= bound else "fail", max_err=repr(worst), bound=bound,
+                      lanes=",".join(CONSENSUS_LANES))
+        failed += status == "fail"
+    if not groups:
+        emit("reference_consensus_f64", "fail", reason="no family rows for the consensus lanes in the given files")
+        failed += 1
+    return failed
+
+
+def run_consensus(args, table):
+    if not args.results:
+        raise SystemExit("--mode consensus needs --results <results.json ...>")
+    rows = []
+    for path in args.results:
+        rows.extend(json.loads(Path(path).read_text())["rows"])
+    failures = consensus_across(table, rows)
+    print(f"SUMMARY consensus_files={len(args.results)} rows={len(rows)} failures={failures}")
+    return 1 if failures else 0
+
+
+PIN_PACKAGES = ("qiskit", "pennylane", "cirq-core", "numpy")
+
+
+def committed_pins() -> dict:
+    pins = {}
+    for line in REQUIREMENTS.read_text().splitlines():
+        name, _, version = line.partition("==")
+        if name in PIN_PACKAGES:
+            pins[name] = version
+    return pins
+
+
+def latest_on_index(package: str) -> str:
+    proc = subprocess.run([sys.executable, "-I", "-m", "pip", "index", "versions", package],
+                          capture_output=True, text=True, check=False)
+    for line in proc.stdout.splitlines():
+        if line.strip().startswith("LATEST:"):
+            return line.split(":", 1)[1].strip()
+    raise RuntimeError(f"could not read the latest {package} version: {one_line(proc.stderr or proc.stdout)}")
+
+
+def run_pins():
+    pins, current = committed_pins(), True
+    for package in PIN_PACKAGES:
+        try:
+            latest = latest_on_index(package)
+        except Exception as exc:  # noqa: BLE001  (an unreachable index is reported, never assumed current)
+            latest = f"unavailable ({one_line(exc)})"
+        same = pins.get(package) == latest
+        current = current and same
+        print(f"pins_current package={package} pinned={pins.get(package)} latest={latest} current={same}", flush=True)
+    print(f"pins_current all={current} date_utc={time.strftime('%Y-%m-%d', time.gmtime())}")
+    return 0 if current else 1
+
+
 def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
     if timed_mode and not table["tolerances_confirmed"]:
         raise SystemExit(
@@ -1240,10 +1327,12 @@ def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
         published = "published" if timed_mode and status == "pass" else "not_published"
         per_op = row["per_op_ms"]
         cpu_wall = row["cpu_wall"]
+        loop = row.get("cpu_wall_timed_loop")
         label = f" LABEL={row['cpu_wall_label']!r}" if row["cpu_wall_label"] else ""
         print(f"ROW scenario={row['scenario']} cache={row['cache_mode']} lane={row['lane']} per_op_ms="
               f"{'n/a' if per_op is None else format(per_op, '.6f')} timing={published} "
-              f"cpu_wall={'n/a' if cpu_wall is None else format(cpu_wall, '.3f')}{label}", flush=True)
+              f"cpu_wall_lane_call={'n/a' if cpu_wall is None else format(cpu_wall, '.3f')} "
+              f"cpu_wall_timed_loop={'n/a' if loop is None else format(loop, '.3f')}{label}", flush=True)
 
     for sid in scenarios:
         scenario = table["scenarios"][sid]
@@ -1370,7 +1459,7 @@ def run_selfcheck(args, table, fixture, fixture_sha):
 
 def build_parser():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--mode", choices=["check", "timed", "pretime", "selfcheck"], default="check")
+    parser.add_argument("--mode", choices=["check", "timed", "pretime", "selfcheck", "pins", "consensus"], default="check")
     parser.add_argument("--scenario", action="append", help="scenario id (repeatable); default: all within --max-qubits")
     parser.add_argument("--cache-mode", choices=["hot", "cold", "both"], default="both")
     parser.add_argument("--lanes", type=str, default=None, help="comma list; default: the committed lane order")
@@ -1381,6 +1470,8 @@ def build_parser():
     parser.add_argument("--check-iterations", type=int, default=3)
     parser.add_argument("--out-dir", type=str, default=None)
     parser.add_argument("--values-out", type=str, default=None, help="write value columns (no timings) for byte comparison")
+    parser.add_argument("--results", nargs="+", default=None, metavar="RESULTS_JSON",
+                        help="--mode consensus: per-invocation results.json files to merge")
     parser.add_argument("--compare-values", nargs=2, metavar=("A", "B"), default=None)
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument("--mix-cmd", type=str, default=os.environ.get("NXQ_BENCH_MIX_CMD", "mise exec -- mix"))
@@ -1394,6 +1485,10 @@ def main() -> int:
     table = load_table()
     if args.compare_values:
         return 0 if compare_values(*args.compare_values) == "pass" else 1
+    if args.mode == "pins":
+        return run_pins()
+    if args.mode == "consensus":
+        return run_consensus(args, table)
     fixture, fixture_sha = load_fixture(table)
     print(f"FIXTURE sha256={fixture_sha} seeds=20261026+100*family_index+qubits "
           f"lanes={json.dumps({k: v['dtype'] for k, v in table['lanes'].items()}, sort_keys=True)}", flush=True)

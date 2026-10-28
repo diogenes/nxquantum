@@ -346,11 +346,20 @@ run_fun =
 {warm_inputs, timed_inputs} = Enum.split(inputs, warmup)
 Enum.each(warm_inputs, fn input -> _ = run_fun.(input) end)
 
-timed =
-  Enum.map(timed_inputs, fn input ->
-    {microseconds, tensor} = :timer.tc(fn -> run_fun.(input) end)
-    {microseconds, tensor}
+# Timed-loop CPU/wall: process CPU across all OS threads (:erlang.statistics(:runtime), ms
+# resolution) over the :timer.tc wall time of the timed loop only (no VM or compile startup).
+{_, _} = :erlang.statistics(:runtime)
+
+{loop_wall_us, timed} =
+  :timer.tc(fn ->
+    Enum.map(timed_inputs, fn input ->
+      {microseconds, tensor} = :timer.tc(fn -> run_fun.(input) end)
+      {microseconds, tensor}
+    end)
   end)
+
+{_, loop_cpu_ms} = :erlang.statistics(:runtime)
+loop_cpu_wall = if loop_wall_us > 0, do: loop_cpu_ms * 1000.0 / loop_wall_us, else: 0.0
 
 total_us = timed |> Enum.map(&elem(&1, 0)) |> Enum.sum()
 total_ms = total_us / 1000.0
@@ -366,7 +375,9 @@ IO.puts(
     "total_ms=#{BenchPlan.shortest(total_ms)} per_op_ms=#{BenchPlan.shortest(per_op_ms)} ops_s=#{BenchPlan.shortest(ops_s)} " <>
     "value=#{BenchPlan.shortest(last_sum)} fixture_sha256=#{fixture_sha} schedulers=#{System.schedulers_online()} " <>
     "max_concurrency=#{max_concurrency} dirty_cpu_schedulers=#{:erlang.system_info(:dirty_cpu_schedulers_online)} observables=#{length(last_values)} dtype=f32 " <>
-    "flags=#{BenchPlan.flags_string(cache_flags)}"
+    "flags=#{BenchPlan.flags_string(cache_flags)} " <>
+    "timed_loop_cpu_ms=#{loop_cpu_ms} timed_loop_wall_ms=#{BenchPlan.shortest(loop_wall_us / 1000.0)} " <>
+    "timed_loop_cpu_wall=#{BenchPlan.shortest(loop_cpu_wall)}"
 )
 
 rows
