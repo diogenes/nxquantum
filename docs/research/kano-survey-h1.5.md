@@ -26,26 +26,26 @@
 
 Answer scale: 1 I like it, 2 I expect it, 3 I'm neutral, 4 I can live with it, 5 I dislike it.
 
-- Functional: "If NxQuantum <feature>, how do you feel?"
-- Dysfunctional: "If NxQuantum did NOT <feature>, how do you feel?"
+- Functional: "If you <feature> with NxQuantum, how do you feel?"
+- Dysfunctional: "If you did NOT <feature> with NxQuantum, how do you feel?"
 - Optional: "How important is this to you?" 1-9
-
-Unshipped items (F9, F10) are framed as "would you value".
+- Unshipped items (F9, F10), functional: "Would you value being able to <feature>? If NxQuantum offered this, how do you feel?"
+- Unshipped items (F9, F10), dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
 
 ### Features
 
-- F1 checked every gate, expectation and gradient against an analytic or independent reference with a published tolerance
-- F2 installed from Hex (Mix.install or mix.exs) and ran a first circuit without cloning the repo
-- F3 had every docs and Livebook example run unchanged on the current release
-- F4 kept job/result/error records in a versioned JSON shape that never changes without a version bump
-- F5 ran circuits up to ~8 qubits in-process fast enough to sit in a request path
-- F6 ran a parameter sweep over many inputs as one batched call
-- F7 simulated up to ~24 qubits on one machine
-- F8 attached a stable fingerprint (circuit, options, seed, versions) to every result
-- F9 ran your quantum model and a classical baseline on the same data in one call
-- F10 shipped a Livebook showing one job fanned out across BEAM nodes with the same results as one node
-- F11 kept seeded results bit-identical after you upgrade Nx or Erlang/OTP (default backend)
-- F12 ran inside your supervised Elixir application, with no Python service to deploy
+- F1 check every gate, expectation and gradient against an analytic or independent reference with a published tolerance
+- F2 install from Hex (Mix.install or mix.exs) and run a first circuit without cloning the repo
+- F3 have every docs and Livebook example run unchanged on the current release
+- F4 keep job/result/error records in a versioned JSON shape that never changes without a version bump
+- F5 run circuits up to ~8 qubits in-process fast enough to sit in a request path
+- F6 run a parameter sweep over many inputs as one batched call
+- F7 simulate up to ~24 qubits on one machine
+- F8 attach a stable fingerprint (circuit, options, seed, versions) to every result
+- F9 run your quantum model and a classical baseline on the same data in one call
+- F10 were shown a Livebook of one job fanned out across BEAM nodes with the same results as one node
+- F11 keep seeded results bit-identical after you upgrade Nx or Erlang/OTP (default backend)
+- F12 run inside your supervised Elixir application, with no Python service to deploy
 
 ### Close
 
@@ -75,7 +75,7 @@ ElixirConf 2027 dates are unpublished as of 2026-10-30, so n >= 10 is not planne
 - Target respondents: n >= 10. S3 = many hardware providers, advanced compiler or GPU-scale simulation marks a respondent as not targeted. Report them separately; never use them to reclassify.
 - Classify each answer pair with the Kano evaluation table below. Drop Q answers. If R is 30% or more of a feature's answers, flag the wording.
 - Reclassify a feature only if the mode category has at least 50% of valid answers and leads the runner-up by at least 2. Otherwise record "inconclusive, hypothesis kept".
-- Tie order is M > O > A > I. Mark a tie-broken result "contested".
+- Tie order is M > O > A > I. A tie-broken mode has margin 0, so it is recorded as "contested, hypothesis kept" and is never used to reclassify.
 - Write results as "observed (n=X, dates, channels)", not "validated".
 
 Kano evaluation table (functional row by dysfunctional column; A attractive, O one-dimensional, M must-be, I indifferent, R reverse, Q questionable):
