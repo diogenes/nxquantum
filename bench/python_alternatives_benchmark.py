@@ -934,6 +934,23 @@ def check_name(row, prep_mode=None):
 # --------------------------------------------------------------------------------------
 
 
+def executable_label() -> str:
+    """sys.executable repo-relative when inside the repo, else the basename. Never absolute."""
+    exe = Path(sys.executable)
+    for candidate in (exe, exe.parent.resolve() / exe.name):
+        try:
+            return candidate.relative_to(ROOT).as_posix()
+        except ValueError:
+            continue
+    return exe.name
+
+
+def rss_max_bytes(who: int) -> int:
+    """ru_maxrss normalized to bytes: macOS reports bytes, Linux reports KiB."""
+    raw = resource.getrusage(who).ru_maxrss
+    return raw if sys.platform == "darwin" else raw * 1024
+
+
 def pip_freeze() -> str:
     return subprocess.run([sys.executable, "-I", "-m", "pip", "freeze"], capture_output=True, text=True, check=True).stdout
 
@@ -945,7 +962,7 @@ def environment_lines(args, table, fixture_sha, mode):
     blas = config.get("Build Dependencies", {}).get("blas", {})
     lines = [
         f"harness_mode: {mode}",
-        f"python: {platform.python_version()} ({sys.executable})",
+        f"python: {platform.python_version()} ({executable_label()})",
         f"python_flags_isolated: {bool(sys.flags.isolated)}",
         f"pip_freeze_sha256: {hashlib.sha256(freeze.encode()).hexdigest()}",
         f"pip_freeze_matches_committed: {freeze == committed}",
@@ -1389,7 +1406,8 @@ def run_checks_or_timed(args, table, fixture, fixture_sha, timed_mode):
     if out_dir:
         (out_dir / "results.json").write_text(json.dumps({
             "mode": args.mode, "timing_published": bool(timed_mode), "fixture_sha256": fixture_sha,
-            "rss_max_kb_self": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+            "rss_max_bytes_self": rss_max_bytes(resource.RUSAGE_SELF),
+            "rss_max_bytes_children": rss_max_bytes(resource.RUSAGE_CHILDREN),
             "rows": all_rows}, indent=1) + "\n")
     print(f"SUMMARY rows={len(all_rows)} failures={failures} errors={errors} timing_published={timed_mode}", flush=True)
     return 1 if failures else 0
