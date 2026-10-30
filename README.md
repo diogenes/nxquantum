@@ -38,7 +38,7 @@ NxQuantum makes no cross-framework speed claims. We keep an internal benchmark h
 - Deterministic means fixed inputs + fixed seed + fixed runtime profile/options produce stable outputs in simulator and fixture lanes.
 - Live provider/QPU execution remains physically probabilistic and can vary due to noise, calibration drift, and queue/runtime conditions.
 - For live lanes, NxQuantum guarantees typed lifecycle/error envelopes and reproducible request metadata; it does not guarantee bit-for-bit identical measured outcomes.
-- Bit-identical repeat runs are verified on the default `Nx.BinaryBackend` for a fixed toolchain (`bench/results/2026-10-26-h1.6/SUMMARY.md`; `docs/roadmap.md` H1.6); EXLA and Torchx are verified within stated tolerances, not bit-for-bit. Ids and fingerprints are stable within an OTP major release.
+- Bit-identical repeat runs are verified on the default `Nx.BinaryBackend` for a fixed toolchain on one host (`bench/results/2026-10-26-h1.6/SUMMARY.md`; `docs/roadmap.md` H1.6); EXLA and Torchx are verified within stated tolerances, not bit-for-bit. Job ids and fingerprints use OTP's deterministic term encoding, which OTP keeps stable only within a major release, so they can change across OTP majors and differ from 0.11.0 (unreleased; on `main`, see CHANGELOG `[Unreleased]`).
 
 ## Choose Your Path
 

@@ -421,7 +421,7 @@ Decisions already taken (2026-10-25):
 
 Decisions already taken (2026-10-30, owner):
 - The README makes no cross-framework speed claims; benchmark reports are internal, environment-specific references ("Drop them.").
-- Timed performance runs happen at major releases only ("Performance runs I consider necessary only on major releases, to ensure we're not breaking stuff."). What counts as a major release while on 0.x is an open owner question.
+- The timed cross-framework comparison runs at major releases only ("Performance runs I consider necessary only on major releases, to ensure we're not breaking stuff."). This does not relax the AGENTS.md rule that non-trivial performance changes include reproducible benchmark evidence. What counts as a major release while on 0.x is an open owner question.
 - The AGENTS.md messaging invariant (line 12) is approved as worded ("Approved.").
 
 ## Docs Consolidation Plan (executed in H1.1, 2026-10-19)
