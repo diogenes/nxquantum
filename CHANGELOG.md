@@ -14,6 +14,7 @@
 
 ### Changed
 
+- README and positioning lead with deterministic quantum execution on BEAM (decision D1). Cross-framework speed claims are removed from the README (owner decision 2026-10-30). The 2026-03-25 report remains as a historical internal reference.
 - The single-precision numerics floor is documented in `docs/backend-support.md` ("Numerical Precision"). Decision recorded in roadmap KG-10: precision stays `complex64`, and the output dtype of `Circuit.expectation/2` is unchanged. Measured error against a float64 reference is at most 4.5e-7 over up to 6 qubits and depth 200 (`bench/numerics_precision_floor.exs`).
 - Dependency currency (H1.6 PR-A, `api change`: the runtime dependency floor moved). Migration note:
   - What changed:

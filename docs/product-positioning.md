@@ -2,13 +2,17 @@
 
 ## Why NxQuantum is Relevant
 
-NxQuantum targets teams that already build ML systems in Elixir and want quantum primitives without moving to a separate Python stack.
+NxQuantum targets Elixir and Nx teams that embed quantum workloads in BEAM services and need deterministic, contract-stable execution without a separate Python stack.
 
 It is most valuable when you care about:
 
-1. Deterministic-by-default and typed behavior for production-like workflows.
-2. Tight integration with `Nx`, `Nx.Defn`, and BEAM services.
-3. A path from research experiments to operational Elixir systems.
+1. Seeded, reproducible results in simulator and fixture lanes, so CI and regression checks stay stable.
+2. Typed, versioned contracts: one provider job lifecycle and envelopes that host applications and control planes can build on (decoding stored envelopes is unreleased; on `main`, see CHANGELOG `[Unreleased]`).
+3. Execution inside the same BEAM runtime as your services and `Nx`/`Nx.Defn` code.
+
+Hybrid quantum-AI (AI tool contracts with rerank and optimization handlers) is an application of these properties, not the lead. The bundled handlers compute classically today, and in-repo rerank evaluation uses synthetic datasets only; no real-data quality claim is made.
+
+Not targeted: teams whose top need is provider breadth, compiler depth, or large-scale GPU simulation.
 
 ## Determinism Scope
 
@@ -21,7 +25,9 @@ It is most valuable when you care about:
 1. Elixir-native quantum primitives (`Estimator`, `Sampler`, `Kernels`, `Transpiler`).
 2. Explicit runtime-profile and fallback contracts.
 3. Seeded deterministic behavior across simulator/fixture sampling and batch workflows.
-4. Structured feature + test coverage aligned to roadmap milestones.
+4. Compiler and transpiler property suites plus the documented single-precision floor (`docs/backend-support.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
+5. Golden envelope snapshots (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
+6. OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled OpenTelemetry-named adapter records in-process; no OpenTelemetry exporter ships, KG-13), and experiment fingerprints (`docs/observability.md`).
 
 ## Comparison Snapshot
 
@@ -43,7 +49,7 @@ It is most valuable when you care about:
    - [docs/decision-matrix.md](decision-matrix.md)
 4. Livebook tutorials:
    - [docs/livebook-tutorials.md](livebook-tutorials.md)
-5. Case-study benchmark narrative:
+5. BEAM integration case study:
    - [docs/case-study-beam-integration.md](case-study-beam-integration.md)
 
 ## Important Gaps (Planned)
@@ -52,6 +58,8 @@ NxQuantum is intentionally honest about current limits:
 
 1. Hardware-provider integrations and calibration depth are still growing.
 2. Some advanced provider-specific execution flows remain phased.
+3. Hybrid quantum-AI rerank results use synthetic datasets; a real-data lane is parked (`docs/vision.md` §11).
+4. Multi-node (distributed) execution is planned for Horizon 2 and is not shipped.
 
 References:
 
