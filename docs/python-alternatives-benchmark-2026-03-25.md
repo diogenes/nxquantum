@@ -1,5 +1,7 @@
 # Python Alternatives vs NxQuantum Benchmark (2026-03-25)
 
+> **Historical internal reference (labeled 2026-10-30).** Methodology superseded: NxQuantum ran in `hot` mode (evolved-state cache enabled) in `baseline_2q`, `deep_6q`, and `batch_obs_8q` while competitor lanes re-simulated each iteration, and this was not disclosed; PennyLane and Cirq rows in `state_reuse_8q_xy` and `sampled_counts_sparse_terms` timed pure-Python helpers; competitor versions were not pinned. These figures are not a like-for-like comparison and must not be cited. The current harness is described in `bench/README.md`; timed comparisons run at major releases.
+
 ## Scope
 
 Fresh 3-run aggregation from `tmp/bench_runs_2026-03-25_phase_c_final/` for:

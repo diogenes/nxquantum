@@ -272,6 +272,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 - Implemented in: `lib/nx_quantum/runtime/scale.ex`, `lib/nx_quantum/performance.ex`, and `lib/nx_quantum/performance/` (benchmark matrix, gates, report, batch-obs guard). Acceptance steps: `test/features/steps/scale_and_performance_steps.ex`.
 - Evidence tooling:
   - `bench/**` and `bench/results/<date>[-<milestone>]/`.
+  - `bench/scenarios/`, `bench/requirements-python-alternatives.txt`, and `test/support/bench_scenarios.ex`.
   - It is not shipped in the Hex package (`files:` in `mix.exs` lists `lib` only).
   - It may read public facades and `test/support`.
   - It must never be referenced from `lib/`.
