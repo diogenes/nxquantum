@@ -1,14 +1,14 @@
 label: run2
-date_utc: 2026-10-30T04:45:03Z
+date_utc: 2026-10-30T09:50:43Z
 dep: {:nx_quantum, path: "<unpacked-package>"}
-expect: 0.3623577356338501
+expect: [0.3623577356338501]
 cache_state_at_start: MIX_HOME=empty HEX_HOME=empty HEX_CACHE_DIR=empty XDG_CACHE_HOME=empty
 --- step: local.hex
 * creating mix/archives/hex-2.6.0
 --- step: local.hex exit=0 seconds=0.5
 --- step: local.rebar
 * creating mix/elixir/1-20-otp-29/rebar3
---- step: local.rebar exit=0 seconds=0.7
+--- step: local.rebar exit=0 seconds=0.5
 --- step: new
 * creating README.md
 * creating .formatter.exs
@@ -32,7 +32,7 @@ Run "mix help" for more commands.
 --- step: write_deps exit=0 seconds=0.0
 --- step: deps.get
 Resolving Hex dependencies...
-Resolution completed in 0.023s
+Resolution completed in 0.022s
 New:
   complex 1.0.0
   nx 1.0.0
@@ -57,12 +57,12 @@ Generated nx_quantum app
 ==> demo
 Compiling 1 file (.ex)
 Generated demo app
---- step: compile exit=0 seconds=7.3
+--- step: compile exit=0 seconds=6.9
 --- step: run
-0.3623577356338501
+[0.3623577356338501]
 --- step: run exit=0 seconds=0.4
 === result ===
-printed: 0.3623577356338501
-step_seconds: local.hex=0.5 local.rebar=0.7 new=0.2 write_deps=0.0 deps.get=0.5 compile=7.3 run=0.4 
-total_seconds: 9.6
+printed: [0.3623577356338501]
+step_seconds: local.hex=0.5 local.rebar=0.5 new=0.2 write_deps=0.0 deps.get=0.5 compile=6.9 run=0.4 
+total_seconds: 9.0
 status: ok
