@@ -8,7 +8,7 @@
 > - [ ] Hex description (`mix.exs`) aligned to decision D1 (`docs/roadmap.md`).
 > - [ ] Claims cleanup done in the 0.12.0 docs.
 > - [ ] A Hex-based quick start is in the README and `docs/getting-started.md`.
-> - [ ] Time to first result (TTFR) measured on the published 0.12.0.
+> - [ ] Time to result (TTFR) measured on the published 0.12.0.
 > - [ ] Survey live (`docs/research/kano-survey-h1.5.md`).
 > - [ ] A green CI run is linked in the evidence section.
 > - [ ] FluxQ G2 contract test merged, if FluxQ is mentioned.
@@ -29,7 +29,7 @@ Alternatives:
 
 NxQuantum is a quantum circuit library for Elixir and Nx. It runs a state-vector simulator inside your BEAM process and puts the focus on reproducibility: a fixed seed gives the same sampled counts, and job, result and error records have a versioned shape.
 
-It is for two groups. The first is BEAM and Nx teams who want to embed quantum workloads in a supervised service. The second is researchers who need to rerun a result and get the same answer. It is not for you if your top need is provider breadth, compiler depth, or GPU-scale simulation.
+It is for two groups. One group is BEAM and Nx teams who want to embed quantum workloads in a supervised service. The other is researchers who need to rerun a result and get the same answer. It is not for you if your top need is provider breadth, compiler depth, or GPU-scale simulation.
 
 ## Try it in two minutes
 
@@ -55,7 +55,7 @@ We would like to hear whether you get the same counts. If you reply, tell us you
 
 We make three claims and point to the files behind each. Every one is scoped to what was run.
 
-**Toolchain upgrades changed no tracked number.** Moving from Nx 0.11 to Nx 1.0, and from OTP 28 to OTP 29, changed none of the tracked numerics digest lines on the default backend. The digests cover seeded sampler counts, gradients, expectation values and compiler output, and each state was run twice. The scope is one host (Apple M4, macOS 26.6.2), `Nx.BinaryBackend` only, recorded 2026-10-26. Evidence: `bench/results/2026-10-26-h1.6/SUMMARY.md`. We say "held from OTP 28 to 29 in our run", not more.
+**Toolchain upgrades changed no tracked number.** Moving from Nx 0.11 to Nx 1.0, and from OTP 28 to OTP 29, changed none of the tracked numerics digest lines on the default backend. The digests cover seeded sampler counts, gradients, expectation values and compiler output, and each state was run twice. The scope is one host (Apple M4, macOS 26.6.2), `Nx.BinaryBackend` alone, recorded 2026-10-26. Evidence: `bench/results/2026-10-26-h1.6/SUMMARY.md`. We say "held from OTP 28 to 29 in our run", not more.
 
 **Envelopes are guarded and resumable.** Job, result and error envelopes for the four core provider adapters (IBM Runtime, AWS Braket, Azure Quantum, Google Quantum AI), in the fixture lane, are compared byte for byte with stored snapshots, and a stored envelope can be decoded and resumed. The snapshot tree id was unchanged across the Nx 1.0 upgrade, and FluxQ's test suite passed against that state in a local check on 2026-10-26. Evidence: `test/nx_quantum/contracts/envelope_snapshot_test.exs`, `test/nx_quantum/contracts/envelope_decode_test.exs`, `test/fixtures/contracts/envelopes/`, `docs/api-stability.md`, `bench/results/2026-10-26-h1.6/fluxq-consumer-check.txt`.
 
