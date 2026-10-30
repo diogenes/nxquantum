@@ -77,6 +77,34 @@ defmodule NxQuantum.LivebooksTest do
     end
   end
 
+  describe "cleanup probe" do
+    @probe Path.expand("test/fixtures/livebook_probe/leftovers.livemd", @repo_root)
+
+    test "stops leftover supervisors and purges only modules the cells defined, twice" do
+      {_setup, cells} = split_setup!(@probe)
+
+      for _run <- 1..2 do
+        assert %{checkpoints: %{"probe_state" => %{agent_value: 41, supervisor_alive: true}}} =
+                 run_cells!(@probe, cells)
+
+        # The supervisor, its named child and the Agent it supervises are gone.
+        for name <- [Probe.Supervisor, Probe.Counter], do: assert(Process.whereis(name) == nil)
+        refute :code.is_loaded(Probe.Thing)
+
+        purged = Process.get(:last_purged_modules)
+        assert Probe.Thing in purged
+
+        stray =
+          Enum.reject(purged, fn module ->
+            name = Atom.to_string(module)
+            String.starts_with?(name, "Elixir.Probe.") or String.starts_with?(name, "elixir_compiler_")
+          end)
+
+        assert stray == [], "purged modules the cells did not define: #{inspect(stray)}"
+      end
+    end
+  end
+
   describe "extractor" do
     test "rejects a setup cell that Livebook would read as a Hex package" do
       bad = Code.string_to_quoted!(~s|Mix.install(path: "../..")|)
@@ -184,11 +212,12 @@ defmodule NxQuantum.LivebooksTest do
 
   # Runs every cell in one fresh process, the way a Livebook runtime evaluates a notebook:
   # one process dictionary, one carried binding, one carried env (aliases and imports).
-  # The process, the processes linked to it, the modules the cells defined, and any telemetry
-  # handlers the cells attached are gone when this returns.
+  # The process, the processes linked to it, the modules the cells defined (not modules loaded
+  # from .beam files), and any telemetry handlers the cells attached are gone when this returns.
   defp run_cells!(source, cells) do
-    modules_before = MapSet.new(:code.all_loaded(), &elem(&1, 0))
+    # Load :telemetry (by calling it) before the module snapshot, so the snapshot is complete.
     handlers_before = MapSet.new(:telemetry.list_handlers([]), & &1.id)
+    modules_before = MapSet.new(:code.all_loaded(), &elem(&1, 0))
     previous_conflict = Code.get_compiler_option(:ignore_module_conflict)
     Code.put_compiler_option(:ignore_module_conflict, true)
 
@@ -226,11 +255,19 @@ defmodule NxQuantum.LivebooksTest do
         :telemetry.detach(id)
       end
 
-      for {module, _} <- :code.all_loaded(), not MapSet.member?(modules_before, module) do
-        :code.purge(module)
-        :code.delete(module)
-        :code.purge(module)
-      end
+      Process.put(:last_purged_modules, purge_defined_modules(modules_before))
+    end
+  end
+
+  # Purges only modules that evaluation defined. Those have `[]` as their load path; a module
+  # that was first loaded from a .beam file during the run (a library module the cells called)
+  # has a path and stays loaded. Returns the purged module names, for the probe test.
+  defp purge_defined_modules(modules_before) do
+    for {module, []} <- :code.all_loaded(), not MapSet.member?(modules_before, module) do
+      :code.purge(module)
+      :code.delete(module)
+      :code.purge(module)
+      module
     end
   end
 
@@ -277,8 +314,10 @@ defmodule NxQuantum.LivebooksTest do
   end
 
   # Supervisors the cells started are linked to the run process. Stop them and wait, so a
-  # second run never sees the first run's registered names.
+  # second run never sees the first run's registered names. The run process traps exits first:
+  # without it, the :shutdown exit of a linked supervisor would kill the run process too.
   defp stop_linked_processes do
+    Process.flag(:trap_exit, true)
     {:links, links} = Process.info(self(), :links)
 
     for pid <- links, is_pid(pid), pid != Process.whereis(:user) do

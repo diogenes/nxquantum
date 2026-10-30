@@ -46,7 +46,7 @@ What the test does for each `examples/livebook/*.livemd`:
 1. Reads the fenced `elixir` cells in order. Fences with any other language tag (`text`, `bash`) are documentation and never run.
 2. Requires the first cell to be exactly the setup cell above, then skips it. A different form fails the test. `Mix.install(path: "../..")`, for example, is read as a Hex package named `path`.
 3. Fails if any cell calls `System.get_env`, `System.put_env` or a related function on a `NXQ_PROVIDER_LIVE*` key, or on a key it cannot read statically. Show live keys as text, in a `text` fence. The test also fails if such a variable is set in the environment it runs in, so notebooks always run in the fixture lane.
-4. Evaluates the remaining cells in order in one fresh process, with the bindings, aliases and imports carried from cell to cell. The process, the supervisors it started, the modules the cells defined and any telemetry handlers they attached are removed afterwards.
+4. Evaluates the remaining cells in order in one fresh process, with the bindings, aliases and imports carried from cell to cell. Afterwards the test stops the supervisors the cells left linked to the process, purges the modules the cells defined (modules loaded from `.beam` files stay loaded) and detaches the telemetry handlers they attached. A cleanup probe, `test/fixtures/livebook_probe/leftovers.livemd`, leaves a supervisor, a named `Agent` and a module behind and checks that all three are gone.
 5. Runs the whole notebook a second time and requires identical checkpoint values.
 6. Compares the checkpoints to the goldens in `test/fixtures/livebooks/<notebook name>.golden`.
 7. Fails if a cell prints a compiler warning.
