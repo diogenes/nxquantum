@@ -23,10 +23,10 @@ end
     same_keys_for_all_providers: true,
     states: [ibm_runtime: :completed, aws_braket: :completed, azure_quantum: :completed]
   },
-  "transport_modes" => [
-    ibm_runtime: %{mode: :fixture, fixture?: true, job_id: "ibm_job_ff6ecf9c987e"},
-    aws_braket: %{mode: :fixture, fixture?: true, job_id: "braket_task_c1ee9ad1c551"},
-    azure_quantum: %{mode: :fixture, fixture?: true, job_id: "azure_job_36df013d01a1"}
+  "fixture_job_ids" => [
+    ibm_runtime: %{job_id: "ibm_job_ff6ecf9c987e", state: :completed, provider: :ibm_runtime},
+    aws_braket: %{job_id: "braket_task_c1ee9ad1c551", state: :completed, provider: :aws_braket},
+    azure_quantum: %{job_id: "azure_job_36df013d01a1", state: :completed, provider: :azure_quantum}
   ],
   "envelope_round_trip" => [
     ibm_runtime: round_trip.("ibm_runtime"),
@@ -49,10 +49,5 @@ end
       reason: :missing_provider_config,
       missing_keys: [:workspace, :auth_context, :target_id, :provider_name]
     }
-  ],
-  "live_keys_from_results" => [
-    ibm_runtime: %{env_key: "NXQ_PROVIDER_LIVE_IBM_RUNTIME", enabled: false},
-    aws_braket: %{env_key: "NXQ_PROVIDER_LIVE_AWS_BRAKET", enabled: false},
-    azure_quantum: %{env_key: "NXQ_PROVIDER_LIVE_AZURE_QUANTUM", enabled: false}
   ]
 }

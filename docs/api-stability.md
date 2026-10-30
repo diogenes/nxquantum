@@ -29,9 +29,16 @@ These are available but may evolve during v0.2:
 6. `NxQuantum.Observability.fingerprint/2`
 7. `NxQuantum.Transpiler.run/2`
 8. `NxQuantum.Mitigation.pipeline/2`
-9. The `NxQuantum.Ports.ObservabilityEmitter` behaviour, when you implement it in your own code. Its callbacks may change.
+9. `NxQuantum.ProviderBridge.submit_job/3`
+10. `NxQuantum.Observability.portability_delta/2`
+11. The `observability: [enabled: boolean, adapter: module]` option of `NxQuantum.ProviderBridge.run_lifecycle/3`
+12. The provider adapter modules passed as the first argument to `NxQuantum.ProviderBridge` functions: `NxQuantum.Adapters.Providers.IBMRuntime`, `AwsBraket`, `AzureQuantum` and `GoogleQuantumAI`
+13. The `NxQuantum.ProviderBridge.ProviderError` fields `code`, `reason` and `metadata.missing_keys`, and the `NxQuantum.ProviderBridge.Result` fields (`job_id`, `state`, `provider`, `payload`, `metadata` and the identifier fields), except the contents of `metadata`
+14. The `NxQuantum.Ports.ObservabilityEmitter` behaviour, when you implement it in your own code. Its callbacks may change.
 
-Items 4 to 9 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+Items 4 to 14 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+
+Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
 Experimental does not mean untested. The notebooks under `examples/livebook/` use several of these items, and `test/nx_quantum/livebooks_test.exs` runs them (`docs/livebook-tutorials.md`). A notebook that passes shows the current behavior, not a stability promise.
 

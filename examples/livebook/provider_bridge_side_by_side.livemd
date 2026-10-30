@@ -13,7 +13,7 @@ Scope and limits:
 * The live environment keys are shown as text in section 8 and are never read or set. A test (`test/nx_quantum/livebooks_test.exs`) fails if a notebook cell reads one.
 * The fixture lane shows that the lifecycle contract is typed and uniform. It says nothing about the outcomes of a live QPU run.
 
-`NxQuantum.ProviderBridge.run_lifecycle/3` is on the experimental tier in `docs/api-stability.md`.
+`NxQuantum.ProviderBridge.run_lifecycle/3`, `submit_job/3` and the provider adapter modules are on the experimental tier in `docs/api-stability.md`.
 
 ## 1) Aliases and shared payload
 
@@ -97,14 +97,14 @@ The common fields are `:job_id`, `:state`, `:provider`, `:target`, `:payload`, `
 
 Equal key sets mean the three providers return the same normalized result structure. It does not mean their payloads agree.
 
-## 5) Transport mode
+## 5) Fixture-lane job ids
 
-Every result records how it was produced. In this notebook the mode is `:fixture` for all three providers. The job ids come from the payload, so they are the same on every run.
+In the fixture lane the job id is derived from the payload and the provider, so it is the same on every run, and the job completes. The cell records both for each provider.
 
 ```elixir
-# checkpoint: transport_modes
+# checkpoint: fixture_job_ids
 Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
-  {provider_id, %{mode: result.metadata.transport.mode, fixture?: result.metadata.transport.mode == :fixture, job_id: result.job_id}}
+  {provider_id, %{job_id: result.job_id, state: result.state, provider: result.provider}}
 end)
 ```
 
@@ -146,15 +146,13 @@ end)
 
 ## 8) Live environment keys (text only)
 
-Live transport needs two things: the request asks for it (`transport_mode: :live` or `:live_smoke` in the options) and the matching environment key is enabled, either the global key or the provider key. Otherwise the call stays in the fixture lane. Each result carries the name of its provider key and whether it was enabled. The cell below reads them from the results, not from the environment.
+Live transport needs all three of these:
 
-```elixir
-# checkpoint: live_keys_from_results
-Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
-  live = result.metadata.transport.live
-  {provider_id, %{env_key: live.env_key, enabled: live.env_enabled?}}
-end)
-```
+1. The request asks for it: `transport_mode: :live` or `transport_mode: :live_smoke` in the options.
+2. The matching environment key is enabled, either the global key or the provider key. The value must be `1` or `true`.
+3. Every required provider config key is present. A request with a missing config key stays in the fixture lane.
+
+If any of the three is missing, a `:live_smoke` request falls back to the fixture lane. A `:live` request returns a typed `{:error, _}` instead. This notebook asks for neither, so it never leaves the fixture lane.
 
 The keys, as text. This notebook never sets or reads them:
 

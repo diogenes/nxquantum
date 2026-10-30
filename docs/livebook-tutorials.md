@@ -13,7 +13,7 @@ Runnable notebooks are provided under `examples/livebook/`.
 | --- | --- |
 | `examples/livebook/estimator_sampler_walkthrough.livemd` | Deterministic expectation and seeded sampling for one circuit. |
 | `examples/livebook/kernel_and_transpiler_walkthrough.livemd` | Kernel matrix generation and topology-aware transpilation. |
-| `examples/livebook/provider_bridge_side_by_side.livemd` | Provider lifecycle parity for `IBM Runtime`, `AWS Braket` and `Azure Quantum` in fixture mode: transport mode, serialize and rehydrate, typed missing-config errors. |
+| `examples/livebook/provider_bridge_side_by_side.livemd` | Provider lifecycle parity for `IBM Runtime`, `AWS Braket` and `Azure Quantum` in fixture mode: deterministic job ids, serialize and rehydrate, typed missing-config errors, and the live-lane requirements as text. |
 | `examples/livebook/supervised_service.livemd` | A user-owned `GenServer` under a `Supervisor`, a kill and restart with identical results, a notebook-defined `ObservabilityEmitter`, and user-side `:telemetry` signals, each labelled by source. |
 | `examples/livebook/researcher_reproducibility.livemd` | Experiment fingerprints, seeded replay, the classical closed form `cos θ`, and `portability_delta/2`. Single-qubit only. |
 
