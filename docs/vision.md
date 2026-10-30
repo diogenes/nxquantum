@@ -28,7 +28,7 @@ Source: FluxQ `docs/product/positioning-and-principles.md` and `docs/plan/master
 
 ## 3. Thesis
 
-As quantum hardware scales, the quantum computer becomes a distributed system. IBM's published roadmap moves from a single chip to coupled modules (Kookaburra 2026, Cockatoo 2027, Starling 2029). Above the physical link layer, the hard problems are distributed-systems problems:
+As quantum hardware scales, the quantum computer becomes a distributed system. IBM's published roadmap moves from a single chip to coupled modules: Kookaburra (2026, one module with a logical processing unit and quantum memory), Cockatoo (2027, two Kookaburra modules linked by L-couplers), and Starling (2029, 200 logical qubits). Checked 2026-10-30: [IBM Quantum roadmap](https://www.ibm.com/roadmaps/quantum/) for Kookaburra and Starling; [IBM newsroom, 2025-06-10](https://newsroom.ibm.com/2025-06-10-IBM-Sets-the-Course-to-Build-Worlds-First-Large-Scale,-Fault-Tolerant-Quantum-Computer-at-New-IBM-Quantum-Data-Center) for Cockatoo. An IBM newsroom search on 2026-10-30 found no Kookaburra delivery announcement. Above the physical link layer, the hard problems are distributed-systems problems:
 - partial failure;
 - scheduling perishable resources;
 - heterogeneous workers;
@@ -38,7 +38,12 @@ BEAM was built for this class of problem. Each project takes one side of the bet
 - **NxQuantum:** distributed execution primitives, plus a deterministic simulator of distributed quantum systems in which failures are reproducible.
 - **FluxQ:** the operations layer, meaning policies, state, and UI.
 
-The joint value is a control plane whose policies are tested against a deterministic simulated quantum system before they touch hardware. Whether any competitor offers this is unverified; it is rechecked at each decision gate (§13 item 6).
+The joint value is a control plane whose policies are tested against a seeded, deterministic simulation of a distributed quantum system before they touch hardware. Adjacent work exists (checked 2026-10-30):
+- NetSquid simulates quantum networks with discrete events, including the control plane of a quantum switch ([Coopmans et al., Commun. Phys. 4, 164, 2021](https://arxiv.org/abs/2010.12535)).
+- ORNL's digital twin of quantum clouds models job lifecycle and job scheduling ([ACM SIGSIM PADS 2025](https://impact.ornl.gov/en/publications/a-digital-twin-of-scalable-quantum-clouds/)).
+- memQ's CUDA-Q simulator is a digital twin of a distributed processor and lists runtime orchestration as future work ([memQ](https://memq.tech/memq_full_stack_simulation_cudaq/)).
+
+None of these sources documents seeded replay of a control plane's routing or promotion policies. One that does falsifies this paragraph. Recheck at D2 (§13 item 6).
 
 ## 4. Audience
 
@@ -71,17 +76,19 @@ Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an
 | Performance | Small-circuit speed, batch throughput, qubit range |
 | Delighter | Experiment fingerprints, one-call classical-baseline comparison, multi-node Livebook demo |
 
-**Positioning: complement, don't compete**
+**Positioning: complement, don't compete** (competitor facts checked 2026-10-30; next recheck at D2)
 
-| Player | Owns |
-| --- | --- |
-| Qiskit | IBM hardware, compiler, fault-tolerance compilation |
-| PennyLane | Differentiable programming, FTQC algorithm design and resource estimation |
-| Cirq | Google hardware research |
-| CUDA-Q | GPU simulation, QPU–GPU datacenter integration, decoding. CUDA-Q Logical (announced) overlaps orchestration inside the datacenter. |
-| memQ | Distributed compilation across linked QPUs |
-| **NxQuantum** | Provider-neutral execution engine on BEAM, deterministic in simulator and fixture lanes; planned: within-job distributed execution (H2), distributed-systems simulation (H3) |
-| **FluxQ** | QROps control plane over NxQuantum |
+| Player | Owns | Source (checked 2026-10-30) |
+| --- | --- | --- |
+| Qiskit | IBM hardware, compiler, fault-tolerance compilation (Pauli-based computation and Clifford+T preset pass managers since v2.5) | [Qiskit v2.5, 2026-07-14](https://www.ibm.com/quantum/blog/qiskit-2-5-release-summary) |
+| PennyLane | Differentiable programming and quantum ML; FTQC algorithm design and resource estimation (`qp.estimator`) | [PennyLane v0.45, 2026-05-13](https://pennylane.ai/blog/2026/05/pennylane-release-0.45) |
+| Cirq | NISQ circuit research; Google Quantum AI's framework, with vendor modules (AQT, IonQ, Pasqal) | [quantumlib/Cirq](https://github.com/quantumlib/Cirq) |
+| CUDA-Q | GPU simulation, QPU–GPU integration (NVQLink), QEC decoding. CUDA-Q Logical (released 2026-09-14) compiles fault-tolerant programs down to QEC microcode, physical gate schedules, and real-time control plans, and derives resource estimates from those artifacts. | [NVIDIA, 2026-09-14](https://nvidianews.nvidia.com/news/nvidia-expands-open-source-cuda-q-platform-for-fault-tolerant-quantum-computing); [arXiv:2609.13388](https://arxiv.org/abs/2609.13388); [CUDA-Q](https://developer.nvidia.com/cuda-q) |
+| memQ | Distributed compilation across linked QPUs: open-source DQC (Apache-2.0, beta) released 2026-09-24; CUDA-Q-based simulator of distributed processors | [memQ news](https://memq.tech/news/); [memQGit/dqc](https://github.com/memQGit/dqc) |
+| **NxQuantum** | Provider-neutral execution engine on BEAM, deterministic in simulator and fixture lanes; planned: within-job distributed execution (H2), distributed-systems simulation (H3) | `docs/roadmap.md` |
+| **FluxQ** | Control plane over NxQuantum (in development) | FluxQ `docs/product/positioning-and-principles.md` |
+
+BEAM ecosystem (checked 2026-10-30, [hex.pm](https://hex.pm/packages/qx_sim), [README](https://github.com/richarc/qx)): qx_sim 0.11.0 is an Nx-based Elixir statevector simulator (up to 20 qubits) with IBM Quantum hardware execution and Livebook Smart Cells (kino_qx). Its README does not document multi-provider execution, versioned envelopes, or distributed execution.
 
 One line: *NxQuantum runs quantum workloads on BEAM, deterministically in simulator and fixture lanes; multi-node execution is the Horizon 2 goal. FluxQ operates them.*
 
@@ -94,7 +101,7 @@ Execution detail for H1 and H2 lives in `docs/roadmap.md`. H3 is detailed here b
 - Exit:
   - docs match code;
   - envelope snapshots guard FluxQ compatibility;
-  - benchmarks refreshed with crossover points;
+  - cross-framework harness refreshed (version-pinned, correctness-gated); timed comparison and crossover points at major releases (owner 2026-10-30);
   - D1 recorded; rerank datasets labeled synthetic;
   - compiler equivalence suite green;
   - Kano survey done.
@@ -140,7 +147,8 @@ Rebalance only after a decision gate passes. Announce only what is shipped and e
 
 | Idea | Trigger to un-park | Notes |
 | --- | --- | --- |
-| Clifford/stabilizer simulator | A named user needs QEC simulation | Commodity (Stim, Qiskit Aer, CUDA-Q). Needs an ADR: `Ports.Simulator.apply_gates/3` returns amplitudes. |
+| Clifford/stabilizer simulator | A named user needs QEC simulation | Commodity: Stim, Qiskit Aer (`stabilizer` method), CUDA-Q (`stim` target) (checked 2026-10-30: [Aer 0.18.2 docs](https://qiskit.github.io/qiskit-aer/stubs/qiskit_aer.AerSimulator.html), [CUDA-Q backends](https://nvidia.github.io/cuda-quantum/latest/using/backends/simulators.html)). Needs an ADR: `Ports.Simulator.apply_gates/3` returns amplitudes. |
+| FTQC resource estimation | Adoption interviews ask for it | PennyLane (`qp.estimator`) and CUDA-Q Logical ship it; Qiskit ships fault-tolerant compilation passes (checked 2026-10-30: [PennyLane v0.45](https://pennylane.ai/blog/2026/05/pennylane-release-0.45), [arXiv:2609.13388](https://arxiv.org/abs/2609.13388), [Qiskit v2.5](https://www.ibm.com/quantum/blog/qiskit-2-5-release-summary)) |
 | Tensor-network contraction engine | Benchmark win over dense at ≤20 qubits | `:tensor_network_fallback` is routing-only today |
 | Krylov/Lanczos time evolution | Hamiltonian-dynamics user | — |
 | Qiskit C API compiler adapter | Distributed compile-farm demand | Opt-in adapter only; the native compiler stays the default |
@@ -163,12 +171,12 @@ Enforced through the `principal-architect-product-strategy` plan review.
 
 ## 13. Risks
 
-1. **Customer identity for H3.** Multi-QPU control stacks are built in-house today. Mitigation: H2 must pay off on its own, and FluxQ provides the operator-facing value.
+1. **Customer identity for H3.** Multi-QPU control stacks are built in-house today: a search on 2026-10-30 found no third-party multi-QPU control stack for sale. The nearest offerings are memQ's network control and interface hardware plus its beta open-source distributed compiler ([memQ](https://memq.tech/)), and NVQLink, which couples QPUs to GPU supercomputers rather than to each other ([NVIDIA, 2026-09-14](https://nvidianews.nvidia.com/news/nvidia-expands-open-source-cuda-q-platform-for-fault-tolerant-quantum-computing)). Mitigation: H2 must pay off on its own, and FluxQ provides the operator-facing value.
 2. **Timing.** Modular hardware may slip. Mitigation: staged gates, 70/20/10 allocation.
 3. **Determinism vs distribution.** The hardest technical risk; gated by D2.
 4. **Boundary drift with FluxQ.** Mitigation: envelope snapshot guard (H1.2) and the non-goal rule above.
 5. **Physics fidelity of the twin.** The physics/math seat owns H3.1 acceptance.
-6. **Competitor drift.** Recheck competitor facts at every decision gate.
+6. **Competitor drift.** Recheck competitor facts at every decision gate. Last recheck: 2026-10-30 (H1.3 review gate 5). Next: D2.
 
 ## 14. Success Metrics
 
