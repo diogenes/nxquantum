@@ -24,6 +24,16 @@ These are available but may evolve during v0.2:
 1. `NxQuantum.Grad.value_and_grad/3`
 2. `NxQuantum.Compiler.optimize/2`
 3. `NxQuantum.Kernels.matrix/2`
+4. `NxQuantum.Sampler.run/2`
+5. `NxQuantum.ProviderBridge.run_lifecycle/3`
+6. `NxQuantum.Observability.fingerprint/2`
+7. `NxQuantum.Transpiler.run/2`
+8. `NxQuantum.Mitigation.pipeline/2`
+9. The `NxQuantum.Ports.ObservabilityEmitter` behaviour, when you implement it in your own code. Its callbacks may change.
+
+Items 4 to 9 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+
+Experimental does not mean untested. The notebooks under `examples/livebook/` use several of these items, and `test/nx_quantum/livebooks_test.exs` runs them (`docs/livebook-tutorials.md`). A notebook that passes shows the current behavior, not a stability promise.
 
 ## Contract Policy
 
