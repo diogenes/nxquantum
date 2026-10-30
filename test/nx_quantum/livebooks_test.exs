@@ -15,8 +15,24 @@ defmodule NxQuantum.LivebooksTest do
   @setup_cell_ast quote(do: Mix.install([{:nx_quantum, path: "../.."}]))
 
   @checkpoint_marker ~r/\A\s*#\s*checkpoint:\s*([a-z][a-z0-9_]*)\s*$/m
-  @env_functions [:get_env, :fetch_env, :fetch_env!, :put_env, :delete_env, :get_env]
+  @env_functions [:get_env, :fetch_env, :fetch_env!, :put_env, :delete_env]
+  @os_env_functions [:getenv, :putenv, :unsetenv]
   @float_tolerance 1.0e-6
+
+  # The stable tier of docs/api-stability.md. `:any` means every arity (gate constructors take a
+  # circuit, a wire and options in several shapes).
+  @stable_api [
+    {NxQuantum.Circuit, :new, 1},
+    {NxQuantum.Circuit, :bind, 2},
+    {NxQuantum.Circuit, :expectation, 2},
+    {NxQuantum.Runtime, :supported_profiles, 0},
+    {NxQuantum.Runtime, :profile!, 1},
+    {NxQuantum.Runtime, :resolve, 2},
+    {NxQuantum.Estimator, :expectation, 2},
+    {NxQuantum.Estimator, :expectation_result, 2},
+    {NxQuantum.Estimator, :run, 2}
+  ]
+  @stable_gates [:h, :x, :y, :z, :rx, :ry, :rz, :cnot]
 
   test "the repository ships at least three notebooks" do
     assert length(@notebooks) >= 3
@@ -48,7 +64,9 @@ defmodule NxQuantum.LivebooksTest do
         assert_no_live_env!()
 
         first = run_cells!(@notebook, cells)
+        assert_no_live_env!()
         second = run_cells!(@notebook, cells)
+        assert_no_live_env!()
 
         assert first.checkpoints != %{}, "#{rel(@notebook)} declares no `# checkpoint:` cell"
         assert first.checkpoints == second.checkpoints
@@ -70,10 +88,11 @@ defmodule NxQuantum.LivebooksTest do
       assert_in_delta value, :math.cos(1.2), @float_tolerance
     end
 
-    test "uses stable API only" do
-      code = File.read!(@getting_started)
-      refute code =~ "Sampler"
-      assert code =~ "Estimator."
+    test "calls only the stable NxQuantum API" do
+      calls = @getting_started |> File.read!() |> call_sites()
+
+      assert {NxQuantum.Estimator, :run, 2} in Enum.map(calls, &signature/1)
+      assert unstable_calls(calls) == []
     end
   end
 
@@ -116,6 +135,37 @@ defmodule NxQuantum.LivebooksTest do
       assert [_] = live_lane_reads(~s|System.put_env("NXQ_PROVIDER_LIVE", "1")|)
       assert [_] = live_lane_reads("System.get_env(key)")
       assert [] = live_lane_reads(~s|keys = ["NXQ_PROVIDER_LIVE_IBM_RUNTIME"]|)
+      assert [] = live_lane_reads(~s|System.get_env("HOME")|)
+    end
+
+    test "flags the other ways to reach the environment" do
+      assert [_] = live_lane_reads(~s|:os.getenv(~c"NXQ_PROVIDER_LIVE")|)
+      assert [_] = live_lane_reads(~s|:os.putenv(~c"NXQ_PROVIDER_LIVE", ~c"1")|)
+      assert [_] = live_lane_reads("System.get_env()")
+      assert [_] = live_lane_reads("import System")
+      assert [_] = live_lane_reads("import System, only: [get_env: 1]")
+      assert [_] = live_lane_reads(~s|alias System, as: Sys\nSys.get_env("NXQ_PROVIDER_LIVE")|)
+      assert [_] = live_lane_reads("Enum.map([:a], &System.get_env/1)")
+    end
+
+    test "rejects unstable and aliased calls in the getting-started snippet" do
+      assert [{NxQuantum.Sampler, :run, 2}] =
+               "alias NxQuantum.Sampler\nSampler.run(c, shots: 1)" |> call_sites() |> unstable_calls()
+
+      assert [{NxQuantum.Transpiler, :run, 2}] =
+               "alias NxQuantum, as: NQ\nc |> NQ.Transpiler.run(topology: nil)" |> call_sites() |> unstable_calls()
+
+      assert [{NxQuantum.Estimator, :run, 3}] =
+               "alias NxQuantum.{Estimator}\nEstimator.run(a, b, c)" |> call_sites() |> unstable_calls()
+
+      assert [{NxQuantum.Gates, :import, :directive}] = "import NxQuantum.Gates" |> call_sites() |> unstable_calls()
+      assert [] = "alias NxQuantum.Gates\nc |> Gates.ry(0, theta: 1.0)" |> call_sites() |> unstable_calls()
+    end
+
+    test "rejects NxQuantum calls in a golden but allows :math" do
+      assert [_] = golden_offences("alias NxQuantum.Estimator\n%{a: Estimator.run(1, 2)}")
+      assert [_] = golden_offences("NxQuantum.Estimator.run(1, 2)")
+      assert [] = golden_offences("%{a: :math.cos(0.8), b: Enum.sum([1])}")
     end
 
     test "tolerance applies to floats only" do
@@ -183,25 +233,126 @@ defmodule NxQuantum.LivebooksTest do
   # -- live-lane guard ----------------------------------------------------------------------
 
   defp live_lane_reads(code) do
-    {_ast, offences} =
-      code
-      |> Code.string_to_quoted!()
-      |> Macro.prewalk([], fn
-        {{:., _, [{:__aliases__, _, [:System]}, fun]}, _, [key | _]} = node, acc when fun in @env_functions ->
-          {node, offence(fun, key, acc)}
+    code
+    |> call_sites()
+    |> Enum.flat_map(fn
+      {System, form, :directive} when form in [:import, :require, :use] ->
+        ["#{form} System"]
+
+      {System, fun, args} when fun in @env_functions or fun == :get_env ->
+        env_offence("System.#{fun}", args)
+
+      {:os, fun, args} when fun in @os_env_functions ->
+        env_offence(":os.#{fun}", args)
+
+      _other ->
+        []
+    end)
+  end
+
+  defp env_offence(name, [key | _]) when is_binary(key) do
+    if String.starts_with?(key, "NXQ_PROVIDER_LIVE"), do: ["#{name}(#{inspect(key)})"], else: []
+  end
+
+  defp env_offence(name, _no_literal_key), do: ["#{name}/N with a non-literal key"]
+
+  # -- call-site extraction -----------------------------------------------------------------
+
+  # Every remote call in `code` as {module, function, args}, plus {module, form, :directive} for
+  # import/require/use. Aliases (`alias A.B`, `alias A.{B, C}`, `alias A, as: X`) are resolved to
+  # the full module, and `a |> M.f(b)` counts as `M.f(a, b)`. A call on a variable is {:dynamic, f, args}.
+  defp call_sites(code) do
+    ast = code |> Code.string_to_quoted!() |> unpipe()
+    aliases = collect_aliases(ast)
+
+    {_ast, sites} =
+      Macro.prewalk(ast, [], fn
+        {{:., _, [_module, :{}]}, _, _subs} = node, acc ->
+          {node, acc}
+
+        # `result.values` is a field read on a variable, not a call.
+        {{:., _, [{var, _, ctx}, field]}, meta, []} = node, acc when is_atom(var) and is_atom(ctx) and is_atom(field) ->
+          {node, if(Keyword.get(meta, :no_parens, false), do: acc, else: [{:dynamic, field, []} | acc])}
+
+        {{:., _, [{:__aliases__, _, parts}, fun]}, _, args} = node, acc when is_atom(fun) ->
+          {node, [{resolve_alias(parts, aliases), fun, args} | acc]}
+
+        {{:., _, [module, fun]}, _, args} = node, acc when is_atom(module) and is_atom(fun) ->
+          {node, [{module, fun, args} | acc]}
+
+        {{:., _, [_dynamic, fun]}, _, args} = node, acc when is_atom(fun) ->
+          {node, [{:dynamic, fun, args} | acc]}
+
+        {form, _, [{:__aliases__, _, parts} | _]} = node, acc when form in [:import, :require, :use] ->
+          {node, [{resolve_alias(parts, aliases), form, :directive} | acc]}
 
         node, acc ->
           {node, acc}
       end)
 
-    Enum.reverse(offences)
+    Enum.reverse(sites)
   end
 
-  defp offence(fun, key, acc) when is_binary(key) do
-    if String.starts_with?(key, "NXQ_PROVIDER_LIVE"), do: ["System.#{fun}(#{inspect(key)})" | acc], else: acc
+  defp unpipe(ast),
+    do:
+      Macro.prewalk(ast, fn
+        {:|>, _, [lhs, rhs]} -> Macro.pipe(lhs, rhs, 0)
+        node -> node
+      end)
+
+  defp collect_aliases(ast) do
+    {_ast, aliases} =
+      Macro.prewalk(ast, %{}, fn
+        {:alias, _, [{:__aliases__, _, parts}, [as: {:__aliases__, _, [name]}]]} = node, acc ->
+          {node, Map.put(acc, name, resolve_alias(parts, acc))}
+
+        {:alias, _, [{:__aliases__, _, parts}]} = node, acc ->
+          {node, Map.put(acc, List.last(parts), resolve_alias(parts, acc))}
+
+        {:alias, _, [{{:., _, [{:__aliases__, _, base}, :{}]}, _, subs}]} = node, acc ->
+          acc =
+            Enum.reduce(subs, acc, fn {:__aliases__, _, sub}, acc ->
+              Map.put(acc, List.last(sub), resolve_alias(base ++ sub, acc))
+            end)
+
+          {node, acc}
+
+        node, acc ->
+          {node, acc}
+      end)
+
+    aliases
   end
 
-  defp offence(fun, _dynamic_key, acc), do: ["System.#{fun}/N with a non-literal key" | acc]
+  defp resolve_alias([first | rest] = parts, aliases) do
+    case Map.fetch(aliases, first) do
+      {:ok, module} -> Module.concat([module | rest])
+      :error -> Module.concat(parts)
+    end
+  end
+
+  defp nxquantum?(module), do: module |> Atom.to_string() |> String.starts_with?("Elixir.NxQuantum")
+
+  # Calls and directives on NxQuantum modules that are not in the stable tier. A dynamic call
+  # (a function called on a variable) cannot be checked, so it counts as unstable.
+  defp unstable_calls(sites) do
+    for site <- sites,
+        {module, fun, arity} = signature(site),
+        module == :dynamic or (nxquantum?(module) and not stable?(module, fun, arity)),
+        do: {module, fun, arity}
+  end
+
+  defp signature({module, fun, :directive}), do: {module, fun, :directive}
+  defp signature({module, fun, args}), do: {module, fun, length(args)}
+
+  defp stable?(NxQuantum.Gates, fun, arity), do: arity != :directive and fun in @stable_gates
+  defp stable?(module, fun, arity), do: {module, fun, arity} in @stable_api
+
+  # Goldens are Elixir term files. They may compute analytic values with :math and nothing else
+  # from the library: a golden that calls NxQuantum compares the program with itself.
+  defp golden_offences(code) do
+    for {module, fun, args} <- call_sites(code), module == :dynamic or nxquantum?(module), do: {module, fun, args}
+  end
 
   defp assert_no_live_env! do
     live = for {key, _} <- System.get_env(), String.starts_with?(key, "NXQ_PROVIDER_LIVE"), do: key
@@ -354,6 +505,10 @@ defmodule NxQuantum.LivebooksTest do
   defp assert_matches_goldens!(notebook, checkpoints) do
     path = Path.join(@goldens_dir, Path.basename(notebook, ".livemd") <> ".golden")
     assert File.exists?(path), "missing goldens file #{rel(path)}"
+
+    assert golden_offences(File.read!(path)) == [],
+           "#{rel(path)} calls NxQuantum; a golden must not use the code it checks (use :math for analytic values)"
+
     {goldens, _} = Code.eval_file(path)
 
     assert Enum.sort(Map.keys(goldens)) == Enum.sort(Map.keys(checkpoints)),
