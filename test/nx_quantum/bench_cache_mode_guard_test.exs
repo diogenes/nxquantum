@@ -62,6 +62,8 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
     assert output =~ "NXQ_BENCH"
     assert output =~ "scenario=#{id}"
     assert output =~ "cache_mode=cold"
+    # Known Gap: the counts path reports no library cache mode.
+    assert output =~ "library_cache_mode=unreported"
     assert output =~ "cache_parsed_counts=false"
     assert output =~ "cache_mask_lookup_plan=false"
     assert_iteration_values(output, length(table["scenarios"][id]["observables"]), 2)
@@ -75,11 +77,13 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
     assert cold_status == 0
     assert cold =~ "scenario=#{id}"
     assert cold =~ "cache_mode=cold"
+    assert cold =~ "library_cache_mode=disabled"
     assert cold =~ "flags=cache_evolved_state=false"
     assert_iteration_values(cold, expected, 2)
 
     {hot, hot_status} = runs.batch_hot
     assert hot_status == 0
+    assert hot =~ "library_cache_mode=enabled"
     assert hot =~ "flags=cache_evolved_state=true"
   end
 

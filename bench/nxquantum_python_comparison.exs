@@ -296,6 +296,12 @@ end
       {List.duplicate(scenario["counts"], total), specs_for.(scenario["observables"]), :sampled}
   end
 
+expected_library_cache_mode = if cache_mode == "hot", do: :enabled, else: :disabled
+
+# Known Gap: only the :batch path (Estimator.run) exposes
+# metadata.strategy_observability.cache_mode. The :scalar (expectation_result) and
+# :sampled (counts) paths return no such signal, so their cold-cache evidence is the
+# applied flags only (library_cache_mode=unreported).
 run_fun =
   case run_once do
     :scalar ->
@@ -323,7 +329,21 @@ run_fun =
           ] ++ nx_opts ++ cache_flags
 
         case Estimator.run(circuit, opts) do
-          {:ok, result} -> result.values
+          {:ok, result} ->
+            # The library reports the cache mode it applied; fail the row when it
+            # disagrees with the requested mode instead of trusting the flag echo.
+            reported = result.metadata.strategy_observability.cache_mode
+
+            if reported != expected_library_cache_mode,
+              do:
+                raise(
+                  "cache mode mismatch: requested #{cache_mode} (expects #{expected_library_cache_mode}) " <>
+                    "but the library reported #{inspect(reported)}"
+                )
+
+            Process.put(:nxq_library_cache_mode, reported)
+            result.values
+
           {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
         end
       end
@@ -369,7 +389,7 @@ last_sum = Enum.sum(last_values)
 
 IO.puts(
   "NXQ_BENCH scenario=#{scenario_id} runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} " <>
-    "cache_mode=#{cache_mode} mode=#{mode} warmup=#{warmup} iterations=#{iterations} " <>
+    "cache_mode=#{cache_mode} library_cache_mode=#{Process.get(:nxq_library_cache_mode, :unreported)} mode=#{mode} warmup=#{warmup} iterations=#{iterations} " <>
     "total_ms=#{BenchPlan.shortest(total_ms)} per_op_ms=#{BenchPlan.shortest(per_op_ms)} ops_s=#{BenchPlan.shortest(ops_s)} " <>
     "value=#{BenchPlan.shortest(last_sum)} fixture_sha256=#{fixture_sha} schedulers=#{System.schedulers_online()} " <>
     "max_concurrency=#{max_concurrency} dirty_cpu_schedulers=#{:erlang.system_info(:dirty_cpu_schedulers_online)} observables=#{length(last_values)} dtype=f32 " <>
