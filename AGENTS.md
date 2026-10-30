@@ -9,7 +9,7 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 - Keep tests deterministic: fixed seeds, fixed fixtures, explicit tolerances, no hidden randomness.
 - Keep public API contracts stable unless change intent is explicitly `api change` and docs are updated.
 - Any non-trivial performance change must include reproducible benchmark evidence.
-- Public messaging must foreground deterministic, BEAM-native, benchmark-backed hybrid quantum-AI workflows; never imply universal provider breadth or deterministic live-QPU outcomes without explicit evidence.
+- Public messaging must lead with deterministic quantum execution on BEAM and present hybrid quantum-AI only as an application of it; cite benchmarks only as internal, environment-specific references, never as official results or the lead proof; never imply universal provider breadth or deterministic live-QPU outcomes without explicit evidence.
 
 ## Required Reading By Task Type
 | Task type | Required reading |
