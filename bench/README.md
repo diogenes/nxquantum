@@ -69,7 +69,7 @@ mise exec python@3.13.16 -- python -m venv .venv-bench
 
 ### Running
 
-The harness has four modes. Run Python only as `.venv-bench/bin/python -I` (the script refuses otherwise) and Elixir with the toolchain from `mise.toml` (`NXQ_BENCH_MIX_CMD="mix"` replaces the default `mise exec -- mix` when the shell already resolves the pinned toolchain).
+The harness has four modes. Run Python only as `.venv-bench/bin/python -I` (the script refuses otherwise) and Elixir with the toolchain from `mise.toml` (the harness and the guard tests run plain `mix` from `PATH`; set `NXQ_BENCH_MIX_CMD="mise exec -- mix"` to go through mise, which needs a trusted `mise.toml`).
 
 Correctness first (`--mode check`, default). Every lane runs the real loop with `--check-warmup/--check-iterations` (default 1 and 3) and each timed iteration is compared with its own NumPy complex128 reference. Output is one `CHECK name=... status=pass|fail|ungated|error max_err=...` line per check (`agreement_<lane>_<family>_<n>`, `zz_...`, `reference_consensus_f64_<family>_<n>`, `sampled_counts_exact_rational`) and a final `SUMMARY rows=... failures=... errors=...`. Timings in this mode carry `timing=not_published`. `--max-qubits` defaults to 8 when no `--scenario` is named; naming a scenario runs it at its own width (a deliberate choice, for example `--scenario real_zbatch_20q`).
 

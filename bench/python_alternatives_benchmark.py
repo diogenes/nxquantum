@@ -1474,7 +1474,7 @@ def build_parser():
                         help="--mode consensus: per-invocation results.json files to merge")
     parser.add_argument("--compare-values", nargs=2, metavar=("A", "B"), default=None)
     parser.add_argument("--repo-root", type=Path, default=ROOT)
-    parser.add_argument("--mix-cmd", type=str, default=os.environ.get("NXQ_BENCH_MIX_CMD", "mise exec -- mix"))
+    parser.add_argument("--mix-cmd", type=str, default=os.environ.get("NXQ_BENCH_MIX_CMD", "mix"))
     return parser
 
 

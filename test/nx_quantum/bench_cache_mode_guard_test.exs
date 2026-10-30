@@ -105,13 +105,20 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
     args = ["run", @script, "--mode", "values", "--profile", "cpu_portable", "--warmup", "1", "--iterations", "2"]
     args = args ++ extra
 
-    {cmd, cmd_args} =
-      if System.find_executable("mise") do
-        {"mise", ["exec", "--", "mix" | args]}
-      else
-        {"mix", args}
+    {cmd, cmd_args} = mix_command()
+    System.cmd(cmd, cmd_args ++ args, cd: @repo_root, stderr_to_stdout: true)
+  end
+
+  # Plain `mix` from PATH by default. NXQ_BENCH_MIX_CMD (for example
+  # "mise exec -- mix") replaces it, matching the Python harness.
+  defp mix_command do
+    words =
+      case System.get_env("NXQ_BENCH_MIX_CMD") do
+        value when value in [nil, ""] -> ["mix"]
+        value -> OptionParser.split(value)
       end
 
-    System.cmd(cmd, cmd_args, cd: @repo_root, stderr_to_stdout: true)
+    [program | rest] = words
+    {System.find_executable(program) || raise("#{program} not found on PATH"), rest}
   end
 end
