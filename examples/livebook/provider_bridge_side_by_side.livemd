@@ -4,7 +4,16 @@
 Mix.install([{:nx_quantum, path: "../.."}])
 ```
 
-This tutorial runs equivalent lifecycle workloads against top-3 providers using deterministic fixture data.
+This notebook runs the same lifecycle workload (submit, poll, fetch result) against `IBM Runtime`, `AWS Braket` and `Azure Quantum`, and checks that the three return the same normalized result shape.
+
+Scope and limits:
+
+* It runs the fixture lane only. No network call is made and no provider account is needed.
+* The tokens, profiles and workspace names below are fake. They exist only to satisfy the typed configuration check.
+* The live environment keys are shown as text in section 8 and are never read or set. A test (`test/nx_quantum/livebooks_test.exs`) fails if a notebook cell reads one.
+* The fixture lane shows that the lifecycle contract is typed and uniform. It says nothing about the outcomes of a live QPU run.
+
+`NxQuantum.ProviderBridge.run_lifecycle/3` is on the experimental tier in `docs/api-stability.md`.
 
 ## 1) Aliases and shared payload
 
@@ -13,6 +22,7 @@ alias NxQuantum.Adapters.Providers.AwsBraket
 alias NxQuantum.Adapters.Providers.AzureQuantum
 alias NxQuantum.Adapters.Providers.IBMRuntime
 alias NxQuantum.ProviderBridge
+alias NxQuantum.ProviderBridge.Serialization
 
 payload = %{workflow: :sampler, shots: 1024}
 ```
@@ -24,7 +34,7 @@ provider_cases = [
   {:ibm_runtime, IBMRuntime,
    [
      target: "ibm_backend_simulator",
-     provider_config: %{auth_token: "ibm-token", channel: "ibm_cloud", backend: "ibm_backend_simulator"}
+     provider_config: %{auth_token: "fake-ibm-token", channel: "ibm_cloud", backend: "ibm_backend_simulator"}
    ]},
   {:aws_braket, AwsBraket,
    [
@@ -59,38 +69,106 @@ results =
 results
 ```
 
-## 4) Compare normalized envelope keys
+## 4) Compare normalized result keys
+
+Each `result` is a `NxQuantum.ProviderBridge.Result` struct. The comparison uses its field names, without the `:__struct__` marker.
 
 ```elixir
 # checkpoint: normalized_key_sets
 normalized_key_sets =
   Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
-    {provider_id, Map.keys(result) |> Enum.sort()}
+    {provider_id, result |> Map.from_struct() |> Map.keys() |> Enum.sort()}
   end)
 
 normalized_key_sets
 ```
 
-Expected common result keys:
-
-1. `:job_id`
-2. `:state`
-3. `:provider`
-4. `:target`
-5. `:payload`
-6. `:metadata`
-
-## 5) Validate deterministic contract shape
+The common fields are `:job_id`, `:state`, `:provider`, `:target`, `:payload`, `:metadata`, `:schema_version`, `:request_id`, `:correlation_id` and `:idempotency_key`.
 
 ```elixir
-[first | rest] = normalized_key_sets
+# checkpoint: deterministic_shape
+[{_first_id, first_keys} | rest] = normalized_key_sets
 
-deterministic_shape? =
-  Enum.all?(rest, fn {_provider_id, keys} ->
-    keys == elem(first, 1)
-  end)
-
-deterministic_shape?
+%{
+  same_keys_for_all_providers: Enum.all?(rest, fn {_provider_id, keys} -> keys == first_keys end),
+  states: Enum.map(results, fn {id, {:ok, %{result: result}}} -> {id, result.state} end)
+}
 ```
 
-If `deterministic_shape?` is true, top-3 providers are emitting the same normalized result envelope structure.
+Equal key sets mean the three providers return the same normalized result structure. It does not mean their payloads agree.
+
+## 5) Transport mode
+
+Every result records how it was produced. In this notebook the mode is `:fixture` for all three providers. The job ids come from the payload, so they are the same on every run.
+
+```elixir
+# checkpoint: transport_modes
+Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
+  {provider_id, %{mode: result.metadata.transport.mode, fixture?: result.metadata.transport.mode == :fixture, job_id: result.job_id}}
+end)
+```
+
+## 6) Serialize and rehydrate
+
+`Serialization.to_external_map/1` turns a result into a versioned (`"v1"`) map with string keys. `Serialization.from_external_map/1` reads it back into a typed struct. `docs/api-stability.md` ("Envelope Compatibility Policy") documents both and the round-trip rule: encoding the rehydrated value gives back the same map.
+
+```elixir
+# checkpoint: envelope_round_trip
+Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
+  external = Serialization.to_external_map(result)
+  {:ok, rehydrated} = Serialization.from_external_map(external)
+
+  {provider_id,
+   %{
+     type: external["type"],
+     schema_version: external["schema_version"],
+     state: external["state"],
+     provider: external["provider"],
+     round_trip_equal: Serialization.to_external_map(rehydrated) == external
+   }}
+end)
+```
+
+Payloads that contain structs, such as an `Nx.Tensor`, are not serializable today (KG-14 in `docs/roadmap.md`). The fixture payloads here are plain maps.
+
+## 7) A typed error: missing configuration
+
+Without the required provider configuration the call returns `{:error, %NxQuantum.ProviderBridge.ProviderError{}}`. It does not raise, and the error names the missing keys.
+
+```elixir
+# checkpoint: missing_config_errors
+Enum.map(provider_cases, fn {provider_id, adapter, opts} ->
+  {:error, error} = ProviderBridge.submit_job(adapter, payload, Keyword.put(opts, :provider_config, %{}))
+
+  {provider_id, %{code: error.code, reason: error.reason, missing_keys: error.metadata.missing_keys}}
+end)
+```
+
+## 8) Live environment keys (text only)
+
+Live transport needs two things: the request asks for it (`transport_mode: :live` or `:live_smoke` in the options) and the matching environment key is enabled, either the global key or the provider key. Otherwise the call stays in the fixture lane. Each result carries the name of its provider key and whether it was enabled. The cell below reads them from the results, not from the environment.
+
+```elixir
+# checkpoint: live_keys_from_results
+Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
+  live = result.metadata.transport.live
+  {provider_id, %{env_key: live.env_key, enabled: live.env_enabled?}}
+end)
+```
+
+The keys, as text. This notebook never sets or reads them:
+
+```text
+NXQ_PROVIDER_LIVE                          global gate for live transport
+NXQ_PROVIDER_LIVE_IBM_RUNTIME              provider gate for live transport
+NXQ_PROVIDER_LIVE_AWS_BRAKET               provider gate for live transport
+NXQ_PROVIDER_LIVE_AZURE_QUANTUM            provider gate for live transport
+NXQ_PROVIDER_LIVE_SMOKE                    global gate for live-smoke checks
+NXQ_PROVIDER_LIVE_SMOKE_<PROVIDER>         provider gate for live-smoke checks
+```
+
+The optional live-smoke gates are described in `docs/release-process.md`. Live lanes need real credentials. The claim for them is a typed lifecycle, not a deterministic outcome: a live QPU result depends on the device and its queue.
+
+## Checkpoints
+
+Cells that start with `# checkpoint: name` are compared against recorded values by `test/nx_quantum/livebooks_test.exs`. Run `mix test.livebooks` from the repository root to check this notebook.
