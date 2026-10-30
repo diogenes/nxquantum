@@ -1,0 +1,267 @@
+# Supervised Service: NxQuantum Behind a GenServer
+
+```elixir
+Mix.install([{:nx_quantum, path: "../.."}])
+```
+
+This notebook wraps public NxQuantum calls in a `GenServer` that you own, starts it under a `Supervisor`, kills it, and shows that the restarted worker returns identical results.
+
+It also shows where signals come from. Every signal recorded here is labelled with its source:
+
+* `:nxquantum`: emitted by NxQuantum. Today that is the provider lifecycle only (`NxQuantum.ProviderBridge.run_lifecycle/3` through the `NxQuantum.Ports.ObservabilityEmitter` port). `Estimator` and `Sampler` emit nothing.
+* `:user`: emitted by code in this notebook, through `:telemetry.span/3`.
+
+What this notebook is not:
+
+* It does not export to OpenTelemetry. The adapter bundled with NxQuantum, `NxQuantum.Adapters.Observability.OpenTelemetry`, records into the process dictionary of the calling process and has no exporter (KG-13 in `docs/roadmap.md`). This notebook defines its own emitter instead.
+* It has no queue, no retry, and no persistence. NxQuantum leaves those to a control plane. See FluxQ for that layer; the notebook does not depend on it.
+* It uses the fixture lane only. The provider tokens below are fake.
+
+`NxQuantum.Sampler` and `NxQuantum.ProviderBridge.run_lifecycle/3` are on the experimental tier in `docs/api-stability.md`.
+
+## 1) A signal store you own
+
+The store is an `Agent`. It lives under the supervisor, so it survives a restart of the worker.
+
+```elixir
+defmodule Demo.SignalStore do
+  use Agent
+
+  def start_link(_opts), do: Agent.start_link(fn -> [] end, name: __MODULE__)
+
+  # Appends one signal and returns its sequence number.
+  def record(signal) do
+    Agent.get_and_update(__MODULE__, fn signals ->
+      id = length(signals) + 1
+      {id, [Map.put(signal, :id, id) | signals]}
+    end)
+  end
+
+  def all, do: __MODULE__ |> Agent.get(& &1) |> Enum.reverse()
+  def clear, do: Agent.update(__MODULE__, fn _ -> [] end)
+end
+```
+
+## 2) An emitter adapter, defined in the notebook
+
+`NxQuantum.Ports.ObservabilityEmitter` is the port NxQuantum calls. The callbacks are `reset/0`, `snapshot/0`, `span_start/3`, `span_stop/3`, `metric_emit/6` and `log_emit/2`. Every signal this adapter records is labelled `source: :nxquantum`.
+
+```elixir
+defmodule Demo.Emitter do
+  @behaviour NxQuantum.Ports.ObservabilityEmitter
+
+  alias Demo.SignalStore
+
+  @impl true
+  def reset, do: SignalStore.clear()
+
+  @impl true
+  def snapshot, do: %{signals: SignalStore.all()}
+
+  @impl true
+  def span_start(name, _attributes, _opts) do
+    id = SignalStore.record(%{source: :nxquantum, kind: :span_start, name: name})
+    %{trace_id: "demo-trace-#{id}", span_id: "demo-span-#{id}"}
+  end
+
+  @impl true
+  def span_stop(%{span_id: span_id}, attributes, _opts) do
+    SignalStore.record(%{source: :nxquantum, kind: :span_stop, name: span_id, status: attributes[:status]})
+    :ok
+  end
+
+  @impl true
+  def metric_emit(name, _type, _unit, _value, _labels, _opts) do
+    SignalStore.record(%{source: :nxquantum, kind: :metric, name: name})
+    :ok
+  end
+
+  @impl true
+  def log_emit(entry, _opts) do
+    SignalStore.record(%{source: :nxquantum, kind: :log, name: entry.event})
+    :ok
+  end
+end
+```
+
+## 3) User-side telemetry
+
+`:telemetry.span/3` wraps each call in the client functions of the service. The handler records `:start` and `:stop` events, labelled `source: :user`. It records event names only, not durations, so the recorded signals are the same on every run.
+
+```elixir
+defmodule Demo.UserTelemetry do
+  @events [[:demo, :call, :start], [:demo, :call, :stop], [:demo, :call, :exception]]
+
+  def attach, do: :telemetry.attach_many("demo-user-telemetry", @events, &__MODULE__.handle/4, nil)
+  def detach, do: :telemetry.detach("demo-user-telemetry")
+
+  def handle(event, _measurements, metadata, _config) do
+    Demo.SignalStore.record(%{source: :user, kind: List.last(event), name: metadata.call})
+  end
+
+  # Wraps one client call in a telemetry span.
+  def traced(call, fun) do
+    :telemetry.span([:demo, :call], %{call: call}, fn -> {fun.(), %{call: call}} end)
+  end
+end
+```
+
+## 4) The service
+
+The worker holds no results. Its seed comes from its child spec, so a restarted worker is started with the same seed and returns the same values for the same inputs.
+
+```elixir
+defmodule Demo.Service do
+  use GenServer
+
+  alias NxQuantum.{Circuit, Estimator, Gates, ProviderBridge, Sampler}
+  alias NxQuantum.Adapters.Providers.IBMRuntime
+
+  @ibm_opts [
+    target: "ibm_backend_simulator",
+    provider_config: %{auth_token: "fake-fixture-token", channel: "ibm_cloud", backend: "ibm_backend_simulator"},
+    observability: [enabled: true, adapter: Demo.Emitter]
+  ]
+
+  # Client API. Each function is wrapped in a user-side telemetry span.
+  def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+
+  def expectation(theta), do: Demo.UserTelemetry.traced(:expectation, fn -> GenServer.call(__MODULE__, {:expectation, theta}) end)
+  def sample(theta, shots), do: Demo.UserTelemetry.traced(:sample, fn -> GenServer.call(__MODULE__, {:sample, theta, shots}) end)
+  def lifecycle(shots), do: Demo.UserTelemetry.traced(:lifecycle, fn -> GenServer.call(__MODULE__, {:lifecycle, shots}) end)
+
+  # Server callbacks.
+  @impl true
+  def init(opts), do: {:ok, %{seed: Keyword.fetch!(opts, :seed)}}
+
+  @impl true
+  def handle_call({:expectation, theta}, _from, state) do
+    {:ok, result} = Estimator.run(circuit(theta), observable: :pauli_z, wire: 0)
+    {:reply, Nx.to_number(result.values[0]), state}
+  end
+
+  def handle_call({:sample, theta, shots}, _from, state) do
+    {:ok, result} = Sampler.run(circuit(theta), shots: shots, seed: state.seed)
+    {:reply, result.counts, state}
+  end
+
+  def handle_call({:lifecycle, shots}, _from, state) do
+    {:ok, %{result: result}} = ProviderBridge.run_lifecycle(IBMRuntime, %{workflow: :sampler, shots: shots}, @ibm_opts)
+    {:reply, %{job_id: result.job_id, state: result.state}, state}
+  end
+
+  defp circuit(theta), do: Circuit.new(qubits: 1) |> Gates.ry(0, theta: theta)
+end
+```
+
+## 5) Start the service under a supervisor
+
+`:one_for_one` is enough here: the store and the worker are independent, and a worker restart must not clear the store. If you re-evaluate this cell, the first lines stop the previous supervisor.
+
+```elixir
+if pid = Process.whereis(Demo.Supervisor), do: Supervisor.stop(pid)
+
+Demo.UserTelemetry.detach()
+Demo.UserTelemetry.attach()
+
+children = [
+  Demo.SignalStore,
+  {Demo.Service, seed: 2026}
+]
+
+{:ok, supervisor} = Supervisor.start_link(children, strategy: :one_for_one, name: Demo.Supervisor)
+
+Supervisor.which_children(supervisor) |> Enum.map(fn {id, _pid, type, _modules} -> {id, type} end)
+```
+
+## 6) Three calls
+
+The three calls are an expectation (RY(1.2), observable Z, cos 1.2), a seeded sample of the same circuit, and a fixture-lane provider lifecycle run. The job id comes from the payload, so it is the same every time.
+
+```elixir
+before_kill = %{
+  expectation: Demo.Service.expectation(1.2),
+  counts: Demo.Service.sample(1.2, 2048),
+  lifecycle: Demo.Service.lifecycle(1024)
+}
+```
+
+```elixir
+# checkpoint: results_before_kill
+before_kill
+```
+
+## 7) Kill the worker and call again
+
+The cell kills the worker with `:kill`, waits until the supervisor has started a new one, and runs the same three calls.
+
+```elixir
+old_pid = Process.whereis(Demo.Service)
+ref = Process.monitor(old_pid)
+Process.exit(old_pid, :kill)
+
+receive do
+  {:DOWN, ^ref, :process, ^old_pid, _reason} -> :ok
+end
+
+wait_for_restart = fn wait ->
+  case Process.whereis(Demo.Service) do
+    pid when is_pid(pid) and pid != old_pid ->
+      pid
+
+    _ ->
+      Process.sleep(10)
+      wait.(wait)
+  end
+end
+
+new_pid = wait_for_restart.(wait_for_restart)
+
+after_kill = %{
+  expectation: Demo.Service.expectation(1.2),
+  counts: Demo.Service.sample(1.2, 2048),
+  lifecycle: Demo.Service.lifecycle(1024)
+}
+```
+
+```elixir
+# checkpoint: restart_identical
+%{new_process: new_pid != old_pid, identical: after_kill == before_kill}
+```
+
+## 8) Read the signals, by source
+
+NxQuantum's signals come only from the provider lifecycle runs: one in each set of three calls, so two in total. The user-side signals are the telemetry span events around all six calls.
+
+```elixir
+signals = Demo.SignalStore.all()
+
+signals
+|> Enum.map(&{&1.source, &1.kind, &1.name})
+|> Enum.frequencies_by(&elem(&1, 0))
+```
+
+```elixir
+# checkpoint: signal_counts
+by_source = Enum.group_by(signals, & &1.source)
+
+%{
+  sources: by_source |> Map.keys() |> Enum.sort(),
+  nxquantum: by_source.nxquantum |> Enum.frequencies_by(& &1.kind),
+  user: by_source.user |> Enum.frequencies_by(& &1.kind),
+  user_calls: by_source.user |> Enum.filter(&(&1.kind == :start)) |> Enum.map(& &1.name)
+}
+```
+
+The `:nxquantum` signals appear only for the `:lifecycle` calls. `:expectation` and `:sample` produce user-side signals only, because the Estimator and Sampler emit nothing.
+
+## 9) Stop
+
+```elixir
+Demo.UserTelemetry.detach()
+Supervisor.stop(supervisor)
+```
+
+## Checkpoints
+
+Cells that start with `# checkpoint: name` are compared against recorded values by `test/nx_quantum/livebooks_test.exs`. Run `mix test.livebooks` from the repository root to check this notebook.
