@@ -298,7 +298,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - `docs/launch/` (launch write-up)
   - `docs/research/` (survey artifacts)
   - `test/nx_quantum/livebooks_test.exs` (Livebook test)
-  - `bench/ttfr/` (time-to-first-result harness; arrives with H1.5 PR-3)
+  - `bench/ttfr/` (time-to-first-result harness)
 - Invariants:
   - claims backed by reproducible scripts/benchmarks
   - limitations explicitly documented

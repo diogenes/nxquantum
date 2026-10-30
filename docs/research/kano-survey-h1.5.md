@@ -29,8 +29,7 @@ Answer scale: 1 I like it, 2 I expect it, 3 I'm neutral, 4 I can live with it, 5
 - Functional: "If you <feature> with NxQuantum, how do you feel?"
 - Dysfunctional: "If you did NOT <feature> with NxQuantum, how do you feel?"
 - Optional: "How important is this to you?" 1-9
-- Unshipped items (F9, F10), functional: "Would you value being able to <feature>? If NxQuantum offered this, how do you feel?"
-- Unshipped items (F9, F10), dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
+- Unshipped items (F9, F10) use the explicit wording under Features instead of the template.
 
 ### Features
 
@@ -42,10 +41,10 @@ Answer scale: 1 I like it, 2 I expect it, 3 I'm neutral, 4 I can live with it, 5
 - F6 run a parameter sweep over many inputs as one batched call
 - F7 simulate up to ~24 qubits on one machine
 - F8 attach a stable fingerprint (circuit, options, seed, versions) to every result
-- F9 run your quantum model and a classical baseline on the same data in one call
-- F10 were shown a Livebook of one job fanned out across BEAM nodes with the same results as one node
+- F9 (not built). Functional: "Would you value running your quantum model and a classical baseline on the same data in one call? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
+- F10 (not built). Functional: "Would you value a Livebook showing one job fanned out across BEAM nodes with the same results as one node? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
 - F11 keep seeded results bit-identical after you upgrade Nx or Erlang/OTP (default backend)
-- F12 run inside your supervised Elixir application, with no Python service to deploy
+- F12 run quantum workloads inside your own supervised Elixir application, with no separate Python service
 
 ### Close
 
