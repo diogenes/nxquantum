@@ -216,3 +216,28 @@ mise exec -- mix run bench/provider_lifecycle_latency_fixture.exs 100
 mise exec -- mix run bench/provider_lifecycle_latency_live.exs live_smoke 20
 mise exec -- mix run bench/provider_lifecycle_latency_live.exs live 20
 ```
+
+## TTFR harness (time to first result)
+
+`bench/ttfr/run.sh` runs the getting-started consumer flow from fresh empty
+Mix/Hex/XDG homes and times each step: `mix local.hex`, `mix local.rebar`,
+`mix new demo`, writing the deps line, `mix deps.get`, `mix compile`, and
+`mix run` of the first-result snippet. Success is exit 0 plus the expected
+printed value (exit 3 on mismatch). Elixir/OTP must already be installed;
+human reading time is not measured. Results are an internal,
+environment-specific reference.
+
+```bash
+bench/ttfr/run.sh --package-dir /path/to/unpacked/nx_quantum \
+  --snippet bench/ttfr/rehearsal_snippet.exs \
+  --expect 0.3623577356338501 --out bench/results/<date>/ttfr --label run1
+```
+
+Use `--dep '{:nx_quantum, "~> 0.12.0"}'` instead of `--package-dir` for Hex.
+Rehearsal: `mix hex.build --unpack -o DIR` with `NXQ_ENABLE_EXLA=0
+NXQ_ENABLE_TORCHX=0`. Evidence: `bench/results/2026-10-30-h1.5/ttfr/`.
+
+Post-release step: once 0.12.0 is published, rerun 3 times with
+`--dep '{:nx_quantum, "~> 0.12.0"}'`, the default
+`test/fixtures/docs/getting_started_first_result.exs` snippet and its expected
+output, then commit the logs and a SUMMARY as the gate 2 evidence (max <= 600 s).
