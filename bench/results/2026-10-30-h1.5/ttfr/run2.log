@@ -1,0 +1,68 @@
+label: run2
+date_utc: 2026-10-30T09:55:02Z
+dep: {:nx_quantum, path: "<unpacked-package>"}
+expect: [0.3623577356338501]
+cache_state_at_start: MIX_HOME=empty HEX_HOME=empty HEX_CACHE_DIR=empty XDG_CACHE_HOME=empty
+--- step: local.hex
+* creating mix/archives/hex-2.6.0
+--- step: local.hex exit=0 seconds=0.5
+--- step: local.rebar
+* creating mix/elixir/1-20-otp-29/rebar3
+--- step: local.rebar exit=0 seconds=0.5
+--- step: new
+* creating README.md
+* creating .formatter.exs
+* creating .gitignore
+* creating mix.exs
+* creating lib
+* creating lib/demo.ex
+* creating test
+* creating test/test_helper.exs
+* creating test/demo_test.exs
+
+Your Mix project was created successfully.
+You can use "mix" to compile it, test it, and more:
+
+    cd demo
+    mix test
+
+Run "mix help" for more commands.
+--- step: new exit=0 seconds=0.2
+--- step: write_deps
+--- step: write_deps exit=0 seconds=0.0
+--- step: deps.get
+Resolving Hex dependencies...
+Resolution completed in 0.022s
+New:
+  complex 1.0.0
+  nx 1.0.0
+  telemetry 1.4.2
+* Getting nx (Hex package)
+* Getting complex (Hex package)
+* Getting telemetry (Hex package)
+--- step: deps.get exit=0 seconds=0.5
+--- step: compile
+==> complex
+Compiling 2 files (.ex)
+Generated complex app
+==> demo
+===> Analyzing applications...
+===> Compiling telemetry
+==> nx
+Compiling 41 files (.ex)
+Generated nx app
+==> nx_quantum
+Compiling 170 files (.ex)
+Generated nx_quantum app
+==> demo
+Compiling 1 file (.ex)
+Generated demo app
+--- step: compile exit=0 seconds=6.9
+--- step: run
+[0.3623577356338501]
+--- step: run exit=0 seconds=0.4
+=== result ===
+printed: [0.3623577356338501]
+step_seconds: local.hex=0.5 local.rebar=0.5 new=0.2 write_deps=0.0 deps.get=0.5 compile=6.9 run=0.4 
+total_seconds: 9.0
+status: ok

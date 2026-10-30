@@ -1,0 +1,173 @@
+label: hex-0.11.0
+date_utc: 2026-10-30T04:45:24Z
+dep: {:nx_quantum, "~> 0.11.0"}
+expect: 0.3623577356338501
+cache_state_at_start: MIX_HOME=empty HEX_HOME=empty HEX_CACHE_DIR=empty XDG_CACHE_HOME=empty
+--- step: local.hex
+* creating mix/archives/hex-2.6.0
+--- step: local.hex exit=0 seconds=0.5
+--- step: local.rebar
+* creating mix/elixir/1-20-otp-29/rebar3
+--- step: local.rebar exit=0 seconds=0.5
+--- step: new
+* creating README.md
+* creating .formatter.exs
+* creating .gitignore
+* creating mix.exs
+* creating lib
+* creating lib/demo.ex
+* creating test
+* creating test/test_helper.exs
+* creating test/demo_test.exs
+
+Your Mix project was created successfully.
+You can use "mix" to compile it, test it, and more:
+
+    cd demo
+    mix test
+
+Run "mix help" for more commands.
+--- step: new exit=0 seconds=0.2
+--- step: write_deps
+--- step: write_deps exit=0 seconds=0.0
+--- step: deps.get
+Resolving Hex dependencies...
+Resolution completed in 0.095s
+New:
+  complex 0.7.0
+  nx 0.13.1
+  nx_quantum 0.11.0
+  telemetry 1.4.2
+* Getting nx_quantum (Hex package)
+* Getting nx (Hex package)
+* Getting complex (Hex package)
+* Getting telemetry (Hex package)
+--- step: deps.get exit=0 seconds=0.7
+--- step: compile
+==> complex
+Compiling 2 files (.ex)
+     warning: the following clause is redundant:
+
+         def divide(n, b) when is_number(n) and (b === :infinity or b === :neg_infinity)
+
+     it has type:
+
+         dynamic(float() or integer()), dynamic(:infinity or :neg_infinity)
+
+     previous clauses have already matched on the following types:
+
+         :infinity or :nan or :neg_infinity, :infinity or :nan or :neg_infinity
+         :nan, float() or integer()
+         float() or integer(), :nan
+         float() or integer(), :infinity
+         float() or integer(), :neg_infinity
+         float() or integer(), float() or integer()
+
+     │
+ 590 │   def divide(n, b) when is_number(n) and b in [:infinity, :neg_infinity] do
+     │       ~
+     │
+     └─ lib/complex.ex:590:7: Complex.divide/2
+
+      warning: the following clause is redundant:
+
+          def pow(%Complex{re: re, im: im}, :neg_infinity) when re == 0 and im == 0
+
+      it has type:
+
+          dynamic(%Complex{re: float() or integer(), im: float() or integer()}), :neg_infinity
+
+      previous clauses have already matched on the following types:
+
+          :infinity or :nan or :neg_infinity, %Complex{}
+          %Complex{}, :infinity or :nan or :neg_infinity
+          %Complex{re: :infinity or :nan or :neg_infinity}, term()
+          %Complex{im: :infinity or :nan or :neg_infinity}, term()
+          term(), %Complex{re: :infinity or :nan or :neg_infinity}
+          term(), %Complex{im: :infinity or :nan or :neg_infinity}
+          :nan, term()
+          term(), :nan
+
+      │
+ 1143 │   def pow(%Complex{re: re, im: im}, :neg_infinity) when re == 0 and im == 0, do: new(:infinity, 0)
+      │       ~
+      │
+      └─ lib/complex.ex:1143:7: Complex.pow/2
+
+      warning: the following clause is redundant:
+
+          def atan2(:nan, :nan)
+
+      it has type:
+
+          :nan, :nan
+
+      previous clauses have already matched on the following types:
+
+          float() or integer(), float() or integer()
+          :infinity, :infinity
+          :infinity, :neg_infinity
+          :infinity, :nan
+          :infinity, float() or integer()
+          :neg_infinity, :infinity
+          :neg_infinity, :neg_infinity
+          :neg_infinity, :nan
+          :neg_infinity, float() or integer()
+          :nan, :infinity or :nan or :neg_infinity or float() or integer()
+          :infinity or :nan or :neg_infinity or float() or integer(), :nan
+
+      │
+ 1458 │   def atan2(:nan, :nan), do: :nan
+      │       ~
+      │
+      └─ lib/complex.ex:1458:7: Complex.atan2/2
+
+Generated complex app
+==> demo
+===> Analyzing applications...
+===> Compiling telemetry
+==> nx
+Compiling 43 files (.ex)
+Generated nx app
+==> nx_quantum
+Compiling 170 files (.ex)
+    warning: this clause of defp validate_redaction/1 is never used (or it will always fail/warn when invoked)
+    │
+ 82 │   defp validate_redaction(_), do: {:error, %{code: :observability_invalid_snapshot, field: :redaction}}
+    │        ~
+    │
+    └─ lib/nx_quantum/observability/schema.ex:82:8: NxQuantum.Observability.Schema.validate_redaction/1
+
+    warning: the following clause is redundant:
+
+        defp stringify_value(%Nx.Tensor{} = tensor)
+
+    it has type:
+
+        dynamic(%Nx.Tensor{})
+
+    previous clauses have already matched on the following types:
+
+        map()
+        empty_list() or non_empty_list(term(), term())
+        atom()
+
+    │
+ 95 │   defp stringify_value(%Nx.Tensor{} = tensor), do: inspect(tensor)
+    │        ~
+    │
+    └─ lib/nx_quantum/provider_bridge/serialization.ex:95:8: NxQuantum.ProviderBridge.Serialization.stringify_value/1
+
+Generated nx_quantum app
+==> demo
+Compiling 1 file (.ex)
+Generated demo app
+--- step: compile exit=0 seconds=4.9
+--- step: run
+0.3623577356338501
+--- step: run exit=0 seconds=0.3
+=== result ===
+printed: 0.3623577356338501
+step_seconds: local.hex=0.5 local.rebar=0.5 new=0.2 write_deps=0.0 deps.get=0.7 compile=4.9 run=0.3 
+total_seconds: 7.1
+status: ok

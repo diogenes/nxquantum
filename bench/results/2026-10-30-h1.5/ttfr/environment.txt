@@ -1,0 +1,10 @@
+date_utc: 2026-10-30
+os: ProductName:		macOS ProductVersion:		26.6.2 BuildVersion:		25G83 
+arch: arm64
+cpu: Apple M4
+cores: 10
+elixir: Elixir 1.20.4 (compiled with Erlang/OTP 29)
+otp_release: 29
+network: live network to hex.pm and builds.hex.pm (not throttled or mirrored)
+caches: fresh empty MIX_HOME, HEX_HOME, HEX_CACHE_DIR, XDG_* dirs per run
+script_ref: fbe7665
