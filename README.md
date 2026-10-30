@@ -64,16 +64,41 @@ These are the requirements on `main` (unreleased). NxQuantum 0.11.0 on Hex requi
 
 ## Quick Start
 
+Install from Hex. `0.11.0` is the current release, on the Nx 0.x line; 0.12.0 (unreleased) moves to Nx 1.0, so use `~> 0.12.0` once it is published.
+
+```elixir
+# mix.exs
+defp deps do
+  [
+    {:nx_quantum, "~> 0.11.0"}
+  ]
+end
+```
+
+Then run this in `iex -S mix`:
+
+```elixir
+alias NxQuantum.Circuit
+alias NxQuantum.Estimator
+alias NxQuantum.Gates
+
+circuit = [qubits: 1] |> Circuit.new() |> Gates.ry(0, theta: 1.2)
+{:ok, result} = Estimator.run(circuit, observable: :pauli_z, wire: 0)
+
+# The expectation of Z after RY(1.2) is cos(1.2), about 0.3623577.
+Nx.to_flat_list(result.values)
+```
+
+Expected result: `[0.3623577356338501]` (`cos(1.2)` in single precision). The full walkthrough, with seeded sampling and error handling, is in [docs/getting-started.md](docs/getting-started.md).
+
+To work on NxQuantum itself, clone the repository and use the contributor flow ([CONTRIBUTING.md](CONTRIBUTING.md)):
+
 ```bash
 mise trust
 mise install
 mix setup
 mix run examples/quantum_kernel_classifier.exs
 ```
-
-For full setup and API walkthroughs and usage examples:
-
-- [docs/getting-started.md](docs/getting-started.md)
 
 ## Main Features (Current)
 
