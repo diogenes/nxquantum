@@ -23,9 +23,7 @@
 # Cold mode builds every iteration's circuit (distinct angle set) before the timed
 # loop and turns the result caches off; only structure-keyed caches stay warm.
 
-alias NxQuantum.Circuit
 alias NxQuantum.Estimator
-alias NxQuantum.Gates
 alias NxQuantum.Runtime
 
 {opts, _args, invalid} =
