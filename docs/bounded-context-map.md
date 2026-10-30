@@ -295,10 +295,10 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
     - `docs/provider-support-catalog.md`
 - Adoption assets owned by this context (H1.5):
   - `examples/livebook/` (Livebook tutorials)
-  - `docs/launch/` (launch write-up; arrives with H1.5 PR-4)
-  - `docs/research/` (survey artifacts; arrives with H1.5 PR-4)
-  - `test/nx_quantum/livebooks_test.exs` (Livebook test; arrives with H1.5 PR-2)
-  - `bench/ttfr/` (time-to-first-result harness; arrives with H1.5 PR-3)
+  - `docs/launch/` (launch write-up)
+  - `docs/research/` (survey artifacts)
+  - `test/nx_quantum/livebooks_test.exs` (Livebook test)
+  - `bench/ttfr/` (time-to-first-result harness)
 - Invariants:
   - claims backed by reproducible scripts/benchmarks
   - limitations explicitly documented
