@@ -32,7 +32,7 @@ exp
 sample
 ```
 
-The same circuit, shot count, and seed give the same counts on every run. This cell records them.
+The same circuit, shot count, and seed give the same counts on every run. This cell records them. `Estimator` and `Sampler` emit no observability signals today (KG-27 in `docs/roadmap.md`).
 
 ```elixir
 # checkpoint: sample_counts_seed_2026

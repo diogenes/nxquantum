@@ -8,13 +8,13 @@ This notebook wraps public NxQuantum calls in a `GenServer` that you own, starts
 
 It also shows where signals come from. Every signal recorded here is labelled with its source:
 
-* `:nxquantum`: emitted by NxQuantum. Today that is the provider lifecycle only (`NxQuantum.ProviderBridge.run_lifecycle/3` through the `NxQuantum.Ports.ObservabilityEmitter` port). `Estimator` and `Sampler` emit nothing.
+* `:nxquantum`: emitted by NxQuantum. Today that is the provider lifecycle only (`NxQuantum.ProviderBridge.run_lifecycle/3` through the `NxQuantum.Ports.ObservabilityEmitter` port). `Estimator` and `Sampler` emit nothing (KG-27 in `docs/roadmap.md`).
 * `:user`: emitted by code in this notebook, through `:telemetry.span/3`.
 
 What this notebook is not:
 
 * It does not export to OpenTelemetry. The adapter bundled with NxQuantum, `NxQuantum.Adapters.Observability.OpenTelemetry`, records into the process dictionary of the calling process and has no exporter (KG-13 in `docs/roadmap.md`). This notebook defines its own emitter instead.
-* It has no queue, no retry, and no persistence. NxQuantum leaves those to a control plane. See FluxQ for that layer; the notebook does not depend on it.
+* It has no queue, no retry, and no persistence. NxQuantum leaves those to a control plane. That layer is out of scope here; FluxQ, a separate project in early development, is designed to own it. This notebook does not depend on it.
 * It uses the fixture lane only. The provider tokens below are fake.
 
 `NxQuantum.Sampler` and `NxQuantum.ProviderBridge.run_lifecycle/3` are on the experimental tier in `docs/api-stability.md`.
@@ -45,6 +45,8 @@ end
 ## 2) An emitter adapter, defined in the notebook
 
 `NxQuantum.Ports.ObservabilityEmitter` is the port NxQuantum calls. The callbacks are `reset/0`, `snapshot/0`, `span_start/3`, `span_stop/3`, `metric_emit/6` and `log_emit/2`. Every signal this adapter records is labelled `source: :nxquantum`.
+
+The port has a contract the type specs do not show (KG-28 in `docs/roadmap.md`). A custom emitter's `span_start/3` must return a map with `:trace_id` and `:span_id`. An emitter that raises makes `run_lifecycle/3` raise instead of returning an error tuple.
 
 ```elixir
 defmodule Demo.Emitter do

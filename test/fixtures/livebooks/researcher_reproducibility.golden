@@ -1,9 +1,9 @@
 # Goldens for examples/livebook/researcher_reproducibility.livemd.
 #
-# The fingerprint is exact. Its value was measured as identical on OTP 27, 28 and 29
-# (Elixir 1.18.5, 1.19.5, 1.20.4) for this input, but OTP does not promise that
-# term_to_binary(_, [:deterministic]) stays stable across majors. If a future OTP changes it,
-# re-derive the value here and in the notebook prose, and say so in the CHANGELOG.
+# The fingerprint is exact. Measured on OTP 29.1.2 / Elixir 1.20.4. The CI floor job also runs
+# this test on OTP 28.1. OTP does not promise that term_to_binary(_, [:deterministic]) stays
+# stable across majors. If a future OTP changes it, re-derive the value here and in the notebook
+# prose, and say so in the CHANGELOG.
 # Counts are exact. Floats use the 1.0e-6 absolute tolerance (f32 results, docs/backend-support.md).
 %{
   "fingerprint_properties" => %{
@@ -19,21 +19,15 @@
     counts_seed_2027: %{"0" => 1406, "1" => 642},
     different_seed_differs: true
   },
-  # cos(0.0, 0.4, 0.8, 1.2, 2.0, 3.0) to f32 precision
+  # Analytic: cos(angle), compared within 1.0e-6 (the estimator returns f32).
   "closed_form" => %{
     all_within_tolerance: true,
-    values: [
-      1.0,
-      0.9210609940028851,
-      0.6967067093471654,
-      0.3623577544766736,
-      -0.4161468365471424,
-      -0.9899924966004454
-    ]
+    values: Enum.map([0.0, 0.4, 0.8, 1.2, 2.0, 3.0], &:math.cos/1)
   },
-  # |(1406 - 642) / 2048 - cos(1.2)| = |0.37304688 - 0.36235775| = 0.0106891205 (exact: 0.373046875 - cos(1.2))
+  # Analytic: |(1406 - 642) / 2048 - cos(1.2)| = |0.373046875 - cos(1.2)|, where 0.373046875 is exact
+  # for the seed-2027 counts.
   "portability_delta" => %{
-    expectation_delta_abs: 0.0106891205,
+    expectation_delta_abs: abs(0.373046875 - :math.cos(1.2)),
     latency_delta_ms: 0.0,
     sample_kl_divergence: 0.0
   }

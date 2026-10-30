@@ -1,10 +1,10 @@
-# API Stability (v0.2)
+# API Stability
 
-This document declares stable vs experimental API surfaces for v0.2.
+This document declares stable vs experimental API surfaces.
 
-## Stable Surface (v0.2)
+## Stable Surface
 
-These modules/functions are expected to remain contract-stable through v0.2:
+These modules/functions are expected to remain contract-stable until an `api change` says otherwise:
 
 1. `NxQuantum.Circuit.new/1`
 2. `NxQuantum.Circuit.bind/2`
@@ -17,9 +17,9 @@ These modules/functions are expected to remain contract-stable through v0.2:
 9. `NxQuantum.Estimator.expectation_result/2`
 10. `NxQuantum.Estimator.run/2`
 
-## Experimental Surface (v0.2)
+## Experimental Surface
 
-These are available but may evolve during v0.2:
+These are available but may evolve without an `api change`:
 
 1. `NxQuantum.Grad.value_and_grad/3`
 2. `NxQuantum.Compiler.optimize/2`
