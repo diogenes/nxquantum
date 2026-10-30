@@ -95,6 +95,23 @@ NxQuantum benchmark scripts used by the Python harness:
 
 - `bench/nxquantum_python_comparison.exs`
 
+### Major-release timed campaign
+
+When it runs. The multi-hour timed comparison runs at major releases only (owner decision, 2026-10-30), to confirm nothing regressed. It does not run per milestone or per PR. Between major releases the harness is exercised by `--mode check` and `--mode selfcheck` only; the committed correctness evidence is in `bench/results/2026-10-30-h1.3/` (`SUMMARY.md`). The tolerance reading (`tol = max(1e-6, B)`) was confirmed on 2026-10-30 and is recorded in `tolerance_confirmation` in the scenario table.
+
+Steps, in order. Run Python as `.venv-bench/bin/python -I bench/python_alternatives_benchmark.py ...` with the toolchain from `mise.toml`.
+
+1. `--mode pins`. If any pin is not current, bump `requirements-python-alternatives.txt`, rerun `--mode selfcheck --max-qubits 24` and `--mode check --max-qubits 8`, and get a new physics sign-off before continuing.
+2. Confirm the physics sign-off still holds for the pinned versions. The four precision disclosures (NxQuantum, Qiskit, PennyLane, Cirq) and the methods line must still be true of the pinned versions, including the sentences about Cirq's single-precision norm and normalization check, PennyLane's `default.qubit` complex128 default, and the NxQuantum real-gate float64 path.
+3. `--mode pretime` with the R4 budget rule: at most 2 h per (lane, family, width) and 8 h for the campaign (`budget` in the table), lanes in the committed `lane_order`, and `nxquantum_cpu_compiled` only at 16 qubits or fewer. A (lane, family, width) whose single-iteration estimate breaks the rule is dropped and recorded in `pretime.json`, not silently shortened.
+4. Timed runs: 3 per scenario, one lane per invocation (`--mode timed --cache-mode hot|cold --lanes <lane> --scenario <id> --out-dir ...`). Hot rows only at 10 qubits or fewer.
+5. `--mode consensus --results <a/results.json> <b/results.json> ...` across every per-invocation `results.json`. It must pass for every width with rows.
+6. Fill the Cirq disclosure placeholder (the bracketed `<filled from the run>` text in `disclosures.cirq`) from the measured rows, such as the 20-qubit complex64 error recorded in `bench/results/2026-10-30-h1.3/cirq_c64_20q_error.txt` and whatever the timed run measures. Report what was measured, not an extrapolation.
+7. Write `docs/python-alternatives-benchmark-<date>.md` per the plan: cold headline, hot rows at 10 qubits or fewer, the agreement and discrimination columns, the crossover qubit count per family and competitor, and the limits (single machine, single thread, pinned versions, 3-run spread).
+8. Claims audit with `docs-sync`: every number traces to a committed `results.json`, and `grep -rn "<filled from the run>" docs/python-alternatives-benchmark-<date>.md` must show 0 hits in the report. The table placeholder must be filled before any Cirq row is published.
+
+Outputs go to `bench/results/<first-run-date>-<release>/` with `pins.txt`, `selfcheck.txt`, `pretime.json`, one directory per invocation (`results.json`, `values.json`, `environment.txt`, logs), `consensus.txt` and a `SUMMARY.md`. Commit with a clean tree so `environment.txt` shows `git_dirty: false`; write outputs outside the repository during the run (an untracked output directory counts as dirty), and strip absolute paths, usernames and hostnames before committing.
+
 ## Numerical Precision Floor (KG-10)
 
 Measures production expectation error against a float64 dense reference over fixed-seed random circuits. Results are documented in `docs/backend-support.md` ("Numerical Precision"):
