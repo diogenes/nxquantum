@@ -52,7 +52,7 @@ NxQuantum makes no cross-framework speed claims. We keep an internal benchmark h
 - Review hybrid benchmark/dataset/API spec (rerank datasets are synthetic; figures are placeholders): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 - Review the internal provider lifecycle benchmark (fixture lane, environment-specific, 2026-03-20, three providers): [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- Review the BEAM integration case study: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
+- Review an illustrative pattern for embedding NxQuantum in a supervised BEAM service (not a user report, no performance figures): [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 ## Requirements
 
@@ -135,7 +135,7 @@ Track status here:
 - [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md)
 - [docs/migration-python-playbook.md](docs/migration-python-playbook.md)
 - [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
-- [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
+- [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md) (illustrative pattern)
 - [docs/axon-integration.md](docs/axon-integration.md)
 - [docs/model-recipes.md](docs/model-recipes.md)
 - [docs/backend-support.md](docs/backend-support.md)
