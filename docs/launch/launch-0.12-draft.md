@@ -57,9 +57,9 @@ We make three claims and point to the files behind each. Every one is scoped to 
 
 **Toolchain upgrades changed no tracked number.** Moving from Nx 0.11 to Nx 1.0, and from OTP 28 to OTP 29, changed none of the tracked numerics digest lines on the default backend. The digests cover seeded sampler counts, gradients, expectation values and compiler output, and each state was run twice. The scope is one host (Apple M4, macOS 26.6.2), `Nx.BinaryBackend` alone, recorded 2026-10-26. Evidence: `bench/results/2026-10-26-h1.6/SUMMARY.md`. We say "held from OTP 28 to 29 in our run", not more.
 
-**Envelopes are guarded and resumable.** Job, result and error envelopes for the four core provider adapters (IBM Runtime, AWS Braket, Azure Quantum, Google Quantum AI), in the fixture lane, are compared byte for byte with stored snapshots, and a stored envelope can be decoded and resumed. The snapshot tree id was unchanged across the Nx 1.0 upgrade, and FluxQ's test suite passed against that state in a local check on 2026-10-26. Evidence: `test/nx_quantum/contracts/envelope_snapshot_test.exs`, `test/nx_quantum/contracts/envelope_decode_test.exs`, `test/fixtures/contracts/envelopes/`, `docs/api-stability.md`, `bench/results/2026-10-26-h1.6/fluxq-consumer-check.txt`.
+**Envelopes are guarded and resumable.** Job, result and error envelopes for the four core provider adapters (IBM Runtime, AWS Braket, Azure Quantum, Google Quantum AI), in the fixture lane, are compared byte for byte with stored snapshots. In 0.12.0, a stored envelope can be decoded and resumed. The snapshot tree id was unchanged across the Nx 1.0 upgrade, and FluxQ's own test suite (18 tests and 2 doctests, 0 failures) passed against NxQuantum on Nx 1.0 in a local scratch-copy check on 2026-10-26, on OTP 28. Evidence: `test/nx_quantum/contracts/envelope_snapshot_test.exs`, `test/nx_quantum/contracts/envelope_decode_test.exs`, `test/fixtures/contracts/envelopes/`, `docs/api-stability.md`, `bench/results/2026-10-26-h1.6/fluxq-consumer-check.txt`.
 
-**Compiler and transpiler passes are checked against an independent dense reference.** The compiler property suite uses 3 fixed seed sets with 12 random circuits each, up to 6 qubits. The tolerance is 1e-9 for exact rewrites and 1e-6 for single-qubit resynthesis. Routing equivalence and a gate-identity catalogue are checked the same way. The suites found 2 defects, both fixed with regression tests. Evidence: `test/property/compiler_semantic_equivalence_property_test.exs`, `test/property/gate_identity_property_test.exs`, `test/property/transpiler_routing_equivalence_property_test.exs`, `test/support/dense_reference.ex`, `CHANGELOG.md`.
+**Compiler and transpiler passes are checked against an independent dense reference.** The compiler property suite uses 3 fixed seed sets with 12 random circuits each, up to 6 qubits. The tolerance is 1e-9 for exact rewrites and 1e-6 for single-qubit resynthesis. Routing equivalence and a gate-identity catalogue are checked the same way. The suites found 2 code defects, both fixed with regression tests; the fixes ship in 0.12.0. Evidence: `test/property/compiler_semantic_equivalence_property_test.exs`, `test/property/gate_identity_property_test.exs`, `test/property/transpiler_routing_equivalence_property_test.exs`, `test/support/dense_reference.ex`, `CHANGELOG.md`.
 
 CI status: <link a green CI run at publish time>.
 
@@ -100,7 +100,7 @@ What we would like from you: try the two-minute example and tell us what happene
 
 ## Claims table (INTERNAL. Remove before publication.)
 
-Every factual sentence of the draft above, with its in-repo evidence. Paths are relative to the repository root and were checked against origin/main (d271840).
+Every factual sentence of the draft above, with its in-repo evidence. Paths are relative to the repository root and were checked against origin/main (bb17b47).
 
 | # | Claim | Evidence |
 | --- | --- | --- |
@@ -113,7 +113,7 @@ Every factual sentence of the draft above, with its in-repo evidence. Paths are 
 | 7 | Install via `Mix.install([{:nx_quantum, "~> 0.12.0"}])` works on default `Nx.BinaryBackend`, no EXLA | `mix.exs` (EXLA optional, env-gated `NXQ_ENABLE_EXLA`); `CHANGELOG.md` Changed (env gating unchanged). Gate: TTFR on published 0.12.0 (checklist) |
 | 8 | The example call returns `%{"0" => 752, "1" => 272}` | `test/nx_quantum/sampler_test.exs` ("Sampler.run counts are pinned for RY(1.1), seed 13, 1024 shots") |
 | 9 | Analytic P(1) = (1 - cos 1.1)/2 = 0.2732; observed 0.2656 | same test, comment lines; 272/1024 = 0.265625 |
-| 10 | `Sampler.run` is experimental | `docs/api-stability.md` (experimental tier, added by H1.5 PR-2; this claim waits for that PR) |
+| 10 | `Sampler.run` is experimental | `docs/api-stability.md` (Experimental Surface items 4 and 15, on origin/main since H1.5 PR-2) |
 | 11 | Our own check covers one host | `bench/results/2026-10-26-h1.6/SUMMARY.md` header |
 | 12 | Evidence 1: Nx 0.11 to 1.0 and OTP 28 to 29 changed no tracked digest line (default backend) | `bench/results/2026-10-26-h1.6/SUMMARY.md` (all lines "Identical y"; after-pr-b section) |
 | 13 | Digests cover seeded sampler counts, gradients, expectation values, compiler output | same file: `sampler_run_ry_sha`, `grad_bits_sha`, `production_expval_bits_sha`, `compiler_optimize_ops_sha` |
@@ -126,12 +126,12 @@ Every factual sentence of the draft above, with its in-repo evidence. Paths are 
 | 20 | Evidence 3: 3 fixed seed sets x 12 random circuits, up to 6 qubits | `test/property/compiler_semantic_equivalence_property_test.exs` (`@seed_sets`, `@circuits_per_seed 12`, `@max_qubits 6`) |
 | 21 | Tolerance 1e-9 exact rewrites, 1e-6 resynthesis | same file (`@exact_tolerance`, `@resynthesis_tolerance`) |
 | 22 | Routing equivalence and gate-identity catalogue are checked the same way (independent dense reference) | `test/property/transpiler_routing_equivalence_property_test.exs`; `test/property/gate_identity_property_test.exs`; `test/support/dense_reference.ex` |
-| 23 | The suites found 2 defects, both fixed with regression tests | `docs/roadmap.md` H1.4 Evidence (defects 1 and 2); `CHANGELOG.md` Fixed |
+| 23 | The suites found 2 code defects (a third finding was a weak test step) | `docs/roadmap.md` H1.4 Evidence (defects 1 and 2); `CHANGELOG.md` Fixed |
 | 24 | Envelope records carry a `v1` schema version; changes need a bump and CHANGELOG entry | `docs/api-stability.md` Envelope policy items 1-2 |
 | 25 | `Serialization.from_external_map/1` decodes `v1` and returns typed errors for unknown versions, types, states, codes, operations; ships in 0.12.0 | `CHANGELOG.md` [Unreleased] Added; `docs/api-stability.md` item 4; `test/nx_quantum/contracts/envelope_decode_test.exs` |
-| 26 | FluxQ is a separate project, still in development | `docs/api-stability.md` ("Known consumer: FluxQ (separate project)"); `docs/roadmap.md` line 7 (FluxQ is a separate project); development status per the H1.5 plan (FluxQ Phase 0); verify at publish |
+| 26 | FluxQ is a separate project, still in development | `docs/product-positioning.md` line 76 and `docs/vision.md` line 89 ("in development"). Verify at publish. |
 | 27 | FluxQ reads envelopes unchanged and gates releases on snapshot files | `docs/api-stability.md` (G2 gate sentence) |
-| 28 | FluxQ is not yet available | FluxQ pre-MVP per the H1.5 plan; no in-repo artifact. Verify at publish (checklist: FluxQ G2 merged) |
+| 28 | FluxQ is not yet available | same two files ("in development"); verify at publish (checklist: FluxQ G2 merged) |
 | 29 | Determinism covers simulator and fixture lanes; live runs are probabilistic, env-gated | `docs/provider-support-catalog.md` (fixture/live table, env-gated); `docs/testing-strategy.md` |
 | 30 | Live lanes covered by typed lifecycle contracts | `docs/provider-support-catalog.md` (lifecycle column); `docs/playbooks/provider-contracts.md` |
 | 31 | Simulator is single precision (`complex64`) | `docs/backend-support.md` "Numerical Precision"; `lib/nx_quantum/adapters/simulators/state_vector/state.ex` |
@@ -140,7 +140,7 @@ Every factual sentence of the draft above, with its in-repo evidence. Paths are 
 | 34 | Hybrid benchmark datasets are synthetic | `docs/hybrid-quantum-ai-benchmark.md` line 7 and 39; `bench/datasets/rerank/*.manifest.json`; `test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs` |
 | 35 | Live provider lanes are env-gated | `docs/provider-support-catalog.md` |
 | 36 | A roadmap exists with no promises attached | `docs/roadmap.md` |
-| 37 | Don't-claim: case-study figures are modeled | `docs/roadmap.md` KG-24 (added by H1.5 PR-1; not on origin/main until then); `lib/nx_quantum/performance.ex` (model) |
+| 37 | Don't-claim: case-study figures are modeled | `docs/roadmap.md` KG-24; `lib/nx_quantum/performance/model.ex` (model) |
 | 38 | Don't-claim: no known dependents on Hex | Hex package page fetched 2026-10-30 (0 dependents), recorded in `docs/research/kano-survey-h1.5.md` baselines |
 | 39 | Don't-claim: rerank figures are placeholders (KG-5, KG-11); tools not quantum (KG-12) | `docs/roadmap.md` KG-5, KG-11, KG-12 |
 | 40 | Don't-claim: OpenTelemetry adapter does not export (KG-13) | `docs/roadmap.md` KG-13 |
