@@ -47,7 +47,8 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
   test "only cirq_c64 is ungated and every family width has a tolerance for every lane", %{table: table} do
     ungated = for {id, lane} <- table["lanes"], lane["agreement"] == "ungated", do: id
     assert ungated == ["cirq_c64"]
-    assert is_boolean(table["tolerances_confirmed"])
+    assert table["tolerances_confirmed"] == true
+    assert table["tolerance_confirmation"]["reading"] =~ "max(1e-6, B)"
 
     for family <- ["real", "complex"], n <- [4, 8, 12, 16, 20, 24], {lane, _} <- table["lanes"] do
       assert Map.has_key?(table["tolerances"][family][Integer.to_string(n)], lane)
