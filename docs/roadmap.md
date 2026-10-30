@@ -55,7 +55,7 @@ Status values: `planned`, `in progress`, `done`.
 ## Current State (0.11.0)
 
 Strengths:
-- deterministic local simulation, fastest on 2–8 qubit workloads;
+- deterministic local simulation covering 2–8 qubit workloads;
 - typed provider lifecycle across IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI (fixture, `live_smoke`, and `live` lanes);
 - OpenTelemetry observability;
 - AI tool contracts;
@@ -405,7 +405,7 @@ Review gate:
 
 | Gate | Question (see `docs/vision.md` §8) | Status | Decision and rationale |
 | --- | --- | --- | --- |
-| D1 | Hybrid quantum-AI stays the lead message? | decided 2026-10-26 (owner): no | Hybrid quantum-AI becomes an application of the pillars and the lead becomes "deterministic quantum execution on BEAM", because the primary audience is BEAM/Nx teams embedding quantum workloads in their services (`docs/vision.md` §4), whom the Trust and Contracts pillars (§5) serve directly. Decided before H1.3 finished: no real-data evaluation was run, and "no" is the branch taken without that evidence. The in-repo rerank datasets are synthetic (KG-5), benchmarks are internal performance references rather than official results (owner, 2026-10-26), and the real-data rerank lane is parked (`docs/vision.md` §11); D1 reopens on that row's trigger. FluxQ needs no change: its `AGENTS.md` has no hybrid quantum-AI invariant (checked 2026-10-26). The vision §13 item 6 competitor recheck moves to the H1.3 benchmark refresh. |
+| D1 | Hybrid quantum-AI stays the lead message? | decided 2026-10-26 (owner): no | Hybrid quantum-AI becomes an application of the pillars and the lead becomes "deterministic quantum execution on BEAM", because the primary audience is BEAM/Nx teams embedding quantum workloads in their services (`docs/vision.md` §4), whom the Trust and Contracts pillars (§5) serve directly. Decided before H1.3 finished: no real-data evaluation was run, and "no" is the branch taken without that evidence. The in-repo rerank datasets are synthetic (KG-5), benchmarks are internal performance references rather than official results (owner, 2026-10-26), and the real-data rerank lane is parked (`docs/vision.md` §11); D1 reopens on that row's trigger. FluxQ needs no change: its `AGENTS.md` has no hybrid quantum-AI invariant (checked 2026-10-26). The vision §13 item 6 competitor recheck moves to the H1.3 benchmark refresh. The AGENTS.md messaging invariant was updated with owner approval on 2026-10-30. |
 | D2 | Determinism holds under distribution? | pending (after H2.1) | — |
 | D3 | Enter Horizon 3? | pending (after H2.3) | — |
 

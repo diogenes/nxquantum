@@ -29,20 +29,9 @@ See positioning and comparison details:
 - [docs/product-positioning.md](docs/product-positioning.md)
 - [docs/vision.md](docs/vision.md)
 
-## Performance Value Proposition
+## Performance
 
-Evidence, not hype:
-
-- In the reproducible cross-framework benchmark (`docs/python-alternatives-benchmark-2026-03-25.md`), NxQuantum is faster than Qiskit on all 5 local simulator scenarios in the report (`baseline_2q`, `deep_6q`, `batch_obs_8q`, `state_reuse_8q_xy`, `sampled_counts_sparse_terms`).
-- The same report shows strong wins vs PennyLane and Cirq on the same machine and run configuration.
-- In the BEAM integration case-study throughput lane, throughput increases from `1333.333 ops/s` to `3030.303 ops/s` on `:cpu_portable`, and from `1666.667 ops/s` to `3787.879 ops/s` on `:cpu_compiled` as batch size increases (`8 -> 32`).
-
-Benchmark references:
-
-- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
-- [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
-
-Caveat: these speed figures are from local simulator/fixture workflows on specific environments; they are not universal claims about remote provider/QPU execution latency.
+NxQuantum makes no cross-framework speed claims. We keep an internal benchmark harness (`bench/README.md`) that compares NxQuantum with reference simulators for our own performance work; its timed comparison runs at major releases. The 2026-03-25 report is kept as a historical internal reference.
 
 ## Determinism Scope (Important)
 
@@ -62,8 +51,7 @@ Caveat: these speed figures are from local simulator/fixture workflows on specif
 - Review hybrid benchmark/dataset/API spec (rerank datasets are synthetic; figures are placeholders): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 - Review reproducible provider benchmark matrix: [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- Review Python alternatives benchmark run: [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
-- Review benchmark narrative evidence: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
+- Review the BEAM integration case study: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 ## Requirements
 
@@ -98,7 +86,7 @@ For full setup and API walkthroughs and usage examples:
 
 - v0.8 migration-assurance toolkit scope from ADR 0007 (unscheduled).
 - Additional provider depth and broader provider-native dynamic/non-gate-model paths.
-- More benchmark-backed case studies across real BEAM deployment patterns.
+- More case studies from real BEAM deployments.
 
 Track status here:
 
@@ -140,7 +128,6 @@ Track status here:
 - [docs/archive/v0.5-acceptance-criteria.md](docs/archive/v0.5-acceptance-criteria.md)
 - [docs/migration-packs.md](docs/migration-packs.md)
 - [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- [docs/python-alternatives-benchmark-2026-03-25.md](docs/python-alternatives-benchmark-2026-03-25.md)
 - [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
 - [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
 

@@ -49,7 +49,7 @@ Not targeted: teams whose top need is provider breadth, compiler depth, or large
    - [docs/decision-matrix.md](decision-matrix.md)
 4. Livebook tutorials:
    - [docs/livebook-tutorials.md](livebook-tutorials.md)
-5. Case-study benchmark narrative:
+5. BEAM integration case study:
    - [docs/case-study-beam-integration.md](case-study-beam-integration.md)
 
 ## Important Gaps (Planned)
