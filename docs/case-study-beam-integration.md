@@ -10,7 +10,7 @@ This page is an illustrative pattern, not a user report. No external deployment 
 
 ## Check It Yourself
 
-- Supervised-service Livebook: `examples/livebook/supervised_service.livemd` (expected with H1.5 PR-2; not in the tree yet).
+- Supervised-service Livebook: `examples/livebook/supervised_service.livemd`.
 - Numerics held across the Nx and OTP upgrade on one host: `bench/results/2026-10-26-h1.6/SUMMARY.md`.
 - Envelope snapshots: `test/nx_quantum/contracts/envelope_snapshot_test.exs`.
 
