@@ -224,7 +224,7 @@ Mix/Hex/XDG homes and times each step: `mix local.hex`, `mix local.rebar`,
 `mix new demo`, writing the deps line, `mix deps.get`, `mix compile`, and
 `mix run` of the first-result snippet. The snippet is plain Elixir that
 returns its value; the harness evaluates it and inspects the return value.
-Success is exit 0 plus the expected value (exit 3 on mismatch). Elixir/OTP must already be installed;
+Success is exit 0 plus the expected value. Exit codes: 0 ok, 1 a step failed, 2 usage error, 3 output mismatch. Elixir/OTP must already be installed;
 human reading time is not measured. Results are an internal,
 environment-specific reference.
 

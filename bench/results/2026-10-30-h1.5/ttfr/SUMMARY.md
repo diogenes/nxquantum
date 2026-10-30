@@ -51,3 +51,5 @@ baseline, Nx 0.x), one run (`hex-0.11.0.log`): total 7.1 s, printed `0.362357735
 Rerun against `{:nx_quantum, "~> 0.12.0"}` from Hex with the exact
 getting-started snippet (`--expect` set from the docs) and commit the logs here
 as the gate evidence. See `bench/README.md`.
+
+Harness argument parsing and environment recording were tightened after this run (usage-error exit codes, `git_dirty`); the measured steps are unchanged.

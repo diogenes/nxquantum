@@ -15,7 +15,7 @@
 #
 # Usage:
 #   bench/ttfr/run.sh --out DIR [--label NAME] [--package-dir DIR | --dep LINE]
-#                     [--snippet FILE] --expect TEXT [--work DIR]
+#                     [--snippet FILE] [--expect TEXT] [--work DIR]
 #
 #   --dep LINE         deps tuple, e.g. '{:nx_quantum, "~> 0.12.0"}'
 #   --package-dir DIR  use '{:nx_quantum, path: DIR}' (an unpacked
@@ -34,15 +34,17 @@ repo_root=$(cd "$(dirname "$0")/../.." && pwd)
 dep=""; pkg=""; snippet="$repo_root/test/fixtures/docs/getting_started_first_result.elixir"
 expect="[0.3623577356338501]"; out=""; label="run"; work=""
 
+need() { [ $# -ge 2 ] || { echo "missing value for $1" >&2; exit 2; }; }
+
 while [ $# -gt 0 ]; do
   case "$1" in
-    --dep) dep=$2; shift 2 ;;
-    --package-dir) pkg=$2; shift 2 ;;
-    --snippet) snippet=$2; shift 2 ;;
-    --expect) expect=$2; shift 2 ;;
-    --out) out=$2; shift 2 ;;
-    --label) label=$2; shift 2 ;;
-    --work) work=$2; shift 2 ;;
+    --dep) need "$@"; dep=$2; shift 2 ;;
+    --package-dir) need "$@"; pkg=$2; shift 2 ;;
+    --snippet) need "$@"; snippet=$2; shift 2 ;;
+    --expect) need "$@"; expect=$2; shift 2 ;;
+    --out) need "$@"; out=$2; shift 2 ;;
+    --label) need "$@"; label=$2; shift 2 ;;
+    --work) need "$@"; work=$2; shift 2 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -159,6 +161,7 @@ elif [ "$got" != "$expect" ]; then status="FAIL (output mismatch)"; code=3; fi
   echo "network: live network to hex.pm and builds.hex.pm (not throttled or mirrored)"
   echo "caches: fresh empty MIX_HOME, HEX_HOME, HEX_CACHE_DIR, XDG_* dirs per run"
   echo "script_ref: $(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null)"
+  if [ -n "$(git -C "$repo_root" status --porcelain 2>/dev/null)" ]; then echo "git_dirty: true"; else echo "git_dirty: false"; fi
 } > "$out/environment.txt"
 
 # Scrub absolute paths before anything is committed.
