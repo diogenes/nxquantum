@@ -6,7 +6,7 @@ This document owns the long-horizon direction. `docs/roadmap.md` owns execution:
 
 ## 1. North Star
 
-NxQuantum is the deterministic, provider-neutral quantum execution engine for BEAM. Teams can embed it directly in Elixir applications, or operate it through FluxQ, the control plane ("FluxQ powered by NxQuantum").
+NxQuantum aims to be the provider-neutral quantum execution engine for BEAM, deterministic in simulator and fixture lanes. Teams can embed it directly in Elixir applications, or operate it through FluxQ, the control plane ("FluxQ powered by NxQuantum").
 
 ## 2. Product Line Boundary
 
@@ -38,7 +38,7 @@ BEAM was built for this class of problem. Each project takes one side of the bet
 - **NxQuantum:** distributed execution primitives, plus a deterministic simulator of distributed quantum systems in which failures are reproducible.
 - **FluxQ:** the operations layer, meaning policies, state, and UI.
 
-The joint value is a control plane whose policies are tested against a deterministic simulated quantum system before they touch hardware. I found no competitor offering this.
+The joint value is a control plane whose policies are tested against a deterministic simulated quantum system before they touch hardware. Whether any competitor offers this is unverified; it is rechecked at each decision gate (§13 item 6).
 
 ## 4. Audience
 
@@ -49,7 +49,7 @@ The joint value is a control plane whose policies are tested against a determini
 
 ## 5. Pillars
 
-1. **Trust.** Deterministic by default, verified physics, evidence-backed claims with explicit limits.
+1. **Trust.** Deterministic by default in simulator and fixture lanes, verified physics, evidence-backed claims with explicit limits.
 2. **Contracts.** Stable, versioned, typed envelopes that hosts (FluxQ and user apps) can build on without breakage.
 3. **Scale-out.** Distributed execution within a job, then deterministic simulation of distributed quantum systems.
 
@@ -63,7 +63,7 @@ Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an
 | --- | --- | --- | --- |
 | Provider-breadth race; compiler-breadth race | Provider surface beyond the core set | Determinism, contract stability, reproducible evidence | Within-job distributed execution on BEAM; deterministic simulation testing of distributed quantum systems (paired with FluxQ policies) |
 
-**Kano hypotheses** (validated by the H1.5 survey)
+**Kano hypotheses** (to be validated by the H1.5 survey)
 
 | Category | Features |
 | --- | --- |
@@ -80,10 +80,10 @@ Hybrid quantum-AI (kernel rerank, optimization helpers, AI tool contracts) is an
 | Cirq | Google hardware research |
 | CUDA-Q | GPU simulation, QPU–GPU datacenter integration, decoding. CUDA-Q Logical (announced) overlaps orchestration inside the datacenter. |
 | memQ | Distributed compilation across linked QPUs |
-| **NxQuantum** | Deterministic, provider-neutral execution engine on BEAM; distributed within-job execution; distributed-systems simulation |
+| **NxQuantum** | Provider-neutral execution engine on BEAM, deterministic in simulator and fixture lanes; planned: within-job distributed execution (H2), distributed-systems simulation (H3) |
 | **FluxQ** | QROps control plane over NxQuantum |
 
-One line: *NxQuantum runs quantum workloads deterministically on BEAM, from one node to many. FluxQ operates them.*
+One line: *NxQuantum runs quantum workloads on BEAM, deterministically in simulator and fixture lanes; multi-node execution is the Horizon 2 goal. FluxQ operates them.*
 
 ## 7. Horizons
 

@@ -57,7 +57,7 @@ Status values: `planned`, `in progress`, `done`.
 Strengths:
 - deterministic local simulation covering 2–8 qubit workloads;
 - typed provider lifecycle across IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI (fixture, `live_smoke`, and `live` lanes);
-- OpenTelemetry observability;
+- telemetry with OpenTelemetry-style names behind a pluggable emitter (in-process adapter only; KG-13);
 - AI tool contracts;
 - TurboQuant rerank.
 
@@ -164,7 +164,7 @@ Review gate:
 
 Goal:
 
-1. Public speed and quality claims rest on current, version-pinned evidence with stated limits.
+1. Internal speed and quality evidence rests on current, version-pinned runs with stated limits; the README makes no cross-framework speed claims (owner decision 2026-10-30).
 2. The in-repo hybrid rerank evidence is labeled synthetic, and D1 is recorded.
 
 Implementation deliverables:
@@ -179,7 +179,7 @@ Implementation deliverables:
 Review gate:
 
 1. Reports are version-pinned, 3-run, and caveat-labeled.
-2. README speed claims cite the new report, including the crossover.
+2. The README makes no cross-framework speed claims; benchmark reports are labeled internal, environment-specific references.
 3. Parked 2026-10-26 (D1); rerank datasets and hybrid figures carry the synthetic/placeholder label instead.
 4. D1 is recorded with its rationale.
 5. Competitor facts in `docs/vision.md` §6 are rechecked and dated (vision §13 item 6; deferred from D1).
@@ -418,6 +418,11 @@ Decisions already taken (2026-10-18):
 
 Decisions already taken (2026-10-25):
 - Dependency policy: track the latest stable Nx ecosystem and Elixir/OTP releases, checked at each minor release cut (H1.6; `docs/api-stability.md`).
+
+Decisions already taken (2026-10-30, owner):
+- The README makes no cross-framework speed claims; benchmark reports are internal, environment-specific references ("Drop them.").
+- Timed performance runs happen at major releases only ("Performance runs I consider necessary only on major releases, to ensure we're not breaking stuff."). What counts as a major release while on 0.x is an open owner question.
+- The AGENTS.md messaging invariant (line 12) is approved as worded ("Approved.").
 
 ## Docs Consolidation Plan (executed in H1.1, 2026-10-19)
 

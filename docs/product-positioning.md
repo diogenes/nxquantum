@@ -27,7 +27,7 @@ Not targeted: teams whose top need is provider breadth, compiler depth, or large
 3. Seeded deterministic behavior across simulator/fixture sampling and batch workflows.
 4. Compiler and transpiler property suites plus the documented single-precision floor (`docs/backend-support.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
 5. Golden envelope snapshots (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
-6. OpenTelemetry-style telemetry behind a pluggable emitter, and experiment fingerprints (`docs/observability.md`).
+6. OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled OpenTelemetry-named adapter records in-process; no OpenTelemetry exporter ships, KG-13), and experiment fingerprints (`docs/observability.md`).
 
 ## Comparison Snapshot
 

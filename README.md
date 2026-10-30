@@ -2,27 +2,27 @@
 
 Deterministic quantum execution on BEAM for Elixir and Nx teams.
 
-NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simulation, estimation, sampling, kernels, and transpilation inside your BEAM application, with no separate Python service. With fixed inputs, seed, and runtime profile, simulator and fixture runs return the same outputs every time. Jobs for IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI go through one typed lifecycle with versioned envelopes ([support tiers](docs/provider-support-catalog.md)); live hardware results remain probabilistic (see Determinism Scope).
+NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simulation, estimation, sampling, kernels, and transpilation inside your BEAM application, with no separate Python service. With fixed inputs, seed, runtime profile, and toolchain, simulator and fixture runs return the same outputs (see Determinism Scope). Jobs for IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI go through one typed lifecycle with versioned envelopes ([support tiers](docs/provider-support-catalog.md)); live hardware results remain probabilistic (see Determinism Scope).
 
 ## Who It Is For
 
 - Elixir and Nx teams embedding quantum workloads in BEAM services, who need seeded, reproducible results and typed contracts in the same runtime.
 - Teams building host applications or control planes on NxQuantum's versioned job, result, and error envelopes and structured telemetry.
 - Researchers who need reproducible runs: fixed seeds, experiment fingerprints, and Livebook tutorials.
-- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically today, and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
+- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically today (results still report `execution.mode: :quantum`; KG-12), and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
 - Not a primary fit (today) for teams whose top requirement is broad hardware-provider coverage, compiler depth, or large-scale GPU simulation.
 
 ## Why Teams Choose NxQuantum
 
 Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx/BEAM community by providing:
 
-- Deterministic-by-default execution: fixed inputs, seed, and runtime profile give the same outputs in simulator and fixture lanes, so CI and regression checks are reproducible.
+- Deterministic-by-default execution: fixed inputs, seed, runtime profile, and toolchain give the same outputs in simulator and fixture lanes, so CI and regression checks are reproducible.
 - Quantum execution in the same BEAM runtime as your services and `Nx` code, with no required cross-language service hop.
 - Typed, versioned contracts: one provider job lifecycle (`submit_job`, `poll_job`, `cancel_job`, `fetch_result`) with typed errors, plus explicit runtime-profile fallback.
-- Envelope compatibility guarded in CI: golden snapshots of job, result, and error envelopes fail the build on any byte change, and a deliberate change requires a `schema_version` bump (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
-- Verified physics with stated limits: compiler and transpiler passes are property-tested against an independent dense reference, and the single-precision accuracy floor is documented. (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
-- Telemetry with OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled adapter records in-process; no OpenTelemetry exporter ships), plus experiment fingerprints for comparing runs. VM-independent fingerprint hashing is unreleased (on `main`, see CHANGELOG `[Unreleased]`).
-- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically today.
+- Envelope compatibility guarded in CI: golden snapshots of job, result, and error envelopes fail the build on any byte change, and a shape or meaning change requires a `schema_version` bump (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
+- Verified physics with stated limits: compiler and transpiler passes are property-tested against an independent dense reference on random circuits up to 6 qubits, and the single-precision accuracy floor is documented. (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
+- Telemetry with OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled OpenTelemetry-named adapter records in-process; no OpenTelemetry exporter ships), plus experiment fingerprints for comparing runs. VM-independent fingerprint hashing is unreleased (on `main`, see CHANGELOG `[Unreleased]`).
+- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-inspired compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically today (results still report `execution.mode: :quantum`; KG-12).
 
 See positioning and comparison details:
 
@@ -31,13 +31,14 @@ See positioning and comparison details:
 
 ## Performance
 
-NxQuantum makes no cross-framework speed claims. We keep an internal benchmark harness (`bench/README.md`) that compares NxQuantum with reference simulators for our own performance work; its timed comparison runs at major releases. The 2026-03-25 report is kept as a historical internal reference.
+NxQuantum makes no cross-framework speed claims. We keep an internal benchmark harness (`bench/README.md`) that compares NxQuantum with reference simulators for our own performance work; its results are internal, environment-specific references, not official results, and its timed comparison runs at major releases (owner decision 2026-10-30; see `docs/roadmap.md` Decision Log). The 2026-03-25 report is kept as a historical internal reference.
 
 ## Determinism Scope (Important)
 
 - Deterministic means fixed inputs + fixed seed + fixed runtime profile/options produce stable outputs in simulator and fixture lanes.
 - Live provider/QPU execution remains physically probabilistic and can vary due to noise, calibration drift, and queue/runtime conditions.
 - For live lanes, NxQuantum guarantees typed lifecycle/error envelopes and reproducible request metadata; it does not guarantee bit-for-bit identical measured outcomes.
+- Bit-identical repeat runs are verified on the default `Nx.BinaryBackend` for a fixed toolchain (`bench/results/2026-10-26-h1.6/SUMMARY.md`; `docs/roadmap.md` H1.6); EXLA and Torchx are verified within stated tolerances, not bit-for-bit. Ids and fingerprints are stable within an OTP major release.
 
 ## Choose Your Path
 
@@ -50,10 +51,12 @@ NxQuantum makes no cross-framework speed claims. We keep an internal benchmark h
 - Review Quantum AI tool contract strategy (sync + async): [docs/quantum-ai-tool-contracts.md](docs/quantum-ai-tool-contracts.md)
 - Review hybrid benchmark/dataset/API spec (rerank datasets are synthetic; figures are placeholders): [docs/hybrid-quantum-ai-benchmark.md](docs/hybrid-quantum-ai-benchmark.md)
 - Review TurboQuant-inspired rerank compression guide: [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
-- Review reproducible provider benchmark matrix: [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
+- Review the internal provider lifecycle benchmark (fixture lane, environment-specific, 2026-03-20, three providers): [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
 - Review the BEAM integration case study: [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 
 ## Requirements
+
+These are the requirements on `main` (unreleased). NxQuantum 0.11.0 on Hex requires `nx ~> 0.10` (see CHANGELOG `[Unreleased]`).
 
 - Elixir `~> 1.19` on OTP 28 or newer. CI tests two toolchain pairs: Elixir 1.19.1 / OTP 28.1 (the supported floor; optional backends off) and Elixir 1.20.4 / OTP 29.1.2. The optional EXLA and Torchx backends are tested on the 1.20.4 / OTP 29.1.2 pair only (`.github/workflows/ci.yml`).
 - Nx `~> 1.0`.
@@ -86,7 +89,7 @@ For full setup and API walkthroughs and usage examples:
 
 - v0.8 migration-assurance toolkit scope from ADR 0007 (unscheduled).
 - Additional provider depth and broader provider-native dynamic/non-gate-model paths.
-- More case studies from real BEAM deployments.
+- Case studies from named external BEAM deployments (none documented yet).
 
 Track status here:
 
