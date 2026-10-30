@@ -1,5 +1,5 @@
 label: run2
-date_utc: 2026-10-30T09:50:43Z
+date_utc: 2026-10-30T09:55:02Z
 dep: {:nx_quantum, path: "<unpacked-package>"}
 expect: [0.3623577356338501]
 cache_state_at_start: MIX_HOME=empty HEX_HOME=empty HEX_CACHE_DIR=empty XDG_CACHE_HOME=empty

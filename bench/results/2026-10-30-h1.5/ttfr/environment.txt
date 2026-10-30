@@ -7,4 +7,4 @@ elixir: Elixir 1.20.4 (compiled with Erlang/OTP 29)
 otp_release: 29
 network: live network to hex.pm and builds.hex.pm (not throttled or mirrored)
 caches: fresh empty MIX_HOME, HEX_HOME, HEX_CACHE_DIR, XDG_* dirs per run
-script_ref: 2cb4c5a
+script_ref: fbe7665
