@@ -1,0 +1,46 @@
+date_utc: 2026-10-30
+os: macOS 26.6.2
+cpu: Apple M4
+elixir: 1.20.4
+otp_release: 29
+otp_version: 29.1.2
+nx: 1.0.0
+exla: 1.0.0
+torchx: not present
+complex: 1.0.0
+NXQ_ENABLE_EXLA: unset
+NXQ_ENABLE_TORCHX: unset
+MIX_ENV: dev
+git_head: 18e15b2f5bc618790adfd521d0b622d887d43fed
+git_dirty: false
+backend: {Nx.BinaryBackend, []}
+beam_schedulers_online: 1
+beam_dirty_cpu_schedulers_online: 1
+beam_schedulers_expected: 1
+beam_max_concurrency: 1
+ELIXIR_ERL_OPTIONS: +S 1:1
+harness_mode: check
+python: 3.13.16 (.venv-bench/bin/python)
+python_flags_isolated: True
+pip_freeze_sha256: 853f1d88abcf5306b3578c92ccd4447332f2d555e1004cbb05f5cc1bc9f81259
+pip_freeze_matches_committed: True
+numpy: 2.5.4
+blas: {"detection method": "system", "found": true, "include directory": "unknown", "lib directory": "unknown", "name": "accelerate", "openblas configuration": "unknown", "pc file directory": "unknown", "version": "unknown"}
+numpy_config_machine: {"build": {"cpu": "aarch64", "endian": "little", "family": "aarch64", "system": "darwin"}, "host": {"cpu": "aarch64", "endian": "little", "family": "aarch64", "system": "darwin"}}
+fixture_sha256: 8ea1b2927b60014ffd569fd9d0d70b1c1c700ef08644e1cf83a3b31126f6eecd
+table_sha256: 20488fb4439d3276d90feef51b485194c9e5661f2d12ce42ede5a414670a5d38
+tolerances_confirmed: True
+thread_counts: {"MKL_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "VECLIB_MAXIMUM_THREADS": "1", "beam_schedulers": 1, "max_concurrency": 1}
+lane_dtypes: {"cirq_c128_equivalence": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt", "cirq_c64": "complex64 state (cirq.Simulator default); expectation returned as Python complex", "nxquantum_cpu_compiled": "complex64 state, float32 values (real-gate Z path: float64 state)", "nxquantum_cpu_portable": "complex64 state, float32 values (real-gate Z path: float64 state)", "pennylane": "complex128 state, float64 values", "qiskit": "complex128 state, float64 values"}
+nxquantum_child_elixir_erl_options: +S 1:1
+cpu_wall_lane_call: per row, RUSAGE_SELF delta for Python lanes and RUSAGE_CHILDREN delta for the NxQuantum subprocess over the whole lane call (VM startup and compile included for NxQuantum); rows above 1.1 are labelled
+cpu_wall_timed_loop: NxQuantum rows only; :erlang.statistics(:runtime) delta (process CPU across all OS threads, ms resolution) over the :timer.tc wall time of the timed loop alone (no startup)
+disclosure_nxquantum: NxQuantum simulates in complex64 and returns float32 expectation values. Real-gate Pauli-Z circuits (H, X, Z, RY, CNOT) use a float64 state with float32-rounded gate coefficients. The ⟨Z⟩ sums accumulate in float64. Both `cpu_portable` and `cpu_compiled` evolve on Nx.BinaryBackend.
+disclosure_qiskit: `qiskit.quantum_info.Statevector` simulates in complex128 and returns float64 expectation values.
+disclosure_pennylane: `default.qubit` simulates in complex128 (its default for NumPy inputs) and returns float64 expectation values.
+disclosure_cirq: `cirq.Simulator()` defaults to complex64. `simulate_expectation_values` renormalizes the final state using a norm computed by a single-precision BLAS dot, checks normalization with `np.isclose(norm, 1, atol=1e-7)` (which allows |norm − 1| ≤ 1.01e-5), and sums each expectation value in complex64 through NumPy/BLAS. It returns Python `complex` values, and the harness records their real part. On state-based scenarios its timed values are disclosed, not tolerance-checked; its sampled-counts rows (`cirq_c64`) are float64 Python helpers and are gated at 1e-6. Semantic equivalence is proven by an untimed run of the same circuit (identical gates and angles) with `cirq.Simulator(dtype=np.complex128)`. On this machine (Accelerate BLAS), the complex64 lane [<filled from the run>]; these are reported as measured, not extrapolated.
+disclosure_cirq_placeholder: [<filled from the run>] must be replaced with the measured complex64 deviation before any Cirq row is published; the bracketed text is not a measurement.
+methods: PennyLane is timed through `qml.execute` on a pre-built tape; no QNode.
+qiskit: 2.6.1
+pennylane: 0.45.1
+cirq: 1.7.0

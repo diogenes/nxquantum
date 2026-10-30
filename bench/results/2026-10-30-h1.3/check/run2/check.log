@@ -1,0 +1,253 @@
+FIXTURE sha256=8ea1b2927b60014ffd569fd9d0d70b1c1c700ef08644e1cf83a3b31126f6eecd seeds=20261026+100*family_index+qubits lanes={"cirq_c128_equivalence": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt", "cirq_c64": "complex64 state (cirq.Simulator default); expectation returned as Python complex", "nxquantum_cpu_compiled": "complex64 state, float32 values (real-gate Z path: float64 state)", "nxquantum_cpu_portable": "complex64 state, float32 values (real-gate Z path: float64 state)", "pennylane": "complex128 state, float64 values", "qiskit": "complex128 state, float64 values"}
+CHECK name=agreement_nxquantum_cpu_portable_baseline_2q_hot status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=hot lane=nxquantum_cpu_portable per_op_ms=0.014000 timing=not_published cpu_wall_lane_call=0.860 cpu_wall_timed_loop=0.000
+CHECK name=agreement_qiskit_baseline_2q_hot status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=hot lane=qiskit per_op_ms=0.219139 timing=not_published cpu_wall_lane_call=1.002 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_baseline_2q_hot status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=hot lane=pennylane per_op_ms=0.573348 timing=not_published cpu_wall_lane_call=0.991 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_baseline_2q_hot status=ungated max_err=0.0 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=hot lane=cirq_c64 per_op_ms=0.637028 timing=not_published cpu_wall_lane_call=0.999 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_baseline_2q_hot status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_baseline_2q_hot status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=hot lane=nxquantum_cpu_compiled per_op_ms=0.218000 timing=not_published cpu_wall_lane_call=0.923 cpu_wall_timed_loop=1.522
+CHECK name=agreement_nxquantum_cpu_portable_baseline_2q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=cold lane=nxquantum_cpu_portable per_op_ms=0.047333 timing=not_published cpu_wall_lane_call=0.986 cpu_wall_timed_loop=0.000
+CHECK name=agreement_qiskit_baseline_2q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=cold lane=qiskit per_op_ms=0.086486 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_baseline_2q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=cold lane=pennylane per_op_ms=0.212319 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_baseline_2q status=ungated max_err=0.0 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=cold lane=cirq_c64 per_op_ms=0.280986 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_baseline_2q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_baseline_2q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.0 discriminating=0/1
+ROW scenario=baseline_2q cache=cold lane=nxquantum_cpu_compiled per_op_ms=0.437000 timing=not_published cpu_wall_lane_call=0.988 cpu_wall_timed_loop=0.762
+CHECK name=agreement_nxquantum_cpu_portable_deep_6q_hot status=pass max_err=3.130761183633979e-08 tol=1.3e-06 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=hot lane=nxquantum_cpu_portable per_op_ms=0.043333 timing=not_published cpu_wall_lane_call=1.019 cpu_wall_timed_loop=0.000
+CHECK name=agreement_qiskit_deep_6q_hot status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=hot lane=qiskit per_op_ms=0.184000 timing=not_published cpu_wall_lane_call=1.002 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_deep_6q_hot status=pass max_err=2.220446049250313e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=hot lane=pennylane per_op_ms=0.457972 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_deep_6q_hot status=ungated max_err=8.790167771444146e-08 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=hot lane=cirq_c64 per_op_ms=0.609195 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_deep_6q_hot status=pass max_err=2.220446049250313e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_deep_6q_hot status=pass max_err=3.130761183633979e-08 tol=1.3e-06 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=hot lane=nxquantum_cpu_compiled per_op_ms=0.274333 timing=not_published cpu_wall_lane_call=1.029 cpu_wall_timed_loop=1.212
+CHECK name=agreement_nxquantum_cpu_portable_deep_6q status=pass max_err=3.130761183633979e-08 tol=1.3e-06 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=cold lane=nxquantum_cpu_portable per_op_ms=0.358333 timing=not_published cpu_wall_lane_call=0.915 cpu_wall_timed_loop=0.929
+CHECK name=agreement_qiskit_deep_6q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=cold lane=qiskit per_op_ms=0.187514 timing=not_published cpu_wall_lane_call=1.002 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_deep_6q status=pass max_err=2.220446049250313e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=cold lane=pennylane per_op_ms=0.422750 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_deep_6q status=ungated max_err=8.790167771444146e-08 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=cold lane=cirq_c64 per_op_ms=0.598542 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_deep_6q status=pass max_err=2.220446049250313e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_deep_6q status=pass max_err=3.130761183633979e-08 tol=1.3e-06 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-06 max_abs_ref=0.7473661020549873 discriminating=1/1
+ROW scenario=deep_6q cache=cold lane=nxquantum_cpu_compiled per_op_ms=0.666000 timing=not_published cpu_wall_lane_call=1.017 cpu_wall_timed_loop=1.000
+CHECK name=agreement_nxquantum_cpu_portable_batch_obs_8q_hot status=pass max_err=7.730415574336291e-08 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=hot lane=nxquantum_cpu_portable per_op_ms=0.539667 timing=not_published cpu_wall_lane_call=0.984 cpu_wall_timed_loop=0.617
+CHECK name=agreement_qiskit_batch_obs_8q_hot status=pass max_err=4.440892098500626e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=hot lane=qiskit per_op_ms=1.079583 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_batch_obs_8q_hot status=pass max_err=4.440892098500626e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=hot lane=pennylane per_op_ms=2.848514 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_batch_obs_8q_hot status=ungated max_err=1.0576643583171119e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=hot lane=cirq_c64 per_op_ms=2.805653 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_batch_obs_8q_hot status=pass max_err=5.551115123125783e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_batch_obs_8q_hot status=pass max_err=7.730415574336291e-08 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=hot lane=nxquantum_cpu_compiled per_op_ms=0.695667 timing=not_published cpu_wall_lane_call=1.025 cpu_wall_timed_loop=0.479
+CHECK name=agreement_nxquantum_cpu_portable_batch_obs_8q status=pass max_err=7.730415574336291e-08 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=cold lane=nxquantum_cpu_portable per_op_ms=2.598667 timing=not_published cpu_wall_lane_call=0.995 cpu_wall_timed_loop=0.769
+CHECK name=agreement_qiskit_batch_obs_8q status=pass max_err=4.440892098500626e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=cold lane=qiskit per_op_ms=0.552903 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_batch_obs_8q status=pass max_err=4.440892098500626e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=cold lane=pennylane per_op_ms=2.825222 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_batch_obs_8q status=ungated max_err=1.0576643583171119e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=cold lane=cirq_c64 per_op_ms=2.715278 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_batch_obs_8q status=pass max_err=5.551115123125783e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_batch_obs_8q status=pass max_err=7.730415574336291e-08 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.8473719473586646 discriminating=14/48
+ROW scenario=batch_obs_8q cache=cold lane=nxquantum_cpu_compiled per_op_ms=2.559667 timing=not_published cpu_wall_lane_call=0.822 cpu_wall_timed_loop=0.781
+CHECK name=agreement_nxquantum_cpu_portable_state_reuse_8q_xy_hot status=pass max_err=1.2969394331541143e-09 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=2.6020852139652106e-17 discriminating=0/2
+ROW scenario=state_reuse_8q_xy cache=hot lane=nxquantum_cpu_portable per_op_ms=0.445000 timing=not_published cpu_wall_lane_call=0.988 cpu_wall_timed_loop=0.747
+CHECK name=agreement_qiskit_state_reuse_8q_xy_hot status=pass max_err=1.4051260155412137e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=2.6020852139652106e-17 discriminating=0/2
+ROW scenario=state_reuse_8q_xy cache=hot lane=qiskit per_op_ms=0.014653 timing=not_published cpu_wall_lane_call=1.002 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_state_reuse_8q_xy_hot status=pass max_err=5.724587470723463e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=2.6020852139652106e-17 discriminating=0/2
+ROW scenario=state_reuse_8q_xy cache=hot lane=pennylane per_op_ms=0.010403 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_state_reuse_8q_xy_hot status=ungated max_err=4.656612899098245e-09 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=2.6020852139652106e-17 discriminating=0/2
+ROW scenario=state_reuse_8q_xy cache=hot lane=cirq_c64 per_op_ms=0.011194 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_state_reuse_8q_xy_hot status=pass max_err=5.811323644522304e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=2.6020852139652106e-17 discriminating=0/2
+ROW scenario=state_reuse_8q_xy cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_state_reuse_8q_xy_hot status=pass max_err=3.0267983701023904e-08 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=2.6020852139652106e-17 discriminating=0/2
+ROW scenario=state_reuse_8q_xy cache=hot lane=nxquantum_cpu_compiled per_op_ms=0.908000 timing=not_published cpu_wall_lane_call=1.022 cpu_wall_timed_loop=0.734
+CHECK name=agreement_qiskit_sampled_counts_sparse_terms status=pass max_err=3.1868767607495796e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.017753906249999996 discriminating=1/1
+ROW scenario=sampled_counts_sparse_terms cache=cold lane=qiskit per_op_ms=0.115209 timing=not_published cpu_wall_lane_call=1.001 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_sampled_counts_sparse_terms status=pass max_err=3.1868767607495796e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.017753906249999996 discriminating=1/1
+ROW scenario=sampled_counts_sparse_terms cache=cold lane=pennylane per_op_ms=0.042056 timing=not_published cpu_wall_lane_call=1.003 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_sampled_counts_sparse_terms status=pass max_err=3.1868767607495796e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.017753906249999996 discriminating=1/1
+ROW scenario=sampled_counts_sparse_terms cache=cold lane=cirq_c64 per_op_ms=0.040653 timing=not_published cpu_wall_lane_call=1.003 cpu_wall_timed_loop=n/a
+ROW scenario=sampled_counts_sparse_terms cache=cold lane=nxquantum_cpu_portable not run (no public facade; Known Gap)
+ROW scenario=sampled_counts_sparse_terms cache=cold lane=nxquantum_cpu_compiled not run (no public facade; Known Gap)
+CHECK name=agreement_nxquantum_cpu_portable_sampled_counts_z_wires_8q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.3525390625 discriminating=8/8
+ROW scenario=sampled_counts_z_wires_8q cache=cold lane=nxquantum_cpu_portable per_op_ms=0.023333 timing=not_published cpu_wall_lane_call=1.022 cpu_wall_timed_loop=0.000
+CHECK name=agreement_qiskit_sampled_counts_z_wires_8q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.3525390625 discriminating=8/8
+ROW scenario=sampled_counts_z_wires_8q cache=cold lane=qiskit per_op_ms=0.028903 timing=not_published cpu_wall_lane_call=1.003 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_sampled_counts_z_wires_8q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.3525390625 discriminating=8/8
+ROW scenario=sampled_counts_z_wires_8q cache=cold lane=pennylane per_op_ms=0.005611 timing=not_published cpu_wall_lane_call=1.012 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_sampled_counts_z_wires_8q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.3525390625 discriminating=8/8
+ROW scenario=sampled_counts_z_wires_8q cache=cold lane=cirq_c64 per_op_ms=0.005458 timing=not_published cpu_wall_lane_call=0.989 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_sampled_counts_z_wires_8q status=pass max_err=0.0 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.3525390625 discriminating=8/8
+ROW scenario=sampled_counts_z_wires_8q cache=cold lane=nxquantum_cpu_compiled per_op_ms=1.309000 timing=not_published cpu_wall_lane_call=0.897 cpu_wall_timed_loop=0.000
+CHECK name=agreement_nxquantum_cpu_portable_real_4_hot status=pass max_err=5.283216586438044e-08 tol=6.2e-06 beyond_kg10_floor=False rows=3 discrim_tol=6.2e-06 max_abs_ref=0.31527022204538235 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_portable_real_4_hot status=pass max_err=5.1257337818633175e-08 tol=6.2e-06
+ROW scenario=real_zbatch_4q cache=hot lane=nxquantum_cpu_portable per_op_ms=0.633000 timing=not_published cpu_wall_lane_call=0.766 cpu_wall_timed_loop=1.052
+CHECK name=agreement_qiskit_real_4_hot status=pass max_err=5.551115123125783e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.31527022204538235 discriminating=4/4
+CHECK name=zz_qiskit_real_4_hot status=pass max_err=0.0 tol=1e-06
+ROW scenario=real_zbatch_4q cache=hot lane=qiskit per_op_ms=0.448931 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_real_4_hot status=pass max_err=6.106226635438361e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.31527022204538235 discriminating=4/4
+CHECK name=zz_pennylane_real_4_hot status=pass max_err=4.440892098500626e-16 tol=1e-06
+ROW scenario=real_zbatch_4q cache=hot lane=pennylane per_op_ms=0.889986 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_real_4_hot status=ungated max_err=7.026985537894603e-08 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.31527022204538235 discriminating=4/4
+CHECK name=zz_cirq_c64_real_4_hot status=ungated max_err=1.57358918895234e-07 tol=None
+ROW scenario=real_zbatch_4q cache=hot lane=cirq_c64 per_op_ms=1.313930 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_real_4_hot status=pass max_err=7.771561172376096e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.31527022204538235 discriminating=4/4
+CHECK name=zz_cirq_c128_equivalence_real_4_hot status=pass max_err=1.1102230246251565e-16 tol=1e-06
+ROW scenario=real_zbatch_4q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_real_4_hot status=pass max_err=5.283216586438044e-08 tol=6.2e-06 beyond_kg10_floor=False rows=3 discrim_tol=6.2e-06 max_abs_ref=0.31527022204538235 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_compiled_real_4_hot status=pass max_err=5.1257337818633175e-08 tol=6.2e-06
+ROW scenario=real_zbatch_4q cache=hot lane=nxquantum_cpu_compiled per_op_ms=3.799000 timing=not_published cpu_wall_lane_call=0.993 cpu_wall_timed_loop=0.965
+CHECK name=agreement_nxquantum_cpu_portable_real_4 status=pass max_err=2.1174669850854144e-07 tol=6.2e-06 beyond_kg10_floor=False rows=3 discrim_tol=6.2e-06 max_abs_ref=0.7044958205533086 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_portable_real_4 status=pass max_err=5.1257337818633175e-08 tol=6.2e-06
+ROW scenario=real_zbatch_4q cache=cold lane=nxquantum_cpu_portable per_op_ms=2.049667 timing=not_published cpu_wall_lane_call=0.986 cpu_wall_timed_loop=0.813
+CHECK name=agreement_qiskit_real_4 status=pass max_err=8.326672684688674e-17 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7044958205533086 discriminating=4/4
+CHECK name=zz_qiskit_real_4 status=pass max_err=0.0 tol=1e-06
+ROW scenario=real_zbatch_4q cache=cold lane=qiskit per_op_ms=0.467264 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_real_4 status=pass max_err=6.106226635438361e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7044958205533086 discriminating=4/4
+CHECK name=zz_pennylane_real_4 status=pass max_err=4.440892098500626e-16 tol=1e-06
+ROW scenario=real_zbatch_4q cache=cold lane=pennylane per_op_ms=1.033542 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_real_4 status=ungated max_err=2.1340793426860571e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7044958205533086 discriminating=4/4
+CHECK name=zz_cirq_c64_real_4 status=ungated max_err=1.57358918895234e-07 tol=None
+ROW scenario=real_zbatch_4q cache=cold lane=cirq_c64 per_op_ms=1.348347 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_real_4 status=pass max_err=4.440892098500626e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7044958205533086 discriminating=4/4
+CHECK name=zz_cirq_c128_equivalence_real_4 status=pass max_err=1.1102230246251565e-16 tol=1e-06
+ROW scenario=real_zbatch_4q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_real_4 status=pass max_err=2.1174669850854144e-07 tol=6.2e-06 beyond_kg10_floor=False rows=3 discrim_tol=6.2e-06 max_abs_ref=0.7044958205533086 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_compiled_real_4 status=pass max_err=5.1257337818633175e-08 tol=6.2e-06
+ROW scenario=real_zbatch_4q cache=cold lane=nxquantum_cpu_compiled per_op_ms=5.962000 timing=not_published cpu_wall_lane_call=1.036 cpu_wall_timed_loop=0.894
+CHECK name=agreement_nxquantum_cpu_portable_real_8_hot status=pass max_err=5.002212466465039e-07 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.7193576331329288 discriminating=8/8
+CHECK name=zz_nxquantum_cpu_portable_real_8_hot status=pass max_err=2.8770709814551765e-07 tol=1.3e-05
+ROW scenario=real_zbatch_8q cache=hot lane=nxquantum_cpu_portable per_op_ms=1.167333 timing=not_published cpu_wall_lane_call=1.016 cpu_wall_timed_loop=1.141
+CHECK name=agreement_qiskit_real_8_hot status=pass max_err=2.220446049250313e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7193576331329288 discriminating=8/8
+CHECK name=zz_qiskit_real_8_hot status=pass max_err=3.3306690738754696e-16 tol=1e-06
+ROW scenario=real_zbatch_8q cache=hot lane=qiskit per_op_ms=1.029236 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_real_8_hot status=pass max_err=5.551115123125783e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7193576331329288 discriminating=8/8
+CHECK name=zz_pennylane_real_8_hot status=pass max_err=4.440892098500626e-16 tol=1e-06
+ROW scenario=real_zbatch_8q cache=hot lane=pennylane per_op_ms=1.873847 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_real_8_hot status=ungated max_err=2.2137187316584317e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7193576331329288 discriminating=8/8
+CHECK name=zz_cirq_c64_real_8_hot status=ungated max_err=1.2952541528221673e-07 tol=None
+ROW scenario=real_zbatch_8q cache=hot lane=cirq_c64 per_op_ms=2.670667 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_real_8_hot status=pass max_err=1.1102230246251565e-15 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.7193576331329288 discriminating=8/8
+CHECK name=zz_cirq_c128_equivalence_real_8_hot status=pass max_err=8.881784197001252e-16 tol=1e-06
+ROW scenario=real_zbatch_8q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_real_8_hot status=pass max_err=5.002212466465039e-07 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.7193576331329288 discriminating=8/8
+CHECK name=zz_nxquantum_cpu_compiled_real_8_hot status=pass max_err=2.8770709814551765e-07 tol=1.3e-05
+ROW scenario=real_zbatch_8q cache=hot lane=nxquantum_cpu_compiled per_op_ms=9.341000 timing=not_published cpu_wall_lane_call=0.903 cpu_wall_timed_loop=0.714
+CHECK name=agreement_nxquantum_cpu_portable_real_8 status=pass max_err=1.3857128400296403e-07 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.6198299929594777 discriminating=8/8
+CHECK name=zz_nxquantum_cpu_portable_real_8 status=pass max_err=2.8770709814551765e-07 tol=1.3e-05
+ROW scenario=real_zbatch_8q cache=cold lane=nxquantum_cpu_portable per_op_ms=7.380333 timing=not_published cpu_wall_lane_call=0.983 cpu_wall_timed_loop=0.813
+CHECK name=agreement_qiskit_real_8 status=pass max_err=2.7755575615628914e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.6198299929594777 discriminating=8/8
+CHECK name=zz_qiskit_real_8 status=pass max_err=3.3306690738754696e-16 tol=1e-06
+ROW scenario=real_zbatch_8q cache=cold lane=qiskit per_op_ms=1.080722 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_real_8 status=pass max_err=7.216449660063518e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.6198299929594777 discriminating=8/8
+CHECK name=zz_pennylane_real_8 status=pass max_err=4.440892098500626e-16 tol=1e-06
+ROW scenario=real_zbatch_8q cache=cold lane=pennylane per_op_ms=2.183486 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_real_8 status=ungated max_err=1.9876473345004086e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.6198299929594777 discriminating=8/8
+CHECK name=zz_cirq_c64_real_8 status=ungated max_err=1.2952541528221673e-07 tol=None
+ROW scenario=real_zbatch_8q cache=cold lane=cirq_c64 per_op_ms=2.683292 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_real_8 status=pass max_err=1.4432899320127035e-15 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.6198299929594777 discriminating=8/8
+CHECK name=zz_cirq_c128_equivalence_real_8 status=pass max_err=8.881784197001252e-16 tol=1e-06
+ROW scenario=real_zbatch_8q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_real_8 status=pass max_err=1.3857128400296403e-07 tol=1.3e-05 beyond_kg10_floor=False rows=3 discrim_tol=1.3e-05 max_abs_ref=0.6198299929594777 discriminating=8/8
+CHECK name=zz_nxquantum_cpu_compiled_real_8 status=pass max_err=2.8770709814551765e-07 tol=1.3e-05
+ROW scenario=real_zbatch_8q cache=cold lane=nxquantum_cpu_compiled per_op_ms=11.467000 timing=not_published cpu_wall_lane_call=0.983 cpu_wall_timed_loop=0.901
+CHECK name=agreement_nxquantum_cpu_portable_complex_4_hot status=pass max_err=1.749464388911548e-07 tol=3e-05 beyond_kg10_floor=False rows=3 discrim_tol=3e-05 max_abs_ref=0.32138529033149443 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_portable_complex_4_hot status=pass max_err=6.755935214042275e-08 tol=3e-05
+ROW scenario=complex_zbatch_4q cache=hot lane=nxquantum_cpu_portable per_op_ms=0.731000 timing=not_published cpu_wall_lane_call=1.002 cpu_wall_timed_loop=0.911
+CHECK name=agreement_qiskit_complex_4_hot status=pass max_err=1.1102230246251565e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.32138529033149443 discriminating=4/4
+CHECK name=zz_qiskit_complex_4_hot status=pass max_err=5.551115123125783e-17 tol=1e-06
+ROW scenario=complex_zbatch_4q cache=hot lane=qiskit per_op_ms=0.766208 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_complex_4_hot status=pass max_err=1.6653345369377348e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.32138529033149443 discriminating=4/4
+CHECK name=zz_pennylane_complex_4_hot status=pass max_err=8.326672684688674e-17 tol=1e-06
+ROW scenario=complex_zbatch_4q cache=hot lane=pennylane per_op_ms=1.250653 timing=not_published cpu_wall_lane_call=0.999 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_complex_4_hot status=ungated max_err=1.4958830024669467e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.32138529033149443 discriminating=4/4
+CHECK name=zz_cirq_c64_complex_4_hot status=ungated max_err=2.5913793885723457e-07 tol=None
+ROW scenario=complex_zbatch_4q cache=hot lane=cirq_c64 per_op_ms=1.699264 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_complex_4_hot status=pass max_err=3.885780586188048e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.32138529033149443 discriminating=4/4
+CHECK name=zz_cirq_c128_equivalence_complex_4_hot status=pass max_err=1.942890293094024e-16 tol=1e-06
+ROW scenario=complex_zbatch_4q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_complex_4_hot status=pass max_err=1.749464388911548e-07 tol=3e-05 beyond_kg10_floor=False rows=3 discrim_tol=3e-05 max_abs_ref=0.32138529033149443 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_compiled_complex_4_hot status=pass max_err=8.24605133342704e-08 tol=3e-05
+ROW scenario=complex_zbatch_4q cache=hot lane=nxquantum_cpu_compiled per_op_ms=4.711333 timing=not_published cpu_wall_lane_call=1.042 cpu_wall_timed_loop=0.990
+CHECK name=agreement_nxquantum_cpu_portable_complex_4 status=pass max_err=2.5696977518085973e-07 tol=3e-05 beyond_kg10_floor=False rows=3 discrim_tol=3e-05 max_abs_ref=0.48784829311147787 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_portable_complex_4 status=pass max_err=6.755935214042275e-08 tol=3e-05
+ROW scenario=complex_zbatch_4q cache=cold lane=nxquantum_cpu_portable per_op_ms=3.502667 timing=not_published cpu_wall_lane_call=1.002 cpu_wall_timed_loop=0.761
+CHECK name=agreement_qiskit_complex_4 status=pass max_err=1.6653345369377348e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.48784829311147787 discriminating=4/4
+CHECK name=zz_qiskit_complex_4 status=pass max_err=5.551115123125783e-17 tol=1e-06
+ROW scenario=complex_zbatch_4q cache=cold lane=qiskit per_op_ms=0.685514 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_complex_4 status=pass max_err=3.3306690738754696e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.48784829311147787 discriminating=4/4
+CHECK name=zz_pennylane_complex_4 status=pass max_err=8.326672684688674e-17 tol=1e-06
+ROW scenario=complex_zbatch_4q cache=cold lane=pennylane per_op_ms=1.399097 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_complex_4 status=ungated max_err=1.6135866554023437e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.48784829311147787 discriminating=4/4
+CHECK name=zz_cirq_c64_complex_4 status=ungated max_err=2.5913793885723457e-07 tol=None
+ROW scenario=complex_zbatch_4q cache=cold lane=cirq_c64 per_op_ms=1.605986 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_complex_4 status=pass max_err=9.159339953157541e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.48784829311147787 discriminating=4/4
+CHECK name=zz_cirq_c128_equivalence_complex_4 status=pass max_err=1.942890293094024e-16 tol=1e-06
+ROW scenario=complex_zbatch_4q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_complex_4 status=pass max_err=2.5696977518085973e-07 tol=3e-05 beyond_kg10_floor=False rows=3 discrim_tol=3e-05 max_abs_ref=0.48784829311147787 discriminating=4/4
+CHECK name=zz_nxquantum_cpu_compiled_complex_4 status=pass max_err=8.24605133342704e-08 tol=3e-05
+ROW scenario=complex_zbatch_4q cache=cold lane=nxquantum_cpu_compiled per_op_ms=6.511667 timing=not_published cpu_wall_lane_call=0.985 cpu_wall_timed_loop=0.870
+CHECK name=agreement_nxquantum_cpu_portable_complex_8_hot status=pass max_err=8.944663976162559e-08 tol=5.9e-05 beyond_kg10_floor=False rows=3 discrim_tol=5.9e-05 max_abs_ref=0.24573467667903925 discriminating=7/8
+CHECK name=zz_nxquantum_cpu_portable_complex_8_hot status=pass max_err=5.520662038627222e-08 tol=5.9e-05
+ROW scenario=complex_zbatch_8q cache=hot lane=nxquantum_cpu_portable per_op_ms=1.146333 timing=not_published cpu_wall_lane_call=0.962 cpu_wall_timed_loop=1.162
+CHECK name=agreement_qiskit_complex_8_hot status=pass max_err=2.220446049250313e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.24573467667903925 discriminating=8/8
+CHECK name=zz_qiskit_complex_8_hot status=pass max_err=8.326672684688674e-17 tol=1e-06
+ROW scenario=complex_zbatch_8q cache=hot lane=qiskit per_op_ms=1.548250 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_complex_8_hot status=pass max_err=3.3306690738754696e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.24573467667903925 discriminating=8/8
+CHECK name=zz_pennylane_complex_8_hot status=pass max_err=5.551115123125783e-17 tol=1e-06
+ROW scenario=complex_zbatch_8q cache=hot lane=pennylane per_op_ms=2.478236 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_complex_8_hot status=ungated max_err=1.7645973343638488e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.24573467667903925 discriminating=8/8
+CHECK name=zz_cirq_c64_complex_8_hot status=ungated max_err=9.608164058816371e-08 tol=None
+ROW scenario=complex_zbatch_8q cache=hot lane=cirq_c64 per_op_ms=3.221722 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_complex_8_hot status=pass max_err=3.2959746043559335e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.24573467667903925 discriminating=8/8
+CHECK name=zz_cirq_c128_equivalence_complex_8_hot status=pass max_err=1.1102230246251565e-16 tol=1e-06
+ROW scenario=complex_zbatch_8q cache=hot lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_complex_8_hot status=pass max_err=8.944663976162559e-08 tol=5.9e-05 beyond_kg10_floor=False rows=3 discrim_tol=5.9e-05 max_abs_ref=0.24573467667903925 discriminating=7/8
+CHECK name=zz_nxquantum_cpu_compiled_complex_8_hot status=pass max_err=5.520662038627222e-08 tol=5.9e-05
+ROW scenario=complex_zbatch_8q cache=hot lane=nxquantum_cpu_compiled per_op_ms=4.103667 timing=not_published cpu_wall_lane_call=0.978 cpu_wall_timed_loop=0.975
+CHECK name=agreement_nxquantum_cpu_portable_complex_8 status=pass max_err=1.076008784295368e-07 tol=5.9e-05 beyond_kg10_floor=False rows=3 discrim_tol=5.9e-05 max_abs_ref=0.28933609692793016 discriminating=7/8
+CHECK name=zz_nxquantum_cpu_portable_complex_8 status=pass max_err=5.520662038627222e-08 tol=5.9e-05
+ROW scenario=complex_zbatch_8q cache=cold lane=nxquantum_cpu_portable per_op_ms=24.729667 timing=not_published cpu_wall_lane_call=0.920 cpu_wall_timed_loop=0.728
+CHECK name=agreement_qiskit_complex_8 status=pass max_err=2.7755575615628914e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.28933609692793016 discriminating=8/8
+CHECK name=zz_qiskit_complex_8 status=pass max_err=8.326672684688674e-17 tol=1e-06
+ROW scenario=complex_zbatch_8q cache=cold lane=qiskit per_op_ms=1.573472 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_pennylane_complex_8 status=pass max_err=3.885780586188048e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.28933609692793016 discriminating=8/8
+CHECK name=zz_pennylane_complex_8 status=pass max_err=5.551115123125783e-17 tol=1e-06
+ROW scenario=complex_zbatch_8q cache=cold lane=pennylane per_op_ms=2.953944 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c64_complex_8 status=ungated max_err=1.2208043403960644e-07 tol=None beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.28933609692793016 discriminating=8/8
+CHECK name=zz_cirq_c64_complex_8 status=ungated max_err=9.608164058816371e-08 tol=None
+ROW scenario=complex_zbatch_8q cache=cold lane=cirq_c64 per_op_ms=3.291653 timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_complex_8 status=pass max_err=3.3306690738754696e-16 tol=1e-06 beyond_kg10_floor=False rows=3 discrim_tol=1e-06 max_abs_ref=0.28933609692793016 discriminating=8/8
+CHECK name=zz_cirq_c128_equivalence_complex_8 status=pass max_err=1.1102230246251565e-16 tol=1e-06
+ROW scenario=complex_zbatch_8q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+CHECK name=agreement_nxquantum_cpu_compiled_complex_8 status=pass max_err=1.076008784295368e-07 tol=5.9e-05 beyond_kg10_floor=False rows=3 discrim_tol=5.9e-05 max_abs_ref=0.28933609692793016 discriminating=7/8
+CHECK name=zz_nxquantum_cpu_compiled_complex_8 status=pass max_err=5.520662038627222e-08 tol=5.9e-05
+ROW scenario=complex_zbatch_8q cache=cold lane=nxquantum_cpu_compiled per_op_ms=28.351000 timing=not_published cpu_wall_lane_call=0.935 cpu_wall_timed_loop=0.764
+CHECK name=sampled_counts_exact_rational status=pass max_err=3.1868767607495796e-17 bound=1e-06 rows=8 data=synthetic
+CHECK name=reference_consensus_f64_complex_4 status=pass max_err=9.159339953157541e-16 bound=1e-08 lanes=qiskit,pennylane,cirq_c128_equivalence
+CHECK name=reference_consensus_f64_complex_8 status=pass max_err=3.885780586188048e-16 bound=1e-08 lanes=qiskit,pennylane,cirq_c128_equivalence
+CHECK name=reference_consensus_f64_real_4 status=pass max_err=7.771561172376096e-16 bound=1e-08 lanes=qiskit,pennylane,cirq_c128_equivalence
+CHECK name=reference_consensus_f64_real_8 status=pass max_err=1.4432899320127035e-15 bound=1e-08 lanes=qiskit,pennylane,cirq_c128_equivalence
+SUMMARY rows=100 failures=0 errors=0 timing_published=False

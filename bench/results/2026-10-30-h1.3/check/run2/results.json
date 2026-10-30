@@ -1,0 +1,7736 @@
+{
+ "mode": "check",
+ "timing_published": false,
+ "fixture_sha256": "8ea1b2927b60014ffd569fd9d0d70b1c1c700ef08644e1cf83a3b31126f6eecd",
+ "rss_max_bytes_self": 296222720,
+ "rss_max_bytes_children": 241352704,
+ "rows": [
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 0.0,
+   "timed_loop_wall_ms": 0.044,
+   "cpu_wall_timed_loop": 0.0,
+   "wall_s": 0.8896713340654969,
+   "cpu_s": 0.7650260000000001,
+   "cpu_wall": 0.8598973246716741,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.028,
+    0.008,
+    0.006
+   ],
+   "per_op_ms": 0.014,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.002568582771345973,
+   "cpu_s": 0.002574999999999772,
+   "cpu_wall": 1.002498353849207,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.281,
+    0.201708,
+    0.174709
+   ],
+   "per_op_ms": 0.219139,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.005426791962236166,
+   "cpu_s": 0.005377999999999883,
+   "cpu_wall": 0.991009059758359,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.719042,
+    0.512917,
+    0.488084
+   ],
+   "per_op_ms": 0.5733476666666667,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.005243374966084957,
+   "cpu_s": 0.005238999999999994,
+   "cpu_wall": 0.9991656202134577,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.76925,
+    0.64425,
+    0.497584
+   ],
+   "per_op_ms": 0.637028,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0009151659905910492,
+   "cpu_s": 0.0009159999999999169,
+   "cpu_wall": 1.000911320369684,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 0.657,
+   "cpu_wall_timed_loop": 1.5220700152207,
+   "wall_s": 0.8004667079076171,
+   "cpu_s": 0.7392169999999998,
+   "cpu_wall": 0.9234825042658911,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.267,
+    0.197,
+    0.19
+   ],
+   "per_op_ms": 0.218,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 0.0,
+   "timed_loop_wall_ms": 0.144,
+   "cpu_wall_timed_loop": 0.0,
+   "wall_s": 0.630200041923672,
+   "cpu_s": 0.6213420000000003,
+   "cpu_wall": 0.9859440791266331,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.067,
+    0.033,
+    0.042
+   ],
+   "per_op_ms": 0.04733333333333334,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0009280829690396786,
+   "cpu_s": 0.0009290000000001797,
+   "cpu_wall": 1.0009880915727287,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.102875,
+    0.081458,
+    0.075125
+   ],
+   "per_op_ms": 0.086486,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.001662291819229722,
+   "cpu_s": 0.0016640000000001098,
+   "cpu_wall": 1.0010276058334808,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.242916,
+    0.204,
+    0.190041
+   ],
+   "per_op_ms": 0.212319,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0016659998800605536,
+   "cpu_s": 0.001667000000000085,
+   "cpu_wall": 1.0006003121317724,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.297084,
+    0.283708,
+    0.262166
+   ],
+   "per_op_ms": 0.280986,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0008396669290959835,
+   "cpu_s": 0.0008399999999999519,
+   "cpu_wall": 1.0003966702658242,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "baseline_2q",
+   "family": null,
+   "qubits": 2,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row",
+    "analytic reference is continuity-only (it does not depend on the angle)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 1.313,
+   "cpu_wall_timed_loop": 0.7616146230007617,
+   "wall_s": 0.6993296251166612,
+   "cpu_s": 0.6908620000000001,
+   "cpu_wall": 0.9878917969258795,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.0,
+   "n_discriminating": 0,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ],
+    [
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    0.601,
+    0.294,
+    0.416
+   ],
+   "per_op_ms": 0.437,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 0.0,
+   "timed_loop_wall_ms": 0.132,
+   "cpu_wall_timed_loop": 0.0,
+   "wall_s": 0.6690055001527071,
+   "cpu_s": 0.6820409999999999,
+   "cpu_wall": 1.0194848918944872,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1.3e-06,
+   "max_err": 3.130761183633979e-08,
+   "tolerance": 1.3e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ]
+   ],
+   "times_ms": [
+    0.066,
+    0.035,
+    0.029
+   ],
+   "per_op_ms": 0.043333333333333335,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0012862919829785824,
+   "cpu_s": 0.0012890000000000956,
+   "cpu_wall": 1.0021052895122944,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473661020549873"
+    ],
+    [
+     "0.7473661020549873"
+    ],
+    [
+     "0.7473661020549873"
+    ]
+   ],
+   "times_ms": [
+    0.202583,
+    0.178666,
+    0.17075
+   ],
+   "per_op_ms": 0.18399966666666667,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0026387081015855074,
+   "cpu_s": 0.00263900000000028,
+   "cpu_wall": 1.0001106217146933,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.220446049250313e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ]
+   ],
+   "times_ms": [
+    0.437458,
+    0.4125,
+    0.523958
+   ],
+   "per_op_ms": 0.457972,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.003005458042025566,
+   "cpu_s": 0.003006999999999982,
+   "cpu_wall": 1.0005130525706414,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 8.790167771444146e-08,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.747366189956665"
+    ],
+    [
+     "0.747366189956665"
+    ],
+    [
+     "0.747366189956665"
+    ]
+   ],
+   "times_ms": [
+    0.633375,
+    0.609209,
+    0.585
+   ],
+   "per_op_ms": 0.6091946666666667,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.00185504206456244,
+   "cpu_s": 0.0018560000000000798,
+   "cpu_wall": 1.0005163955340635,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.220446049250313e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 0.825,
+   "cpu_wall_timed_loop": 1.2121212121212122,
+   "wall_s": 0.7732883340213448,
+   "cpu_s": 0.795757,
+   "cpu_wall": 1.029056000187939,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1.3e-06,
+   "max_err": 3.130761183633979e-08,
+   "tolerance": 1.3e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ]
+   ],
+   "times_ms": [
+    0.306,
+    0.207,
+    0.31
+   ],
+   "per_op_ms": 0.2743333333333333,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 1.076,
+   "cpu_wall_timed_loop": 0.929368029739777,
+   "wall_s": 0.8699842081405222,
+   "cpu_s": 0.7956159999999999,
+   "cpu_wall": 0.9145177493514799,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1.3e-06,
+   "max_err": 3.130761183633979e-08,
+   "tolerance": 1.3e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ]
+   ],
+   "times_ms": [
+    0.489,
+    0.314,
+    0.272
+   ],
+   "per_op_ms": 0.35833333333333334,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0013548338320106268,
+   "cpu_s": 0.0013570000000000526,
+   "cpu_wall": 1.00159884403404,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473661020549873"
+    ],
+    [
+     "0.7473661020549873"
+    ],
+    [
+     "0.7473661020549873"
+    ]
+   ],
+   "times_ms": [
+    0.208084,
+    0.183208,
+    0.17125
+   ],
+   "per_op_ms": 0.187514,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0025795421097427607,
+   "cpu_s": 0.0025800000000000267,
+   "cpu_wall": 1.0001775083475228,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.220446049250313e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ]
+   ],
+   "times_ms": [
+    0.450917,
+    0.415958,
+    0.401375
+   ],
+   "per_op_ms": 0.42275,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0030364999547600746,
+   "cpu_s": 0.003038000000000096,
+   "cpu_wall": 1.0004940046969768,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 8.790167771444146e-08,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.747366189956665"
+    ],
+    [
+     "0.747366189956665"
+    ],
+    [
+     "0.747366189956665"
+    ]
+   ],
+   "times_ms": [
+    0.62325,
+    0.595583,
+    0.576792
+   ],
+   "per_op_ms": 0.5985416666666666,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0018044582102447748,
+   "cpu_s": 0.0018050000000000566,
+   "cpu_wall": 1.0003002506526368,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.220446049250313e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ],
+    [
+     "0.7473661020549871"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "deep_6q",
+   "family": null,
+   "qubits": 6,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 2.0,
+   "timed_loop_wall_ms": 2.0,
+   "cpu_wall_timed_loop": 1.0,
+   "wall_s": 0.7173252091743052,
+   "cpu_s": 0.7296259999999997,
+   "cpu_wall": 1.0171481368121074,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7473661020549873,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1.3e-06,
+   "max_err": 3.130761183633979e-08,
+   "tolerance": 1.3e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ],
+    [
+     "0.7473660707473755"
+    ]
+   ],
+   "times_ms": [
+    0.968,
+    0.586,
+    0.444
+   ],
+   "per_op_ms": 0.666,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 1.621,
+   "cpu_wall_timed_loop": 0.6169031462060457,
+   "wall_s": 0.6399417081847787,
+   "cpu_s": 0.6293899999999999,
+   "cpu_wall": 0.9835114541686787,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 7.730415574336291e-08,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ]
+   ],
+   "times_ms": [
+    1.05,
+    0.361,
+    0.208
+   ],
+   "per_op_ms": 0.5396666666666666,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.004659416852518916,
+   "cpu_s": 0.004661999999999944,
+   "cpu_wall": 1.0005543928699214,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 4.440892098500626e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17",
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17"
+    ],
+    [
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17",
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17"
+    ],
+    [
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17",
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17"
+    ]
+   ],
+   "times_ms": [
+    0.55,
+    2.160375,
+    0.528375
+   ],
+   "per_op_ms": 1.0795833333333336,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.012783082900568843,
+   "cpu_s": 0.012783999999999907,
+   "cpu_wall": 1.0000717432123531,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 4.440892098500626e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16",
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16"
+    ],
+    [
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16",
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16"
+    ],
+    [
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16",
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16"
+    ]
+   ],
+   "times_ms": [
+    2.8805,
+    2.851584,
+    2.813459
+   ],
+   "per_op_ms": 2.8485143333333336,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.011966041987761855,
+   "cpu_s": 0.011967000000000061,
+   "cpu_wall": 1.0000800609123037,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.0576643583171119e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0",
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0"
+    ],
+    [
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0",
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0"
+    ],
+    [
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0",
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    2.816709,
+    2.816583,
+    2.783667
+   ],
+   "per_op_ms": 2.805653,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.00831570802256465,
+   "cpu_s": 0.00831700000000013,
+   "cpu_wall": 1.0001553658969236,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 5.551115123125783e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17",
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17"
+    ],
+    [
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17",
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17"
+    ],
+    [
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17",
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 2.089,
+   "cpu_wall_timed_loop": 0.47869794159885115,
+   "wall_s": 1.4521860000677407,
+   "cpu_s": 1.4878600000000004,
+   "cpu_wall": 1.0245657236267225,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 7.730415574336291e-08,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ]
+   ],
+   "times_ms": [
+    1.432,
+    0.451,
+    0.204
+   ],
+   "per_op_ms": 0.6956666666666665,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 6.0,
+   "timed_loop_wall_ms": 7.798,
+   "cpu_wall_timed_loop": 0.7694280584765324,
+   "wall_s": 0.7937683751806617,
+   "cpu_s": 0.7896979999999996,
+   "cpu_wall": 0.9948720869866657,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 7.730415574336291e-08,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ]
+   ],
+   "times_ms": [
+    3.287,
+    2.544,
+    1.965
+   ],
+   "per_op_ms": 2.598666666666667,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0030712918378412724,
+   "cpu_s": 0.0030729999999998814,
+   "cpu_wall": 1.000556170578635,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 4.440892098500626e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17",
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17"
+    ],
+    [
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17",
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17"
+    ],
+    [
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17",
+     "0.057379715861299155",
+     "-7.580944877925988e-19",
+     "-6.488950002325744e-17",
+     "9.974659986866641e-17",
+     "-2.315788077793257e-18",
+     "0.7709514037092717",
+     "1.4268100589909238e-16",
+     "2.4487722505121823e-18",
+     "1.0706496453294356e-16",
+     "0.13380025951069166",
+     "-0.12437744695768668",
+     "2.554922419462091e-16",
+     "3.0357660829594124e-17",
+     "-1.1013122380200413e-17",
+     "0.6669516386420415",
+     "7.031051088568496e-17",
+     "-7.182839392716467e-19",
+     "1.1216071474362543e-16",
+     "0.22557777089719303",
+     "5.55653613398821e-19",
+     "0.8473719473586645",
+     "1.1449174941446927e-16",
+     "-2.6479943997063937e-17",
+     "-1.1221492485224971e-17"
+    ]
+   ],
+   "times_ms": [
+    0.556625,
+    0.546125,
+    0.555958
+   ],
+   "per_op_ms": 0.5529026666666667,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.012550499988719821,
+   "cpu_s": 0.012550999999999979,
+   "cpu_wall": 1.0000398399490544,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 4.440892098500626e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16",
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16"
+    ],
+    [
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16",
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16"
+    ],
+    [
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16",
+     "0.057379715861299085",
+     "-1.1102230246251565e-16",
+     "0.0",
+     "1.1102230246251565e-16",
+     "1.1102230246251565e-16",
+     "0.7709514037092717",
+     "0.0",
+     "-2.220446049250313e-16",
+     "0.0",
+     "0.13380025951069163",
+     "-0.12437744695768682",
+     "0.0",
+     "0.0",
+     "0.0",
+     "0.666951638642042",
+     "3.3306690738754696e-16",
+     "0.0",
+     "0.0",
+     "0.225577770897193",
+     "0.0",
+     "0.8473719473586645",
+     "0.0",
+     "-1.6653345369377348e-16",
+     "2.220446049250313e-16"
+    ]
+   ],
+   "times_ms": [
+    2.90225,
+    2.7915,
+    2.781917
+   ],
+   "per_op_ms": 2.825222333333333,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.011705375043675303,
+   "cpu_s": 0.011706999999999912,
+   "cpu_wall": 1.0001388213806517,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.0576643583171119e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0",
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0"
+    ],
+    [
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0",
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0"
+    ],
+    [
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0",
+     "0.057379722595214844",
+     "-7.569636029103322e-10",
+     "1.1641532182693481e-09",
+     "2.991873770952225e-08",
+     "-1.284113482213911e-09",
+     "0.770951509475708",
+     "2.60770320892334e-08",
+     "0.0",
+     "6.146728992462158e-08",
+     "0.13380026817321777",
+     "-0.12437745928764343",
+     "-8.568167686462402e-08",
+     "-1.0384246706962585e-07",
+     "2.4076726723443187e-10",
+     "0.6669515371322632",
+     "3.363174627679655e-09",
+     "-2.329140769141702e-10",
+     "-8.754432201385498e-08",
+     "0.22557775676250458",
+     "1.30385160446167e-08",
+     "0.8473719358444214",
+     "4.6566128730773926e-09",
+     "-1.4901161193847656e-08",
+     "0.0"
+    ]
+   ],
+   "times_ms": [
+    2.73425,
+    2.680166,
+    2.731417
+   ],
+   "per_op_ms": 2.7152776666666667,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "wall_s": 0.008040250046178699,
+   "cpu_s": 0.00804000000000027,
+   "cpu_wall": 0.9999689006962479,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 5.551115123125783e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17",
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17"
+    ],
+    [
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17",
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17"
+    ],
+    [
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17",
+     "0.05737971586129915",
+     "4.06772522381543e-18",
+     "1.0581813203458523e-16",
+     "-5.312590645178972e-17",
+     "-4.8634124099801284e-18",
+     "0.7709514037092717",
+     "-2.949029909160572e-17",
+     "0.0",
+     "1.0755285551056204e-16",
+     "0.13380025951069155",
+     "-0.12437744695768668",
+     "-2.2898349882893854e-16",
+     "8.066464163292153e-17",
+     "2.1006677309830125e-18",
+     "0.6669516386420414",
+     "4.0683153554080553e-17",
+     "1.4787079383692187e-18",
+     "5.551115123125783e-17",
+     "0.225577770897193",
+     "-3.8163916471489756e-17",
+     "0.8473719473586641",
+     "-8.413408858487514e-17",
+     "-3.469446951953614e-17",
+     "4.85722573273506e-17"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "batch_obs_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "angle-keyed plan memo warm",
+    "continuity scenario (fixed angles), not a headline row"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 6.0,
+   "timed_loop_wall_ms": 7.682,
+   "cpu_wall_timed_loop": 0.7810466024472793,
+   "wall_s": 1.97370016714558,
+   "cpu_s": 1.6228819999999988,
+   "cpu_wall": 0.8222535656705424,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.8473719473586646,
+   "n_discriminating": 14,
+   "n_observables": 48,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 7.730415574336291e-08,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ],
+    [
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16",
+     "0.05737971514463425",
+     "-4.901257177891694e-10",
+     "-1.8426015921391148e-16",
+     "-1.157385819128276e-17",
+     "-1.6371394240266568e-09",
+     "0.7709514498710632",
+     "-1.3140530330524314e-16",
+     "0.0",
+     "-6.814210654071395e-17",
+     "0.13380025327205658",
+     "-0.12437742948532104",
+     "1.7309287683731078e-16",
+     "5.854691731421724e-17",
+     "-1.2951713035391776e-09",
+     "0.6669517159461975",
+     "-8.673617379884035e-19",
+     "-1.7067519619828886e-10",
+     "-4.808436634973212e-17",
+     "0.22557777166366577",
+     "-5.55653613398821e-19",
+     "0.8473719954490662",
+     "6.5052130349130266e-18",
+     "-2.676730836981278e-09",
+     "2.1169047417779474e-16"
+    ]
+   ],
+   "times_ms": [
+    3.338,
+    2.314,
+    2.027
+   ],
+   "per_op_ms": 2.5596666666666668,
+   "publishable": true
+  },
+  {
+   "scenario": "state_reuse_8q_xy",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": "public Estimator.run with cache_evolved_state: true",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "hot-only state-reuse micro-benchmark",
+    "angle-keyed plan memo warm",
+    "continuity-only, non-discriminating (X5/Y5 are analytically 0)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 1.0,
+   "timed_loop_wall_ms": 1.338,
+   "cpu_wall_timed_loop": 0.7473841554559043,
+   "wall_s": 0.6296209169086069,
+   "cpu_s": 0.622326000000001,
+   "cpu_wall": 0.9884137951699201,
+   "cpu_wall_label": null,
+   "max_abs_ref": 2.6020852139652106e-17,
+   "n_discriminating": 0,
+   "n_observables": 2,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 1.2969394331541143e-09,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.0",
+     "-1.2969394447281957e-09"
+    ],
+    [
+     "0.0",
+     "-1.2969394447281957e-09"
+    ],
+    [
+     "0.0",
+     "-1.2969394447281957e-09"
+    ]
+   ],
+   "times_ms": [
+    0.952,
+    0.271,
+    0.112
+   ],
+   "per_op_ms": 0.445,
+   "publishable": true
+  },
+  {
+   "scenario": "state_reuse_8q_xy",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": "Statevector.from_instruction once, untimed; timed region calls expectation_value for X5 and Y5",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "hot-only state-reuse micro-benchmark",
+    "angle-keyed plan memo warm",
+    "continuity-only, non-discriminating (X5/Y5 are analytically 0)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0009033752139657736,
+   "cpu_s": 0.0009049999999999336,
+   "cpu_wall": 1.0017985727403649,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 2.6020852139652106e-17,
+   "n_discriminating": 0,
+   "n_observables": 2,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.4051260155412137e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "1.1449174941446927e-16",
+     "-1.1013122380200413e-17"
+    ],
+    [
+     "1.1449174941446927e-16",
+     "-1.1013122380200413e-17"
+    ],
+    [
+     "1.1449174941446927e-16",
+     "-1.1013122380200413e-17"
+    ]
+   ],
+   "times_ms": [
+    0.016291,
+    0.014333,
+    0.013334
+   ],
+   "per_op_ms": 0.014652666666666666,
+   "publishable": true
+  },
+  {
+   "scenario": "state_reuse_8q_xy",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": "state from qml.execute (qml.state(), complex128) once, untimed; timed region is the NumPy ref_expectations helper on that state (no framework API)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "hot-only state-reuse micro-benchmark",
+    "angle-keyed plan memo warm",
+    "continuity-only, non-discriminating (X5/Y5 are analytically 0)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0014853330794721842,
+   "cpu_s": 0.0014849999999999586,
+   "cpu_wall": 0.9997757543564949,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 2.6020852139652106e-17,
+   "n_discriminating": 0,
+   "n_observables": 2,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 5.724587470723463e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-8.326672684688674e-17",
+     "5.967325077066308e-18"
+    ],
+    [
+     "-8.326672684688674e-17",
+     "5.967325077066308e-18"
+    ],
+    [
+     "-8.326672684688674e-17",
+     "5.967325077066308e-18"
+    ]
+   ],
+   "times_ms": [
+    0.012125,
+    0.010375,
+    0.008709
+   ],
+   "per_op_ms": 0.010403,
+   "publishable": true
+  },
+  {
+   "scenario": "state_reuse_8q_xy",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": "state from cirq.Simulator().simulate(...).final_state_vector once, untimed (complex64); timed region is the NumPy ref_expectations helper on that state (no framework API)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "hot-only state-reuse micro-benchmark",
+    "angle-keyed plan memo warm",
+    "continuity-only, non-discriminating (X5/Y5 are analytically 0)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0013284578453749418,
+   "cpu_s": 0.0013289999999999136,
+   "cpu_wall": 1.0004081082639236,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 2.6020852139652106e-17,
+   "n_discriminating": 0,
+   "n_observables": 2,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 4.656612899098245e-09,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "4.6566128730773926e-09",
+     "2.568092099652225e-10"
+    ],
+    [
+     "4.6566128730773926e-09",
+     "2.568092099652225e-10"
+    ],
+    [
+     "4.6566128730773926e-09",
+     "2.568092099652225e-10"
+    ]
+   ],
+   "times_ms": [
+    0.013125,
+    0.010875,
+    0.009583
+   ],
+   "per_op_ms": 0.011194333333333334,
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "state_reuse_8q_xy",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": "same, with cirq.Simulator(dtype=np.complex128), untimed",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "hot-only state-reuse micro-benchmark",
+    "angle-keyed plan memo warm",
+    "continuity-only, non-discriminating (X5/Y5 are analytically 0)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.000860957894474268,
+   "cpu_s": 0.0008619999999999184,
+   "cpu_wall": 1.0012104024277364,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 2.6020852139652106e-17,
+   "n_discriminating": 0,
+   "n_observables": 2,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 5.811323644522304e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-8.413408858487514e-17",
+     "2.1006677309830125e-18"
+    ],
+    [
+     "-8.413408858487514e-17",
+     "2.1006677309830125e-18"
+    ],
+    [
+     "-8.413408858487514e-17",
+     "2.1006677309830125e-18"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "publishable": false
+  },
+  {
+   "scenario": "state_reuse_8q_xy",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": "public Estimator.run with cache_evolved_state: true",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "hot-only state-reuse micro-benchmark",
+    "angle-keyed plan memo warm",
+    "continuity-only, non-discriminating (X5/Y5 are analytically 0)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 2.0,
+   "timed_loop_wall_ms": 2.726,
+   "cpu_wall_timed_loop": 0.7336757153338225,
+   "wall_s": 0.8260133748408407,
+   "cpu_s": 0.8442810000000005,
+   "cpu_wall": 1.0221154108584254,
+   "cpu_wall_label": null,
+   "max_abs_ref": 2.6020852139652106e-17,
+   "n_discriminating": 0,
+   "n_observables": 2,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 3.0267983701023904e-08,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "3.026798367500305e-08",
+     "-3.8971847970969975e-10"
+    ],
+    [
+     "3.026798367500305e-08",
+     "-3.8971847970969975e-10"
+    ],
+    [
+     "3.026798367500305e-08",
+     "-3.8971847970969975e-10"
+    ]
+   ],
+   "times_ms": [
+    1.682,
+    0.614,
+    0.428
+   ],
+   "per_op_ms": 0.9079999999999999,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_sparse_terms",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline"
+   ],
+   "synthetic": true,
+   "status": "not_run",
+   "note": "not run (no public facade; Known Gap)"
+  },
+  {
+   "scenario": "sampled_counts_sparse_terms",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": "sampled_expectation_value (parses counts per call)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline"
+   ],
+   "synthetic": true,
+   "wall_s": 0.0010397080332040787,
+   "cpu_s": 0.0010410000000002917,
+   "cpu_wall": 1.001242624616674,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.017753906249999996,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.1868767607495796e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.017753906249999965"
+    ],
+    [
+     "-0.017753906249999965"
+    ],
+    [
+     "-0.017753906249999965"
+    ]
+   ],
+   "times_ms": [
+    0.127917,
+    0.109917,
+    0.107792
+   ],
+   "per_op_ms": 0.11520866666666667,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_sparse_terms",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "float64 Python helper (no framework API)",
+   "label": "float64 Python helper (no framework API)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline"
+   ],
+   "synthetic": true,
+   "wall_s": 0.00019037490710616112,
+   "cpu_s": 0.00019100000000005224,
+   "cpu_wall": 1.0032834836449456,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.017753906249999996,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.1868767607495796e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.017753906249999965"
+    ],
+    [
+     "-0.017753906249999965"
+    ],
+    [
+     "-0.017753906249999965"
+    ]
+   ],
+   "times_ms": [
+    0.043042,
+    0.041333,
+    0.041792
+   ],
+   "per_op_ms": 0.042055666666666665,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_sparse_terms",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "float64 Python helper (no framework API)",
+   "label": "float64 Python helper (no framework API)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline"
+   ],
+   "synthetic": true,
+   "wall_s": 0.00017550005577504635,
+   "cpu_s": 0.00017600000000017602,
+   "cpu_wall": 1.0028486841381434,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.017753906249999996,
+   "n_discriminating": 1,
+   "n_observables": 1,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.1868767607495796e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.017753906249999965"
+    ],
+    [
+     "-0.017753906249999965"
+    ],
+    [
+     "-0.017753906249999965"
+    ]
+   ],
+   "times_ms": [
+    0.040959,
+    0.040833,
+    0.040167
+   ],
+   "per_op_ms": 0.040653,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_sparse_terms",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline"
+   ],
+   "synthetic": true,
+   "status": "not_run",
+   "note": "not run (no public facade; Known Gap)"
+  },
+  {
+   "scenario": "sampled_counts_z_wires_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline",
+    "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"
+   ],
+   "synthetic": true,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_parsed_counts=false,cache_mask_lookup_plan=false",
+   "timed_loop_cpu_ms": 0.0,
+   "timed_loop_wall_ms": 0.073,
+   "cpu_wall_timed_loop": 0.0,
+   "wall_s": 0.6529242501128465,
+   "cpu_s": 0.666977000000001,
+   "cpu_wall": 1.0215227874975172,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.3525390625,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ]
+   ],
+   "times_ms": [
+    0.028,
+    0.029,
+    0.013
+   ],
+   "per_op_ms": 0.023333333333333334,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_z_wires_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": "sampled_expectation_value (parses counts per call)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline",
+    "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"
+   ],
+   "synthetic": true,
+   "wall_s": 0.00035395799204707146,
+   "cpu_s": 0.0003549999999998832,
+   "cpu_wall": 1.0029438746298265,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.3525390625,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ]
+   ],
+   "times_ms": [
+    0.029041,
+    0.031,
+    0.026667
+   ],
+   "per_op_ms": 0.02890266666666667,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_z_wires_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "float64 Python helper (no framework API)",
+   "label": "float64 Python helper (no framework API)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline",
+    "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"
+   ],
+   "synthetic": true,
+   "wall_s": 3.162515349686146e-05,
+   "cpu_s": 3.2000000000032e-05,
+   "cpu_wall": 1.0118527963258026,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.3525390625,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ]
+   ],
+   "times_ms": [
+    0.005833,
+    0.005459,
+    0.005542
+   ],
+   "per_op_ms": 0.005611333333333334,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_z_wires_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "float64 Python helper (no framework API)",
+   "label": "float64 Python helper (no framework API)",
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline",
+    "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"
+   ],
+   "synthetic": true,
+   "wall_s": 2.933293581008911e-05,
+   "cpu_s": 2.8999999999834714e-05,
+   "cpu_wall": 0.9886497617418887,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.3525390625,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ]
+   ],
+   "times_ms": [
+    0.005166,
+    0.005958,
+    0.00525
+   ],
+   "per_op_ms": 0.005458,
+   "publishable": true
+  },
+  {
+   "scenario": "sampled_counts_z_wires_8q",
+   "family": null,
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "synthetic counts",
+    "parse inside the timed region in every lane",
+    "kept out of the width headline",
+    "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"
+   ],
+   "synthetic": true,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_parsed_counts=false,cache_mask_lookup_plan=false",
+   "timed_loop_cpu_ms": 0.0,
+   "timed_loop_wall_ms": 3.931,
+   "cpu_wall_timed_loop": 0.0,
+   "wall_s": 0.7738786248955876,
+   "cpu_s": 0.6939109999999982,
+   "cpu_wall": 0.8966664508838467,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.3525390625,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 0.0,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ],
+    [
+     "-0.00390625",
+     "-0.0087890625",
+     "0.2841796875",
+     "0.328125",
+     "0.1767578125",
+     "0.3330078125",
+     "0.30859375",
+     "0.3525390625"
+    ]
+   ],
+   "times_ms": [
+    0.774,
+    0.761,
+    2.392
+   ],
+   "per_op_ms": 1.309,
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 2.0,
+   "timed_loop_wall_ms": 1.901,
+   "cpu_wall_timed_loop": 1.0520778537611783,
+   "wall_s": 0.9395936669316143,
+   "cpu_s": 0.7201789999999999,
+   "cpu_wall": 0.7664791977066573,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.31527022204538235,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 6.2e-06,
+   "max_err": 5.283216586438044e-08,
+   "tolerance": 6.2e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.3152702748775482",
+     "0.3075108528137207",
+     "0.10660349577665329",
+     "-0.22318245470523834"
+    ],
+    [
+     "-0.3152702748775482",
+     "0.3075108528137207",
+     "0.10660349577665329",
+     "-0.22318245470523834"
+    ],
+    [
+     "-0.3152702748775482",
+     "0.3075108528137207",
+     "0.10660349577665329",
+     "-0.22318245470523834"
+    ]
+   ],
+   "times_ms": [
+    1.818,
+    0.037,
+    0.044
+   ],
+   "per_op_ms": 0.633,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356425285339",
+     "1,2": "0.27425602078437805"
+    },
+    "max_err": 5.1257337818633175e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0035113750491291285,
+   "cpu_s": 0.0035119999999999596,
+   "cpu_wall": 1.0001779789575558,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.31527022204538235,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 5.551115123125783e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.3152702220453824",
+     "0.3075108202722233",
+     "0.10660348686105489",
+     "-0.22318245046928775"
+    ],
+    [
+     "-0.3152702220453824",
+     "0.3075108202722233",
+     "0.10660348686105489",
+     "-0.22318245046928775"
+    ],
+    [
+     "-0.3152702220453824",
+     "0.3075108202722233",
+     "0.10660348686105489",
+     "-0.22318245046928775"
+    ]
+   ],
+   "times_ms": [
+    0.462334,
+    0.442583,
+    0.441875
+   ],
+   "per_op_ms": 0.44893066666666664,
+   "zz": {
+    "values": {
+     "0,1": "-0.506135618981459",
+     "1,2": "0.27425596952704023"
+    },
+    "max_err": 0.0,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.006938082864508033,
+   "cpu_s": 0.0069390000000000285,
+   "cpu_wall": 1.0001321886045333,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.31527022204538235,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 6.106226635438361e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.3152702220453821",
+     "0.3075108202722229",
+     "0.10660348686105464",
+     "-0.22318245046928714"
+    ],
+    [
+     "-0.3152702220453821",
+     "0.3075108202722229",
+     "0.10660348686105464",
+     "-0.22318245046928714"
+    ],
+    [
+     "-0.3152702220453821",
+     "0.3075108202722229",
+     "0.10660348686105464",
+     "-0.22318245046928714"
+    ]
+   ],
+   "times_ms": [
+    0.914375,
+    0.881667,
+    0.873917
+   ],
+   "per_op_ms": 0.8899863333333333,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356189814585",
+     "1,2": "0.2742559695270402"
+    },
+    "max_err": 4.440892098500626e-16,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.008783708093687892,
+   "cpu_s": 0.00878599999999996,
+   "cpu_wall": 1.0002609269670193,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.31527022204538235,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 7.026985537894603e-08,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.31527024507522583",
+     "0.3075108528137207",
+     "0.10660344362258911",
+     "-0.22318238019943237"
+    ],
+    [
+     "-0.31527024507522583",
+     "0.3075108528137207",
+     "0.10660344362258911",
+     "-0.22318238019943237"
+    ],
+    [
+     "-0.31527024507522583",
+     "0.3075108528137207",
+     "0.10660344362258911",
+     "-0.22318238019943237"
+    ]
+   ],
+   "times_ms": [
+    1.347,
+    1.315791,
+    1.279
+   ],
+   "per_op_ms": 1.3139303333333332,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061355233192444",
+     "1,2": "0.27425581216812134"
+    },
+    "max_err": 1.57358918895234e-07,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.006570209050551057,
+   "cpu_s": 0.0065709999999998825,
+   "cpu_wall": 1.0001203842134612,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.31527022204538235,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 7.771561172376096e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.31527022204538235",
+     "0.3075108202722239",
+     "0.10660348686105522",
+     "-0.22318245046928853"
+    ],
+    [
+     "-0.31527022204538235",
+     "0.3075108202722239",
+     "0.10660348686105522",
+     "-0.22318245046928853"
+    ],
+    [
+     "-0.31527022204538235",
+     "0.3075108202722239",
+     "0.10660348686105522",
+     "-0.22318245046928853"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356189814591",
+     "1,2": "0.27425596952704023"
+    },
+    "max_err": 1.1102230246251565e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 11.0,
+   "timed_loop_wall_ms": 11.399,
+   "cpu_wall_timed_loop": 0.9649969295552241,
+   "wall_s": 0.7052809582091868,
+   "cpu_s": 0.7005870000000005,
+   "cpu_wall": 0.9933445555922779,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.31527022204538235,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 6.2e-06,
+   "max_err": 5.283216586438044e-08,
+   "tolerance": 6.2e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.3152702748775482",
+     "0.3075108528137207",
+     "0.10660349577665329",
+     "-0.22318245470523834"
+    ],
+    [
+     "-0.3152702748775482",
+     "0.3075108528137207",
+     "0.10660349577665329",
+     "-0.22318245470523834"
+    ],
+    [
+     "-0.3152702748775482",
+     "0.3075108528137207",
+     "0.10660349577665329",
+     "-0.22318245470523834"
+    ]
+   ],
+   "times_ms": [
+    10.313,
+    0.603,
+    0.481
+   ],
+   "per_op_ms": 3.799,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356425285339",
+     "1,2": "0.27425602078437805"
+    },
+    "max_err": 5.1257337818633175e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 5.0,
+   "timed_loop_wall_ms": 6.152,
+   "cpu_wall_timed_loop": 0.812743823146944,
+   "wall_s": 0.6278512079734355,
+   "cpu_s": 0.6189009999999993,
+   "cpu_wall": 0.9857446989672513,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7044958205533086,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 6.2e-06,
+   "max_err": 2.1174669850854144e-07,
+   "tolerance": 6.2e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11134660243988037",
+     "0.11941743642091751",
+     "-0.019967032596468925",
+     "0.5019779801368713"
+    ],
+    [
+     "0.199441060423851",
+     "-0.15404750406742096",
+     "0.05724283307790756",
+     "-0.16692346334457397"
+    ],
+    [
+     "0.3909657895565033",
+     "0.7044956088066101",
+     "0.15108557045459747",
+     "0.1960776150226593"
+    ]
+   ],
+   "times_ms": [
+    3.217,
+    1.597,
+    1.335
+   ],
+   "per_op_ms": 2.0496666666666665,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356425285339",
+     "1,2": "0.27425602078437805"
+    },
+    "max_err": 5.1257337818633175e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0039025419391691685,
+   "cpu_s": 0.0039039999999999075,
+   "cpu_wall": 1.0003736182348497,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7044958205533086,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 8.326672684688674e-17,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11134656390143523",
+     "0.11941741765307061",
+     "-0.01996703442255343",
+     "0.5019778477626435"
+    ],
+    [
+     "0.19944103541320612",
+     "-0.15404754500752862",
+     "0.057242845483149646",
+     "-0.16692349014756988"
+    ],
+    [
+     "0.3909659209086072",
+     "0.7044958205533086",
+     "0.15108559530943938",
+     "0.19607773534054168"
+    ]
+   ],
+   "times_ms": [
+    0.485416,
+    0.461167,
+    0.455209
+   ],
+   "per_op_ms": 0.46726399999999996,
+   "zz": {
+    "values": {
+     "0,1": "-0.506135618981459",
+     "1,2": "0.27425596952704023"
+    },
+    "max_err": 0.0,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.008089750073850155,
+   "cpu_s": 0.008090999999999848,
+   "cpu_wall": 1.0001545073875315,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7044958205533086,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 6.106226635438361e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11134656390143538",
+     "0.11941741765307007",
+     "-0.019967034422552876",
+     "0.5019778477626436"
+    ],
+    [
+     "0.19944103541320668",
+     "-0.15404754500752849",
+     "0.05724284548314934",
+     "-0.1669234901475699"
+    ],
+    [
+     "0.39096592090860727",
+     "0.7044958205533087",
+     "0.1510855953094396",
+     "0.1960777353405414"
+    ]
+   ],
+   "times_ms": [
+    1.062041,
+    1.024917,
+    1.013667
+   ],
+   "per_op_ms": 1.0335416666666666,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356189814585",
+     "1,2": "0.2742559695270402"
+    },
+    "max_err": 4.440892098500626e-16,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.009283707942813635,
+   "cpu_s": 0.00928400000000007,
+   "cpu_wall": 1.0000314591096826,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7044958205533086,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.1340793426860571e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11134669184684753",
+     "0.11941729485988617",
+     "-0.01996692270040512",
+     "0.5019780397415161"
+    ],
+    [
+     "0.1994408220052719",
+     "-0.15404744446277618",
+     "0.05724269151687622",
+     "-0.16692370176315308"
+    ],
+    [
+     "0.39096593856811523",
+     "0.7044958472251892",
+     "0.15108542144298553",
+     "0.19607794284820557"
+    ]
+   ],
+   "times_ms": [
+    1.372583,
+    1.347917,
+    1.324542
+   ],
+   "per_op_ms": 1.3483473333333336,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061355233192444",
+     "1,2": "0.27425581216812134"
+    },
+    "max_err": 1.57358918895234e-07,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.007164750015363097,
+   "cpu_s": 0.007166000000000006,
+   "cpu_wall": 1.0001744631193312,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7044958205533086,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 4.440892098500626e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11134656390143544",
+     "0.11941741765307058",
+     "-0.01996703442255321",
+     "0.5019778477626438"
+    ],
+    [
+     "0.1994410354132065",
+     "-0.15404754500752887",
+     "0.05724284548314948",
+     "-0.16692349014757013"
+    ],
+    [
+     "0.3909659209086076",
+     "0.704495820553309",
+     "0.1510855953094394",
+     "0.1960777353405418"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356189814591",
+     "1,2": "0.27425596952704023"
+    },
+    "max_err": 1.1102230246251565e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "real_zbatch_4q",
+   "family": "real",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 16.0,
+   "timed_loop_wall_ms": 17.888,
+   "cpu_wall_timed_loop": 0.8944543828264758,
+   "wall_s": 0.79620649991557,
+   "cpu_s": 0.8247610000000023,
+   "cpu_wall": 1.0358631838442165,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7044958205533086,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 6.2e-06,
+   "max_err": 2.1174669850854144e-07,
+   "tolerance": 6.2e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11134660243988037",
+     "0.11941743642091751",
+     "-0.019967032596468925",
+     "0.5019779801368713"
+    ],
+    [
+     "0.199441060423851",
+     "-0.15404750406742096",
+     "0.05724283307790756",
+     "-0.16692346334457397"
+    ],
+    [
+     "0.3909657895565033",
+     "0.7044956088066101",
+     "0.15108557045459747",
+     "0.1960776150226593"
+    ]
+   ],
+   "times_ms": [
+    12.859,
+    2.928,
+    2.099
+   ],
+   "per_op_ms": 5.962,
+   "zz": {
+    "values": {
+     "0,1": "-0.5061356425285339",
+     "1,2": "0.27425602078437805"
+    },
+    "max_err": 5.1257337818633175e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 4.0,
+   "timed_loop_wall_ms": 3.505,
+   "cpu_wall_timed_loop": 1.1412268188302426,
+   "wall_s": 0.6956250420771539,
+   "cpu_s": 0.7067719999999973,
+   "cpu_wall": 1.0160243769970647,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7193576331329288,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 5.002212466465039e-07,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.6589722633361816",
+     "0.28031566739082336",
+     "0.07490380853414536",
+     "0.1908632516860962",
+     "0.2826285660266876",
+     "0.7193571329116821",
+     "-0.48040276765823364",
+     "0.0892612412571907"
+    ],
+    [
+     "0.6589722633361816",
+     "0.28031566739082336",
+     "0.07490380853414536",
+     "0.1908632516860962",
+     "0.2826285660266876",
+     "0.7193571329116821",
+     "-0.48040276765823364",
+     "0.0892612412571907"
+    ],
+    [
+     "0.6589722633361816",
+     "0.28031566739082336",
+     "0.07490380853414536",
+     "0.1908632516860962",
+     "0.2826285660266876",
+     "0.7193571329116821",
+     "-0.48040276765823364",
+     "0.0892612412571907"
+    ]
+   ],
+   "times_ms": [
+    2.726,
+    0.423,
+    0.353
+   ],
+   "per_op_ms": 1.1673333333333333,
+   "zz": {
+    "values": {
+     "0,1": "0.30671802163124084",
+     "3,4": "0.5512120127677917"
+    },
+    "max_err": 2.8770709814551765e-07,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.007239541970193386,
+   "cpu_s": 0.007241000000000053,
+   "cpu_wall": 1.000201398073617,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7193576331329288,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.220446049250313e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.6589726380107563",
+     "0.2803158491732701",
+     "0.07490386716714957",
+     "0.19086331918908814",
+     "0.2826287386489081",
+     "0.7193576331329286",
+     "-0.48040310299576555",
+     "0.08926127127405752"
+    ],
+    [
+     "0.6589726380107563",
+     "0.2803158491732701",
+     "0.07490386716714957",
+     "0.19086331918908814",
+     "0.2826287386489081",
+     "0.7193576331329286",
+     "-0.48040310299576555",
+     "0.08926127127405752"
+    ],
+    [
+     "0.6589726380107563",
+     "0.2803158491732701",
+     "0.07490386716714957",
+     "0.19086331918908814",
+     "0.2826287386489081",
+     "0.7193576331329286",
+     "-0.48040310299576555",
+     "0.08926127127405752"
+    ]
+   ],
+   "times_ms": [
+    1.03775,
+    1.025458,
+    1.0245
+   ],
+   "per_op_ms": 1.029236,
+   "zz": {
+    "values": {
+     "0,1": "0.3067182423529585",
+     "3,4": "0.5512123004748896"
+    },
+    "max_err": 3.3306690738754696e-16,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.013607207918539643,
+   "cpu_s": 0.013608000000000064,
+   "cpu_wall": 1.0000582104326738,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7193576331329288,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 5.551115123125783e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.6589726380107562",
+     "0.28031584917327074",
+     "0.07490386716714958",
+     "0.19086331918908783",
+     "0.28262873864890764",
+     "0.7193576331329284",
+     "-0.4804031029957659",
+     "0.08926127127405808"
+    ],
+    [
+     "0.6589726380107562",
+     "0.28031584917327074",
+     "0.07490386716714958",
+     "0.19086331918908783",
+     "0.28262873864890764",
+     "0.7193576331329284",
+     "-0.4804031029957659",
+     "0.08926127127405808"
+    ],
+    [
+     "0.6589726380107562",
+     "0.28031584917327074",
+     "0.07490386716714958",
+     "0.19086331918908783",
+     "0.28262873864890764",
+     "0.7193576331329284",
+     "-0.4804031029957659",
+     "0.08926127127405808"
+    ]
+   ],
+   "times_ms": [
+    1.916,
+    1.841083,
+    1.864458
+   ],
+   "per_op_ms": 1.8738469999999998,
+   "zz": {
+    "values": {
+     "0,1": "0.3067182423529592",
+     "3,4": "0.5512123004748897"
+    },
+    "max_err": 4.440892098500626e-16,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.01689958292990923,
+   "cpu_s": 0.016901000000000055,
+   "cpu_wall": 1.0000838523706002,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7193576331329288,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.2137187316584317e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.6589728593826294",
+     "0.2803158760070801",
+     "0.07490383088588715",
+     "0.1908634603023529",
+     "0.2826288044452667",
+     "0.7193577289581299",
+     "-0.4804031252861023",
+     "0.08926129341125488"
+    ],
+    [
+     "0.6589728593826294",
+     "0.2803158760070801",
+     "0.07490383088588715",
+     "0.1908634603023529",
+     "0.2826288044452667",
+     "0.7193577289581299",
+     "-0.4804031252861023",
+     "0.08926129341125488"
+    ],
+    [
+     "0.6589728593826294",
+     "0.2803158760070801",
+     "0.07490383088588715",
+     "0.1908634603023529",
+     "0.2826288044452667",
+     "0.7193577289581299",
+     "-0.4804031252861023",
+     "0.08926129341125488"
+    ]
+   ],
+   "times_ms": [
+    2.702833,
+    2.658292,
+    2.650875
+   ],
+   "per_op_ms": 2.670666666666667,
+   "zz": {
+    "values": {
+     "0,1": "0.30671828985214233",
+     "3,4": "0.5512124300003052"
+    },
+    "max_err": 1.2952541528221673e-07,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.014395208097994328,
+   "cpu_s": 0.014396000000000075,
+   "cpu_wall": 1.0000550115010742,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7193576331329288,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.1102230246251565e-15,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.658972638010757",
+     "0.28031584917327124",
+     "0.07490386716714911",
+     "0.1908633191890884",
+     "0.2826287386489083",
+     "0.7193576331329294",
+     "-0.4804031029957666",
+     "0.0892612712740587"
+    ],
+    [
+     "0.658972638010757",
+     "0.28031584917327124",
+     "0.07490386716714911",
+     "0.1908633191890884",
+     "0.2826287386489083",
+     "0.7193576331329294",
+     "-0.4804031029957666",
+     "0.0892612712740587"
+    ],
+    [
+     "0.658972638010757",
+     "0.28031584917327124",
+     "0.07490386716714911",
+     "0.1908633191890884",
+     "0.2826287386489083",
+     "0.7193576331329294",
+     "-0.4804031029957666",
+     "0.0892612712740587"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "0.30671824235295964",
+     "3,4": "0.5512123004748908"
+    },
+    "max_err": 8.881784197001252e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 20.0,
+   "timed_loop_wall_ms": 28.025,
+   "cpu_wall_timed_loop": 0.7136485280999108,
+   "wall_s": 1.095779333030805,
+   "cpu_s": 0.9889930000000007,
+   "cpu_wall": 0.9025475934689833,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.7193576331329288,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 5.002212466465039e-07,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.6589722633361816",
+     "0.28031566739082336",
+     "0.07490380853414536",
+     "0.1908632516860962",
+     "0.2826285660266876",
+     "0.7193571329116821",
+     "-0.48040276765823364",
+     "0.0892612412571907"
+    ],
+    [
+     "0.6589722633361816",
+     "0.28031566739082336",
+     "0.07490380853414536",
+     "0.1908632516860962",
+     "0.2826285660266876",
+     "0.7193571329116821",
+     "-0.48040276765823364",
+     "0.0892612412571907"
+    ],
+    [
+     "0.6589722633361816",
+     "0.28031566739082336",
+     "0.07490380853414536",
+     "0.1908632516860962",
+     "0.2826285660266876",
+     "0.7193571329116821",
+     "-0.48040276765823364",
+     "0.0892612412571907"
+    ]
+   ],
+   "times_ms": [
+    25.477,
+    1.543,
+    1.003
+   ],
+   "per_op_ms": 9.341,
+   "zz": {
+    "values": {
+     "0,1": "0.30671802163124084",
+     "3,4": "0.5512120127677917"
+    },
+    "max_err": 2.8770709814551765e-07,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 18.0,
+   "timed_loop_wall_ms": 22.143,
+   "cpu_wall_timed_loop": 0.8128979813033465,
+   "wall_s": 0.7395767909474671,
+   "cpu_s": 0.7268229999999996,
+   "cpu_wall": 0.9827552850446689,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.6198299929594777,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 1.3857128400296403e-07,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11602906137704849",
+     "-0.34126511216163635",
+     "0.05824152007699013",
+     "-0.28725311160087585",
+     "-0.29273539781570435",
+     "0.22243380546569824",
+     "0.24787941575050354",
+     "-0.6198301315307617"
+    ],
+    [
+     "-0.03842746838927269",
+     "-0.20001555979251862",
+     "-0.06246068701148033",
+     "0.2765762209892273",
+     "-0.12140683084726334",
+     "-0.5960661768913269",
+     "-0.07443356513977051",
+     "0.18315929174423218"
+    ],
+    [
+     "0.05871730297803879",
+     "0.6094609498977661",
+     "0.4803030788898468",
+     "0.4418647885322571",
+     "0.16515840590000153",
+     "0.16003748774528503",
+     "-0.17915670573711395",
+     "-0.2901441752910614"
+    ]
+   ],
+   "times_ms": [
+    9.453,
+    6.352,
+    6.336
+   ],
+   "per_op_ms": 7.380333333333333,
+   "zz": {
+    "values": {
+     "0,1": "0.30671802163124084",
+     "3,4": "0.5512120127677917"
+    },
+    "max_err": 2.8770709814551765e-07,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.008245333097875118,
+   "cpu_s": 0.008248000000000033,
+   "cpu_wall": 1.0003234438309838,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.6198299929594777,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.7755575615628914e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11602901782012798",
+     "-0.34126510908358987",
+     "0.05824153061976303",
+     "-0.2872530947180991",
+     "-0.29273534738771656",
+     "0.2224338032214377",
+     "0.247879375394365",
+     "-0.6198299929594779"
+    ],
+    [
+     "-0.03842749341842424",
+     "-0.20001557486266947",
+     "-0.062460671523949",
+     "0.27657617110159183",
+     "-0.12140684908442707",
+     "-0.5960660764527507",
+     "-0.07443359434466676",
+     "0.18315931169503147"
+    ],
+    [
+     "0.05871734169928368",
+     "0.6094609651965625",
+     "0.4803030845387274",
+     "0.44186478961903",
+     "0.16515841787950625",
+     "0.1600373979750554",
+     "-0.17915675224438857",
+     "-0.29014420633685944"
+    ]
+   ],
+   "times_ms": [
+    1.118125,
+    1.063667,
+    1.060375
+   ],
+   "per_op_ms": 1.0807223333333333,
+   "zz": {
+    "values": {
+     "0,1": "0.3067182423529585",
+     "3,4": "0.5512123004748896"
+    },
+    "max_err": 3.3306690738754696e-16,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.01621004194021225,
+   "cpu_s": 0.016211999999999893,
+   "cpu_wall": 1.0001207930118172,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.6198299929594777,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 7.216449660063518e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11602901782012764",
+     "-0.34126510908358976",
+     "0.058241530619763116",
+     "-0.28725309471809934",
+     "-0.2927353473877167",
+     "0.2224338032214378",
+     "0.24787937539436516",
+     "-0.6198299929594778"
+    ],
+    [
+     "-0.03842749341842433",
+     "-0.20001557486266947",
+     "-0.06246067152394885",
+     "0.27657617110159194",
+     "-0.12140684908442706",
+     "-0.5960660764527503",
+     "-0.0744335943446669",
+     "0.1831593116950312"
+    ],
+    [
+     "0.058717341699283665",
+     "0.609460965196563",
+     "0.4803030845387277",
+     "0.44186478961903036",
+     "0.1651584178795062",
+     "0.16003739797505545",
+     "-0.17915675224438848",
+     "-0.29014420633686"
+    ]
+   ],
+   "times_ms": [
+    2.195208,
+    2.233125,
+    2.122125
+   ],
+   "per_op_ms": 2.183486,
+   "zz": {
+    "values": {
+     "0,1": "0.3067182423529592",
+     "3,4": "0.5512123004748897"
+    },
+    "max_err": 4.440892098500626e-16,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.017955041024833918,
+   "cpu_s": 0.01795599999999986,
+   "cpu_wall": 1.0000534098008809,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.6198299929594777,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.9876473345004086e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11602891236543655",
+     "-0.34126514196395874",
+     "0.05824156850576401",
+     "-0.28725314140319824",
+     "-0.29273539781570435",
+     "0.22243398427963257",
+     "0.24787941575050354",
+     "-0.6198300123214722"
+    ],
+    [
+     "-0.0384274423122406",
+     "-0.20001545548439026",
+     "-0.062460724264383316",
+     "0.2765762209892273",
+     "-0.12140680849552155",
+     "-0.5960661768913269",
+     "-0.07443356513977051",
+     "0.18315911293029785"
+    ],
+    [
+     "0.058717481791973114",
+     "0.6094610691070557",
+     "0.48030316829681396",
+     "0.4418647885322571",
+     "0.16515840590000153",
+     "0.16003745794296265",
+     "-0.17915664613246918",
+     "-0.29014408588409424"
+    ]
+   ],
+   "times_ms": [
+    2.691208,
+    2.686167,
+    2.6725
+   ],
+   "per_op_ms": 2.683291666666667,
+   "zz": {
+    "values": {
+     "0,1": "0.30671828985214233",
+     "3,4": "0.5512124300003052"
+    },
+    "max_err": 1.2952541528221673e-07,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.01423579198308289,
+   "cpu_s": 0.014237000000000055,
+   "cpu_wall": 1.0000848577247126,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.6198299929594777,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.4432899320127035e-15,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11602901782012819",
+     "-0.34126510908359015",
+     "0.05824153061976296",
+     "-0.2872530947180995",
+     "-0.29273534738771695",
+     "0.22243380322143796",
+     "0.24787937539436516",
+     "-0.6198299929594786"
+    ],
+    [
+     "-0.038427493418424316",
+     "-0.20001557486266985",
+     "-0.06246067152394927",
+     "0.2765761711015927",
+     "-0.12140684908442731",
+     "-0.596066076452752",
+     "-0.07443359434466645",
+     "0.18315931169503097"
+    ],
+    [
+     "0.058717341699284054",
+     "0.6094609651965636",
+     "0.4803030845387286",
+     "0.4418647896190311",
+     "0.1651584178795072",
+     "0.16003739797505512",
+     "-0.17915675224438915",
+     "-0.29014420633685983"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "0.30671824235295964",
+     "3,4": "0.5512123004748908"
+    },
+    "max_err": 8.881784197001252e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "real_zbatch_8q",
+   "family": "real",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 31.0,
+   "timed_loop_wall_ms": 34.403,
+   "cpu_wall_timed_loop": 0.901084207772578,
+   "wall_s": 0.8081652498804033,
+   "cpu_s": 0.7945239999999991,
+   "cpu_wall": 0.9831207171028167,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.6198299929594777,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1.3e-05,
+   "max_err": 1.3857128400296403e-07,
+   "tolerance": 1.3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.11602906137704849",
+     "-0.34126511216163635",
+     "0.05824152007699013",
+     "-0.28725311160087585",
+     "-0.29273539781570435",
+     "0.22243380546569824",
+     "0.24787941575050354",
+     "-0.6198301315307617"
+    ],
+    [
+     "-0.03842746838927269",
+     "-0.20001555979251862",
+     "-0.06246068701148033",
+     "0.2765762209892273",
+     "-0.12140683084726334",
+     "-0.5960661768913269",
+     "-0.07443356513977051",
+     "0.18315929174423218"
+    ],
+    [
+     "0.05871730297803879",
+     "0.6094609498977661",
+     "0.4803030788898468",
+     "0.4418647885322571",
+     "0.16515840590000153",
+     "0.16003748774528503",
+     "-0.17915670573711395",
+     "-0.2901441752910614"
+    ]
+   ],
+   "times_ms": [
+    19.595,
+    7.711,
+    7.095
+   ],
+   "per_op_ms": 11.466999999999999,
+   "zz": {
+    "values": {
+     "0,1": "0.30671802163124084",
+     "3,4": "0.5512120127677917"
+    },
+    "max_err": 2.8770709814551765e-07,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 2.0,
+   "timed_loop_wall_ms": 2.196,
+   "cpu_wall_timed_loop": 0.9107468123861566,
+   "wall_s": 0.6632129580248147,
+   "cpu_s": 0.6644920000000027,
+   "cpu_wall": 1.0019285539579885,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.32138529033149443,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 3e-05,
+   "max_err": 1.749464388911548e-07,
+   "tolerance": 3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.29345032572746277",
+     "-0.06764835119247437",
+     "0.19450202584266663",
+     "0.32138511538505554"
+    ],
+    [
+     "-0.29345032572746277",
+     "-0.06764835119247437",
+     "0.19450202584266663",
+     "0.32138511538505554"
+    ],
+    [
+     "-0.29345032572746277",
+     "-0.06764835119247437",
+     "0.19450202584266663",
+     "0.32138511538505554"
+    ]
+   ],
+   "times_ms": [
+    2.064,
+    0.073,
+    0.056
+   ],
+   "per_op_ms": 0.731,
+   "zz": {
+    "values": {
+     "0,1": "0.21773409843444824",
+     "1,2": "0.10263360291719437"
+    },
+    "max_err": 6.755935214042275e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.005602249875664711,
+   "cpu_s": 0.005605000000000082,
+   "cpu_wall": 1.000490896407052,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.32138529033149443,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.1102230246251565e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.2934503764331588",
+     "-0.06764841882438809",
+     "0.194502078872099",
+     "0.3213852903314943"
+    ],
+    [
+     "-0.2934503764331588",
+     "-0.06764841882438809",
+     "0.194502078872099",
+     "0.3213852903314943"
+    ],
+    [
+     "-0.2934503764331588",
+     "-0.06764841882438809",
+     "0.194502078872099",
+     "0.3213852903314943"
+    ]
+   ],
+   "times_ms": [
+    0.800084,
+    0.756,
+    0.742541
+   ],
+   "per_op_ms": 0.7662083333333333,
+   "zz": {
+    "values": {
+     "0,1": "0.21773416599380044",
+     "1,2": "0.10263355984609279"
+    },
+    "max_err": 5.551115123125783e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.009834584081545472,
+   "cpu_s": 0.00982700000000003,
+   "cpu_wall": 0.9992288355580107,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.32138529033149443,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.6653345369377348e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.2934503764331589",
+     "-0.06764841882438793",
+     "0.19450207887209914",
+     "0.3213852903314945"
+    ],
+    [
+     "-0.2934503764331589",
+     "-0.06764841882438793",
+     "0.19450207887209914",
+     "0.3213852903314945"
+    ],
+    [
+     "-0.2934503764331589",
+     "-0.06764841882438793",
+     "0.19450207887209914",
+     "0.3213852903314945"
+    ]
+   ],
+   "times_ms": [
+    1.289,
+    1.245125,
+    1.217834
+   ],
+   "per_op_ms": 1.250653,
+   "zz": {
+    "values": {
+     "0,1": "0.21773416599380047",
+     "1,2": "0.10263355984609279"
+    },
+    "max_err": 8.326672684688674e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.011412499938160181,
+   "cpu_s": 0.011413999999999813,
+   "cpu_wall": 1.0001314402495298,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.32138529033149443,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.4958830024669467e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.2934502959251404",
+     "-0.0676482692360878",
+     "0.19450215995311737",
+     "0.32138538360595703"
+    ],
+    [
+     "-0.2934502959251404",
+     "-0.0676482692360878",
+     "0.19450215995311737",
+     "0.32138538360595703"
+    ],
+    [
+     "-0.2934502959251404",
+     "-0.0676482692360878",
+     "0.19450215995311737",
+     "0.32138538360595703"
+    ]
+   ],
+   "times_ms": [
+    1.722458,
+    1.689875,
+    1.685459
+   ],
+   "per_op_ms": 1.699264,
+   "zz": {
+    "values": {
+     "0,1": "0.21773436665534973",
+     "1,2": "0.10263381898403168"
+    },
+    "max_err": 2.5913793885723457e-07,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.009001457830891013,
+   "cpu_s": 0.008999999999999897,
+   "cpu_wall": 0.999838045023539,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.32138529033149443,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.885780586188048e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.2934503764331588",
+     "-0.06764841882438843",
+     "0.19450207887209917",
+     "0.3213852903314947"
+    ],
+    [
+     "-0.2934503764331588",
+     "-0.06764841882438843",
+     "0.19450207887209917",
+     "0.3213852903314947"
+    ],
+    [
+     "-0.2934503764331588",
+     "-0.06764841882438843",
+     "0.19450207887209917",
+     "0.3213852903314947"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "0.21773416599380058",
+     "1,2": "0.10263355984609265"
+    },
+    "max_err": 1.942890293094024e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 14.0,
+   "timed_loop_wall_ms": 14.135,
+   "cpu_wall_timed_loop": 0.9904492394764768,
+   "wall_s": 0.7872177499812096,
+   "cpu_s": 0.8204039999999999,
+   "cpu_wall": 1.042156379247778,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.32138529033149443,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 3e-05,
+   "max_err": 1.749464388911548e-07,
+   "tolerance": 3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "-0.29345032572746277",
+     "-0.06764835119247437",
+     "0.19450204074382782",
+     "0.32138511538505554"
+    ],
+    [
+     "-0.29345032572746277",
+     "-0.06764835119247437",
+     "0.19450204074382782",
+     "0.32138511538505554"
+    ],
+    [
+     "-0.29345032572746277",
+     "-0.06764835119247437",
+     "0.19450204074382782",
+     "0.32138511538505554"
+    ]
+   ],
+   "times_ms": [
+    12.376,
+    0.915,
+    0.843
+   ],
+   "per_op_ms": 4.711333333333333,
+   "zz": {
+    "values": {
+     "0,1": "0.21773408353328705",
+     "1,2": "0.10263361036777496"
+    },
+    "max_err": 8.24605133342704e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 8.0,
+   "timed_loop_wall_ms": 10.511,
+   "cpu_wall_timed_loop": 0.7611074112834174,
+   "wall_s": 0.6636317078955472,
+   "cpu_s": 0.6648840000000007,
+   "cpu_wall": 1.0018870287383113,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.48784829311147787,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 3e-05,
+   "max_err": 2.5696977518085973e-07,
+   "tolerance": 3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.1718522608280182",
+     "0.04374393820762634",
+     "0.48784855008125305",
+     "-0.1068095862865448"
+    ],
+    [
+     "-0.07337270677089691",
+     "-0.1356307715177536",
+     "-0.21803005039691925",
+     "-0.47097134590148926"
+    ],
+    [
+     "-0.12969240546226501",
+     "-0.0023375852033495903",
+     "-0.05958434194326401",
+     "-0.10238423198461533"
+    ]
+   ],
+   "times_ms": [
+    4.803,
+    3.08,
+    2.625
+   ],
+   "per_op_ms": 3.5026666666666664,
+   "zz": {
+    "values": {
+     "0,1": "0.21773409843444824",
+     "1,2": "0.10263360291719437"
+    },
+    "max_err": 6.755935214042275e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.005499042104929686,
+   "cpu_s": 0.00550000000000006,
+   "cpu_wall": 1.000174193078012,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.48784829311147787,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.6653345369377348e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.1718520656220609",
+     "0.04374386405600448",
+     "0.487848293111478",
+     "-0.106809428534516"
+    ],
+    [
+     "-0.07337283861972836",
+     "-0.13563089166459125",
+     "-0.21802996440658293",
+     "-0.47097146688813557"
+    ],
+    [
+     "-0.12969232840235145",
+     "-0.0023375194319362746",
+     "-0.05958426937658462",
+     "-0.10238422885006554"
+    ]
+   ],
+   "times_ms": [
+    0.694541,
+    0.690875,
+    0.671125
+   ],
+   "per_op_ms": 0.6855136666666667,
+   "zz": {
+    "values": {
+     "0,1": "0.21773416599380044",
+     "1,2": "0.10263355984609279"
+    },
+    "max_err": 5.551115123125783e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.010556458029896021,
+   "cpu_s": 0.010558000000000067,
+   "cpu_wall": 1.000146068889743,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.48784829311147787,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.3306690738754696e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.171852065622061",
+     "0.04374386405600417",
+     "0.48784829311147787",
+     "-0.10680942853451614"
+    ],
+    [
+     "-0.07337283861972854",
+     "-0.1356308916645912",
+     "-0.21802996440658295",
+     "-0.4709714668881356"
+    ],
+    [
+     "-0.12969232840235162",
+     "-0.002337519431935997",
+     "-0.059584269376584564",
+     "-0.10238422885006543"
+    ]
+   ],
+   "times_ms": [
+    1.427542,
+    1.392,
+    1.37775
+   ],
+   "per_op_ms": 1.3990973333333334,
+   "zz": {
+    "values": {
+     "0,1": "0.21773416599380047",
+     "1,2": "0.10263355984609279"
+    },
+    "max_err": 8.326672684688674e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.01128700003027916,
+   "cpu_s": 0.011289000000000105,
+   "cpu_wall": 1.000177192319977,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.48784829311147787,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.6135866554023437e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.17185194790363312",
+     "0.043743833899497986",
+     "0.487848162651062",
+     "-0.1068093329668045"
+    ],
+    [
+     "-0.07337269186973572",
+     "-0.13563084602355957",
+     "-0.21803006529808044",
+     "-0.47097158432006836"
+    ],
+    [
+     "-0.1296921670436859",
+     "-0.0023375488817691803",
+     "-0.05958425998687744",
+     "-0.1023842990398407"
+    ]
+   ],
+   "times_ms": [
+    1.63325,
+    1.594083,
+    1.590625
+   ],
+   "per_op_ms": 1.605986,
+   "zz": {
+    "values": {
+     "0,1": "0.21773436665534973",
+     "1,2": "0.10263381898403168"
+    },
+    "max_err": 2.5913793885723457e-07,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.009013833943754435,
+   "cpu_s": 0.009013999999999855,
+   "cpu_wall": 1.0000184223768107,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.48784829311147787,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 9.159339953157541e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.17185206562206176",
+     "0.04374386405600422",
+     "0.48784829311147776",
+     "-0.10680942853451647"
+    ],
+    [
+     "-0.07337283861972871",
+     "-0.13563089166459108",
+     "-0.21802996440658276",
+     "-0.4709714668881354"
+    ],
+    [
+     "-0.12969232840235165",
+     "-0.0023375194319358236",
+     "-0.05958426937658491",
+     "-0.10238422885006529"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "0.21773416599380058",
+     "1,2": "0.10263355984609265"
+    },
+    "max_err": 1.942890293094024e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "complex_zbatch_4q",
+   "family": "complex",
+   "qubits": 4,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 17.0,
+   "timed_loop_wall_ms": 19.537,
+   "cpu_wall_timed_loop": 0.8701438296565491,
+   "wall_s": 0.7182035841979086,
+   "cpu_s": 0.7073730000000005,
+   "cpu_wall": 0.9849198967587947,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.48784829311147787,
+   "n_discriminating": 4,
+   "n_observables": 4,
+   "discrimination_tolerance": 3e-05,
+   "max_err": 2.5696977518085973e-07,
+   "tolerance": 3e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.1718522608280182",
+     "0.04374393820762634",
+     "0.48784855008125305",
+     "-0.1068095862865448"
+    ],
+    [
+     "-0.07337271422147751",
+     "-0.1356307715177536",
+     "-0.21803005039691925",
+     "-0.47097134590148926"
+    ],
+    [
+     "-0.12969240546226501",
+     "-0.0023375852033495903",
+     "-0.05958434194326401",
+     "-0.10238423198461533"
+    ]
+   ],
+   "times_ms": [
+    12.569,
+    3.757,
+    3.209
+   ],
+   "per_op_ms": 6.511666666666667,
+   "zz": {
+    "values": {
+     "0,1": "0.21773408353328705",
+     "1,2": "0.10263361036777496"
+    },
+    "max_err": 8.24605133342704e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 4.0,
+   "timed_loop_wall_ms": 3.441,
+   "cpu_wall_timed_loop": 1.1624527753560012,
+   "wall_s": 0.6718258338514715,
+   "cpu_s": 0.6465320000000006,
+   "cpu_wall": 0.9623506084806751,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.24573467667903925,
+   "n_discriminating": 7,
+   "n_observables": 8,
+   "discrimination_tolerance": 5.9e-05,
+   "max_err": 8.944663976162559e-08,
+   "tolerance": 5.9e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.027775868773460388",
+     "0.23291517794132233",
+     "0.11320042610168457",
+     "-0.24573476612567902",
+     "0.013562588021159172",
+     "-0.02323402464389801",
+     "-0.005900783929973841",
+     "-0.00033136451384052634"
+    ],
+    [
+     "0.027775868773460388",
+     "0.23291517794132233",
+     "0.11320042610168457",
+     "-0.24573476612567902",
+     "0.013562588021159172",
+     "-0.02323402464389801",
+     "-0.005900783929973841",
+     "-0.00033136451384052634"
+    ],
+    [
+     "0.027775868773460388",
+     "0.23291517794132233",
+     "0.11320042610168457",
+     "-0.24573476612567902",
+     "0.013562588021159172",
+     "-0.02323402464389801",
+     "-0.005900783929973841",
+     "-0.00033136451384052634"
+    ]
+   ],
+   "times_ms": [
+    2.605,
+    0.424,
+    0.41
+   ],
+   "per_op_ms": 1.1463333333333334,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438388794660568",
+     "3,4": "0.06448598951101303"
+    },
+    "max_err": 5.520662038627222e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.010498167015612125,
+   "cpu_s": 0.010499999999999954,
+   "cpu_wall": 1.0001746004216834,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.24573467667903925,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.220446049250313e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.027775869265016066",
+     "0.23291511076286597",
+     "0.11320040504541941",
+     "-0.2457346766790393",
+     "0.013562554319395886",
+     "-0.023234031652929917",
+     "-0.005900791178293483",
+     "-0.00033135871161585643"
+    ],
+    [
+     "0.027775869265016066",
+     "0.23291511076286597",
+     "0.11320040504541941",
+     "-0.2457346766790393",
+     "0.013562554319395886",
+     "-0.023234031652929917",
+     "-0.005900791178293483",
+     "-0.00033135871161585643"
+    ],
+    [
+     "0.027775869265016066",
+     "0.23291511076286597",
+     "0.11320040504541941",
+     "-0.2457346766790393",
+     "0.013562554319395886",
+     "-0.023234031652929917",
+     "-0.005900791178293483",
+     "-0.00033135871161585643"
+    ]
+   ],
+   "times_ms": [
+    1.560292,
+    1.5535,
+    1.530959
+   ],
+   "per_op_ms": 1.5482503333333335,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438390207185976",
+     "3,4": "0.06448593430439256"
+    },
+    "max_err": 8.326672684688674e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.01794412499293685,
+   "cpu_s": 0.0179450000000001,
+   "cpu_wall": 1.0000487628716137,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.24573467667903925,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.3306690738754696e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.027775869265016184",
+     "0.2329151107628663",
+     "0.1132004050454194",
+     "-0.24573467667903925",
+     "0.013562554319396125",
+     "-0.023234031652929976",
+     "-0.005900791178293563",
+     "-0.0003313587116160477"
+    ],
+    [
+     "0.027775869265016184",
+     "0.2329151107628663",
+     "0.1132004050454194",
+     "-0.24573467667903925",
+     "0.013562554319396125",
+     "-0.023234031652929976",
+     "-0.005900791178293563",
+     "-0.0003313587116160477"
+    ],
+    [
+     "0.027775869265016184",
+     "0.2329151107628663",
+     "0.1132004050454194",
+     "-0.24573467667903925",
+     "0.013562554319396125",
+     "-0.023234031652929976",
+     "-0.005900791178293563",
+     "-0.0003313587116160477"
+    ]
+   ],
+   "times_ms": [
+    2.506209,
+    2.47275,
+    2.45575
+   ],
+   "per_op_ms": 2.4782363333333333,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438390207185965",
+     "3,4": "0.0644859343043927"
+    },
+    "max_err": 5.551115123125783e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.0205697079654783,
+   "cpu_s": 0.020570999999999895,
+   "cpu_wall": 1.0000628124873607,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.24573467667903925,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.7645973343638488e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.027776045724749565",
+     "0.23291513323783875",
+     "0.11320045590400696",
+     "-0.24573470652103424",
+     "0.013562608510255814",
+     "-0.023233970627188683",
+     "-0.005900785326957703",
+     "-0.0003313720226287842"
+    ],
+    [
+     "0.027776045724749565",
+     "0.23291513323783875",
+     "0.11320045590400696",
+     "-0.24573470652103424",
+     "0.013562608510255814",
+     "-0.023233970627188683",
+     "-0.005900785326957703",
+     "-0.0003313720226287842"
+    ],
+    [
+     "0.027776045724749565",
+     "0.23291513323783875",
+     "0.11320045590400696",
+     "-0.24573470652103424",
+     "0.013562608510255814",
+     "-0.023233970627188683",
+     "-0.005900785326957703",
+     "-0.0003313720226287842"
+    ]
+   ],
+   "times_ms": [
+    3.242958,
+    3.22775,
+    3.194458
+   ],
+   "per_op_ms": 3.2217219999999998,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438380599021912",
+     "3,4": "0.06448585540056229"
+    },
+    "max_err": 9.608164058816371e-08,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.01644620788283646,
+   "cpu_s": 0.01644699999999988,
+   "cpu_wall": 1.0000481641220311,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.24573467667903925,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.2959746043559335e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.027775869265016098",
+     "0.2329151107628662",
+     "0.1132004050454196",
+     "-0.2457346766790393",
+     "0.013562554319395872",
+     "-0.023234031652929702",
+     "-0.00590079117829341",
+     "-0.0003313587116159922"
+    ],
+    [
+     "0.027775869265016098",
+     "0.2329151107628662",
+     "0.1132004050454196",
+     "-0.2457346766790393",
+     "0.013562554319395872",
+     "-0.023234031652929702",
+     "-0.00590079117829341",
+     "-0.0003313587116159922"
+    ],
+    [
+     "0.027775869265016098",
+     "0.2329151107628662",
+     "0.1132004050454196",
+     "-0.2457346766790393",
+     "0.013562554319395872",
+     "-0.023234031652929702",
+     "-0.00590079117829341",
+     "-0.0003313587116159922"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438390207185982",
+     "3,4": "0.06448593430439267"
+    },
+    "max_err": 1.1102230246251565e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "hot",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=true",
+   "timed_loop_cpu_ms": 12.0,
+   "timed_loop_wall_ms": 12.312,
+   "cpu_wall_timed_loop": 0.9746588693957114,
+   "wall_s": 0.7804475831799209,
+   "cpu_s": 0.7635989999999957,
+   "cpu_wall": 0.9784116402650952,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.24573467667903925,
+   "n_discriminating": 7,
+   "n_observables": 8,
+   "discrimination_tolerance": 5.9e-05,
+   "max_err": 8.944663976162559e-08,
+   "tolerance": 5.9e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.02777586691081524",
+     "0.23291517794132233",
+     "0.11320042610168457",
+     "-0.24573476612567902",
+     "0.013562586158514023",
+     "-0.02323402464389801",
+     "-0.005900784395635128",
+     "-0.00033136512502096593"
+    ],
+    [
+     "0.02777586691081524",
+     "0.23291517794132233",
+     "0.11320042610168457",
+     "-0.24573476612567902",
+     "0.013562586158514023",
+     "-0.02323402464389801",
+     "-0.005900784395635128",
+     "-0.00033136512502096593"
+    ],
+    [
+     "0.02777586691081524",
+     "0.23291517794132233",
+     "0.11320042610168457",
+     "-0.24573476612567902",
+     "0.013562586158514023",
+     "-0.02323402464389801",
+     "-0.005900784395635128",
+     "-0.00033136512502096593"
+    ]
+   ],
+   "times_ms": [
+    10.531,
+    0.925,
+    0.855
+   ],
+   "per_op_ms": 4.103666666666666,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438388794660568",
+     "3,4": "0.06448598951101303"
+    },
+    "max_err": 5.520662038627222e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_portable",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_portable",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 54.0,
+   "timed_loop_wall_ms": 74.192,
+   "cpu_wall_timed_loop": 0.7278412766875135,
+   "wall_s": 0.90436683408916,
+   "cpu_s": 0.8318830000000013,
+   "cpu_wall": 0.9198512911387763,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.28933609692793016,
+   "n_discriminating": 7,
+   "n_observables": 8,
+   "discrimination_tolerance": 5.9e-05,
+   "max_err": 1.076008784295368e-07,
+   "tolerance": 5.9e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.14556317031383514",
+     "0.07018066197633743",
+     "-0.035440701991319656",
+     "0.10075057297945023",
+     "0.027097726240754128",
+     "-0.005293544847518206",
+     "-0.04823543503880501",
+     "0.07739222794771194"
+    ],
+    [
+     "0.10984358936548233",
+     "-0.06465768814086914",
+     "0.2128015011548996",
+     "-0.012533583678305149",
+     "0.08614874631166458",
+     "0.017940405756235123",
+     "0.021166451275348663",
+     "-0.06014905869960785"
+    ],
+    [
+     "-0.2757473587989807",
+     "-0.049540407955646515",
+     "0.04858236759901047",
+     "0.2893362045288086",
+     "0.03170908987522125",
+     "0.01810700073838234",
+     "0.002896807389333844",
+     "-1.3434771062748041e-05"
+    ]
+   ],
+   "times_ms": [
+    26.886,
+    23.691,
+    23.612
+   ],
+   "per_op_ms": 24.729666666666663,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438388794660568",
+     "3,4": "0.06448598951101303"
+    },
+    "max_err": 5.520662038627222e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "qiskit",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.011372833047062159,
+   "cpu_s": 0.01137699999999997,
+   "cpu_wall": 1.0003663953318025,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.28933609692793016,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 2.7755575615628914e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.14556316438862282",
+     "0.07018062887982082",
+     "-0.03544070399934546",
+     "0.1007505115425956",
+     "0.02709774872742729",
+     "-0.00529355624396962",
+     "-0.0482353715499394",
+     "0.07739221246843453"
+    ],
+    [
+     "0.10984363394606493",
+     "-0.06465764801404571",
+     "0.2128015758453971",
+     "-0.01253361526609583",
+     "0.08614881716929734",
+     "0.01794044503050903",
+     "0.021166421498480362",
+     "-0.060149019688989044"
+    ],
+    [
+     "-0.2757472864245994",
+     "-0.04954033590511763",
+     "0.0485823122051382",
+     "0.28933609692793005",
+     "0.03170904718563992",
+     "0.018107030764880898",
+     "0.0028967613679168006",
+     "-1.348506917334645e-05"
+    ]
+   ],
+   "times_ms": [
+    1.573166,
+    1.597583,
+    1.549666
+   ],
+   "per_op_ms": 1.5734716666666666,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438390207185976",
+     "3,4": "0.06448593430439256"
+    },
+    "max_err": 8.326672684688674e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "pennylane",
+   "dtype": "complex128 state, float64 values",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.021170249907299876,
+   "cpu_s": 0.02117100000000005,
+   "cpu_wall": 1.0000354314523192,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.28933609692793016,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.885780586188048e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.14556316438862266",
+     "0.07018062887982068",
+     "-0.03544070399934529",
+     "0.10075051154259573",
+     "0.027097748727427318",
+     "-0.005293556243969766",
+     "-0.048235371549939676",
+     "0.07739221246843436"
+    ],
+    [
+     "0.10984363394606489",
+     "-0.06465764801404578",
+     "0.21280157584539688",
+     "-0.012533615266096088",
+     "0.08614881716929729",
+     "0.01794044503050879",
+     "0.02116642149848036",
+     "-0.06014901968898939"
+    ],
+    [
+     "-0.27574728642459956",
+     "-0.049540335905117694",
+     "0.048582312205138256",
+     "0.2893360969279299",
+     "0.03170904718563988",
+     "0.018107030764880738",
+     "0.002896761367917111",
+     "-1.3485069173313491e-05"
+    ]
+   ],
+   "times_ms": [
+    3.002125,
+    2.934083,
+    2.925625
+   ],
+   "per_op_ms": 2.9539443333333337,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438390207185965",
+     "3,4": "0.0644859343043927"
+    },
+    "max_err": 5.551115123125783e-17,
+    "status": "pass"
+   },
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c64",
+   "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.02222641697153449,
+   "cpu_s": 0.022227999999999914,
+   "cpu_wall": 1.0000712228366566,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.28933609692793016,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 1.2208043403960644e-07,
+   "tolerance": null,
+   "status": "ungated",
+   "gated": false,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.14556312561035156",
+     "0.07018058001995087",
+     "-0.03544077277183533",
+     "0.10075042396783829",
+     "0.027097687125205994",
+     "-0.005293525755405426",
+     "-0.048235394060611725",
+     "0.07739229500293732"
+    ],
+    [
+     "0.10984353721141815",
+     "-0.0646575540304184",
+     "0.21280156075954437",
+     "-0.01253373734652996",
+     "0.08614881336688995",
+     "0.017940498888492584",
+     "0.02116643637418747",
+     "-0.06014895439147949"
+    ],
+    [
+     "-0.2757472097873688",
+     "-0.04954027011990547",
+     "0.04858233407139778",
+     "0.2893361449241638",
+     "0.03170905262231827",
+     "0.018107039853930473",
+     "0.002896822988986969",
+     "-1.3425946235656738e-05"
+    ]
+   ],
+   "times_ms": [
+    3.3195,
+    3.282041,
+    3.273417
+   ],
+   "per_op_ms": 3.2916526666666663,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438380599021912",
+     "3,4": "0.06448585540056229"
+    },
+    "max_err": 9.608164058816371e-08,
+    "status": "ungated"
+   },
+   "cirq_publishable": true,
+   "publishable": true
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "cirq_c128_equivalence",
+   "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "wall_s": 0.018093124963343143,
+   "cpu_s": 0.018094000000000054,
+   "cpu_wall": 1.000048362936678,
+   "cpu_wall_timed_loop": null,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.28933609692793016,
+   "n_discriminating": 8,
+   "n_observables": 8,
+   "discrimination_tolerance": 1e-06,
+   "max_err": 3.3306690738754696e-16,
+   "tolerance": 1e-06,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.14556316438862257",
+     "0.07018062887982074",
+     "-0.03544070399934551",
+     "0.10075051154259561",
+     "0.027097748727427165",
+     "-0.005293556243969575",
+     "-0.04823537154993962",
+     "0.07739221246843456"
+    ],
+    [
+     "0.10984363394606506",
+     "-0.06465764801404571",
+     "0.21280157584539705",
+     "-0.012533615266095859",
+     "0.08614881716929723",
+     "0.01794044503050879",
+     "0.02116642149848015",
+     "-0.060149019688989336"
+    ],
+    [
+     "-0.2757472864245991",
+     "-0.04954033590511763",
+     "0.048582312205138284",
+     "0.2893360969279301",
+     "0.03170904718563995",
+     "0.01810703076488086",
+     "0.0028967613679168613",
+     "-1.3485069173313491e-05"
+    ]
+   ],
+   "times_ms": [],
+   "per_op_ms": null,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438390207185982",
+     "3,4": "0.06448593430439267"
+    },
+    "max_err": 1.1102230246251565e-16,
+    "status": "pass"
+   },
+   "publishable": false
+  },
+  {
+   "scenario": "complex_zbatch_8q",
+   "family": "complex",
+   "qubits": 8,
+   "cache_mode": "cold",
+   "lane": "nxquantum_cpu_compiled",
+   "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+   "label": null,
+   "warmup": 1,
+   "iterations": 3,
+   "scenario_labels": [
+    "cold headline and hot (<=10 qubits)"
+   ],
+   "synthetic": false,
+   "resolved_profile": "cpu_compiled",
+   "nx_flags": "cache_evolved_state=false",
+   "timed_loop_cpu_ms": 65.0,
+   "timed_loop_wall_ms": 85.056,
+   "cpu_wall_timed_loop": 0.7642024078254327,
+   "wall_s": 0.9875853329431266,
+   "cpu_s": 0.9229169999999982,
+   "cpu_wall": 0.9345187390031313,
+   "cpu_wall_label": null,
+   "max_abs_ref": 0.28933609692793016,
+   "n_discriminating": 7,
+   "n_observables": 8,
+   "discrimination_tolerance": 5.9e-05,
+   "max_err": 1.076008784295368e-07,
+   "tolerance": 5.9e-05,
+   "status": "pass",
+   "gated": true,
+   "beyond_kg10_floor": false,
+   "values": [
+    [
+     "0.14556317031383514",
+     "0.07018065452575684",
+     "-0.03544069826602936",
+     "0.10075057297945023",
+     "0.02709772251546383",
+     "-0.005293545313179493",
+     "-0.04823542758822441",
+     "0.07739222794771194"
+    ],
+    [
+     "0.10984358191490173",
+     "-0.06465768814086914",
+     "0.2128015011548996",
+     "-0.012533584609627724",
+     "0.08614874631166458",
+     "0.017940407618880272",
+     "0.021166453137993813",
+     "-0.06014906242489815"
+    ],
+    [
+     "-0.2757473587989807",
+     "-0.049540407955646515",
+     "0.048582371324300766",
+     "0.2893362045288086",
+     "0.031709086149930954",
+     "0.01810699887573719",
+     "0.002896806923672557",
+     "-1.3435265827865805e-05"
+    ]
+   ],
+   "times_ms": [
+    36.12,
+    24.548,
+    24.385
+   ],
+   "per_op_ms": 28.351,
+   "zz": {
+    "values": {
+     "0,1": "-0.09438388794660568",
+     "3,4": "0.06448598951101303"
+    },
+    "max_err": 5.520662038627222e-08,
+    "status": "pass"
+   },
+   "publishable": true
+  }
+ ]
+}
