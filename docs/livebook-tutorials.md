@@ -81,7 +81,7 @@ To change a notebook's output on purpose, edit the notebook and the goldens file
 
 ### Fingerprint goldens depend on the OTP major
 
-`Observability.fingerprint/2` hashes `:erlang.term_to_binary/2` with `:deterministic`. OTP does not promise the same bytes across OTP majors. `researcher_reproducibility.golden` pins one fingerprint, measured as identical on OTP 27, 28 and 29. If a future OTP changes it, re-derive the value and record it in the CHANGELOG.
+`Observability.fingerprint/2` hashes `:erlang.term_to_binary/2` with `:deterministic`. OTP does not promise the same bytes across OTP majors. `researcher_reproducibility.golden` pins one fingerprint. The golden fingerprint was measured on OTP 29 (Elixir 1.20.4). OTP keeps the deterministic term encoding stable only within a major release, so the value can differ on another OTP major and differs from 0.11.0. If it changes, re-derive the value and record it in the CHANGELOG.
 
 ### The getting-started snippet
 
