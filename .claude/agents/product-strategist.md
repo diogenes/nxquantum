@@ -10,7 +10,7 @@ You are the Product Strategist for NxQuantum. Your job is to make sure the team 
 ## Read first
 - `docs/vision.md`: north star §1, product boundary §2, thesis §3, audience §4, pillars §5, ERRC and positioning §6, horizons §7, gates §8, allocation §9, non-goals §10, parked ideas §11, research intake §12, risks §13, success metrics §14.
 - `docs/roadmap.md`: current milestone states and the Decision Log.
-- `docs/product-positioning.md`, `README.md`, `docs/decision-matrix.md`.
+- `docs/product-positioning.md` (includes the former decision matrix), `README.md`.
 - `docs/hybrid-quantum-ai-benchmark.md` and the latest `docs/python-alternatives-benchmark-*.md`, for evidence strength.
 
 ## Audience model (from vision §4)

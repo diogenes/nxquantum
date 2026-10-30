@@ -88,6 +88,12 @@ Known gaps:
 | KG-21 | Sparse Z-mask observables over counts cannot be built through a documented API. `Estimator.sampled_expectation_from_counts/2` accepts `sparse_pauli: %SparsePauli{}`, but the `SparsePauli` module is `@moduledoc false` (`lib/nx_quantum/observables/sparse_pauli.ex`). For that reason the H1.3 `sampled_counts_sparse_terms` NxQuantum lane is not run | unassigned (owner decision) |
 | KG-22 | The cache and concurrency options are undocumented, and the cache options fail open. `cache_evolved_state`, `cache_parsed_counts`, and `cache_mask_lookup_plan` are read with `Keyword.get(opts, key, true)`, so a misspelled key silently leaves the cache on. `parallel_observables`, `max_concurrency`, and `sampled_parallel_mode` are also undocumented. H1.3 cold mode depends on these options; the bench guards it with the library-reported `strategy_observability.cache_mode` on the batch path. Keeping them internal is deliberate, because documenting them is an `api change` | unassigned (owner decision) |
 | KG-23 | Pre-existing boundary breach. `lib/nx_quantum/ai/tools/kernel_rerank/dataset_csv.ex` references `bench/datasets` from `lib/`, contrary to `docs/bounded-context-map.md` (bench must never be referenced from `lib/`). Fixing it needs a refactor-intent change | unassigned (owner decision; refactor) |
+| KG-24 | `NxQuantum.Performance.benchmark_matrix/2` and `compare_batched_workflows/3` return modeled latency and throughput (a formula in `lib/nx_quantum/performance/model.ex`), not measurements, under "benchmark" names (`lib/nx_quantum/performance.ex`, whose moduledoc calls them "Deterministic scale/performance helpers for benchmark evidence and CI gates"). Docs must not cite them as measured. Renaming or removing them is an `api change`. H1.5 PR-1 removed the modeled figures from `docs/case-study-beam-integration.md` | unassigned (owner decision) |
+| KG-25 | Unknown or misspelled options are silently ignored. For example, `Sampler.run(c, seeed: 1)` runs with the default seed (0), and `Estimator.run/2` accepts `obsrvable:` and falls back to `:pauli_z` (checked 2026-10-30). Options are not validated at the boundary, and `docs/api-stability.md` states no rule for it yet (the H1.5 PR-2 API tiers may add one). Fixing it is an `api change` | unassigned (owner decision) |
+| KG-26 | `config :nx_quantum, :observability` is documented in `docs/observability.md`, but no code reads it (no `Application.get_env(:nx_quantum, :observability)` call in `lib/`) | unassigned (owner decision) |
+| KG-27 | Estimator and Sampler emit no observability signals. Neither calls the `ObservabilityEmitter` port, and `lib/` has no `:telemetry` call. Only `ProviderBridge` lifecycle operations emit, through the port, when `observability: [enabled: true]` is set (`lib/nx_quantum/observability.ex`, `lib/nx_quantum/observability/profile.ex`). Users who want per-call signals wrap the calls themselves (`examples/livebook/supervised_service.livemd`, which arrives with H1.5 PR-2) | unassigned (owner decision) |
+| KG-28 | `ObservabilityEmitter` callback specs are wider than what `NxQuantum.Observability` needs. `span_start/3` is specced to return `map()` but must return `:trace_id` and `:span_id` (`lib/nx_quantum/ports/observability_emitter.ex`, `lib/nx_quantum/observability.ex`). An emitter that matches the specs and returns `%{}`, or any emitter that raises, makes `ProviderBridge.run_lifecycle/3` raise instead of returning a typed error (the `rescue` in `lib/nx_quantum/application/provider_lifecycle/dispatcher.ex` wraps only the provider call). Fixing it is an `api change` | unassigned (owner decision) |
+| KG-29 | Notebooks are checked by an extractor in the test VM (`test/nx_quantum/livebooks_test.exs`, arriving with H1.5 PR-2), not by Livebook itself. Livebook-specific behaviour is untested: resolving the setup-cell path against the runtime working directory, and `Mix.install` resolution | unassigned (owner decision) |
 
 ---
 
@@ -232,7 +238,7 @@ Evidence (2026-10-25):
 
 ### H1.5 - Adoption Launch
 
-- Status: planned
+- Status: in progress
 - Intent: feature (DX and docs)
 - Seats: Product marketing (owner), DX, Product strategy, Docs sync
 - Depends on: H1.3 (D1)
@@ -248,11 +254,12 @@ Implementation deliverables:
 1. Refresh positioning according to D1:
    - update `README.md` and `docs/getting-started.md` (the `README.md` and `docs/product-positioning.md` lead were updated in the D1 slice, 2026-10-26; `docs/getting-started.md` and the decision-matrix merge stay open here);
    - merge `docs/decision-matrix.md` into `docs/product-positioning.md`, updating `AGENTS.md` and skill references.
+   - Done in PR-1 (2026-10-30): `docs/getting-started.md` and the README Quick Start lead with the Hex path; the decision matrix is merged into `docs/product-positioning.md`, with `docs/decision-matrix.md` kept as a pointer stub; skill and agent references are updated. Open: the `AGENTS.md` reading row (owner approval pending).
 2. Three Livebooks:
    - embedding NxQuantum in a supervised BEAM service;
    - researcher reproducibility (fingerprints, seeded replay, classical-baseline comparison);
    - provider lifecycle across lanes (fixture lane; live lanes stay env-gated).
-3. A launch write-up and Elixir Forum post based on H1.3 evidence (owner publishes).
+3. A launch write-up and Elixir Forum post based on H1.2/H1.4/H1.6 evidence (owner publishes).
 4. A Kano survey of at least 10 target users (Elixir Forum, ElixirConf, FluxQ early users). Its results reclassify the hypotheses in `docs/vision.md` §6.
 5. A joint "FluxQ powered by NxQuantum" narrative, aligned with FluxQ's positioning docs.
 
@@ -462,7 +469,7 @@ Every action requires updating references in the same change.
 | From | Into |
 | --- | --- |
 | `docs/v0.5-provider-support-tiers.md`, `docs/v0.8-provider-capability-matrix.md` | `docs/provider-support-catalog.md` (name kept; FluxQ links to it) |
-| `docs/decision-matrix.md` | `docs/product-positioning.md` (in H1.5, after D1) |
+| `docs/decision-matrix.md` | `docs/product-positioning.md` (done in H1.5 PR-1, 2026-10-30; `docs/decision-matrix.md` stays as a pointer stub until the owner approves the `AGENTS.md` reading-row edit) |
 
 **Archive** to `docs/archive/` (history only). Deviation from plan: archived files stay in the HexDocs extras under their new paths, because CHANGELOG links to them would otherwise fail `mix docs.build`.
 - Feature specs and plans:

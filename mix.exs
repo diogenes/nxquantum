@@ -195,7 +195,7 @@ defmodule NxQuantum.MixProject do
   end
 
   defp description do
-    "Pure-Elixir quantum circuit simulation and quantum machine learning primitives powered by Nx."
+    "Deterministic quantum circuit execution for Elixir on BEAM, built on Nx: Estimator, Sampler, Kernels, Transpiler, and a typed provider job lifecycle."
   end
 
   defp package do

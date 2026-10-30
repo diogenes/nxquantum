@@ -280,19 +280,25 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - deterministic fallback selection
   - reproducible benchmark evidence
 
-### 12) Product Positioning Context (Planned v0.4)
+### 12) Product Positioning Context
 
 - Artifacts:
   - positioning and comparison docs
-  - migration playbooks and case-study narratives
-- Planned public assets:
+  - migration playbooks and the illustrative embedding pattern (`docs/case-study-beam-integration.md`)
+- Public assets:
   - side-by-side workflow guides
   - migration playbooks
-  - decision matrix and case-study evidence
+  - positioning with the decision matrix (`docs/product-positioning.md`; `docs/decision-matrix.md` is a pointer stub)
   - provider migration packs and release-hardening evidence (`v0.5`):
     - `docs/migration-packs.md`
     - `docs/provider-benchmark-matrix.md`
     - `docs/provider-support-catalog.md`
+- Adoption assets owned by this context (H1.5):
+  - `examples/livebook/` (Livebook tutorials)
+  - `docs/launch/` (launch write-up; arrives with H1.5 PR-4)
+  - `docs/research/` (survey artifacts; arrives with H1.5 PR-4)
+  - `test/nx_quantum/livebooks_test.exs` (Livebook test; arrives with H1.5 PR-2)
+  - `bench/ttfr/` (time-to-first-result harness; arrives with H1.5 PR-3)
 - Invariants:
   - claims backed by reproducible scripts/benchmarks
   - limitations explicitly documented

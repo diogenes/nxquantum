@@ -1,136 +1,80 @@
 # Getting Started
 
-This guide is for ML engineers and researchers who want to run quantum workflows inside Elixir + `Nx`.
+This guide is for BEAM/Nx teams embedding quantum workloads in Elixir services, and for researchers who need reproducible results. It takes you from an empty project to a first result using the Hex package.
 
-## 1) Setup
+## 1) What You Need
 
-```bash
-mise trust
-mise install
-mix setup
-```
+- Elixir `~> 1.19`, on OTP 28 or newer (CI tests OTP 28 and OTP 29, `.github/workflows/ci.yml`).
+- No EXLA. EXLA and Torchx are optional (`mix.exs`).
+- No environment flags.
 
-Optional backend lanes:
+## 2) Install
 
 ```bash
-NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 mix test
-NXQ_ENABLE_EXLA=1 NXQ_ENABLE_TORCHX=0 mix test
+mix new my_quantum_app
+cd my_quantum_app
 ```
 
-## 2) Quick Scripts
+Add the dependency to `mix.exs`, then run `mix deps.get`:
 
-```bash
-mix run examples/quantum_kernel_classifier.exs
-mix run examples/axon_hybrid_train_step.exs
+```elixir
+defp deps do
+  [
+    {:nx_quantum, "~> 0.11.0"}
+  ]
+end
 ```
 
-## 3) Core API Examples
+`0.11.0` is the current release, on the Nx 0.x line. 0.12.0 (unreleased) moves to Nx 1.0 (CHANGELOG `[Unreleased]`); use `~> 0.12.0` once it is published.
 
-### Circuit + expectation
+## 3) First Result
+
+Run this in `iex -S mix`:
 
 ```elixir
 alias NxQuantum.Circuit
 alias NxQuantum.Estimator
 alias NxQuantum.Gates
 
-circuit =
-  Circuit.new(qubits: 2)
-  |> Gates.h(0)
-  |> Gates.cnot(control: 0, target: 1)
-  |> Gates.ry(1, theta: Nx.tensor(0.3))
+circuit = [qubits: 1] |> Circuit.new() |> Gates.ry(0, theta: 1.2)
+{:ok, result} = Estimator.run(circuit, observable: :pauli_z, wire: 0)
 
-expectation =
-  Estimator.expectation(
-    circuit,
-    observable: :pauli_z,
-    wire: 1,
-    runtime_profile: :cpu_portable
-  )
+# The expectation of Z after RY(1.2) is cos(1.2), about 0.3623577.
+Nx.to_flat_list(result.values)
 ```
 
-### Batched estimator
+Expected result: `[0.3623577356338501]`, which is `cos(1.2)` in single precision (the documented precision floor, `docs/backend-support.md`).
 
-```elixir
-angles = Nx.tensor([0.0, 0.5, 1.0, 1.5])
+`Estimator.run/2` and `result.values` exist in 0.11.0 (`lib/nx_quantum/estimator.ex` and `lib/nx_quantum/estimator/result.ex` at the 0.11.0 release commit) and on `main`.
 
-builder = fn theta ->
-  NxQuantum.Circuit.new(qubits: 1)
-  |> NxQuantum.Gates.ry(0, theta: theta)
-end
+## 4) What Deterministic Means Here
 
-{:ok, values} =
-  NxQuantum.Estimator.batched_expectation(
-    builder,
-    angles,
-    observable: :pauli_z,
-    wire: 0,
-    parallel: true,
-    max_concurrency: System.schedulers_online()
-  )
-```
+- Scope: simulator and fixture lanes only. Live provider and QPU results are not deterministic.
+- Fixed inputs, seed, runtime profile, and toolchain on one host give the same outputs.
+- On the default `Nx.BinaryBackend` the repeat runs are bit-identical. EXLA and Torchx are checked within stated tolerances, not bit-for-bit (`bench/results/2026-10-26-h1.6/SUMMARY.md`: Apple M4, macOS 26.6.2, one host).
+- Job ids and fingerprints use OTP's term encoding, which OTP keeps stable only within a major release, so they can change across OTP majors.
 
-### Sampler + mitigation
+The README "Determinism Scope" section has the full statement.
 
-```elixir
-circuit =
-  NxQuantum.Circuit.new(qubits: 1)
-  |> NxQuantum.Gates.ry(0, theta: Nx.tensor(1.2))
+## 5) Errors: Tuple Versus Raise
 
-{:ok, sample} = NxQuantum.Sampler.run(circuit, shots: 2048, seed: 2026)
+- Tuple style returns `{:ok, value}` or `{:error, map}`: `Estimator.run/2` and `Estimator.expectation_result/2`. Use it in services and pipelines, where you want to match on the error.
+- Raising style: `Estimator.expectation/2` returns the tensor and raises `ArgumentError` when runtime profile resolution fails. Use it in scripts, notebooks, and tests, where a failure should stop the run.
 
-calibration = Nx.tensor([[0.95, 0.05], [0.06, 0.94]], type: {:f, 32})
+Unknown or misspelled options are currently ignored without an error (KG-25 in `docs/roadmap.md`), so check option names against the docs.
 
-{:ok, mitigated} =
-  NxQuantum.Mitigation.pipeline(sample, [
-    {:readout, calibration: calibration},
-    {:zne_linear, scales: [1.0, 2.0, 3.0]}
-  ])
-```
+## 6) Next Steps
 
-### Batched sampler (optional parallel lane)
+- Seeded sampling (experimental API). The same seed returns the same counts:
 
-```elixir
-angles = Nx.tensor([0.1, 0.2, 0.3, 0.4], type: {:f, 32})
+  ```elixir
+  circuit = [qubits: 1] |> Circuit.new() |> Gates.ry(0, theta: 1.1)
+  NxQuantum.Sampler.run(circuit, shots: 1024, seed: 13, observable: :pauli_z, wire: 0)
+  # counts: %{"0" => 752, "1" => 272}
+  ```
 
-builder = fn theta ->
-  NxQuantum.Circuit.new(qubits: 1)
-  |> NxQuantum.Gates.ry(0, theta: theta)
-end
-
-{:ok, samples} =
-  NxQuantum.Sampler.batched_run(builder, angles,
-    shots: 1024,
-    seed: 11,
-    parallel: true,
-    max_concurrency: System.schedulers_online()
-  )
-```
-
-### Kernel matrix
-
-```elixir
-x =
-  Nx.tensor([
-    [0.0, 0.1],
-    [0.2, 0.3],
-    [0.4, 0.5],
-    [0.6, 0.7]
-  ])
-
-k = NxQuantum.Kernels.matrix(x, gamma: 0.7, seed: 1234)
-```
-
-### Topology-aware transpilation
-
-```elixir
-circuit =
-  NxQuantum.Circuit.new(qubits: 4)
-  |> NxQuantum.Gates.cnot(control: 0, target: 3)
-
-{:ok, transpiled, report} =
-  NxQuantum.Transpiler.run(
-    circuit,
-    topology: {:coupling_map, [{0, 1}, {1, 2}, {2, 3}]},
-    mode: :insert_swaps
-  )
-```
+  The counts are pinned in `test/nx_quantum/sampler_test.exs` on `main`.
+- Interactive notebooks: [docs/livebook-tutorials.md](livebook-tutorials.md).
+- Optional EXLA backend: [docs/backend-support.md](backend-support.md). The first result does not need it.
+- More facades (`batched_expectation`, `Sampler.batched_run`, `Mitigation.pipeline`, `Kernels.matrix`, `Transpiler.run`): [docs/model-recipes.md](model-recipes.md), [docs/axon-integration.md](axon-integration.md), and `examples/`.
+- Contributor setup (mise, `mix setup`, quality gates): [CONTRIBUTING.md](../CONTRIBUTING.md).

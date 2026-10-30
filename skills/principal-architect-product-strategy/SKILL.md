@@ -9,9 +9,8 @@ Use before Builder work for every change intent to validate plan quality across 
 - `docs/development-flow.md`
 - `docs/architecture.md`
 - `docs/bounded-context-map.md`
-- `docs/product-positioning.md`
+- `docs/product-positioning.md` (includes the former decision matrix)
 - `docs/vision.md`
-- `docs/decision-matrix.md`
 - `docs/api-stability.md`
 
 ## Step-by-Step Workflow

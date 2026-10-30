@@ -21,7 +21,7 @@ To keep operations and research reproducibility strong, we need:
 
 1. Determinism first: same workflow inputs should produce stable telemetry shape.
 2. Contract-first telemetry: schema changes are versioned and tested.
-3. Low-cardinality defaults: production-safe by default.
+3. Low-cardinality defaults: `:high_level` is the default profile (the `:high_level` fallback in `Profile.normalize/1`, `lib/nx_quantum/observability/profile.ex`), and the schema check flags metric label keys outside its allowed set (`lib/nx_quantum/observability/schema.ex:84-88`).
 4. Explicit depth controls: `high_level`, `granular`, `forensics`.
 5. Security by default: deterministic redaction and secret-safe logging.
 6. Cross-provider comparability: telemetry should support portability analysis.
@@ -57,7 +57,7 @@ To keep operations and research reproducibility strong, we need:
 ### Adapter Layer
 
 1. NxQuantum.Adapters.Observability.OpenTelemetry:
-   - production emitter adapter
+   - OpenTelemetry-named adapter that records spans, metrics, and logs in-process (process dictionary); no OpenTelemetry exporter ships (KG-13)
 2. NxQuantum.Adapters.Observability.Noop:
    - deterministic no-op path for disabled observability
 
@@ -161,7 +161,7 @@ Log safety:
 
 ### `:high_level` (default)
 
-Intended for production baselines.
+Default profile (the `:high_level` fallback in `Profile.normalize/1`, `lib/nx_quantum/observability/profile.ex`); intended as the low-volume baseline.
 
 1. Emit core lifecycle spans and core metric set.
 2. Emit only low-cardinality labels.
@@ -181,11 +181,13 @@ Intended for short-lived deep investigations.
 
 1. Include detailed lifecycle events and richer diagnostic logs.
 2. Include advanced metadata behind explicit opt-in guards.
-3. Should be time-bounded and not the default production mode.
+3. Should be time-bounded and not the default profile.
 
-## Configuration Contract
+## Configuration Contract (not read by the code; KG-26)
 
-Recommended configuration shape:
+No code in `lib/` reads `config :nx_quantum, :observability`. The shape below is a design proposal, not a working setting.
+
+Proposed configuration shape:
 
 ```elixir
 config :nx_quantum, :observability,

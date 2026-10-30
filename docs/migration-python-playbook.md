@@ -55,7 +55,7 @@ Track explicit gaps while migrating:
 
 - [docs/getting-started.md](getting-started.md)
 - [docs/python-comparison-workflows.md](python-comparison-workflows.md)
-- [docs/decision-matrix.md](decision-matrix.md)
+- [docs/product-positioning.md](product-positioning.md) (Choosing NxQuantum vs Python-First)
 - [docs/migration-packs.md](migration-packs.md)
 - [docs/provider-support-catalog.md](provider-support-catalog.md)
 - [docs/provider-benchmark-matrix.md](provider-benchmark-matrix.md)
