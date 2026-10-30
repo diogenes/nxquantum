@@ -1,0 +1,27 @@
+# Cleanup probe (test only)
+
+This file is not a tutorial. `test/nx_quantum/livebooks_test.exs` runs it to prove that the test harness stops leftover supervisors and purges the modules cells define. It lives outside `examples/livebook/`.
+
+```elixir
+Mix.install([{:nx_quantum, path: "../.."}])
+```
+
+A module defined by a cell:
+
+```elixir
+defmodule Probe.Thing do
+  def answer, do: 41
+end
+```
+
+A supervisor with a named Agent, left running on purpose:
+
+```elixir
+children = [%{id: Probe.Counter, start: {Agent, :start_link, [fn -> Probe.Thing.answer() end, [name: Probe.Counter]]}}]
+{:ok, supervisor} = Supervisor.start_link(children, strategy: :one_for_one, name: Probe.Supervisor)
+```
+
+```elixir
+# checkpoint: probe_state
+%{agent_value: Agent.get(Probe.Counter, & &1), supervisor_alive: Process.alive?(supervisor)}
+```

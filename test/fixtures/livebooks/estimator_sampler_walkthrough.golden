@@ -1,0 +1,6 @@
+# Goldens for examples/livebook/estimator_sampler_walkthrough.livemd.
+# Exact for counts; 1.0e-6 absolute for floats. The expectation is analytic: cos(0.8).
+%{
+  "expectation_ry_0_8" => [:math.cos(0.8)],
+  "sample_counts_seed_2026" => %{"0" => 441, "1" => 71}
+}

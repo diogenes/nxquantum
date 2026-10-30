@@ -1,0 +1,142 @@
+# Reproducibility: Fingerprints, Seeded Replay, Closed Form
+
+```elixir
+Mix.install([{:nx_quantum, path: "../.."}])
+```
+
+This notebook shows how to make a single-qubit run reproducible and checkable:
+
+* an experiment fingerprint that names the inputs of a run,
+* a seeded replay that gives the same counts, and a different seed that gives different counts,
+* a comparison with the classical closed form `cos θ`,
+* `NxQuantum.Observability.portability_delta/2` to compare two results.
+
+It is about reproducibility, not about speed or advantage over classical methods: a one-qubit circuit has a closed form, and that is the point. Everything runs on the default simulator. Circuits are single-qubit only, because `NxQuantum.Sampler.run/2` supports a single measured wire. The notebook uses no AI tool handlers (see KG-12 in `docs/roadmap.md`).
+
+`NxQuantum.Sampler.run/2` and `NxQuantum.Observability.fingerprint/2` are on the experimental tier in `docs/api-stability.md`.
+
+## 1) The circuit and the run description
+
+```elixir
+alias NxQuantum.{Circuit, Estimator, Gates, Observability, Sampler}
+
+theta = 1.2
+circuit = Circuit.new(qubits: 1) |> Gates.ry(0, theta: theta)
+
+run_description = %{
+  workflow: :sampler,
+  observable: :pauli_z,
+  circuit: [%{gate: :ry, wire: 0, theta: theta}],
+  shots: 2048,
+  seed: 2026
+}
+```
+
+## 2) Fingerprint
+
+`Observability.fingerprint/2` returns `"v1:"` followed by 64 lowercase hex characters: a SHA-256 over the input after its maps are sorted. The checks below confirm the format and three properties:
+
+* the same map built in a different key order has the same fingerprint (the fingerprint sorts map keys itself, so it does not depend on map iteration order, which is not a contract for large maps),
+* changing a value changes the fingerprint,
+* the order of a list changes it too, because gate order matters.
+
+```elixir
+# checkpoint: fingerprint_properties
+fingerprint = Observability.fingerprint(run_description)
+
+pairs = for n <- 1..40, do: {"key_#{n}", n}
+many_keys_forward = Map.new(pairs)
+many_keys_reversed = pairs |> Enum.reverse() |> Map.new()
+
+two_gates = %{circuit: [%{gate: :h, wire: 0}, %{gate: :x, wire: 0}]}
+two_gates_swapped = %{circuit: [%{gate: :x, wire: 0}, %{gate: :h, wire: 0}]}
+
+%{
+  format_ok: Regex.match?(~r/\Av1:[0-9a-f]{64}\z/, fingerprint),
+  key_order_independent: Observability.fingerprint(many_keys_forward) == Observability.fingerprint(many_keys_reversed),
+  value_sensitive: fingerprint != Observability.fingerprint(%{run_description | seed: 2027}),
+  list_order_sensitive: Observability.fingerprint(two_gates) != Observability.fingerprint(two_gates_swapped)
+}
+```
+
+### Fingerprint goldens and the OTP major
+
+The fingerprint hashes `:erlang.term_to_binary/2` with the `:deterministic` option. Erlang/OTP keeps this encoding stable only within a major release, so the value can differ on another OTP major and differs from 0.11.0. This repository pins the value this cell shows in `test/fixtures/livebooks/researcher_reproducibility.golden` and checks it on every test run. The golden fingerprint was measured on OTP 29 (Elixir 1.20.4) and may differ on another OTP major. If you store fingerprints, store the OTP major with them and re-derive them after upgrading it. Compare fingerprints only between runs on the same OTP major.
+
+```elixir
+# checkpoint: fingerprint_golden
+fingerprint
+```
+
+## 3) Seeded replay
+
+The same circuit, shots, and seed give the same counts. This cell also runs the replay in a separate process, so process-local random state does not matter.
+
+```elixir
+replay_a = Sampler.run(circuit, shots: 2048, seed: 2026)
+replay_b = Sampler.run(circuit, shots: 2048, seed: 2026)
+replay_in_task = Task.async(fn -> Sampler.run(circuit, shots: 2048, seed: 2026) end) |> Task.await()
+
+{:ok, result_a} = replay_a
+{:ok, result_b} = replay_b
+{:ok, result_task} = replay_in_task
+
+result_a.counts == result_b.counts and result_a.counts == result_task.counts
+```
+
+A different seed gives different counts. With 2048 shots the two seeds below do not collide; this is a property of those two seeds, not a general guarantee for every pair of seeds.
+
+```elixir
+# checkpoint: seeded_replay
+{:ok, other_seed} = Sampler.run(circuit, shots: 2048, seed: 2027)
+
+%{
+  replay_equal: result_a.counts == result_b.counts and result_a.counts == result_task.counts,
+  counts_seed_2026: result_a.counts,
+  counts_seed_2027: other_seed.counts,
+  different_seed_differs: result_a.counts != other_seed.counts
+}
+```
+
+## 4) Closed form
+
+For `RY(θ)` on `|0>`, the expectation of Pauli Z is `cos θ`. The estimator returns `f32`. The documented accuracy floor is an absolute error of about 5e-7 against a float64 reference, and comparisons with float64 values need a tolerance of at least 1e-6 (`docs/backend-support.md`, "Numerical Precision"). The cell checks every angle against `1.0e-6`.
+
+```elixir
+# checkpoint: closed_form
+tolerance = 1.0e-6
+angles = [0.0, 0.4, 0.8, 1.2, 2.0, 3.0]
+
+values =
+  for angle <- angles do
+    c = Circuit.new(qubits: 1) |> Gates.ry(0, theta: angle)
+    {:ok, result} = Estimator.run(c, observable: :pauli_z, wire: 0)
+    Nx.to_number(result.values[0])
+  end
+
+errors = Enum.zip_with(values, angles, fn value, angle -> abs(value - :math.cos(angle)) end)
+
+%{all_within_tolerance: Enum.all?(errors, &(&1 <= tolerance)), values: values}
+```
+
+## 5) Comparing two results with `portability_delta/2`
+
+`Observability.portability_delta/2` is public and documented in `docs/observability.md`. It takes two maps, a reference and a candidate, and returns `latency_delta_ms`, `expectation_delta_abs` and `sample_kl_divergence`. It does not compute them from circuits: it reads `payload.expectation` and `metadata.latency_ms` from each map and `metadata.sample_kl_divergence` from the candidate, and each missing value counts as 0.0. This notebook supplies only expectations, so the latency and divergence fields are 0.0 here.
+
+The reference is the exact expectation. The candidate is the expectation estimated from the seed-2027 counts, `(n0 - n1) / shots` for Pauli Z.
+
+```elixir
+# checkpoint: portability_delta
+reference = %{payload: %{expectation: Nx.to_number(Estimator.expectation(circuit, observable: :pauli_z, wire: 0))}}
+
+sampled_expectation = (other_seed.counts["0"] - other_seed.counts["1"]) / 2048
+candidate = %{payload: %{expectation: sampled_expectation}}
+
+Observability.portability_delta(reference, candidate)
+```
+
+The difference is shot noise of the 2048-shot estimate, not a defect in either side.
+
+## Checkpoints
+
+Cells that start with `# checkpoint: name` are compared against recorded values by `test/nx_quantum/livebooks_test.exs`. Run `mix test.livebooks` from the repository root to check this notebook.

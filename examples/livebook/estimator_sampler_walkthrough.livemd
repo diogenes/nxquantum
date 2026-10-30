@@ -20,6 +20,7 @@ circuit =
 ## Deterministic Expectation
 
 ```elixir
+# checkpoint: expectation_ry_0_8
 {:ok, exp} = NxQuantum.Estimator.expectation_result(circuit, observable: :pauli_z, wire: 0)
 exp
 ```
@@ -30,3 +31,14 @@ exp
 {:ok, sample} = NxQuantum.Sampler.run(circuit, shots: 512, seed: 2026)
 sample
 ```
+
+The same circuit, shot count, and seed give the same counts on every run. This cell records them. `Estimator` and `Sampler` emit no observability signals today (KG-27 in `docs/roadmap.md`).
+
+```elixir
+# checkpoint: sample_counts_seed_2026
+sample.counts
+```
+
+## Checkpoints
+
+Cells that start with `# checkpoint: name` are compared against recorded values by `test/nx_quantum/livebooks_test.exs`. Run `mix test.livebooks` from the repository root to check this notebook.
