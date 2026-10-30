@@ -14,6 +14,7 @@
    - production workload adoption evidence,
    - operational reliability evidence,
    - reproducible benchmark/rollout evidence.
+4. Major releases run the cross-framework timed campaign (`bench/README.md`, 'Major-release timed campaign') and publish `docs/python-alternatives-benchmark-<date>.md`. What counts as a major release while on 0.x is an open owner decision (2026-10-30); until decided, 1.0.0.
 
 ## Pre-Release Checklist
 

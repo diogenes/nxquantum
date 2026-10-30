@@ -70,7 +70,7 @@ Known gaps:
 | KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Closed in H1.4: property suites and dense reference (see H1.4 Evidence) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
 | KG-5 | Rerank datasets (`bench/datasets/rerank/*`) appear synthetic; manifests lack provenance | Closed 2026-10-26 by D1. Manifests carry `provenance: synthetic`, the guard test (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`) checks provenance and CSV sha256 on both, and the docs are labeled |
-| KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | H1.3 |
+| KG-6 | Cross-framework benchmarks cover 2–8 qubits against March 2026 competitor versions | first major-release timed campaign (`bench/README.md` runbook) |
 | KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
@@ -80,6 +80,14 @@ Known gaps:
 | KG-13 | The OpenTelemetry-named observability adapter (`lib/nx_quantum/adapters/observability/open_telemetry.ex`) records spans, metrics, and logs in the process dictionary; there is no OpenTelemetry dependency or exporter, and `docs/observability.md` calls it the production emitter adapter | unassigned (owner decision) |
 | KG-14 | `ProviderBridge.Serialization` raises on struct values (`Nx.Tensor`, `DateTime`, `MapSet`) in envelope payload, metadata, reason, or response (`lib/nx_quantum/provider_bridge/serialization.ex`, `stringify_value/1` → `stringify_keys/1`), contrary to `serialize/1`'s `{:ok, String.t()}` spec. A fix needs a v1 encoding decision under the Envelope Compatibility Policy | unassigned (owner decision) |
 | KG-15 | The acceptance scenario 'Calibration payload provenance is normalized' (`features/provider_mitigation_calibration_contracts.feature`) asserts a constant its own step injects; `CalibrationPayload.validate/1` drops provenance | unassigned (owner decision) |
+| KG-16 | `cpu_compiled` does not speed up state evolution. Both profiles build and evolve the state on Nx's default backend (`lib/nx_quantum/adapters/simulators/state_vector/state.ex`), and `cpu_compiled` then transfers the evolved state to EXLA (`lib/nx_quantum/adapters/simulators/state_vector.ex`), so only the expectation step runs on EXLA | unassigned (owner decision) |
+| KG-17 | The state-vector structure cache is capped at 4096 entries, not by bytes (`lib/nx_quantum/adapters/simulators/state_vector/cache.ex`). Each CNOT permutation is an s64 tensor of 2^n entries (`lib/nx_quantum/adapters/simulators/state_vector/matrix_library.ex`), which is 134 MB at 24 qubits, and runs of consecutive CNOTs add a composed permutation each (`lib/nx_quantum/adapters/simulators/state_vector/compiled_plan.ex`). By code reading (not measured), a 24-qubit brickwork family keeps about 25 such tensors resident, roughly 3.4 GB. The evolved-state cache has a byte cap (`lib/nx_quantum/adapters/simulators/state_vector/evolved_state_cache.ex`); this cache does not | unassigned (owner decision) |
+| KG-18 | In batch estimation, the first observable picks the evolution path: `Deterministic.run/3` sets `measurement: hd(observable_specs)` (`lib/nx_quantum/estimator/batch/strategies/deterministic.ex`), and `RealPauliZ` applies only to `:pauli_z` (`lib/nx_quantum/adapters/simulators/state_vector/evolution_strategy/real_pauli_z.ex`). A batch of real gates that starts with X or Y therefore takes the complex path | unassigned (owner decision) |
+| KG-19 | There is no public multi-qubit Pauli observable. Observables are `:pauli_x \| :pauli_y \| :pauli_z` on a single `wire` (`lib/nx_quantum/observables.ex`, `lib/nx_quantum/estimator/observable_specs.ex`). ⟨Z_a Z_b⟩ is reachable only through the circuit identity: apply CNOT(a,b), then measure Z_b | unassigned (owner decision) |
+| KG-20 | No public facade reports the evolution path (RealPauliZ or Complex). `Estimator.Result.metadata` has no path field (`lib/nx_quantum/estimator/result_builder.ex`), and `EvolutionStrategy` is `@moduledoc false` (`lib/nx_quantum/adapters/simulators/state_vector/evolution_strategy.ex`). The H1.3 path evidence therefore lives in a test that calls the internal selector and mirrors KG-18's rule (`test/nx_quantum/bench_evolution_path_test.exs`, merged by the bench PR) | unassigned (owner decision) |
+| KG-21 | Sparse Z-mask observables over counts cannot be built through a documented API. `Estimator.sampled_expectation_from_counts/2` accepts `sparse_pauli: %SparsePauli{}`, but the `SparsePauli` module is `@moduledoc false` (`lib/nx_quantum/observables/sparse_pauli.ex`). For that reason the H1.3 `sampled_counts_sparse_terms` NxQuantum lane is not run | unassigned (owner decision) |
+| KG-22 | The cache and concurrency options are undocumented, and the cache options fail open. `cache_evolved_state`, `cache_parsed_counts`, and `cache_mask_lookup_plan` are read with `Keyword.get(opts, key, true)`, so a misspelled key silently leaves the cache on. `parallel_observables`, `max_concurrency`, and `sampled_parallel_mode` are also undocumented. H1.3 cold mode depends on these options; the bench guards it with the library-reported `strategy_observability.cache_mode` on the batch path. Keeping them internal is deliberate, because documenting them is an `api change` | unassigned (owner decision) |
+| KG-23 | Pre-existing boundary breach. `lib/nx_quantum/ai/tools/kernel_rerank/dataset_csv.ex` references `bench/datasets` from `lib/`, contrary to `docs/bounded-context-map.md` (bench must never be referenced from `lib/`). Fixing it needs a refactor-intent change | unassigned (owner decision; refactor) |
 
 ---
 
@@ -156,7 +164,7 @@ Review gate:
 
 ### H1.3 - Evidence Refresh
 
-- Status: in progress
+- Status: done
 - Intent: performance (evidence only)
 - Seats: Lead, Quantum physics/math, Verifier, Product marketing (claims audit)
 - Depends on: H1.1, H1.6
@@ -169,20 +177,20 @@ Goal:
 
 Implementation deliverables:
 
-1. Rerun `bench/python_alternatives_benchmark.py` against current pinned Qiskit 2.x, PennyLane, and Cirq releases (versions recorded in the report), using 3-run means.
-2. Add 12, 16, 20, and 24 qubit scenarios, and state the crossover point where NxQuantum stops winning.
-3. Publish `docs/python-alternatives-benchmark-<date>.md` and archive the 2026-03-25 report.
+1. Cross-framework harness rebuilt: pinned Python environment (`bench/requirements-python-alternatives.txt`), one scenario table, correctness gates (agreement, references, byte identity), and a defined cold mode (`bench/README.md`). Correctness evidence: `bench/results/2026-10-30-h1.3/`. The timed 3-run campaign runs at major releases (owner decision 2026-10-30) and was not run in H1.3.
+2. Scenarios at 4-24 qubits (real and complex families) and a falsifiable crossover rule are defined in the scenario table; the crossover is first measured by the major-release campaign.
+3. The 2026-03-25 report is kept and labeled a historical internal reference (methodology superseded); the next report comes from the major-release campaign.
 4. Parked 2026-10-26 (D1); see `docs/vision.md` §11.
 5. Parked 2026-10-26 (D1); see `docs/vision.md` §11.
 6. Record decision D1 in the Decision Log (done 2026-10-26; see the D1 row).
 
 Review gate:
 
-1. Reports are version-pinned, 3-run, and caveat-labeled.
+1. Re-scoped 2026-10-30: the harness is version-pinned and correctness-gated; 3-run timed reports come from the major-release campaign.
 2. The README makes no cross-framework speed claims; benchmark reports are labeled internal, environment-specific references.
 3. Parked 2026-10-26 (D1); rerank datasets and hybrid figures carry the synthetic/placeholder label instead.
 4. D1 is recorded with its rationale.
-5. Competitor facts in `docs/vision.md` §6 are rechecked and dated (vision §13 item 6; deferred from D1).
+5. Done 2026-10-30 (`docs/vision.md` §6, §11, §13).
 
 ### H1.4 - Compiler Correctness Suite
 
@@ -423,6 +431,7 @@ Decisions already taken (2026-10-30, owner):
 - The README makes no cross-framework speed claims; benchmark reports are internal, environment-specific references ("Drop them.").
 - The timed cross-framework comparison runs at major releases only ("Performance runs I consider necessary only on major releases, to ensure we're not breaking stuff."). This does not relax the AGENTS.md rule that non-trivial performance changes include reproducible benchmark evidence. What counts as a major release while on 0.x is an open owner question.
 - The AGENTS.md messaging invariant (line 12) is approved as worded ("Approved.").
+- H1.3 closes without a timed run; KG-6 stays open until the first major-release campaign.
 
 ## Docs Consolidation Plan (executed in H1.1, 2026-10-19)
 

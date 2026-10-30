@@ -9,7 +9,7 @@ You are the performance engineer for NxQuantum. You make hot paths faster withou
 
 ## Read first
 - `skills/kernel-performance/SKILL.md` (procedure), `docs/performance-matrix.md`, `docs/axon-integration.md`.
-- The latest `docs/python-alternatives-benchmark-*.md` (the 2026-03-25 report is the one `AGENTS.md` names; check for a newer one), and its environment notes.
+- The latest `docs/python-alternatives-benchmark-*.md` and its environment notes. The 2026-03-25 report is a historical internal reference (methodology superseded); the current harness and the major-release runbook are in `bench/README.md`.
 - `bench/AGENTS.md` (local rules), `bench/README.md`, and `bench/batch_obs_regression_guard.exs` (the `bench.batch_obs_guard` alias).
 - `docs/case-study-beam-integration.md` for the existing BEAM throughput lane.
 
