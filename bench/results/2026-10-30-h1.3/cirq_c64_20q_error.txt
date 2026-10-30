@@ -1,0 +1,7 @@
+FIXTURE sha256=8ea1b2927b60014ffd569fd9d0d70b1c1c700ef08644e1cf83a3b31126f6eecd seeds=20261026+100*family_index+qubits lanes={"cirq_c128_equivalence": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt", "cirq_c64": "complex64 state (cirq.Simulator default); expectation returned as Python complex", "nxquantum_cpu_compiled": "complex64 state, float32 values (real-gate Z path: float64 state)", "nxquantum_cpu_portable": "complex64 state, float32 values (real-gate Z path: float64 state)", "pennylane": "complex128 state, float64 values", "qiskit": "complex128 state, float64 values"}
+CHECK name=agreement_cirq_c64_real_20 status=error error="ValueError: State_vector is not normalized instead had norm 1.0004842281341553" gated=False tol=None
+ROW scenario=real_zbatch_20q cache=cold lane=cirq_c64 per_op_ms=n/a timing=not_published cpu_wall_lane_call=0.999 cpu_wall_timed_loop=n/a
+CHECK name=agreement_cirq_c128_equivalence_real_20 status=pass max_err=1.176836406102666e-14 tol=1e-06 beyond_kg10_floor=False rows=1 discrim_tol=1e-06 max_abs_ref=0.637944228642157 discriminating=20/20
+CHECK name=zz_cirq_c128_equivalence_real_20 status=pass max_err=8.382183835919932e-15 tol=1e-06
+ROW scenario=real_zbatch_20q cache=cold lane=cirq_c128_equivalence per_op_ms=n/a timing=not_published cpu_wall_lane_call=1.000 cpu_wall_timed_loop=n/a
+SUMMARY rows=2 failures=0 errors=1 timing_published=False

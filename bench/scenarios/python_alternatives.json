@@ -1,0 +1,719 @@
+{
+  "schema_version": 1,
+  "tolerances_confirmed": true,
+  "tolerance_confirmation": {"reading": "tol = max(1e-6, B); owner's 'at least 1e-6' read as a floor", "decided_by": "Lead (owner delegated 2026-10-30: 'Use your best recommendation/judgment here. Not hard rule from my side.')", "physics_signoff": "quantum-physics-verifier: pass with risks at f7d66fd; pre-run must-changes applied in bcc2ec6..dcc0ab1"},
+  "tolerances_note": "tol = max(1e-6, B rounded up to 2 significant figures), B = (2*kappa*G1 + c0)*u, u = 2^-24. Real path: kappa = sqrt(2), G1 = 9n, c0 = 1. Complex path: kappa = 2*sqrt(2) + 1, G1 = 16n, c0 = 3. CNOT is an exact permutation. For a unit-norm observable |d<P>| <= 2*|d psi| + |d psi|^2. X/Y on cpu_compiled: EXLA float32 sum bounded by (2^(n-1) + 3)*u (Higham 2002, section 4.2). tolerance_formula below holds the inputs; test/nx_quantum/bench_tolerance_formula_test.exs recomputes every NxQuantum family and continuity tolerance from them. Timed mode refuses to run while tolerances_confirmed is false. The owner confirmation (R3: at least 1e-6 means tol >= 1e-6) and the physics seat sign-off flip it in a separate commit.",
+  "tolerance_formula": {
+    "u": "2^-24",
+    "floor": 1e-6,
+    "rounding": "ceil to 2 significant figures",
+    "kappa": "a*sqrt(2) + b",
+    "families": {
+      "real": {"kappa": [1, 0], "g1_per_qubit": 9, "c0": 1},
+      "complex": {"kappa": [2, 1], "g1_per_qubit": 16, "c0": 3}
+    },
+    "continuity": {
+      "baseline_2q": {"kappa": [1, 0], "g1": 2, "c0": 1, "xy_units": {"cpu_portable": 0, "cpu_compiled": 0}},
+      "deep_6q": {"kappa": [1, 0], "g1": 7, "c0": 1, "xy_units": {"cpu_portable": 0, "cpu_compiled": 0}},
+      "batch_obs_8q": {"kappa": [2, 1], "g1": 11, "c0": 1, "xy_units": {"cpu_portable": 3, "cpu_compiled": 131}},
+      "state_reuse_8q_xy": {"kappa": [2, 1], "g1": 11, "c0": 1, "xy_units": {"cpu_portable": 3, "cpu_compiled": 131}}
+    },
+    "continuity_rule": "one tolerance per scenario, shared by both NxQuantum lanes: the bound of the looser lane (cpu_compiled where X/Y observables run on EXLA)"
+  },
+  "fixture": {
+    "path": "bench/scenarios/python_alternatives_fixture.json",
+    "sha256_path": "bench/scenarios/python_alternatives_fixture.sha256",
+    "generator": "bench/scenarios/generate_python_alternatives_fixture.py"
+  },
+  "fixture_spec": {
+    "rng": "numpy.random.Generator(PCG64(seed))",
+    "seed_formula": "20261026 + 100*family_index + qubits",
+    "prefix_parity_angles": "theta_w=(w+1)/64 (k=16(w+1)); complex phi_w=2theta_w (k=32(w+1)); deterministic",
+    "family_index": {
+      "real": 0,
+      "complex": 1
+    },
+    "angle": "k/1024",
+    "k_range": [1, 6433],
+    "layers": 8,
+    "selfcheck_only_widths": [6]
+  },
+  "families": {
+    "real": {
+      "structure": "H on every wire; then for layer l in 0..L-1: RY(w, angle[l*n+w]) for w in 0..n-1, then CNOT(i,i+1) for i = l mod 2, l mod 2 + 2, ... while i+1 < n",
+      "angles_per_set": "L*n"
+    },
+    "complex": {
+      "structure": "for layer l in 0..L-1: RX(w, angle[l*2n+w]) for w in 0..n-1, RZ(w, angle[l*2n+n+w]) for w in 0..n-1, then CNOT(i,i+1) for i = l mod 2, l mod 2 + 2, ... while i+1 < n; no H layer",
+      "angles_per_set": "2*L*n"
+    }
+  },
+  "prefix_parity": {
+    "real": "RY(w, theta_w) on every wire, then CNOT(j,j+1) for j = 0..n-2 in ascending order; <Z_k> = prod_{j<=k} cos(theta_j)",
+    "complex": "RX(w, theta_w) then RZ(w, phi_w) on every wire, then the same CNOT chain; <Z_k> = prod_{j<=k} cos(theta_j)"
+  },
+  "disclosures": {
+    "nxquantum": "NxQuantum simulates in complex64 and returns float32 expectation values. Real-gate Pauli-Z circuits (H, X, Z, RY, CNOT) use a float64 state with float32-rounded gate coefficients. The \u27e8Z\u27e9 sums accumulate in float64. Both `cpu_portable` and `cpu_compiled` evolve on Nx.BinaryBackend.",
+    "qiskit": "`qiskit.quantum_info.Statevector` simulates in complex128 and returns float64 expectation values.",
+    "pennylane": "`default.qubit` simulates in complex128 (its default for NumPy inputs) and returns float64 expectation values.",
+    "cirq": "`cirq.Simulator()` defaults to complex64. `simulate_expectation_values` renormalizes the final state using a norm computed by a single-precision BLAS dot, checks normalization with `np.isclose(norm, 1, atol=1e-7)` (which allows |norm \u2212 1| \u2264 1.01e-5), and sums each expectation value in complex64 through NumPy/BLAS. It returns Python `complex` values, and the harness records their real part. On state-based scenarios its timed values are disclosed, not tolerance-checked; its sampled-counts rows (`cirq_c64`) are float64 Python helpers and are gated at 1e-6. Semantic equivalence is proven by an untimed run of the same circuit (identical gates and angles) with `cirq.Simulator(dtype=np.complex128)`. On this machine (Accelerate BLAS), the complex64 lane [<filled from the run>]; these are reported as measured, not extrapolated.",
+    "cirq_placeholder": "[<filled from the run>] must be replaced with the measured complex64 deviation before any Cirq row is published; the bracketed text is not a measurement.",
+    "methods": [
+      "PennyLane is timed through `qml.execute` on a pre-built tape; no QNode."
+    ]
+  },
+  "lanes": {
+    "nxquantum_cpu_portable": {
+      "framework": "nxquantum",
+      "runtime_profile": "cpu_portable",
+      "agreement": "gated",
+      "tolerance_class": "nxquantum",
+      "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+      "max_timed_qubits": null
+    },
+    "nxquantum_cpu_compiled": {
+      "framework": "nxquantum",
+      "runtime_profile": "cpu_compiled",
+      "agreement": "gated",
+      "tolerance_class": "nxquantum",
+      "dtype": "complex64 state, float32 values (real-gate Z path: float64 state)",
+      "max_timed_qubits": 16,
+      "above_limit_note": "not run (same evolution path as cpu_portable; see Known Gap)"
+    },
+    "qiskit": {
+      "framework": "qiskit",
+      "agreement": "gated",
+      "tolerance_class": "f64",
+      "dtype": "complex128 state, float64 values",
+      "max_timed_qubits": null
+    },
+    "pennylane": {
+      "framework": "pennylane",
+      "agreement": "gated",
+      "tolerance_class": "f64",
+      "dtype": "complex128 state, float64 values",
+      "max_timed_qubits": null
+    },
+    "cirq_c64": {
+      "framework": "cirq",
+      "agreement": "ungated",
+      "agreement_sampled": "gated",
+      "tolerance_class": "none",
+      "dtype": "complex64 state (cirq.Simulator default); expectation returned as Python complex",
+      "equivalence_lane": "cirq_c128_equivalence",
+      "max_timed_qubits": null
+    },
+    "cirq_c128_equivalence": {
+      "framework": "cirq",
+      "agreement": "gated",
+      "tolerance_class": "f64",
+      "timed": false,
+      "dtype": "complex128 (cirq.Simulator(dtype=np.complex128)), untimed, same circuit (identical gates and angles), rebuilt",
+      "max_timed_qubits": null
+    }
+  },
+  "lane_order": ["nxquantum_cpu_portable", "qiskit", "pennylane", "cirq_c64", "nxquantum_cpu_compiled"],
+  "agreement_states": ["pass", "fail", "ungated"],
+  "agreement_note": "Gated lanes end a check as pass or fail. cirq_c64 is ungated only on state-based scenarios (its complex64 state is disclosed, R5); its equivalence run cirq_c128_equivalence is gated at 1e-6 and decides whether a Cirq row is published. On sampled scenarios the Cirq and PennyLane rows are float64 Python helpers, so cirq_c64 is gated at 1e-6 there and publishable only when its own status is pass. A lane error counts as fail on a gated lane; for ungated cirq_c64 it is status error and the row is not publishable.",
+  "selfcheck_bounds": {
+    "reference_selfcheck_dense_le6q": 1e-12,
+    "reference_selfcheck_prefix_parity": 1e-08,
+    "reference_consensus_f64": 1e-08,
+    "sampled_counts_exact_rational": 1e-06,
+    "prefix_parity_exunit": {
+      "real": 2.1e-06,
+      "complex": 1.2e-05,
+      "qubits": 12
+    }
+  },
+  "threads": {
+    "beam_schedulers": 1,
+    "max_concurrency": 1,
+    "note": "single-threaded headline: NxQuantum runs at +S 1:1 with max_concurrency 1 and every Python lane at 1 BLAS thread; a row whose CPU/wall exceeds 1.1 is labelled",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "budget": {
+    "per_lane_width_hours": 2.0,
+    "campaign_hours": 8.0,
+    "runs": 3
+  },
+  "tolerances": {
+    "real": {
+      "4": {
+        "nxquantum_cpu_portable": 6.2e-06,
+        "nxquantum_cpu_compiled": 6.2e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "8": {
+        "nxquantum_cpu_portable": 1.3e-05,
+        "nxquantum_cpu_compiled": 1.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "12": {
+        "nxquantum_cpu_portable": 1.9e-05,
+        "nxquantum_cpu_compiled": 1.9e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "16": {
+        "nxquantum_cpu_portable": 2.5e-05,
+        "nxquantum_cpu_compiled": 2.5e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "20": {
+        "nxquantum_cpu_portable": 3.1e-05,
+        "nxquantum_cpu_compiled": 3.1e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "24": {
+        "nxquantum_cpu_portable": 3.7e-05,
+        "nxquantum_cpu_compiled": 3.7e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      }
+    },
+    "complex": {
+      "4": {
+        "nxquantum_cpu_portable": 3e-05,
+        "nxquantum_cpu_compiled": 3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "8": {
+        "nxquantum_cpu_portable": 5.9e-05,
+        "nxquantum_cpu_compiled": 5.9e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "12": {
+        "nxquantum_cpu_portable": 8.8e-05,
+        "nxquantum_cpu_compiled": 8.8e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "16": {
+        "nxquantum_cpu_portable": 0.00012,
+        "nxquantum_cpu_compiled": 0.00012,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "20": {
+        "nxquantum_cpu_portable": 0.00015,
+        "nxquantum_cpu_compiled": 0.00015,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "24": {
+        "nxquantum_cpu_portable": 0.00018,
+        "nxquantum_cpu_compiled": 0.00018,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      }
+    }
+  },
+  "scenarios": {
+    "baseline_2q": {
+      "kind": "fixed",
+      "qubits": 2,
+      "warmup": 100,
+      "iterations": 2000,
+      "cache_modes": ["hot", "cold"],
+      "headline": false,
+      "labels": ["angle-keyed plan memo warm", "continuity scenario (fixed angles), not a headline row", "analytic reference is continuity-only (it does not depend on the angle)"],
+      "analytic_reference": "<Z_1> = 0 for every RY angle (qubit 1 reduced state I/2)",
+      "gates": [["h", 0], ["cnot", 0, 1], ["ry", 1, 0.3]],
+      "observables": [["Z", 1]],
+      "tolerance": {
+        "nxquantum_cpu_portable": 1e-06,
+        "nxquantum_cpu_compiled": 1e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "real path, G1 = 2, B = (2*sqrt(2)*2 + 1)*u = 4.0e-7, floored to 1e-6"
+    },
+    "deep_6q": {
+      "kind": "fixed",
+      "qubits": 6,
+      "warmup": 50,
+      "iterations": 500,
+      "cache_modes": ["hot", "cold"],
+      "headline": false,
+      "labels": ["angle-keyed plan memo warm", "continuity scenario (fixed angles), not a headline row"],
+      "gates": [
+        ["h", 0],
+        ["cnot", 0, 1],
+        ["cnot", 1, 2],
+        ["cnot", 2, 3],
+        ["cnot", 3, 4],
+        ["cnot", 4, 5],
+        ["ry", 0, 0.11],
+        ["ry", 1, 0.22],
+        ["ry", 2, 0.33],
+        ["ry", 3, 0.44],
+        ["ry", 4, 0.55],
+        ["ry", 5, 0.66],
+        ["cnot", 0, 3],
+        ["cnot", 2, 5],
+        ["cnot", 1, 4]
+      ],
+      "observables": [["Z", 5]],
+      "tolerance": {
+        "nxquantum_cpu_portable": 1.3e-06,
+        "nxquantum_cpu_compiled": 1.3e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "real path, G1 = 7, B = (2*sqrt(2)*7 + 1)*u = 1.24e-6, rounded up to 1.3e-6"
+    },
+    "batch_obs_8q": {
+      "kind": "fixed",
+      "qubits": 8,
+      "warmup": 10,
+      "iterations": 100,
+      "cache_modes": ["hot", "cold"],
+      "headline": false,
+      "labels": ["angle-keyed plan memo warm", "continuity scenario (fixed angles), not a headline row"],
+      "gates": [
+        ["h", 0],
+        ["cnot", 0, 1],
+        ["cnot", 1, 2],
+        ["cnot", 2, 3],
+        ["cnot", 3, 4],
+        ["cnot", 4, 5],
+        ["cnot", 5, 6],
+        ["cnot", 6, 7],
+        ["ry", 0, 0.11],
+        ["ry", 1, 0.22],
+        ["ry", 2, 0.33],
+        ["ry", 3, 0.44],
+        ["ry", 4, 0.55],
+        ["ry", 5, 0.66],
+        ["ry", 6, 0.77],
+        ["ry", 7, 0.88],
+        ["rx", 2, 0.19],
+        ["rz", 3, 0.29],
+        ["cnot", 0, 4],
+        ["cnot", 2, 6],
+        ["cnot", 1, 5]
+      ],
+      "observables": [
+        ["X", 0],
+        ["Y", 1],
+        ["Z", 2],
+        ["X", 3],
+        ["Y", 4],
+        ["Z", 5],
+        ["X", 6],
+        ["Y", 7],
+        ["Z", 0],
+        ["X", 1],
+        ["Y", 2],
+        ["Z", 3],
+        ["X", 4],
+        ["Y", 5],
+        ["Z", 6],
+        ["X", 7],
+        ["Y", 0],
+        ["Z", 1],
+        ["X", 2],
+        ["Y", 3],
+        ["Z", 4],
+        ["X", 5],
+        ["Y", 6],
+        ["Z", 7],
+        ["X", 0],
+        ["Y", 1],
+        ["Z", 2],
+        ["X", 3],
+        ["Y", 4],
+        ["Z", 5],
+        ["X", 6],
+        ["Y", 7],
+        ["Z", 0],
+        ["X", 1],
+        ["Y", 2],
+        ["Z", 3],
+        ["X", 4],
+        ["Y", 5],
+        ["Z", 6],
+        ["X", 7],
+        ["Y", 0],
+        ["Z", 1],
+        ["X", 2],
+        ["Y", 3],
+        ["Z", 4],
+        ["X", 5],
+        ["Y", 6],
+        ["Z", 7]
+      ],
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 1.3e-05,
+        "nxquantum_cpu_compiled": 1.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "complex path, G1 = 11 plus the float32 X/Y sum on EXLA: B = (2*(2*sqrt(2)+1)*11 + 2^7 + 3 + 1)*u = 1.29e-5 on cpu_compiled, 5.3e-6 on cpu_portable (3 units for the sum); the looser bound is used for both lanes"
+    },
+    "state_reuse_8q_xy": {
+      "kind": "fixed",
+      "qubits": 8,
+      "warmup": 50,
+      "iterations": 800,
+      "cache_modes": ["hot"],
+      "headline": false,
+      "labels": ["hot-only state-reuse micro-benchmark", "angle-keyed plan memo warm", "continuity-only, non-discriminating (X5/Y5 are analytically 0)"],
+      "analytic_reference": "<X5> = <Y5> = 0 for every angle: X on a CNOT target commutes and qubit 5's reduced state before CNOT(1,5) is I/2; CNOT(1,5) maps Y5 to Z1 Y5 and RY keeps qubit 5 real",
+      "gates": [
+        ["h", 0],
+        ["cnot", 0, 1],
+        ["cnot", 1, 2],
+        ["cnot", 2, 3],
+        ["cnot", 3, 4],
+        ["cnot", 4, 5],
+        ["cnot", 5, 6],
+        ["cnot", 6, 7],
+        ["ry", 0, 0.11],
+        ["ry", 1, 0.22],
+        ["ry", 2, 0.33],
+        ["ry", 3, 0.44],
+        ["ry", 4, 0.55],
+        ["ry", 5, 0.66],
+        ["ry", 6, 0.77],
+        ["ry", 7, 0.88],
+        ["rx", 2, 0.19],
+        ["rz", 3, 0.29],
+        ["cnot", 0, 4],
+        ["cnot", 2, 6],
+        ["cnot", 1, 5]
+      ],
+      "observables": [["X", 5], ["Y", 5]],
+      "state_reuse": true,
+      "lane_labels": {
+        "nxquantum_cpu_portable": "public Estimator.run with cache_evolved_state: true",
+        "nxquantum_cpu_compiled": "public Estimator.run with cache_evolved_state: true",
+        "qiskit": "Statevector.from_instruction once, untimed; timed region calls expectation_value for X5 and Y5",
+        "pennylane": "state from qml.execute (qml.state(), complex128) once, untimed; timed region is the NumPy ref_expectations helper on that state (no framework API)",
+        "cirq_c64": "state from cirq.Simulator().simulate(...).final_state_vector once, untimed (complex64); timed region is the NumPy ref_expectations helper on that state (no framework API)",
+        "cirq_c128_equivalence": "same, with cirq.Simulator(dtype=np.complex128), untimed"
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 1.3e-05,
+        "nxquantum_cpu_compiled": 1.3e-05,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": null,
+        "cirq_c128_equivalence": 1e-06
+      },
+      "tolerance_basis": "complex path, G1 = 11 plus the float32 X/Y sum on EXLA: B = (2*(2*sqrt(2)+1)*11 + 2^7 + 3 + 1)*u = 1.29e-5 on cpu_compiled, 5.3e-6 on cpu_portable (3 units for the sum); the looser bound is used for both lanes"
+    },
+    "sampled_counts_sparse_terms": {
+      "kind": "sampled_sparse",
+      "qubits": 8,
+      "warmup": 100,
+      "iterations": 2000,
+      "cache_modes": ["cold"],
+      "headline": false,
+      "synthetic": true,
+      "labels": ["synthetic counts", "parse inside the timed region in every lane", "kept out of the width headline"],
+      "counts": {
+        "00000000": 900,
+        "00000011": 420,
+        "00011100": 330,
+        "00110011": 270,
+        "01010101": 510,
+        "01100110": 340,
+        "10011001": 290,
+        "10101010": 470,
+        "11000011": 280,
+        "11111111": 286
+      },
+      "terms": {
+        "count": 48,
+        "mask_multiplier": 37,
+        "magnitude_step": 0.02,
+        "magnitude_cycle": 5,
+        "rule": "z_mask = (i*mask_multiplier mod (2^qubits-1)) + 1; coeff = (-1)^i * magnitude_step*((i mod magnitude_cycle)+1)"
+      },
+      "nx_cold_flags": {
+        "cache_parsed_counts": false,
+        "cache_mask_lookup_plan": false
+      },
+      "nx_public_api": false,
+      "nx_public_api_note": "Known Gap: the weighted multi-wire Z-mask workload needs NxQuantum.Observables.SparsePauli (@moduledoc false); no public facade exists, so the NxQuantum lane is not run for this scenario. Competitor lanes still run for the exact-rational check.",
+      "lane_labels": {
+        "qiskit": "sampled_expectation_value (parses counts per call)",
+        "pennylane": "float64 Python helper (no framework API)",
+        "cirq_c64": "float64 Python helper (no framework API)"
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 1e-06,
+        "nxquantum_cpu_compiled": 1e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": 1e-06,
+        "cirq_c128_equivalence": 1e-06
+      }
+    },
+    "sampled_counts_z_wires_8q": {
+      "kind": "sampled_z_wires",
+      "qubits": 8,
+      "warmup": 100,
+      "iterations": 2000,
+      "cache_modes": ["cold"],
+      "headline": false,
+      "synthetic": true,
+      "labels": ["synthetic counts", "parse inside the timed region in every lane", "kept out of the width headline", "added in H1.3 because it is expressible through public Estimator.sampled_expectation_from_counts"],
+      "counts": {
+        "00000000": 900,
+        "00000011": 420,
+        "00011100": 330,
+        "00110011": 270,
+        "01010101": 510,
+        "01100110": 340,
+        "10011001": 290,
+        "10101010": 470,
+        "11000011": 280,
+        "11111111": 286
+      },
+      "observables": [["Z", 0], ["Z", 1], ["Z", 2], ["Z", 3], ["Z", 4], ["Z", 5], ["Z", 6], ["Z", 7]],
+      "nx_cold_flags": {
+        "cache_parsed_counts": false,
+        "cache_mask_lookup_plan": false
+      },
+      "nx_public_api": true,
+      "lane_labels": {
+        "qiskit": "sampled_expectation_value (parses counts per call)",
+        "pennylane": "float64 Python helper (no framework API)",
+        "cirq_c64": "float64 Python helper (no framework API)"
+      },
+      "tolerance": {
+        "nxquantum_cpu_portable": 1e-06,
+        "nxquantum_cpu_compiled": 1e-06,
+        "qiskit": 1e-06,
+        "pennylane": 1e-06,
+        "cirq_c64": 1e-06,
+        "cirq_c128_equivalence": 1e-06
+      }
+    },
+    "real_zbatch_4q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 4,
+      "warmup": 20,
+      "iterations": 200,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "4"]
+    },
+    "real_zbatch_8q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 8,
+      "warmup": 10,
+      "iterations": 100,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "8"]
+    },
+    "real_zbatch_12q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 12,
+      "warmup": 3,
+      "iterations": 20,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "12"]
+    },
+    "real_zbatch_16q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 16,
+      "warmup": 2,
+      "iterations": 10,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "16"]
+    },
+    "real_zbatch_20q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 20,
+      "warmup": 1,
+      "iterations": 5,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "20"]
+    },
+    "real_zbatch_24q": {
+      "kind": "family",
+      "family": "real",
+      "qubits": 24,
+      "warmup": 1,
+      "iterations": 3,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["real", "24"]
+    },
+    "complex_zbatch_4q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 4,
+      "warmup": 20,
+      "iterations": 200,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "4"]
+    },
+    "complex_zbatch_8q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 8,
+      "warmup": 10,
+      "iterations": 100,
+      "cache_modes": ["hot", "cold"],
+      "headline": true,
+      "labels": ["cold headline and hot (<=10 qubits)"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "8"]
+    },
+    "complex_zbatch_12q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 12,
+      "warmup": 3,
+      "iterations": 20,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "12"]
+    },
+    "complex_zbatch_16q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 16,
+      "warmup": 2,
+      "iterations": 10,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "16"]
+    },
+    "complex_zbatch_20q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 20,
+      "warmup": 1,
+      "iterations": 5,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "20"]
+    },
+    "complex_zbatch_24q": {
+      "kind": "family",
+      "family": "complex",
+      "qubits": 24,
+      "warmup": 1,
+      "iterations": 3,
+      "cache_modes": ["cold"],
+      "headline": true,
+      "labels": ["cold headline"],
+      "observables_rule": "Z_w for every wire, Z_0 first",
+      "nx_opts": {
+        "parallel_observables": true
+      },
+      "tolerance_ref": ["complex", "24"]
+    }
+  }
+}

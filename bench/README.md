@@ -40,47 +40,77 @@ Reference evidence:
 
 ## Python Alternatives Comparison
 
-Run NxQuantum against Qiskit, PennyLane, and Cirq on equivalent local workloads:
+Run NxQuantum against Qiskit, PennyLane, and Cirq on equivalent local workloads.
+
+### Environment
+
+Python pins: `bench/requirements-python-alternatives.txt` is the exact `pip freeze` of the comparison environment (Python 3.13.16, qiskit 2.6.1, pennylane 0.45.1, cirq-core 1.7.0, numpy 2.5.4 and their transitive closure only; `pennylane-lightning` arrives as a pennylane requirement and no lightning lane is run), taken from the latest stable PyPI releases on 2026-10-26; pinning makes competitor versions reproducible and recorded with every result. The environment lives outside `mix.exs`, CI and Hex. Always run it as `.venv-bench/bin/python -I`.
 
 ```bash
-python3 -m venv .venv-bench
-source .venv-bench/bin/activate
-python -m pip install --upgrade pip
-python -m pip install 'qiskit>=1.2,<2' 'pennylane>=0.38,<0.40' 'cirq-core>=1.3,<1.5'
-python -m pip install 'autoray<0.7'
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact
-python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario deep_6q
-python bench/python_alternatives_benchmark.py --iterations 100 --warmup 10 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario batch_obs_8q
-python bench/python_alternatives_benchmark.py --iterations 800 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario state_reuse_8q_xy
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario sampled_counts_sparse_terms
+mise exec python@3.13.16 -- python -m venv .venv-bench
+.venv-bench/bin/python -I -m pip install -r bench/requirements-python-alternatives.txt
+.venv-bench/bin/python -I -m pip freeze | diff - bench/requirements-python-alternatives.txt   # must be empty
 ```
 
-Cache mode lanes for NxQuantum (`--nx-cache-mode hot|cold`, default: `hot`):
+### Scenario table and fixture (H1.3)
+
+- `bench/scenarios/python_alternatives.json` is the single source of scenario ids, warmup and iteration counts, lane agreement states, tolerances, thread counts and the fixed-angle circuits. Both `bench/python_alternatives_benchmark.py` and `bench/nxquantum_python_comparison.exs` read it with stdlib JSON; an unknown scenario id raises in both.
+- Agreement is gated per lane (`pass` or `fail`). Only `cirq_c64` (the `cirq.Simulator()` default complex64) is `ungated`, and only on state-based scenarios; its untimed complex128 run `cirq_c128_equivalence` is gated at 1e-6 and decides whether a Cirq row is published. On the sampled scenarios the PennyLane and Cirq rows are float64 Python helpers (no framework API), so `cirq_c64` is gated at 1e-6 there and publishable only when its own status is `pass`. A lane that raises is recorded as `status=error` (with the exception type and message) and the run continues; on a gated lane an error counts as a failure, and an `error` row is never publishable. A failed ZZ check fails its row and withholds the row's timing. Agreement returns `inf` (a fail) for NaN or non-finite values, a missing or extra row, and a short row.
+- `"tolerances_confirmed": true` (with the record in `tolerance_confirmation`: reading `tol = max(1e-6, B)`, owner-delegated Lead decision 2026-10-30, physics sign-off) lets timed mode start. If the flag is `false`, timed mode refuses to run; `test/nx_quantum/bench_timed_refusal_test.exs` keeps that guard under test with a temp copy of the table.
+- Tolerances for the NxQuantum lanes follow one written formula, `tol = max(1e-6, B rounded up to 2 significant figures)`, `B = (2 kappa G1 + c0) u`, `u = 2^-24` (inputs in `tolerance_formula`, derivation in `tolerances_note`). `test/nx_quantum/bench_tolerance_formula_test.exs` recomputes every family and continuity tolerance from it and asserts it equals the table value. The competitor lanes are gated at 1e-6.
+- The four precision disclosures (NxQuantum, Qiskit, PennyLane, Cirq) and the methods line (PennyLane is timed through `qml.execute` on a pre-built tape; no QNode) are stored in the table (`disclosures`) and copied into `environment.txt`. The bracketed part of the Cirq sentence is a placeholder to fill from the run before any Cirq row is published.
+- Width families `real_zbatch_<n>q` and `complex_zbatch_<n>q` (n = 4, 8, 12, 16, 20, 24; 8 layers) time a Z batch over every wire. Their structure is written in the table (`families`).
+- `bench/scenarios/python_alternatives_fixture.json` (with `.sha256`) holds the angles as integers `k` (angle = k/1024, exact in float32 and float64): one distinct angle set per warmup and timed iteration, drawn with `numpy.random.Generator(PCG64(seed))`, seed = 20261026 + 100 * family_index + qubits. It also holds the prefix-parity analytic circuits and a 6-qubit self-check instance. The prefix-parity angles are deterministic, not drawn: `theta_w = (w+1)/64` (`k = 16(w+1)`) and, for the complex family, `phi_w = 2 theta_w` (`k = 32(w+1)`), which keeps every `|<Z_k>| = |prod_{j<=k} cos(theta_j)|` at or above 0.54 up to 24 qubits so the identity discriminates. Regenerate and verify byte identity:
 
 ```bash
-python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario deep_6q --nx-cache-mode hot
-python bench/python_alternatives_benchmark.py --iterations 500 --warmup 50 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario deep_6q --nx-cache-mode cold
-python bench/python_alternatives_benchmark.py --iterations 100 --warmup 10 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario batch_obs_8q --nx-cache-mode hot
-python bench/python_alternatives_benchmark.py --iterations 100 --warmup 10 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario batch_obs_8q --nx-cache-mode cold
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario sampled_counts_sparse_terms --nx-cache-mode hot
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy require_exact --scenario sampled_counts_sparse_terms --nx-cache-mode cold
+.venv-bench/bin/python -I bench/scenarios/generate_python_alternatives_fixture.py
+(cd bench/scenarios && shasum -a 256 -c python_alternatives_fixture.sha256)
 ```
 
-Sampled sparse-term lane semantics (`sampled_counts_sparse_terms`):
+### Running
 
-- `nxquantum[cpu_portable]` => scalar reducer lane (`:force_scalar`)
-- `nxquantum[cpu_compiled]` => helper/parallel lane (`:force_parallel`)
-- This lane mapping is guaranteed under `--nx-profile-resolution-policy require_exact`; with fallback enabled, interpret lanes by `resolved_profile`.
+The harness has four modes. Run Python only as `.venv-bench/bin/python -I` (the script refuses otherwise) and Elixir with the toolchain from `mise.toml` (the harness and the guard tests run plain `mix` from `PATH`; set `NXQ_BENCH_MIX_CMD="mise exec -- mix"` to go through mise, which needs a trusted `mise.toml`).
 
-If you intentionally want fallback-lane measurements (requested profile may resolve to a different runtime profile), run with:
+Correctness first (`--mode check`, default). Every lane runs the real loop with `--check-warmup/--check-iterations` (default 1 and 3) and each timed iteration is compared with its own NumPy complex128 reference. Output is one `CHECK name=... status=pass|fail|ungated|error max_err=...` line per check (`agreement_<lane>_<family>_<n>`, `zz_...`, `reference_consensus_f64_<family>_<n>`, `sampled_counts_exact_rational`) and a final `SUMMARY rows=... failures=... errors=...`. Timings in this mode carry `timing=not_published`. `--max-qubits` defaults to 8 when no `--scenario` is named; naming a scenario runs it at its own width (a deliberate choice, for example `--scenario real_zbatch_20q`).
+
+Every agreement line also carries the discrimination columns: `max_abs_ref` (largest reference value in the row) and `discriminating=k/n` (observables whose reference stays at or above 10 times the row tolerance in every iteration). A row whose references sit near zero checks little, whatever its `max_err`. `baseline_2q` (analytic `<Z_1> = 0`) is continuity-only, and the X5/Y5 references of `state_reuse_8q_xy` are below 1e-16, so that scenario checks the plumbing of the state-reuse lanes, not values.
 
 ```bash
-python bench/python_alternatives_benchmark.py --iterations 2000 --warmup 100 --nx-runtime-profiles cpu_portable,cpu_compiled --nx-profile-resolution-policy allow_fallback
+.venv-bench/bin/python -I bench/python_alternatives_benchmark.py --mode check --max-qubits 8 --out-dir <dir> --values-out <dir>/values.json
+.venv-bench/bin/python -I bench/python_alternatives_benchmark.py --compare-values <run1>/values.json <run2>/values.json   # values_byte_identical_runs
+.venv-bench/bin/python -I bench/python_alternatives_benchmark.py --mode selfcheck --max-qubits 8                         # reference checks
 ```
+
+Self-checks (`--mode selfcheck`): `reference_selfcheck_dense_le6q` (NumPy reference vs `test/support/dense_reference.ex` exported by the `.exs`, at most 1e-12), `reference_selfcheck_prefix_parity` (analytic product of cosines, at most 1e-8, Python only; also emits `min_abs_expected` and fails below 0.5), `reference_consensus_f64` (Qiskit, PennyLane, Cirq complex128 vs the reference, at most 1e-8; consensus is checked at 8 qubits or fewer in selfcheck, and per width in check and timed runs as `reference_consensus_f64_<family>_<n>`), `sampled_counts_exact_rational` (exact `fractions.Fraction` reference over synthetic counts, at most 1e-6), `harness_agreement_negative_cases` (NaN, infinity, a missing, extra or short row and an empty comparison must all be a `fail`).
+
+Timed mode (`--mode timed --cache-mode hot|cold`) refuses to run while `"tolerances_confirmed"` is `false` in the scenario table (it is `true` since 2026-10-30). The timed campaign itself runs only at major releases (see "Major-release timed campaign"). A timing row counts only if its lane passed agreement for that row; `cirq_c64` is ungated and published only where `cirq_c128_equivalence` passes. Release-time helpers: `--mode pins` queries `pip index versions` for qiskit, pennylane, cirq-core and numpy and prints one `pins_current` line per package plus an `all=` summary against `requirements-python-alternatives.txt` (needs network; exit 1 if any pin is not the latest or the index is unreachable). `--mode consensus --results <a/results.json> <b/results.json> ...` computes `reference_consensus_f64_<family>_<n>` (bound 1e-8) across per-invocation `results.json` files, as needed when the campaign runs one lane per invocation, and fails when `qiskit`, `pennylane` or `cirq_c128_equivalence` is missing for a width that has rows. Budget pre-timing (`--mode pretime`) times one untimed iteration per (lane, family, width) and writes `pretime.json` with the 2 h per row and 8 h campaign rule applied; `cpu_compiled` is limited to 16 qubits.
+
+Cache modes. `--cache-mode cold` builds one distinct angle set per iteration (warmup plus timed) before the timed loop in every lane and turns the NxQuantum result caches off (`cache_evolved_state: false`; for sampled counts `cache_parsed_counts: false, cache_mask_lookup_plan: false`); only structure-keyed caches stay warm. `hot` repeats one circuit and is allowed only at 10 qubits or fewer. `state_reuse_8q_xy` is a hot-only micro-benchmark. Each lane simulates the state once, untimed (NxQuantum: public `Estimator.run` with `cache_evolved_state: true`; Qiskit: `Statevector.from_instruction`, then `expectation_value` for X5 and Y5 in the timed region; PennyLane: the complex128 state of `qml.execute` with `qml.state()`; Cirq: `cirq.Simulator().simulate(...).final_state_vector`, with `cirq_c128_equivalence` on `Simulator(dtype=np.complex128)`). The PennyLane and Cirq timed region is the NumPy reference helper `ref_expectations` on that state, not a framework API. `sampled_counts_*` use synthetic counts. The 2 to 8 qubit continuity scenarios use fixed angles (angle-keyed plan memo warm) and are not headline rows.
+
+Thread counts are fixed from the table (BEAM `+S 1:1`, `max_concurrency` 1, `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`, `VECLIB_MAXIMUM_THREADS` all single-threaded for the headline); the harness fails a row if the NxQuantum subprocess reports different scheduler counts. Every row records `cpu_wall_lane_call` (`RUSAGE_SELF` delta for Python lanes, `RUSAGE_CHILDREN` delta for the NxQuantum subprocess, over the whole lane call, so NxQuantum startup is included) and a row above 1.1 is labelled. NxQuantum rows also carry `cpu_wall_timed_loop`: the `:erlang.statistics(:runtime)` delta (process CPU across all OS threads, millisecond resolution, so very short loops quantise to 0) over the `:timer.tc` wall time of the timed loop alone, without startup. Report the two figures separately. The thread settings are written to `environment.txt` together with the `numerics_digest.exs --env-out` fields, Python and framework versions, the `pip freeze` hash, the NumPy BLAS configuration and the fixture sha256.
+
+Known limits of the NxQuantum lane: it calls public facades only (`Circuit`, `Gates`, `Estimator`, `Runtime`). `sampled_counts_sparse_terms` needs the internal `SparsePauli` struct (no public facade), so its NxQuantum lane is not run; `sampled_counts_z_wires_8q` is the public-API sampled lane. The evolution path (RealPauliZ or Complex) is asserted by `test/nx_quantum/bench_evolution_path_test.exs`, not by the bench.
 
 NxQuantum benchmark scripts used by the Python harness:
 
 - `bench/nxquantum_python_comparison.exs`
+
+### Major-release timed campaign
+
+When it runs. The multi-hour timed comparison runs at major releases only (owner decision, 2026-10-30), to confirm nothing regressed. It does not run per milestone or per PR. Between major releases the harness is exercised by `--mode check` and `--mode selfcheck` only; the committed correctness evidence is in `bench/results/2026-10-30-h1.3/` (`SUMMARY.md`). The tolerance reading (`tol = max(1e-6, B)`) was confirmed on 2026-10-30 and is recorded in `tolerance_confirmation` in the scenario table.
+
+Steps, in order. Run Python as `.venv-bench/bin/python -I bench/python_alternatives_benchmark.py ...` with the toolchain from `mise.toml`.
+
+1. `--mode pins`. If any pin is not current, bump `requirements-python-alternatives.txt`, rerun `--mode selfcheck --max-qubits 24` and `--mode check --max-qubits 8`, and get a new physics sign-off before continuing.
+2. Confirm the physics sign-off still holds for the pinned versions. The four precision disclosures (NxQuantum, Qiskit, PennyLane, Cirq) and the methods line must still be true of the pinned versions, including the sentences about Cirq's single-precision norm and normalization check, PennyLane's `default.qubit` complex128 default, and the NxQuantum real-gate float64 path.
+3. `--mode pretime` with the R4 budget rule: at most 2 h per (lane, family, width) and 8 h for the campaign (`budget` in the table), lanes in the committed `lane_order`, and `nxquantum_cpu_compiled` only at 16 qubits or fewer. A (lane, family, width) whose single-iteration estimate breaks the rule is dropped and recorded in `pretime.json`, not silently shortened.
+4. Timed runs: 3 per scenario, one lane per invocation (`--mode timed --cache-mode hot|cold --lanes <lane> --scenario <id> --out-dir ...`). Hot rows only at 10 qubits or fewer.
+5. `--mode consensus --results <a/results.json> <b/results.json> ...` across every per-invocation `results.json`. It must pass for every width with rows.
+6. Fill the Cirq disclosure placeholder (the bracketed `<filled from the run>` text in `disclosures.cirq`) from the measured rows, such as the 20-qubit complex64 error recorded in `bench/results/2026-10-30-h1.3/cirq_c64_20q_error.txt` and whatever the timed run measures. Report what was measured, not an extrapolation.
+7. Write `docs/python-alternatives-benchmark-<date>.md` per the plan: cold headline, hot rows at 10 qubits or fewer, the agreement and discrimination columns, the crossover qubit count per family and competitor, and the limits (single machine, single thread, pinned versions, 3-run spread).
+8. Claims audit with `docs-sync`: every number traces to a committed `results.json`, and `grep -rn "<filled from the run>" docs/python-alternatives-benchmark-<date>.md` must show 0 hits in the report. The table placeholder must be filled before any Cirq row is published.
+
+Outputs go to `bench/results/<first-run-date>-<release>/` with `pins.txt`, `selfcheck.txt`, `pretime.json`, one directory per invocation (`results.json`, `values.json`, `environment.txt`, logs), `consensus.txt` and a `SUMMARY.md`. Commit with a clean tree so `environment.txt` shows `git_dirty: false`; write outputs outside the repository during the run (an untracked output directory counts as dirty), and strip absolute paths, usernames and hostnames before committing.
 
 ## Numerical Precision Floor (KG-10)
 

@@ -1,0 +1,5 @@
+pins_current package=qiskit pinned=2.6.1 latest=2.6.1 current=True
+pins_current package=pennylane pinned=0.45.1 latest=0.45.1 current=True
+pins_current package=cirq-core pinned=1.7.0 latest=1.7.0 current=True
+pins_current package=numpy pinned=2.5.4 latest=2.5.4 current=True
+pins_current all=True date_utc=2026-10-30

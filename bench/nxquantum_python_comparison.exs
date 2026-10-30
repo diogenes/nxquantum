@@ -1,68 +1,254 @@
-alias NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy
-alias NxQuantum.Adapters.Simulators.StateVector.PauliExpval
-alias NxQuantum.Circuit
+# NxQuantum lane of the cross-framework benchmark (H1.3 Track A).
+#
+# Driven by bench/python_alternatives_benchmark.py. Scenario ids, counts, fixed
+# circuits and thread counts come from bench/scenarios/python_alternatives.json;
+# angle sets come from bench/scenarios/python_alternatives_fixture.json (sha256
+# verified). An unknown scenario id raises.
+#
+# Only public facades are called: NxQuantum.Circuit, Gates, Estimator and
+# Runtime. No @moduledoc false adapter module is used (R2). The one exception is
+# test/support/dense_reference.ex in --mode dense_export, which is the
+# independent reference under test, not an NxQuantum adapter.
+#
+#   mix run bench/nxquantum_python_comparison.exs --mode values --scenario deep_6q \
+#     --profile cpu_portable --cache-mode cold --warmup 1 --iterations 3
+#
+# Modes: values | timed | pretime | env | dense_export
+#   values/timed  warmup + timed loop; one NXQ_ITER line per timed iteration with
+#                 the per-observable values in shortest round-trip form.
+#   pretime       the same with warmup 0 / iterations 1 (single untimed sample).
+#   env           writes the environment block (numerics_digest.exs --env-out format).
+#   dense_export  float64 dense-reference states and Pauli expectations (<= 6 qubits).
+#
+# Cold mode builds every iteration's circuit (distinct angle set) before the timed
+# loop and turns the result caches off; only structure-keyed caches stay warm.
+
 alias NxQuantum.Estimator
-alias NxQuantum.Gates
-alias NxQuantum.Observables.SparsePauli
 alias NxQuantum.Runtime
 
-parse_iterations = fn value ->
-  case Integer.parse(value) do
-    {parsed, ""} when parsed > 0 -> parsed
-    _ -> 1000
+{opts, _args, invalid} =
+  OptionParser.parse(System.argv(),
+    strict: [
+      mode: :string,
+      scenario: :string,
+      profile: :string,
+      cache_mode: :string,
+      warmup: :integer,
+      iterations: :integer,
+      zz: :boolean,
+      out: :string,
+      cases: :string,
+      env_out: :string,
+      table: :string
+    ]
+  )
+
+if invalid != [], do: raise(ArgumentError, "invalid options: #{inspect(invalid)}")
+
+Code.require_file("test/support/bench_scenarios.ex")
+
+defmodule BenchPlan do
+  @moduledoc false
+  # Script-local helpers. Circuit structure, table and fixture loading live in
+  # test/support/bench_scenarios.ex (shared with the guard tests).
+
+  def shortest(x) when is_float(x), do: :erlang.float_to_binary(x, [:short])
+  def shortest(x) when is_integer(x), do: shortest(x * 1.0)
+
+  def cache_flags("cold", scenario) do
+    case scenario["kind"] do
+      "sampled_" <> _ -> [cache_parsed_counts: false, cache_mask_lookup_plan: false]
+      _ -> [cache_evolved_state: false]
+    end
   end
+
+  def cache_flags("hot", _scenario), do: [cache_evolved_state: true]
+
+  def flags_string(flags), do: Enum.map_join(flags, ",", fn {k, v} -> "#{k}=#{v}" end)
 end
 
-parse_runtime_profile = fn value ->
-  case String.trim(value) do
+alias NxQuantum.TestSupport.BenchScenarios
+
+table_path = opts[:table] || "bench/scenarios/python_alternatives.json"
+table = BenchScenarios.table(table_path)
+mode = opts[:mode] || "values"
+
+if mode not in ["values", "timed", "pretime", "env", "dense_export"],
+  do: raise(ArgumentError, "unknown mode #{inspect(mode)}")
+
+load_fixture = fn -> BenchScenarios.fixture(table) end
+
+# ---------------------------------------------------------------------------------------------
+# env mode
+# ---------------------------------------------------------------------------------------------
+
+if mode == "env" do
+  path = opts[:env_out] || raise ArgumentError, "--env-out is required in env mode"
+
+  run = fn cmd, args ->
+    try do
+      case System.cmd(cmd, args, stderr_to_stdout: true) do
+        {out, 0} -> String.trim(out)
+        _ -> "unavailable"
+      end
+    rescue
+      _ -> "unavailable"
+    end
+  end
+
+  version = fn app ->
+    _ = Application.load(app)
+
+    case Application.spec(app, :vsn) do
+      nil -> "not present"
+      vsn -> to_string(vsn)
+    end
+  end
+
+  otp_release = :otp_release |> :erlang.system_info() |> to_string()
+
+  otp_full =
+    [:code.root_dir(), "releases", otp_release, "OTP_VERSION"]
+    |> Path.join()
+    |> File.read()
+    |> case do
+      {:ok, text} -> String.trim(text)
+      _ -> "unavailable"
+    end
+
+  flag = fn name -> System.get_env(name) || "unset" end
+
+  lines = [
+    "date_utc: #{Date.to_iso8601(Date.utc_today())}",
+    "os: #{run.("sw_vers", ["-productName"])} #{run.("sw_vers", ["-productVersion"])}",
+    "cpu: #{run.("sysctl", ["-n", "machdep.cpu.brand_string"])}",
+    "elixir: #{System.version()}",
+    "otp_release: #{otp_release}",
+    "otp_version: #{otp_full}",
+    "nx: #{version.(:nx)}",
+    "exla: #{version.(:exla)}",
+    "torchx: #{version.(:torchx)}",
+    "complex: #{version.(:complex)}",
+    "NXQ_ENABLE_EXLA: #{flag.("NXQ_ENABLE_EXLA")}",
+    "NXQ_ENABLE_TORCHX: #{flag.("NXQ_ENABLE_TORCHX")}",
+    "MIX_ENV: #{Mix.env()}",
+    "git_head: #{run.("git", ["rev-parse", "HEAD"])}",
+    "git_dirty: #{run.("git", ["status", "--porcelain"]) != ""}",
+    "backend: #{inspect(Nx.default_backend())}",
+    "beam_schedulers_online: #{System.schedulers_online()}",
+    "beam_dirty_cpu_schedulers_online: #{:erlang.system_info(:dirty_cpu_schedulers_online)}",
+    "beam_schedulers_expected: #{table["threads"]["beam_schedulers"]}",
+    "beam_max_concurrency: #{table["threads"]["max_concurrency"]}",
+    "ELIXIR_ERL_OPTIONS: #{flag.("ELIXIR_ERL_OPTIONS")}"
+  ]
+
+  File.write!(path, Enum.join(lines, "\n") <> "\n")
+  System.halt(0)
+end
+
+# ---------------------------------------------------------------------------------------------
+# dense_export mode: float64 dense reference (independent of the production matrix library)
+# ---------------------------------------------------------------------------------------------
+
+if mode == "dense_export" do
+  Code.require_file("test/support/dense_reference.ex")
+  {fixture, _sha} = load_fixture.()
+  out_path = opts[:out] || raise ArgumentError, "--out is required in dense_export mode"
+  cases = (opts[:cases] || raise(ArgumentError, "--cases is required")) |> String.split(",", trim: true)
+
+  case_gates = fn name ->
+    case Regex.run(~r/^(real|complex)_(\d+)_set(\d+)$/, name) do
+      [_, family, width, set] ->
+        entry = fixture["families"][family]["widths"][width]
+        n = String.to_integer(width)
+        {n, BenchScenarios.family_gates(family, n, Enum.at(entry["k"], String.to_integer(set)), fixture["layers"])}
+
+      nil ->
+        scenario = BenchScenarios.scenario!(table, name)
+        {scenario["qubits"], scenario["gates"]}
+    end
+  end
+
+  pauli_expectations = fn n, amps ->
+    dim = Bitwise.bsl(1, n)
+    amp = List.to_tuple(amps)
+
+    for axis <- ["X", "Y", "Z"], w <- 0..(n - 1) do
+      mask = Bitwise.bsl(1, n - 1 - w)
+
+      Enum.reduce(0..(dim - 1), 0.0, fn i, acc ->
+        {ar, ai} = elem(amp, i)
+        {cr, ci} = elem(amp, Bitwise.bxor(i, mask))
+        bit = if Bitwise.band(i, mask) == 0, do: 0, else: 1
+
+        term =
+          case axis do
+            "Z" -> (ar * ar + ai * ai) * (1 - 2 * bit)
+            "X" -> ar * cr + ai * ci
+            "Y" ->
+              {dr, di} = if bit == 0, do: {ci, -cr}, else: {-ci, cr}
+              ar * dr + ai * di
+          end
+
+        acc + term
+      end)
+    end
+  end
+
+  exported =
+    Map.new(cases, fn name ->
+      {n, gates} = case_gates.(name)
+      circuit = BenchScenarios.build_circuit(n, gates, & &1)
+      unitary = NxQuantum.TestSupport.DenseReference.unitary(n, circuit.operations)
+      column = unitary |> Nx.slice_along_axis(0, 1, axis: 1) |> Nx.reshape({:auto})
+      re = Nx.to_flat_list(Nx.real(column))
+      im = Nx.to_flat_list(Nx.imag(column))
+      amps = Enum.zip(re, im)
+      {name, %{"n" => n, "re" => re, "im" => im, "expectations" => pauli_expectations.(n, amps)}}
+    end)
+
+  File.write!(out_path, JSON.encode!(exported))
+  IO.puts("NXQ_DENSE_EXPORT cases=#{length(cases)} out=#{out_path}")
+  System.halt(0)
+end
+
+# ---------------------------------------------------------------------------------------------
+# values / timed / pretime
+# ---------------------------------------------------------------------------------------------
+
+scenario_id = opts[:scenario] || raise(ArgumentError, "--scenario is required")
+scenario = BenchScenarios.scenario!(table, scenario_id)
+kind = scenario["kind"]
+qubits = scenario["qubits"]
+cache_mode = opts[:cache_mode] || "cold"
+
+if cache_mode not in scenario["cache_modes"],
+  do: raise(ArgumentError, "scenario #{scenario_id} does not allow cache mode #{cache_mode}; allowed #{inspect(scenario["cache_modes"])}")
+
+if cache_mode == "hot" and qubits > 10,
+  do: raise(ArgumentError, "hot rows are published only at 10 qubits or fewer")
+
+if scenario["nx_public_api"] == false,
+  do: raise(ArgumentError, "scenario #{scenario_id}: #{scenario["nx_public_api_note"]}")
+
+{warmup, iterations} =
+  case mode do
+    "pretime" -> {0, 1}
+    _ -> {opts[:warmup] || scenario["warmup"], opts[:iterations] || scenario["iterations"]}
+  end
+
+threads = table["threads"]
+
+if mode in ["timed", "pretime"] and System.schedulers_online() != threads["beam_schedulers"],
+  do: raise("BEAM schedulers #{System.schedulers_online()} != table #{threads["beam_schedulers"]}; start with ELIXIR_ERL_OPTIONS='+S N:N'")
+
+max_concurrency = threads["max_concurrency"]
+
+runtime_profile =
+  case opts[:profile] || "cpu_portable" do
     "cpu_portable" -> :cpu_portable
     "cpu_compiled" -> :cpu_compiled
-    "nvidia_gpu_compiled" -> :nvidia_gpu_compiled
-    "torch_interop_runtime" -> :torch_interop_runtime
-    _ -> :cpu_portable
-  end
-end
-
-parse_scenario = fn value ->
-  case String.trim(value) do
-    "baseline_2q" -> :baseline_2q
-    "deep_6q" -> :deep_6q
-    "batch_obs_8q" -> :batch_obs_8q
-    "state_reuse_8q_xy" -> :state_reuse_8q_xy
-    "sampled_counts_sparse_terms" -> :sampled_counts_sparse_terms
-    _ -> :baseline_2q
-  end
-end
-
-parse_cache_mode = fn value ->
-  case String.trim(value) do
-    "cold" -> :cold
-    _ -> :hot
-  end
-end
-
-{iterations, runtime_profile} =
-  case System.argv() do
-    [iterations_arg, profile_arg, _scenario_arg | _rest] ->
-      {parse_iterations.(iterations_arg), parse_runtime_profile.(profile_arg)}
-
-    [iterations_arg] ->
-      {parse_iterations.(iterations_arg), :cpu_portable}
-
-    _ ->
-      {1000, :cpu_portable}
-  end
-
-scenario =
-  case System.argv() do
-    [_iterations_arg, _profile_arg, scenario_arg | _rest] -> parse_scenario.(scenario_arg)
-    _ -> :baseline_2q
-  end
-
-cache_mode =
-  case System.argv() do
-    [_iterations_arg, _profile_arg, _scenario_arg, cache_mode_arg | _rest] -> parse_cache_mode.(cache_mode_arg)
-    _ -> :hot
+    other -> raise ArgumentError, "unsupported profile #{inspect(other)} for this benchmark"
   end
 
 resolved_profile =
@@ -71,233 +257,169 @@ resolved_profile =
     {:error, _reason} -> :cpu_portable
   end
 
-warmup = min(100, iterations)
+{fixture, fixture_sha} = load_fixture.()
+total = warmup + iterations
+cache_flags = BenchPlan.cache_flags(cache_mode, scenario)
+nx_opts = Enum.map(scenario["nx_opts"] || %{}, fn {k, v} -> {String.to_atom(k), v} end)
+f32 = fn angle -> Nx.tensor(angle) end
 
-circuit =
-  case scenario do
-    :baseline_2q ->
-      [qubits: 2]
-      |> Circuit.new()
-      |> Gates.h(0)
-      |> Gates.cnot(control: 0, target: 1)
-      |> Gates.ry(1, theta: Nx.tensor(0.3))
-
-    :deep_6q ->
-      [qubits: 6]
-      |> Circuit.new()
-      |> Gates.h(0)
-      |> Gates.cnot(control: 0, target: 1)
-      |> Gates.cnot(control: 1, target: 2)
-      |> Gates.cnot(control: 2, target: 3)
-      |> Gates.cnot(control: 3, target: 4)
-      |> Gates.cnot(control: 4, target: 5)
-      |> Gates.ry(0, theta: Nx.tensor(0.11))
-      |> Gates.ry(1, theta: Nx.tensor(0.22))
-      |> Gates.ry(2, theta: Nx.tensor(0.33))
-      |> Gates.ry(3, theta: Nx.tensor(0.44))
-      |> Gates.ry(4, theta: Nx.tensor(0.55))
-      |> Gates.ry(5, theta: Nx.tensor(0.66))
-      |> Gates.cnot(control: 0, target: 3)
-      |> Gates.cnot(control: 2, target: 5)
-      |> Gates.cnot(control: 1, target: 4)
-
-    :batch_obs_8q ->
-      [qubits: 8]
-      |> Circuit.new()
-      |> Gates.h(0)
-      |> Gates.cnot(control: 0, target: 1)
-      |> Gates.cnot(control: 1, target: 2)
-      |> Gates.cnot(control: 2, target: 3)
-      |> Gates.cnot(control: 3, target: 4)
-      |> Gates.cnot(control: 4, target: 5)
-      |> Gates.cnot(control: 5, target: 6)
-      |> Gates.cnot(control: 6, target: 7)
-      |> Gates.ry(0, theta: Nx.tensor(0.11))
-      |> Gates.ry(1, theta: Nx.tensor(0.22))
-      |> Gates.ry(2, theta: Nx.tensor(0.33))
-      |> Gates.ry(3, theta: Nx.tensor(0.44))
-      |> Gates.ry(4, theta: Nx.tensor(0.55))
-      |> Gates.ry(5, theta: Nx.tensor(0.66))
-      |> Gates.ry(6, theta: Nx.tensor(0.77))
-      |> Gates.ry(7, theta: Nx.tensor(0.88))
-      |> Gates.rx(2, theta: Nx.tensor(0.19))
-      |> Gates.rz(3, theta: Nx.tensor(0.29))
-      |> Gates.cnot(control: 0, target: 4)
-      |> Gates.cnot(control: 2, target: 6)
-      |> Gates.cnot(control: 1, target: 5)
-
-    :state_reuse_8q_xy ->
-      [qubits: 8]
-      |> Circuit.new()
-      |> Gates.h(0)
-      |> Gates.cnot(control: 0, target: 1)
-      |> Gates.cnot(control: 1, target: 2)
-      |> Gates.cnot(control: 2, target: 3)
-      |> Gates.cnot(control: 3, target: 4)
-      |> Gates.cnot(control: 4, target: 5)
-      |> Gates.cnot(control: 5, target: 6)
-      |> Gates.cnot(control: 6, target: 7)
-      |> Gates.ry(0, theta: Nx.tensor(0.11))
-      |> Gates.ry(1, theta: Nx.tensor(0.22))
-      |> Gates.ry(2, theta: Nx.tensor(0.33))
-      |> Gates.ry(3, theta: Nx.tensor(0.44))
-      |> Gates.ry(4, theta: Nx.tensor(0.55))
-      |> Gates.ry(5, theta: Nx.tensor(0.66))
-      |> Gates.ry(6, theta: Nx.tensor(0.77))
-      |> Gates.ry(7, theta: Nx.tensor(0.88))
-      |> Gates.rx(2, theta: Nx.tensor(0.19))
-      |> Gates.rz(3, theta: Nx.tensor(0.29))
-      |> Gates.cnot(control: 0, target: 4)
-      |> Gates.cnot(control: 2, target: 6)
-      |> Gates.cnot(control: 1, target: 5)
-
-    :sampled_counts_sparse_terms ->
-      [qubits: 2]
-      |> Circuit.new()
-      |> Gates.h(0)
-  end
-
-batch_observables =
-  case scenario do
-    :batch_obs_8q ->
-      observable_cycle = [:pauli_x, :pauli_y, :pauli_z]
-
-      Enum.map(0..47, fn index ->
-        %{observable: Enum.at(observable_cycle, rem(index, 3)), wire: rem(index, 8)}
-      end)
-
-    _ ->
-      []
-  end
-
-max_concurrency = System.schedulers_online()
-
-state_reuse_payload =
-  case scenario do
-    :state_reuse_8q_xy ->
-      state = EvolutionStrategy.evolve(circuit)
-      x_term = PauliExpval.term_for_observable(:pauli_x, 5)
-      y_term = PauliExpval.term_for_observable(:pauli_y, 5)
-
-      plan =
-        PauliExpval.plan([x_term, y_term], 8, parallel_observables: false)
-
-      %{state: state, plan: plan}
-
-    _ ->
-      nil
-  end
-
-sampled_counts_payload =
-  case scenario do
-    :sampled_counts_sparse_terms ->
-      counts = %{
-        "00000000" => 900,
-        "00000011" => 420,
-        "00011100" => 330,
-        "00110011" => 270,
-        "01010101" => 510,
-        "01100110" => 340,
-        "10011001" => 290,
-        "10101010" => 470,
-        "11000011" => 280,
-        "11111111" => 286
-      }
-
-      terms =
-        Enum.map(0..47, fn index ->
-          z_mask = rem(index * 37, 255) + 1
-          magnitude = 0.02 * (rem(index, 5) + 1)
-          coeff = if rem(index, 2) == 0, do: magnitude, else: -magnitude
-          %{x_mask: 0, z_mask: z_mask, coeff: coeff}
-        end)
-
-      {:ok, sparse_pauli} = SparsePauli.new(8, terms)
-
-      %{counts: counts, sparse_pauli: sparse_pauli}
-
-    _ ->
-      nil
-  end
-
-sampled_parallel_mode =
-  case resolved_profile do
-    :cpu_compiled -> :force_parallel
-    _ -> :force_scalar
-  end
-
-run_once = fn ->
-  cache_opts =
-    case cache_mode do
-      :cold -> [cache_evolved_state: false]
-      :hot -> [cache_evolved_state: true]
-    end
-
-  case scenario do
-    :batch_obs_8q ->
-      batch_opts =
-        [
-          observables: batch_observables,
-          runtime_profile: runtime_profile,
-          fallback_policy: :allow_cpu_compiled,
-          parallel_observables: true,
-          max_concurrency: max_concurrency
-        ] ++ cache_opts
-
-      case Estimator.run(circuit, batch_opts) do
-        {:ok, result} -> Nx.sum(result.values)
-        {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
-      end
-
-    :sampled_counts_sparse_terms ->
-      %{counts: counts, sparse_pauli: sparse_pauli} = sampled_counts_payload
-
-      case Estimator.sampled_expectation_from_counts(counts,
-             sparse_pauli: sparse_pauli,
-             sampled_parallel_mode: sampled_parallel_mode,
-             max_concurrency: max_concurrency
-           ) do
-        {:ok, value} -> value
-        {:error, reason} -> raise "NxQuantum sampled benchmark failed: #{inspect(reason)}"
-      end
-
-    :state_reuse_8q_xy ->
-      %{state: state, plan: plan} = state_reuse_payload
-      [x, y] = PauliExpval.expectations_with_reuse_cache(state, plan)
-      Nx.add(x, y)
-
-    _ ->
-      estimator_opts =
-        [
-          observable: :pauli_z,
-          wire: if(scenario == :deep_6q, do: 5, else: 1),
-          runtime_profile: runtime_profile,
-          fallback_policy: :allow_cpu_compiled
-        ] ++ cache_opts
-
-      case Estimator.expectation_result(circuit, estimator_opts) do
-        {:ok, value} -> value
-        {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
-      end
-  end
+specs_for = fn observables ->
+  Enum.map(observables, fn [axis, wire] -> %{observable: BenchScenarios.observable_atom(axis), wire: wire} end)
 end
 
-for _ <- 1..warmup do
-  _ = run_once.()
+gates_for_family = fn index ->
+  entry = fixture["families"][scenario["family"]]["widths"][Integer.to_string(qubits)]
+  BenchScenarios.family_gates(scenario["family"], qubits, Enum.at(entry["k"], index), fixture["layers"])
 end
 
-{microseconds, last_value} =
+# Inputs for every warmup + timed iteration are built BEFORE the timed loop.
+{inputs, specs, run_once} =
+  case kind do
+    "family" ->
+      specs = specs_for.(for w <- 0..(qubits - 1), do: ["Z", w])
+
+      gate_sets =
+        if cache_mode == "hot",
+          do: List.duplicate(gates_for_family.(0), total),
+          else: Enum.map(0..(total - 1), gates_for_family)
+
+      inputs = Enum.map(gate_sets, &BenchScenarios.build_circuit(qubits, &1, f32))
+      {inputs, specs, :batch}
+
+    "fixed" ->
+      specs = specs_for.(scenario["observables"])
+      circuit = BenchScenarios.build_circuit(qubits, scenario["gates"], f32)
+      kind_run = if length(specs) == 1, do: :scalar, else: :batch
+      {List.duplicate(circuit, total), specs, kind_run}
+
+    "sampled_z_wires" ->
+      {List.duplicate(scenario["counts"], total), specs_for.(scenario["observables"]), :sampled}
+  end
+
+expected_library_cache_mode = if cache_mode == "hot", do: :enabled, else: :disabled
+
+# Known Gap: only the :batch path (Estimator.run) exposes
+# metadata.strategy_observability.cache_mode. The :scalar (expectation_result) and
+# :sampled (counts) paths return no such signal, so their cold-cache evidence is the
+# applied flags only (library_cache_mode=unreported).
+run_fun =
+  case run_once do
+    :scalar ->
+      [%{observable: observable, wire: wire}] = specs
+
+      fn circuit ->
+        opts =
+          [observable: observable, wire: wire, runtime_profile: runtime_profile, fallback_policy: :allow_cpu_compiled] ++
+            cache_flags
+
+        case Estimator.expectation_result(circuit, opts) do
+          {:ok, value} -> Nx.reshape(value, {1})
+          {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
+        end
+      end
+
+    :batch ->
+      fn circuit ->
+        opts =
+          [
+            observables: specs,
+            runtime_profile: runtime_profile,
+            fallback_policy: :allow_cpu_compiled,
+            max_concurrency: max_concurrency
+          ] ++ nx_opts ++ cache_flags
+
+        case Estimator.run(circuit, opts) do
+          {:ok, result} ->
+            # The library reports the cache mode it applied; fail the row when it
+            # disagrees with the requested mode instead of trusting the flag echo.
+            reported = result.metadata.strategy_observability.cache_mode
+
+            if reported != expected_library_cache_mode,
+              do:
+                raise(
+                  "cache mode mismatch: requested #{cache_mode} (expects #{expected_library_cache_mode}) " <>
+                    "but the library reported #{inspect(reported)}"
+                )
+
+            Process.put(:nxq_library_cache_mode, reported)
+            result.values
+
+          {:error, reason} -> raise "NxQuantum benchmark failed: #{inspect(reason)}"
+        end
+      end
+
+    :sampled ->
+      sampled_mode = if resolved_profile == :cpu_compiled, do: :force_parallel, else: :force_scalar
+
+      fn counts ->
+        opts = [observables: specs, sampled_parallel_mode: sampled_mode, max_concurrency: max_concurrency] ++ cache_flags
+
+        case Estimator.sampled_expectation_from_counts(counts, opts) do
+          {:ok, value} -> Nx.reshape(value, {:auto})
+          {:error, reason} -> raise "NxQuantum sampled benchmark failed: #{inspect(reason)}"
+        end
+      end
+  end
+
+{warm_inputs, timed_inputs} = Enum.split(inputs, warmup)
+Enum.each(warm_inputs, fn input -> _ = run_fun.(input) end)
+
+# Timed-loop CPU/wall: process CPU across all OS threads (:erlang.statistics(:runtime), ms
+# resolution) over the :timer.tc wall time of the timed loop only (no VM or compile startup).
+{_, _} = :erlang.statistics(:runtime)
+
+{loop_wall_us, timed} =
   :timer.tc(fn ->
-    Enum.reduce(1..iterations, nil, fn _, _acc ->
-      run_once.()
+    Enum.map(timed_inputs, fn input ->
+      {microseconds, tensor} = :timer.tc(fn -> run_fun.(input) end)
+      {microseconds, tensor}
     end)
   end)
 
-total_ms = microseconds / 1000.0
+{_, loop_cpu_ms} = :erlang.statistics(:runtime)
+loop_cpu_wall = if loop_wall_us > 0, do: loop_cpu_ms * 1000.0 / loop_wall_us, else: 0.0
+
+total_us = timed |> Enum.map(&elem(&1, 0)) |> Enum.sum()
+total_ms = total_us / 1000.0
 per_op_ms = total_ms / iterations
-ops_s = iterations / (microseconds / 1_000_000.0)
-numeric_value = Nx.to_number(last_value)
+ops_s = if total_us > 0, do: iterations / (total_us / 1_000_000.0), else: 0.0
+rows = Enum.map(timed, fn {us, tensor} -> {us, Nx.to_flat_list(tensor)} end)
+{_, last_values} = List.last(rows)
+last_sum = Enum.sum(last_values)
 
 IO.puts(
-  "NXQ_BENCH scenario=#{scenario} runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} cache_mode=#{cache_mode} total_ms=#{Float.round(total_ms, 6)} per_op_ms=#{Float.round(per_op_ms, 6)} ops_s=#{Float.round(ops_s, 6)} value=#{Float.round(numeric_value, 10)}"
+  "NXQ_BENCH scenario=#{scenario_id} runtime_profile=#{runtime_profile} resolved_profile=#{resolved_profile} " <>
+    "cache_mode=#{cache_mode} library_cache_mode=#{Process.get(:nxq_library_cache_mode, :unreported)} mode=#{mode} warmup=#{warmup} iterations=#{iterations} " <>
+    "total_ms=#{BenchPlan.shortest(total_ms)} per_op_ms=#{BenchPlan.shortest(per_op_ms)} ops_s=#{BenchPlan.shortest(ops_s)} " <>
+    "value=#{BenchPlan.shortest(last_sum)} fixture_sha256=#{fixture_sha} schedulers=#{System.schedulers_online()} " <>
+    "max_concurrency=#{max_concurrency} dirty_cpu_schedulers=#{:erlang.system_info(:dirty_cpu_schedulers_online)} observables=#{length(last_values)} dtype=f32 " <>
+    "flags=#{BenchPlan.flags_string(cache_flags)} " <>
+    "timed_loop_cpu_ms=#{loop_cpu_ms} timed_loop_wall_ms=#{BenchPlan.shortest(loop_wall_us / 1000.0)} " <>
+    "timed_loop_cpu_wall=#{BenchPlan.shortest(loop_cpu_wall)}"
 )
+
+rows
+|> Enum.with_index()
+|> Enum.each(fn {{us, values}, index} ->
+  IO.puts("NXQ_ITER i=#{index} ms=#{BenchPlan.shortest(us / 1000.0)} values=#{Enum.map_join(values, ",", &BenchPlan.shortest/1)}")
+end)
+
+# Untimed ZZ check: <Z_a Z_b> = <Z_b> after appending CNOT(a, b) (CNOT Z_b CNOT = Z_a Z_b).
+if opts[:zz] && kind == "family" do
+  entry = fixture["families"][scenario["family"]]["widths"][Integer.to_string(qubits)]
+  base = gates_for_family.(0)
+
+  Enum.each(entry["zz_pairs"], fn [a, b] ->
+    circuit = BenchScenarios.build_circuit(qubits, base ++ [["cnot", a, b]], f32)
+
+    zz_opts = [
+      observables: specs_for.([["Z", b]]),
+      runtime_profile: runtime_profile,
+      fallback_policy: :allow_cpu_compiled
+    ]
+
+    {:ok, result} = Estimator.run(circuit, zz_opts)
+    [value] = Nx.to_flat_list(result.values)
+    IO.puts("NXQ_ZZ pair=#{a},#{b} value=#{BenchPlan.shortest(value)}")
+  end)
+end
