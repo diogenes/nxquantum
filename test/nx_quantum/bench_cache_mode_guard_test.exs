@@ -8,7 +8,6 @@ defmodule NxQuantum.BenchCacheModeGuardTest do
   @legacy_ids ~w(baseline_2q deep_6q batch_obs_8q state_reuse_8q_xy sampled_counts_sparse_terms)
 
   setup_all do
-    File.cd!(@repo_root)
     %{table: BenchScenarios.table()}
   end
 

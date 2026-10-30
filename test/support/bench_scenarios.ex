@@ -13,20 +13,25 @@ defmodule NxQuantum.TestSupport.BenchScenarios do
   alias NxQuantum.Circuit
   alias NxQuantum.Gates
 
+  # Paths resolve from the repository root, not the current directory, so the
+  # tests need no File.cd!.
+  @repo_root Path.expand("../..", __DIR__)
   @table_path "bench/scenarios/python_alternatives.json"
 
   @spec table(String.t()) :: map()
-  def table(path \\ @table_path), do: path |> File.read!() |> JSON.decode!()
+  def table(path \\ @table_path), do: path |> from_root() |> File.read!() |> JSON.decode!()
 
   @spec fixture(map()) :: {map(), String.t()}
   def fixture(table) do
-    bytes = File.read!(table["fixture"]["path"])
-    expected = table["fixture"]["sha256_path"] |> File.read!() |> String.split() |> hd()
+    bytes = table["fixture"]["path"] |> from_root() |> File.read!()
+    expected = table["fixture"]["sha256_path"] |> from_root() |> File.read!() |> String.split() |> hd()
     actual = :sha256 |> :crypto.hash(bytes) |> Base.encode16(case: :lower)
 
     if actual != expected, do: raise("fixture sha256 mismatch: file=#{actual} committed=#{expected}")
     {JSON.decode!(bytes), actual}
   end
+
+  defp from_root(path), do: Path.expand(path, @repo_root)
 
   @spec scenario!(map(), String.t()) :: map()
   def scenario!(table, id) do
