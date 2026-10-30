@@ -8,7 +8,7 @@
 #   3. write the nx_quantum dependency line into mix.exs
 #   4. mix deps.get
 #   5. mix compile
-#   6. mix run <first-result snippet>
+#   6. mix run -e <evaluate the snippet and inspect its return value>
 # Success = every step exits 0 AND the last non-empty stdout line of step 6
 # equals --expect. Elixir/OTP must already be on PATH (toolchain install time
 # is not measured). Human reading time is not measured.
@@ -20,8 +20,10 @@
 #   --dep LINE         deps tuple, e.g. '{:nx_quantum, "~> 0.12.0"}'
 #   --package-dir DIR  use '{:nx_quantum, path: DIR}' (an unpacked
 #                      `mix hex.build --unpack` directory)
-#   --snippet FILE     default: test/fixtures/docs/getting_started_first_result.exs
-#   --expect TEXT      expected printed value (required)
+#   --snippet FILE     plain Elixir that RETURNS the value (not prints it);
+#                      default: test/fixtures/docs/getting_started_first_result.elixir
+#   --expect TEXT      expected inspected return value
+#                      (default: [0.3623577356338501])
 #   --out DIR          output dir for <label>.log and environment.txt
 #   --label NAME       default: run
 #   --work DIR         parent for the fresh home (default: mktemp -d)
@@ -29,8 +31,8 @@
 set -u
 
 repo_root=$(cd "$(dirname "$0")/../.." && pwd)
-dep=""; pkg=""; snippet="$repo_root/test/fixtures/docs/getting_started_first_result.exs"
-expect=""; out=""; label="run"; work=""
+dep=""; pkg=""; snippet="$repo_root/test/fixtures/docs/getting_started_first_result.elixir"
+expect="[0.3623577356338501]"; out=""; label="run"; work=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -45,7 +47,6 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ -n "$expect" ] || { echo "--expect is required" >&2; exit 2; }
 [ -n "$out" ] || { echo "--out is required" >&2; exit 2; }
 [ -f "$snippet" ] || { echo "snippet not found: $snippet" >&2; exit 2; }
 if [ -z "$dep" ]; then
@@ -117,7 +118,7 @@ write_deps() {
 }
 
 run_snippet() {
-  mix run "$snippet" > "$root/snippet.out" 2>> "$raw"
+  TTFR_SNIPPET="$snippet" mix run -e 'IO.inspect(elem(Code.eval_file(System.fetch_env!("TTFR_SNIPPET")), 0), limit: :infinity, printable_limit: :infinity)' > "$root/snippet.out" 2>> "$raw"
   rc=$?
   cat "$root/snippet.out" >> "$raw"
   return $rc
