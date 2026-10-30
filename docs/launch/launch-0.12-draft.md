@@ -8,7 +8,7 @@
 > - [ ] Hex description (`mix.exs`) aligned to decision D1 (`docs/roadmap.md`).
 > - [ ] Claims cleanup done in the 0.12.0 docs.
 > - [ ] A Hex-based quick start is in the README and `docs/getting-started.md`.
-> - [ ] Time to result (TTFR) measured on the published 0.12.0.
+> - [ ] Time to first result (TTFR) measured on the published 0.12.0.
 > - [ ] Survey live (`docs/research/kano-survey-h1.5.md`).
 > - [ ] A green CI run is linked in the evidence section.
 > - [ ] FluxQ G2 contract test merged, if FluxQ is mentioned.
@@ -83,7 +83,7 @@ What we would like from you: try the two-minute example and tell us what happene
 ## What we don't claim
 
 - Speed or throughput of any kind, crossover points, or comparisons with other libraries. We publish no benchmark in this release.
-- Figures in the BEAM case study. They are modeled, not measured (KG-16).
+- Figures in the BEAM case study. They are modeled, not measured (KG-24).
 - That any team uses NxQuantum in production. We have no known dependents on Hex.
 - Rerank quality, latency, compression or TurboQuant figures (KG-5, KG-11), or that the rerank and optimization tools are quantum computations (KG-12).
 - OpenTelemetry export. The adapter named for it does not export (KG-13).
@@ -140,7 +140,7 @@ Every factual sentence of the draft above, with its in-repo evidence. Paths are 
 | 34 | Hybrid benchmark datasets are synthetic | `docs/hybrid-quantum-ai-benchmark.md` line 7 and 39; `bench/datasets/rerank/*.manifest.json`; `test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs` |
 | 35 | Live provider lanes are env-gated | `docs/provider-support-catalog.md` |
 | 36 | A roadmap exists with no promises attached | `docs/roadmap.md` |
-| 37 | Don't-claim: case-study figures are modeled | `docs/roadmap.md` KG-16 (added by H1.5 PR-1; not on origin/main until then); `lib/nx_quantum/performance.ex` (model) |
+| 37 | Don't-claim: case-study figures are modeled | `docs/roadmap.md` KG-24 (added by H1.5 PR-1; not on origin/main until then); `lib/nx_quantum/performance.ex` (model) |
 | 38 | Don't-claim: no known dependents on Hex | Hex package page fetched 2026-10-30 (0 dependents), recorded in `docs/research/kano-survey-h1.5.md` baselines |
 | 39 | Don't-claim: rerank figures are placeholders (KG-5, KG-11); tools not quantum (KG-12) | `docs/roadmap.md` KG-5, KG-11, KG-12 |
 | 40 | Don't-claim: OpenTelemetry adapter does not export (KG-13) | `docs/roadmap.md` KG-13 |
