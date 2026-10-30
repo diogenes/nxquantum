@@ -8,6 +8,12 @@ defmodule NxQuantum.BenchEvolutionPathTest do
 
   # Path evidence for the H1.3 width families (R2). The bench calls public
   # facades only; this test may use the internal strategy selector.
+  #
+  # The `%{circuit | measurement: hd(specs)}` selection input below mirrors the rule
+  # in lib/nx_quantum/estimator/batch/strategies/deterministic.ex:29 (the batch
+  # strategy selects the evolution path from the first observable spec). It stays
+  # a mirror until a public path facade exists; if that line changes, update this
+  # test with it.
   @expected %{"real" => RealPauliZ, "complex" => Complex}
 
   setup_all do
