@@ -35,8 +35,9 @@ These are available but may evolve without an `api change`:
 12. The provider adapter modules passed as the first argument to `NxQuantum.ProviderBridge` functions: `NxQuantum.Adapters.Providers.IBMRuntime`, `AwsBraket`, `AzureQuantum` and `GoogleQuantumAI`
 13. The `NxQuantum.ProviderBridge.ProviderError` fields `code`, `reason` and `metadata.missing_keys`, and the `NxQuantum.ProviderBridge.Result` fields (`job_id`, `state`, `provider`, `payload`, `metadata` and the identifier fields), except the contents of `metadata`
 14. The `NxQuantum.Ports.ObservabilityEmitter` behaviour, when you implement it in your own code. Its callbacks may change.
+15. Envelope serialization and notebook-used result fields: `NxQuantum.ProviderBridge.Serialization.to_external_map/1` and `from_external_map/1`; the `counts` field of the `NxQuantum.Sampler.run/2` result; and, for `NxQuantum.Transpiler.run/2`, the `operations` field of the routed circuit and the `inserted_swaps` and `added_swap_gates` fields of the report
 
-Items 4 to 14 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+Items 4 to 15 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
 
 Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
