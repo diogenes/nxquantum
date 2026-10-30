@@ -235,7 +235,7 @@ Evidence (2026-10-25):
 
 ### H1.5 - Adoption Launch
 
-- Status: planned
+- Status: in progress
 - Intent: feature (DX and docs)
 - Seats: Product marketing (owner), DX, Product strategy, Docs sync
 - Depends on: H1.3 (D1)
@@ -251,11 +251,12 @@ Implementation deliverables:
 1. Refresh positioning according to D1:
    - update `README.md` and `docs/getting-started.md` (the `README.md` and `docs/product-positioning.md` lead were updated in the D1 slice, 2026-10-26; `docs/getting-started.md` and the decision-matrix merge stay open here);
    - merge `docs/decision-matrix.md` into `docs/product-positioning.md`, updating `AGENTS.md` and skill references.
+   - Done in PR-1 (2026-10-30): `docs/getting-started.md` and the README Quick Start lead with the Hex path; the decision matrix is merged into `docs/product-positioning.md`, with `docs/decision-matrix.md` kept as a pointer stub; skill and agent references are updated. Open: the `AGENTS.md` reading row (owner approval pending).
 2. Three Livebooks:
    - embedding NxQuantum in a supervised BEAM service;
    - researcher reproducibility (fingerprints, seeded replay, classical-baseline comparison);
    - provider lifecycle across lanes (fixture lane; live lanes stay env-gated).
-3. A launch write-up and Elixir Forum post based on H1.3 evidence (owner publishes).
+3. A launch write-up and Elixir Forum post based on H1.2/H1.4/H1.6 evidence (owner publishes).
 4. A Kano survey of at least 10 target users (Elixir Forum, ElixirConf, FluxQ early users). Its results reclassify the hypotheses in `docs/vision.md` §6.
 5. A joint "FluxQ powered by NxQuantum" narrative, aligned with FluxQ's positioning docs.
 

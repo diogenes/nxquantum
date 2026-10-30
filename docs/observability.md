@@ -57,7 +57,7 @@ To keep operations and research reproducibility strong, we need:
 ### Adapter Layer
 
 1. NxQuantum.Adapters.Observability.OpenTelemetry:
-   - production emitter adapter
+   - OpenTelemetry-named adapter that records spans, metrics, and logs in-process (process dictionary); no OpenTelemetry exporter ships (KG-13)
 2. NxQuantum.Adapters.Observability.Noop:
    - deterministic no-op path for disabled observability
 
@@ -183,9 +183,11 @@ Intended for short-lived deep investigations.
 2. Include advanced metadata behind explicit opt-in guards.
 3. Should be time-bounded and not the default production mode.
 
-## Configuration Contract
+## Configuration Contract (not read by the code; KG-26)
 
-Recommended configuration shape:
+No code in `lib/` reads `config :nx_quantum, :observability`. The shape below is a design proposal, not a working setting.
+
+Proposed configuration shape:
 
 ```elixir
 config :nx_quantum, :observability,
