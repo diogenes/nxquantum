@@ -1,7 +1,7 @@
-# NxQuantum v0.5: ProviderBridge Side-by-Side (Fixture Lane)
+# ProviderBridge Side-by-Side (Fixture Lane)
 
 ```elixir
-Mix.install(path: "../..")
+Mix.install([{:nx_quantum, path: "../.."}])
 ```
 
 This tutorial runs equivalent lifecycle workloads against top-3 providers using deterministic fixture data.
@@ -62,6 +62,7 @@ results
 ## 4) Compare normalized envelope keys
 
 ```elixir
+# checkpoint: normalized_key_sets
 normalized_key_sets =
   Enum.map(results, fn {provider_id, {:ok, %{result: result}}} ->
     {provider_id, Map.keys(result) |> Enum.sort()}

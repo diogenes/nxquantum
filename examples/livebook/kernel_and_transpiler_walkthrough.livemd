@@ -9,6 +9,7 @@ Mix.install([
 ## Kernel Matrix Example
 
 ```elixir
+# checkpoint: kernel_matrix
 x =
   Nx.tensor([
     [0.0, 0.1],
@@ -29,9 +30,27 @@ circuit =
   Circuit.new(qubits: 4)
   |> Gates.cnot(control: 0, target: 3)
 
-NxQuantum.Transpiler.run(
-  circuit,
-  topology: {:coupling_map, [{0, 1}, {1, 2}, {2, 3}]},
-  mode: :insert_swaps
-)
+{:ok, routed, report} =
+  NxQuantum.Transpiler.run(
+    circuit,
+    topology: {:coupling_map, [{0, 1}, {1, 2}, {2, 3}]},
+    mode: :insert_swaps
+  )
+
+{routed, report}
 ```
+
+The CNOT between wires 0 and 3 is not on the coupling map, so the transpiler inserts two SWAPs. This cell records the routed gate list and the report fields that show it.
+
+```elixir
+# checkpoint: transpiler_routing
+%{
+  operations: Enum.map(routed.operations, &{&1.name, &1.wires}),
+  inserted_swaps: report.inserted_swaps,
+  added_swap_gates: report.added_swap_gates
+}
+```
+
+## Checkpoints
+
+Cells that start with `# checkpoint: name` are compared against recorded values by `test/nx_quantum/livebooks_test.exs`. Run `mix test.livebooks` from the repository root to check this notebook.

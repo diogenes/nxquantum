@@ -88,6 +88,7 @@ defmodule NxQuantum.MixProject do
       "test.unit": :test,
       "test.property": :test,
       "test.arch": :test,
+      "test.livebooks": :test,
       "test.domain_coverage": :test,
       "test.features": :test,
       "test.provider_smoke": :test,
@@ -217,6 +218,7 @@ defmodule NxQuantum.MixProject do
       "test.unit": ["test test/nx_quantum"],
       "test.property": ["test test/property"],
       "test.arch": ["test test/architecture"],
+      "test.livebooks": ["test test/nx_quantum/livebooks_test.exs"],
       "test.domain_coverage": ["cmd elixir scripts/enforce_domain_coverage.exs"],
       "test.features": ["test test/features/features_test.exs"],
       "test.provider_smoke": [
