@@ -48,7 +48,7 @@ What the test does for each `examples/livebook/*.livemd`:
 3. Fails if any cell calls `System.get_env`, `System.put_env` or a related function on a `NXQ_PROVIDER_LIVE*` key, or on a key it cannot read statically. Show live keys as text, in a `text` fence. The test also fails if such a variable is set in the environment it runs in, so notebooks always run in the fixture lane.
 4. Evaluates the remaining cells in order in one fresh process, with the bindings, aliases and imports carried from cell to cell. The process, the supervisors it started, the modules the cells defined and any telemetry handlers they attached are removed afterwards.
 5. Runs the whole notebook a second time and requires identical checkpoint values.
-6. Compares the checkpoints to the goldens in `test/fixtures/livebooks/<notebook name>.exs`.
+6. Compares the checkpoints to the goldens in `test/fixtures/livebooks/<notebook name>.golden`.
 7. Fails if a cell prints a compiler warning.
 
 ### The checkpoint convention
@@ -70,7 +70,7 @@ The value of the last expression in the cell is recorded under that name. Rules:
 
 ### Goldens
 
-A goldens file is an `.exs` file that evaluates to a map from checkpoint name to expected value. Matching rules:
+A goldens file is a `.golden` data file (kept off the `.exs` extension so `mix format` and credo do not touch it) that evaluates to a map from checkpoint name to expected value. Matching rules:
 
 * Exact for integers, strings and atoms: counts, job ids, fingerprints, states.
 * An absolute tolerance of `1.0e-6` for floats. That is the `f32` accuracy floor documented in `docs/backend-support.md` ("Numerical Precision").
@@ -81,11 +81,11 @@ To change a notebook's output on purpose, edit the notebook and the goldens file
 
 ### Fingerprint goldens depend on the OTP major
 
-`Observability.fingerprint/2` hashes `:erlang.term_to_binary/2` with `:deterministic`. OTP does not promise the same bytes across OTP majors. `researcher_reproducibility.exs` pins one fingerprint, measured as identical on OTP 27, 28 and 29. If a future OTP changes it, re-derive the value and record it in the CHANGELOG.
+`Observability.fingerprint/2` hashes `:erlang.term_to_binary/2` with `:deterministic`. OTP does not promise the same bytes across OTP majors. `researcher_reproducibility.golden` pins one fingerprint, measured as identical on OTP 27, 28 and 29. If a future OTP changes it, re-derive the value and record it in the CHANGELOG.
 
 ### The getting-started snippet
 
-`test/fixtures/docs/getting_started_first_result.exs` is the first-result snippet a reader pastes. It is plain Elixir over the stable `Estimator.run/2`. The same test evaluates it, twice, and compares the result to `cos(1.2)` within `1.0e-6`. Docs that show this snippet copy it from that file.
+`test/fixtures/docs/getting_started_first_result.elixir` is the first-result snippet a reader pastes. It is plain Elixir over the stable `Estimator.run/2`. The same test evaluates it, twice, and compares the result to `cos(1.2)` within `1.0e-6`. Docs that show this snippet copy it from that file.
 
 ## Tutorial Goals
 

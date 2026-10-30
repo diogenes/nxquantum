@@ -61,7 +61,7 @@ two_gates_swapped = %{circuit: [%{gate: :x, wire: 0}, %{gate: :h, wire: 0}]}
 
 ### Fingerprint goldens and the OTP major
 
-The fingerprint hashes `:erlang.term_to_binary/2` with the `:deterministic` option. Erlang/OTP does not promise that this encoding is identical across OTP major versions, and the value can differ from the one a previous NxQuantum release produced. This repository pins the value this cell shows in `test/fixtures/livebooks/researcher_reproducibility.exs` and checks it on every test run. The same value was measured on OTP 27, 28 and 29 for this input, but that is a measurement, not a guarantee. If you store fingerprints, store the OTP major with them and re-derive them after upgrading it. Compare fingerprints only between runs on the same OTP major.
+The fingerprint hashes `:erlang.term_to_binary/2` with the `:deterministic` option. Erlang/OTP does not promise that this encoding is identical across OTP major versions, and the value can differ from the one a previous NxQuantum release produced. This repository pins the value this cell shows in `test/fixtures/livebooks/researcher_reproducibility.golden` and checks it on every test run. The same value was measured on OTP 27, 28 and 29 for this input, but that is a measurement, not a guarantee. If you store fingerprints, store the OTP major with them and re-derive them after upgrading it. Compare fingerprints only between runs on the same OTP major.
 
 ```elixir
 # checkpoint: fingerprint_golden

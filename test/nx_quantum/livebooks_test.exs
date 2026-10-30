@@ -8,7 +8,7 @@ defmodule NxQuantum.LivebooksTest do
   @repo_root Path.expand("../..", __DIR__)
   @notebooks "examples/livebook/*.livemd" |> Path.expand(@repo_root) |> Path.wildcard() |> Enum.sort()
   @goldens_dir Path.expand("test/fixtures/livebooks", @repo_root)
-  @getting_started Path.expand("test/fixtures/docs/getting_started_first_result.exs", @repo_root)
+  @getting_started Path.expand("test/fixtures/docs/getting_started_first_result.elixir", @repo_root)
 
   # The only setup cell form the test accepts. Livebook resolves the relative path against the
   # notebook directory, which is examples/livebook/, so "../.." is the repository root.
@@ -313,7 +313,7 @@ defmodule NxQuantum.LivebooksTest do
   # -- goldens ------------------------------------------------------------------------------
 
   defp assert_matches_goldens!(notebook, checkpoints) do
-    path = Path.join(@goldens_dir, Path.basename(notebook, ".livemd") <> ".exs")
+    path = Path.join(@goldens_dir, Path.basename(notebook, ".livemd") <> ".golden")
     assert File.exists?(path), "missing goldens file #{rel(path)}"
     {goldens, _} = Code.eval_file(path)
 
