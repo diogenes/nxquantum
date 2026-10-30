@@ -134,7 +134,6 @@ Track status here:
 - [docs/product-positioning.md](docs/product-positioning.md)
 - [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md)
 - [docs/migration-python-playbook.md](docs/migration-python-playbook.md)
-- [docs/decision-matrix.md](docs/decision-matrix.md)
 - [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
 - [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md)
 - [docs/axon-integration.md](docs/axon-integration.md)

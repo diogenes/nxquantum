@@ -462,7 +462,7 @@ Every action requires updating references in the same change.
 | From | Into |
 | --- | --- |
 | `docs/v0.5-provider-support-tiers.md`, `docs/v0.8-provider-capability-matrix.md` | `docs/provider-support-catalog.md` (name kept; FluxQ links to it) |
-| `docs/decision-matrix.md` | `docs/product-positioning.md` (in H1.5, after D1) |
+| `docs/decision-matrix.md` | `docs/product-positioning.md` (done in H1.5 PR-1, 2026-10-30; `docs/decision-matrix.md` stays as a pointer stub until the owner approves the `AGENTS.md` reading-row edit) |
 
 **Archive** to `docs/archive/` (history only). Deviation from plan: archived files stay in the HexDocs extras under their new paths, because CHANGELOG links to them would otherwise fail `mix docs.build`.
 - Feature specs and plans:
