@@ -2,21 +2,10 @@
 
 ## [Unreleased]
 
-### Added
+Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
-- External envelope golden snapshots for every core provider (job, result, error) under `test/fixtures/contracts/envelopes/`, with a byte-level snapshot test.
-- `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations.
-- Round-trip and rehydrate-and-poll contract tests (`test/nx_quantum/contracts/envelope_decode_test.exs`).
-- Envelope compatibility policy in `docs/api-stability.md`.
-- Compiler semantic-equivalence property suites (H1.4): gate-identity catalogue, random circuits up to 6 qubits over three fixed seed sets, and routing equivalence. The oracle is an independent dense reference (`test/support/dense_reference.ex`).
-- QFT reference test: the circuit matches the analytic DFT in float64 and `Nx.ifft` within a measured bound.
-- `logical_to_physical_map` key in the `Transpiler` report: the final logical-to-physical wire map after routing (`nil` when no routing ran).
+### Upgrading from 0.11.0
 
-### Changed
-
-- Cross-framework benchmark harness rebuilt: pinned Python environment, one scenario table, correctness gates, defined cold mode; timed comparison runs at major releases (owner decision 2026-10-30). The 2026-03-25 report is labeled a historical internal reference.
-- README and positioning lead with deterministic quantum execution on BEAM (decision D1). Cross-framework speed claims are removed from the README (owner decision 2026-10-30). The 2026-03-25 report remains as a historical internal reference.
-- The single-precision numerics floor is documented in `docs/backend-support.md` ("Numerical Precision"). Decision recorded in roadmap KG-10: precision stays `complex64`, and the output dtype of `Circuit.expectation/2` is unchanged. Measured error against a float64 reference is at most 4.5e-7 over up to 6 qubits and depth 200 (`bench/numerics_precision_floor.exs`).
 - Dependency currency (H1.6 PR-A, `api change`: the runtime dependency floor moved). Migration note:
   - What changed:
     - Runtime dependency `nx ~> 0.10` is now `nx ~> 1.0`.
@@ -26,20 +15,54 @@
     - The Elixir requirement stays `~> 1.19`.
   - What did not change:
     - No NxQuantum function, type, option, error, or envelope changed. Envelope snapshots were not regenerated.
-    - On the default `Nx.BinaryBackend`, the numerics digests and the precision table are bit-identical before and after (`bench/results/2026-10-26-h1.6/SUMMARY.md`). This bit-identity claim covers BinaryBackend only. EXLA and Torchx are covered by the tolerance-based tests, not by bit-identity.
+    - On the default `Nx.BinaryBackend`, the numerics digests and the precision table are bit-identical before and after, measured on one host (`bench/results/2026-10-26-h1.6/SUMMARY.md`). This bit-identity claim covers BinaryBackend only. EXLA and Torchx are covered by the tolerance-based tests, not by bit-identity.
   - A consumer on Nx 0.x fails at dependency resolution, not at runtime. With `{:nx_quantum, "~> 0.11"}` and `nx` held at 0.x, `mix deps.update` stays on 0.11.0. Requiring the next release fails version solving on `nx`.
   - To migrate: bump `nx` (and `exla` / `torchx`, if used) to `~> 1.0`, then run `mix deps.update nx exla torchx complex nx_quantum`. Fix your own code for the Nx 1.0 removals listed in the [Nx changelog](https://hexdocs.pm/nx/changelog.html). NxQuantum used none of them.
   - To stay on Nx 0.x: pin `{:nx_quantum, "~> 0.11.0"}`. No 0.11.x maintenance line is promised.
+- Job ids and observability fingerprints are now hashed with `:erlang.term_to_binary(_, [:deterministic])`, so map encoding order is no longer left to the VM. Values for the same input may differ from 0.11.0. They are stable only within an OTP major release and may change across OTP majors.
+- `Transpiler.run/2` with `mode: :insert_swaps` produces different operations than 0.11.0 (see Fixed). Callers that inspected the SWAP-prepend ordering or the original CNOT wires are affected.
+- `NxQuantum.AI.Tools.KernelRerank.DatasetCSV` now rejects dataset paths outside the allowed roots (see Security).
 
+### Security
+
+- The rerank dataset CSV reader now accepts a `dataset_path` only under `bench/datasets` (resolved against the working directory) or `System.tmp_dir!/0`. Before, a path such as `../../etc/passwd`, or a sibling directory sharing a prefix with an allowed directory, was not checked and could open files outside the dataset directory. Other paths return `{:error, %{code: :ai_tool_invalid_request, field: :dataset_path, message: "unauthorized dataset path"}}`. Tests: `test/nx_quantum/ai/dataset_traversal_test.exs`.
+- Migration: Hex consumers have no `bench/datasets`. Put the CSV under `bench/datasets` in the working directory, or under `System.tmp_dir!/0`.
+
+### Added
+
+- External envelope golden snapshots for every core provider (job, result, error) under `test/fixtures/contracts/envelopes/`, with a byte-level snapshot test. A shape or meaning change requires a `schema_version` bump; compatibility policy in `docs/api-stability.md`.
+- `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations. Round-trip and rehydrate-and-poll contract tests: `test/nx_quantum/contracts/envelope_decode_test.exs`.
+- Compiler semantic-equivalence property suites (H1.4): gate-identity catalogue, random circuits up to 6 qubits over three fixed seed sets, and routing equivalence. The oracle is an independent dense reference (`test/support/dense_reference.ex`).
+- QFT reference test: the circuit matches the analytic DFT in float64 and `Nx.ifft` within a measured bound.
+- `logical_to_physical_map` key in the `Transpiler` report: the final logical-to-physical wire map after routing (`nil` when no routing ran).
+- Livebooks (fixture and simulator lanes only): supervised service, researcher reproducibility, and provider-bridge side by side. `test/nx_quantum/livebooks_test.exs` (`mix test.livebooks`) evaluates each notebook twice and compares checkpoints to goldens. The surfaces they use beyond the stable tier stay experimental. The notebooks use a repository-relative setup cell until the Hex release.
+- Experimental API tier in `docs/api-stability.md`, listing what the notebooks use beyond the stable tier.
+- Time-to-first-result harness (`bench/ttfr/run.sh`) that checks the documented install flow from fresh directories. It is an onboarding check, not a speed benchmark.
+
+### Changed
+
+- README, getting-started, and positioning lead with deterministic quantum execution on BEAM (decision D1); hybrid quantum-AI is presented as an application of it. "Deterministic" is scoped to simulator and fixture lanes. Cross-framework speed claims are removed from the README (owner decision 2026-10-30). The Hex package description is updated (`mix.exs`).
+- The case study (`docs/case-study-beam-integration.md`) is an illustrative pattern, not a user report, and reports no performance figures.
+- Rerank dataset manifests under `bench/datasets/rerank/` carry `provenance: synthetic`; the guard test (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`) checks it, and the docs label these datasets synthetic (roadmap KG-5).
+- The single-precision numerics floor is documented in `docs/backend-support.md` ("Numerical Precision"). Decision recorded in roadmap KG-10: precision stays `complex64`, and the output dtype of `Circuit.expectation/2` is unchanged. Measured error against a float64 reference is at most 4.5e-7 over up to 6 qubits and depth 200 (`bench/numerics_precision_floor.exs`).
+- Cross-framework benchmark harness rebuilt: pinned Python environment, one scenario table, correctness gates, defined cold mode. No timings are published; the timed comparison runs at major releases (owner decision 2026-10-30). The 2026-03-25 report is a historical internal reference with superseded methodology.
+- Documentation consolidated: about 60 docs to 34 living docs in `docs/`, with history under `docs/archive/` (roadmap KG-8). Known Gaps KG-11..29 are documented in `docs/roadmap.md`.
 - Toolchain currency (H1.6 PR-B). Development and CI move to Elixir 1.20.4 / OTP 29.1.2 (`mise.toml`, `.github/workflows/ci.yml`, `.github/workflows/release.yml`). The supported floor stays `elixir: "~> 1.19"` on OTP 28, tested by a new CI floor job (Elixir 1.19.1 / OTP 28.1, optional backends off). No public API change. Two clauses the 1.20 type checker proves unreachable were removed (`ProviderBridge.Serialization.stringify_value/1` for `Nx.Tensor`, `Observability.Schema.validate_redaction/1` catch-all); behavior is unchanged. BinaryBackend numerics and envelope snapshots are byte-identical on OTP 29 (`bench/results/2026-10-26-h1.6/SUMMARY.md`).
 - CI and internal: the release workflow now builds docs in the dev env (`ex_doc` is not available in prod).
+- Internal: an unused private function was removed from `NxQuantum.Circuit`, and the wire mapping in the fused single-wire Pauli expectation path was adjusted. No user-visible change intended; no performance claim.
+
+### Removed
+
+- The optional `axon` dependency. See the migration note under "Upgrading from 0.11.0".
 
 ### Fixed
 
 - `Transpiler.run/2` with `mode: :insert_swaps` now routes correctly. The CNOT is rewritten onto the routed coupled edge, and later gates follow the updated layout. Before, the output could keep a CNOT on an uncoupled edge, and gates after a routed interaction used stale wires. Callers that inspected the SWAP-prepend ordering or the original CNOT wires will see different operations. Use `report.logical_to_physical_map` to map observables onto physical wires.
 - `NxQuantum.Compiler.optimize/2` with the `simplify` pass no longer raises on batched (non-scalar) rotation angles. A batched rotation is removed only when every angle is negligible.
 
-- Deterministic job ids and observability fingerprints are now hashed with `:erlang.term_to_binary(_, [:deterministic])`. Map encoding order is no longer left to the VM. Job ids and fingerprint values for the same input may differ from 0.11.0.
+### References
+
+- `docs/roadmap.md`, `docs/api-stability.md`, `docs/getting-started.md`
 
 ## [0.11.0] - 2026-03-29
 
