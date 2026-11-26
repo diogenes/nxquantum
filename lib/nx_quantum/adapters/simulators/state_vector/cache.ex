@@ -53,6 +53,10 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.Cache do
     end
   end
 
+  @doc false
+  @spec default_max_bytes() :: non_neg_integer()
+  def default_max_bytes, do: @default_max_bytes
+
   defp ensure_table do
     case :ets.whereis(@table) do
       :undefined ->
