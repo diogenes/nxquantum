@@ -3,6 +3,8 @@ defmodule NxQuantum.Mitigation.PassPipeline do
 
   alias NxQuantum.Mitigation.Passes.Readout
   alias NxQuantum.Mitigation.Passes.ZneLinear
+  alias NxQuantum.Mitigation.Passes.ZnePolyLs
+  alias NxQuantum.Mitigation.Passes.ZneRichardson
 
   @spec run(term(), list()) :: {:ok, term()} | {:error, map()}
   def run(result, passes) when is_list(passes) do
@@ -16,6 +18,8 @@ defmodule NxQuantum.Mitigation.PassPipeline do
 
   defp apply_pass(result, {:readout, opts}), do: Readout.apply(result, opts)
   defp apply_pass(result, {:zne_linear, opts}), do: ZneLinear.apply(result, opts)
+  defp apply_pass(result, {:zne_richardson, opts}), do: ZneRichardson.apply(result, opts)
+  defp apply_pass(result, {:zne_poly_ls, opts}), do: ZnePolyLs.apply(result, opts)
   defp apply_pass(_result, {unknown, _opts}), do: {:error, %{code: :unsupported_mitigation_pass, pass: unknown}}
   defp apply_pass(_result, invalid), do: {:error, %{code: :unsupported_mitigation_pass, pass: invalid}}
 end

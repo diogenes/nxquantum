@@ -108,7 +108,7 @@ mix run examples/quantum_kernel_classifier.exs
 - Shot-based sampling with explicit seeds (deterministic in simulator/fixture lanes).
 - Batched estimator/sampler APIs.
 - Gradient modes (`backprop`, `parameter_shift`, `adjoint`).
-- Error mitigation pipeline (`readout`, `zne_linear`).
+- Error mitigation pipeline (`readout`, `zne_linear`, and the experimental `zne_richardson` and `zne_poly_ls` extrapolators with propagated standard errors).
 - Topology-aware transpilation interface.
 - Quantum kernel matrix generation.
 

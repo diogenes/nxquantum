@@ -14,10 +14,11 @@ defmodule NxQuantum.Estimator do
   alias NxQuantum.Estimator.Result
   alias NxQuantum.Estimator.SampledExpval
   alias NxQuantum.Estimator.Scalar
+  alias NxQuantum.OptionKeys
 
   @spec expectation(Circuit.t(), keyword()) :: Nx.Tensor.t()
   def expectation(%Circuit{} = circuit, opts \\ []) do
-    case expectation_result(circuit, opts) do
+    case checked_expectation(circuit, opts, "NxQuantum.Estimator.expectation/2") do
       {:ok, tensor} ->
         tensor
 
@@ -28,14 +29,22 @@ defmodule NxQuantum.Estimator do
 
   @spec expectation_result(Circuit.t(), keyword()) :: {:ok, Nx.Tensor.t()} | {:error, map()}
   def expectation_result(%Circuit{} = circuit, opts \\ []) do
-    Scalar.run(circuit, opts)
+    checked_expectation(circuit, opts, "NxQuantum.Estimator.expectation_result/2")
   end
 
   @spec run(Circuit.t(), keyword()) :: {:ok, Result.t()} | {:error, map()}
   def run(%Circuit{} = circuit, opts \\ []) do
-    with {:ok, normalized_specs} <- ObservableSpecs.normalize(opts) do
-      Batch.run(circuit, normalized_specs, opts)
+    unknown = OptionKeys.validate(opts, :estimator, "NxQuantum.Estimator.run/2")
+
+    with {:ok, normalized_specs} <- ObservableSpecs.normalize(opts),
+         {:ok, result} <- Batch.run(circuit, normalized_specs, opts) do
+      {:ok, OptionKeys.put_unknown(result, unknown)}
     end
+  end
+
+  defp checked_expectation(circuit, opts, entrypoint) do
+    _unknown = OptionKeys.validate(opts, :estimator, entrypoint)
+    Scalar.run(circuit, opts)
   end
 
   @spec sampled_expectation_from_counts(map(), keyword()) :: {:ok, Nx.Tensor.t()} | {:error, map()}
@@ -74,11 +83,14 @@ defmodule NxQuantum.Estimator do
   defp batch_results(circuit_builder, params_batch, opts) do
     values = Nx.to_flat_list(params_batch)
 
+    # Scalar.run/2 rather than expectation_result/2, so an element does not log a warning
+    # each time. batched_expectation/3 is not validated in phase 1 (KG-25 names run/2,
+    # expectation_result/2 and Sampler.run/2 only).
     BatchExecutor.run(values, opts, fn value ->
       value
       |> Nx.tensor()
       |> circuit_builder.()
-      |> expectation_result(opts)
+      |> Scalar.run(opts)
     end)
   end
 end

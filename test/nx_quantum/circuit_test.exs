@@ -5,6 +5,25 @@ defmodule NxQuantum.CircuitTest do
   alias NxQuantum.Circuit.Error
   alias NxQuantum.Gates
 
+  describe "to_qasm/2" do
+    test "delegates to the OpenQASM 3 export" do
+      circuit =
+        [qubits: 2]
+        |> Circuit.new()
+        |> Gates.h(0)
+        |> Gates.cnot(control: 0, target: 1)
+
+      assert {:ok, qasm} = Circuit.to_qasm(circuit, measure: true)
+      assert qasm =~ "bit[2] c;\nh q[0];\ncx q[0], q[1];\nc = measure q;\n"
+    end
+
+    test "returns the typed error for constructs outside the subset" do
+      circuit = %Circuit{qubits: 1, measurement: %{observable: :pauli_z, wire: 0}}
+
+      assert {:error, %{code: :unsupported_qasm_construct}} = Circuit.to_qasm(circuit)
+    end
+  end
+
   describe "new/1" do
     test "creates a circuit with configured qubits" do
       circuit = Circuit.new(qubits: 2)
