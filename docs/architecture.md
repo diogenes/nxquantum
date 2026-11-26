@@ -116,7 +116,7 @@ Current internal decomposition examples:
   - NxQuantum.Adapters.Simulators.StateVector.Cache
   - NxQuantum.Adapters.Simulators.StateVector.KeyEncoder
 - Compiler internals: NxQuantum.Compiler.PassPipeline, NxQuantum.Compiler.Passes.* (including `Resynthesize1Q`), NxQuantum.Compiler.Theta.
-- Mitigation internals: NxQuantum.Mitigation.PassPipeline, NxQuantum.Mitigation.Passes.Readout, NxQuantum.Mitigation.Passes.ZneLinear, NxQuantum.Mitigation.Trace.
+- Mitigation internals: NxQuantum.Mitigation.PassPipeline, NxQuantum.Mitigation.Passes.Readout, NxQuantum.Mitigation.Passes.ZneLinear, NxQuantum.Mitigation.Passes.ZneRichardson, NxQuantum.Mitigation.Passes.ZnePolyLs, NxQuantum.Mitigation.Extrapolation, NxQuantum.Mitigation.Trace.
 - Runtime internals: NxQuantum.Runtime.Catalog, NxQuantum.Runtime.Detection, NxQuantum.Runtime.Fallback.
 - Sampler internals:
   - NxQuantum.Sampler.Options

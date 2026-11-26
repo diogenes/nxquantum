@@ -53,6 +53,7 @@ defmodule NxQuantum.PublicApiContractTest do
       assert_exported(Performance, :compare_batched_workflows, 3)
       assert_exported(Performance, :benchmark_matrix, 2)
       assert_exported(Performance, :evaluate_gates, 2)
+      assert_exported(Circuit, :to_qasm, 2)
     end
   end
 

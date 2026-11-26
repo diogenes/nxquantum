@@ -17,7 +17,7 @@ Feature: Finite-shot estimation and noise modeling
       And I estimate expectation with "8192" shots
       Then the "8192"-shot estimate is closer to "0.5" than the "128"-shot estimate
 
-  Rule: Noise channels modify expectation in expected direction
+  Rule: Scalar noise model modifies expectation in expected direction
     Scenario: Depolarizing noise shrinks absolute expectation magnitude
       Given a one-qubit circuit with ideal expectation "1.0"
       And depolarizing probability is "0.1"
