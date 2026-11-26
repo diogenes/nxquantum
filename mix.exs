@@ -131,7 +131,6 @@ defmodule NxQuantum.MixProject do
         "docs/product-positioning.md",
         "docs/python-comparison-workflows.md",
         "docs/migration-python-playbook.md",
-        "docs/decision-matrix.md",
         "docs/livebook-tutorials.md",
         "docs/archive/python-alternatives-benchmark-2026-03-21.md",
         "docs/archive/python-alternatives-benchmark-2026-03-23-rerun.md",
@@ -178,7 +177,67 @@ defmodule NxQuantum.MixProject do
         "docs/adr/0011-ai-tool-transport-sync-async-contract.md",
         "AGENTS.md",
         "SKILLS.md"
-      ]
+      ],
+      groups_for_extras: groups_for_extras()
+    ]
+  end
+
+  # HexDocs sidebar groups. Mirrors docs/README.md (the documentation map).
+  defp groups_for_extras do
+    [
+      "Start here": [
+        "README.md",
+        "docs/getting-started.md",
+        "docs/livebook-tutorials.md",
+        "docs/product-positioning.md"
+      ],
+      Guides: [
+        "docs/model-recipes.md",
+        "docs/axon-integration.md",
+        "docs/backend-support.md",
+        "docs/standalone-integration-profiles.md",
+        "docs/case-study-beam-integration.md",
+        "docs/hybrid-quantum-ai-integration-guide.md",
+        "docs/turboquant-rerank-guide.md"
+      ],
+      "Migrate from Python": [
+        "docs/python-comparison-workflows.md",
+        "docs/migration-python-playbook.md",
+        "docs/migration-packs.md"
+      ],
+      "Providers and operations": [
+        "docs/provider-support-catalog.md",
+        "docs/observability.md",
+        "docs/observability-dashboards.md",
+        "docs/playbooks/quantum-ai-rollout.md"
+      ],
+      "Contracts and reference": [
+        "docs/api-stability.md",
+        "docs/quantum-ai-tool-contracts.md",
+        "docs/hybrid-quantum-ai-benchmark.md",
+        "docs/performance-matrix.md",
+        "docs/provider-benchmark-matrix.md",
+        "docs/python-alternatives-benchmark-2026-03-25.md"
+      ],
+      Design: [
+        "docs/architecture.md",
+        "docs/bounded-context-map.md",
+        ~r{^docs/adr/}
+      ],
+      "Product strategy": [
+        "docs/vision.md",
+        "docs/roadmap.md"
+      ],
+      Contributing: [
+        "CONTRIBUTING.md",
+        "docs/development-flow.md",
+        "docs/testing-strategy.md",
+        "docs/release-process.md",
+        "AGENTS.md",
+        "SKILLS.md",
+        "CHANGELOG.md"
+      ],
+      "History (archive)": ~r{^docs/archive/}
     ]
   end
 
@@ -196,7 +255,7 @@ defmodule NxQuantum.MixProject do
   end
 
   defp description do
-    "Deterministic quantum circuit execution for Elixir on BEAM, built on Nx: Estimator, Sampler, Kernels, Transpiler, and a typed provider job lifecycle."
+    "Deterministic quantum simulation and execution for Elixir on BEAM, built on Nx: Estimator, Sampler, Kernels, Transpiler, and a typed provider job lifecycle."
   end
 
   defp package do

@@ -51,6 +51,12 @@ Does not buy (do not claim):
 - Competitive claims are limited to fault-tolerant, deterministic, within-job fan-out until a same-workload comparison exists.
 - Trace determinism is a separate, later promise (D2 in `vision.md` §8).
 
+## Update (2026-11-25, strategy review)
+
+- Circuit-cut fragments are no longer a planned task type: H2.2 moved to Parked (PD-8, `docs/roadmap.md` Decision Log).
+- Planned task types: parameter sweeps, batched estimation, and shot partitions in H2.1; noisy trajectories when H2.5 lands; Pauli-propagation partitions when H2.6 lands. All use the same `fan_out_task` contract and seed derivation (PD-2).
+- Partial results are reduced in task-index order, because floating-point sums are not associative (`docs/roadmap.md` H2.1 deliverable 7).
+
 ## Open questions
 
 1. Seed derivation function: fixed hash of (job seed, index), versioned as `seed_derivation: v1`. Needs owner approval before implementation.
