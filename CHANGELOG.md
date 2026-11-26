@@ -48,6 +48,11 @@ Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
 ### Changed
 
+- AI tool result envelope: api change (schema v1 to v2 for success envelopes; error envelope stays v1). `schema_version` is now `"v2"` for success results (KG-12). The bundled `quantum-kernel reranking` / `quantum_kernel_rerank.v1` and `constrained optimization helper` handlers computed classically but reported `execution.mode: :quantum`; they now report `execution.mode: :classical` with `provider: :none` and `target: :none`. `:classical_fallback` is unchanged. Migration note:
+  - What changed: a successful bundled call returns `mode: :classical` where 0.11.0 returned `:quantum`. The `status` is still `:ok`.
+  - Consumers that treat `execution.mode == :quantum` as evidence of quantum execution must stop doing so. A `:quantum` result from the bundled handlers no longer exists.
+  - Consumers that match on `schema_version: "v1"` for AI results must accept `"v2"`. Error envelopes keep `"v1"`.
+  - Tool names and request envelopes are unchanged. `docs/quantum-ai-tool-contracts.md` no longer names `constrained_optimize.v1` / `constrained_optimize.ex`; the real names are `constrained optimization helper` and `lib/nx_quantum/ai/tool_runner.ex`.
 - README, getting-started, and positioning lead with deterministic quantum execution on BEAM (decision D1); hybrid quantum-AI is presented as an application of it. "Deterministic" is scoped to simulator and fixture lanes. Cross-framework speed claims are removed from the README (owner decision 2026-10-30). The Hex package description is updated (`mix.exs`).
 - The case study (`docs/case-study-beam-integration.md`) is an illustrative pattern, not a user report, and reports no performance figures.
 - Rerank dataset manifests under `bench/datasets/rerank/` carry `provenance: synthetic`; the guard test (`test/nx_quantum/hybrid_quantum_ai_benchmark_guard_test.exs`) checks it, and the docs label these datasets synthetic (roadmap KG-5).

@@ -11,7 +11,7 @@ NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simula
 - Elixir and Nx teams embedding quantum workloads in BEAM services, who need seeded, reproducible results and typed contracts in the same runtime.
 - Teams building host applications or control planes on NxQuantum's versioned job, result, and error envelopes and structured telemetry.
 - Researchers who need reproducible runs: fixed seeds, experiment fingerprints, and Livebook tutorials.
-- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically today (results still report `execution.mode: :quantum`; KG-12), and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
+- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically and report `execution.mode: :classical`, and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
 - Not a primary fit (today) for teams whose top requirement is broad hardware-provider coverage, compiler depth, or large-scale GPU simulation.
 
 ## Why Teams Choose NxQuantum
@@ -24,7 +24,7 @@ Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx
 - Envelope compatibility guarded in CI: golden snapshots of job, result, and error envelopes fail the build on any byte change, and a shape or meaning change requires a `schema_version` bump (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
 - Verified physics with stated limits: compiler and transpiler passes are property-tested against an independent dense reference on random circuits up to 6 qubits, and the single-precision accuracy floor is documented. (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
 - Telemetry with OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled OpenTelemetry-named adapter records in-process; no OpenTelemetry exporter ships), plus experiment fingerprints for comparing runs. VM-independent fingerprint hashing is unreleased (on `main`, see CHANGELOG `[Unreleased]`).
-- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-inspired compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically today (results still report `execution.mode: :quantum`; KG-12).
+- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-inspired compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically and report `execution.mode: :classical`.
 
 See positioning and comparison details:
 

@@ -308,6 +308,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 
 ### 13) Quantum AI Tool Contract Context (Planned v1.0)
 
+- Owner: user
 - Features:
   - `features/quantum_ai_tool_contracts.feature`
   - `features/quantum_ai_rollout_gates.feature`

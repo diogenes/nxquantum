@@ -102,7 +102,7 @@ Transport mode semantics:
 
 ```elixir
 %{
-  schema_version: "v1",
+  schema_version: "v2",
   request_id: String.t(),
   correlation_id: String.t(),
   status: :ok | :degraded | :fallback | :error,
@@ -111,7 +111,7 @@ Transport mode semantics:
   execution: %{
     provider: atom() | String.t() | :none,
     target: String.t() | :none,
-    mode: :quantum | :classical_fallback,
+    mode: :quantum | :classical | :classical_fallback,
     latency_ms: non_neg_integer(),
     started_at: String.t() | nil,
     finished_at: String.t() | nil
@@ -120,6 +120,14 @@ Transport mode semantics:
   metadata: map()
 }
 ```
+
+`execution.mode` reports the mode the handler used:
+
+1. `:quantum` only when a simulator or provider call ran for the computation. No bundled handler reports it.
+2. `:classical` when the handler computed the result classically and no quantum fallback was involved. `provider` and `target` are `:none`.
+3. `:classical_fallback` when a quantum capability was unavailable and the handler fell back to a classical computation under `fallback_policy: :allow_classical_fallback`.
+
+Versioning: `schema_version` is `"v2"` for the result envelope. v1 results from the bundled handlers reported `execution.mode: :quantum` for classical computation (KG-12). Consumers that read `:quantum` from a v1 result must not treat it as quantum evidence. The request envelope and the tool names (`quantum_kernel_rerank.v1`, `constrained optimization helper`) are unchanged. The error envelope keeps `schema_version: "v1"` because its shape and meaning did not change.
 
 ## Error Envelope
 
@@ -155,7 +163,7 @@ Transport mode semantics:
      - `parallel_mode`
      - `max_concurrency`
    - output: ranked list with scores and execution metadata.
-2. `constrained_optimize.v1`
+2. `constrained optimization helper` (the tool name in `NxQuantum.AI.run_tool/2`; no version suffix)
    - input: objective id/config, constraint set, budget params.
    - output: candidate solution and optimization trace summary.
 
@@ -251,7 +259,7 @@ Minimum span attributes:
 1. Add:
    - `lib/nx_quantum/ai/tool_runner.ex`
    - `lib/nx_quantum/ai/tools/kernel_rerank.ex`
-   - `lib/nx_quantum/ai/tools/constrained_optimize.ex`
+   - The constrained optimization handler lives in `lib/nx_quantum/ai/tool_runner.ex`; there is no separate `constrained_optimize.ex`.
 2. Implement strict/fallback policy handling.
 3. Add acceptance and contract tests.
 

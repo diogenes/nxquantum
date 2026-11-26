@@ -44,6 +44,10 @@ These are available but may evolve without an `api change`:
 
 Items 4 to 16 and items 18 and 19 are listed here so that the tier is explicit. Item 17 is listed on the same basis; it was never on the stable surface. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
 
+The AI tool-contract surface is declared experimental as item 21. It is a separate numbered list so that it keeps the number 21:
+
+21. `NxQuantum.AI` (the tool-contract surface: `NxQuantum.AI.run_tool/2` and its request and result envelopes). The tier is experimental. The `schema_version: "v2"` success envelope is the first versioned break under this tier: an `api change`, recorded in CHANGELOG `[Unreleased]` (schema v1 to v2 for success envelopes; the error envelope stays `"v1"`). Tool names and request envelopes are unchanged.
+
 Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
 Experimental does not mean untested. The notebooks under `examples/livebook/` use several of these items, and `test/nx_quantum/livebooks_test.exs` runs them (`docs/livebook-tutorials.md`). A notebook that passes shows the current behavior, not a stability promise.
