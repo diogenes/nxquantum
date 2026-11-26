@@ -15,7 +15,7 @@ defmodule NxQuantum.AI.Tools.KernelRerank do
 
     cond do
       Map.get(capabilities, :supports_kernel_rerank, true) ->
-        run_quantum_path(request, capabilities, fallback_policy, opts)
+        run_rerank(request, fallback_policy, opts)
 
       fallback_policy == :allow_classical_fallback ->
         {:ok, fallback_result(request, :provider_capability_unavailable)}
@@ -31,10 +31,10 @@ defmodule NxQuantum.AI.Tools.KernelRerank do
     end
   end
 
-  defp run_quantum_path(%Request{} = request, capabilities, fallback_policy, opts) do
+  defp run_rerank(%Request{} = request, fallback_policy, opts) do
     case ranking_payload(request, opts) do
       {:ok, ranked, ranking_metadata} ->
-        {:ok, quantum_result(request, capabilities, ranked, ranking_metadata)}
+        {:ok, classical_result(request, ranked, ranking_metadata)}
 
       {:error, error} ->
         if fallback_policy == :allow_classical_fallback do
@@ -200,17 +200,16 @@ defmodule NxQuantum.AI.Tools.KernelRerank do
     end
   end
 
-  defp quantum_result(%Request{} = request, capabilities, ranked, ranking_metadata) do
+  # The bundled rerank computes classically (caller scores or TurboQuant dot products
+  # on the BEAM). No simulator or provider runs, so the mode is `:classical` and the
+  # provider and target are `:none`, whatever the caller's capabilities declare.
+  defp classical_result(%Request{} = request, ranked, ranking_metadata) do
     Result.ok(%{
       request_id: request.request_id,
       correlation_id: request.correlation_id,
       tool_name: request.tool_name,
       output: %{ranked_candidate_ids: ranked},
-      execution: %{
-        mode: :quantum,
-        provider: Map.get(capabilities, :provider, :none),
-        target: Map.get(capabilities, :target, :none)
-      },
+      execution: %{mode: :classical, provider: :none, target: :none},
       metadata: %{ranking: ranking_metadata}
     })
   end

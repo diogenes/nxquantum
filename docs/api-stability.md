@@ -36,8 +36,17 @@ These are available but may evolve without an `api change`:
 13. The `NxQuantum.ProviderBridge.ProviderError` fields `code`, `reason` and `metadata.missing_keys`, and the `NxQuantum.ProviderBridge.Result` fields (`job_id`, `state`, `provider`, `payload`, `metadata` and the identifier fields), except the contents of `metadata`
 14. The `NxQuantum.Ports.ObservabilityEmitter` behaviour, when you implement it in your own code. Its callbacks may change.
 15. Envelope serialization and notebook-used result fields: `NxQuantum.ProviderBridge.Serialization.to_external_map/1` and `from_external_map/1`; the `counts` field of the `NxQuantum.Sampler.run/2` result; and, for `NxQuantum.Transpiler.run/2`, the `operations` field of the routed circuit and the `inserted_swaps` and `added_swap_gates` fields of the report
+16. `NxQuantum.Circuit.to_qasm/2` (H2.8, OpenQASM 3 export; api change (additive), experimental tier; slice 1 of H2.8; gates open). Subset: `OPENQASM 3.0;`, `include "stdgates.inc";`, `qubit[n] q;`, and with `measure: true` `bit[n] c;` plus `c = measure q;`. Gates map to `h`, `x`, `y`, `z`, `rx(theta)`, `ry(theta)`, `rz(theta)`, `cx`, `swap`. Angles are printed as shortest round-trip float literals. Float caveat: the export prints the widened f32 value (for example 0.10000000149011612 for an f32 `0.1`), which is deterministic but not the user's decimal. Anything else returns `{:error, %{code: :unsupported_qasm_construct, construct: ...}}`, with constructs `:gate`, `:unsupported_parameter`, `:unbound_parameter`, `:non_scalar_parameter`, `:non_finite_parameter`, `:non_real_parameter`, and `:observable_measurement`. Import (`from_qasm`) is not part of this item.
+17. `NxQuantum.Noise.Channel` (Kraus channel constructors, including `kraus/1`) and `NxQuantum.Noise.Model` (gate and qubit noise maps). Added as H2.5 domain types: no executor uses them yet, and the scalar `noise:` option is unchanged. Change intent: `api change` (additive), experimental tier.
+18. The mitigation pass names `:zne_richardson` and `:zne_poly_ls` in the `NxQuantum.Mitigation.pipeline/2` pass type. Declared `api change` (additive), experimental tier. Item 17 is the H2.5 noise domain types (item 17 above).
+19. The `:nx_quantum, :state_vector_structure_cache_max_bytes` application configuration key (byte budget of the state-vector structure cache, default 512 MiB; `lib/nx_quantum/adapters/simulators/state_vector/cache.ex`). Setting it changes memory use, not simulation results. Non-integer or negative values fall back to the default.
 
-Items 4 to 15 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+
+Items 4 to 16 and items 18 and 19 are listed here so that the tier is explicit. Item 17 is listed on the same basis; it was never on the stable surface. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+
+The AI tool-contract surface is declared experimental as item 21. It is a separate numbered list so that it keeps the number 21:
+
+21. `NxQuantum.AI` (the tool-contract surface: `NxQuantum.AI.run_tool/2` and its request and result envelopes). The tier is experimental. The `schema_version: "v2"` success envelope is the first versioned break under this tier: an `api change`, recorded in CHANGELOG `[Unreleased]` (schema v1 to v2 for success envelopes; the error envelope stays `"v1"`). Tool names and request envelopes are unchanged.
 
 Item 20 is listed on its own, so that items 16 to 19 stay unused:
 
@@ -56,6 +65,16 @@ Experimental does not mean untested. The notebooks under `examples/livebook/` us
 2. Experimental APIs may evolve, but must keep deterministic typed error behavior.
 3. Public API contract tests live in:
    - `test/nx_quantum/public_api_contract_test.exs`
+
+## Option Validation (KG-25, phase 1)
+
+Applies to the top-level keyword options of `NxQuantum.Estimator.run/2`, `NxQuantum.Estimator.expectation_result/2`, and `NxQuantum.Sampler.run/2`. `NxQuantum.Estimator.expectation/2` and `NxQuantum.Circuit.expectation/2` go through the same check, because they call `expectation_result/2`.
+
+1. Each call checks every top-level key against the allow-list in `lib/nx_quantum/option_keys.ex`. The Estimator list covers every key read on the estimator path, including the simulator's cache and concurrency keys (KG-22). The Sampler list covers the keys `Sampler.run/2` reads.
+2. An unknown key does not change the computation. The call returns the result it returned before, logs one `Logger.warning` that names the keys, and, when the result has a `metadata` map (`Estimator.run/2` and `Sampler.run/2`), adds `metadata.unknown_options`, the unknown keys in order of appearance. The entry is absent when no key is unknown. `expectation_result/2` returns a tensor and has no metadata, so it only logs.
+3. Phase 2, in a later minor release, returns a typed error for an unknown key, with a CHANGELOG migration note. Until then, a misspelled key is ignored, as it was before this rule.
+4. A change that starts reading a new top-level option adds its key to the allow-list in the same change. Otherwise callers get a false warning.
+5. Not checked in phase 1: the nested contents of `noise:` and `backend_opts:`, `Estimator.batched_expectation/3`, `Sampler.batched_run/3`, and `Estimator.sampled_expectation_from_counts/2`.
 
 ## Envelope Compatibility Policy (external provider envelopes)
 
