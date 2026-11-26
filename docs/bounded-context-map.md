@@ -288,7 +288,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 - Public assets:
   - side-by-side workflow guides
   - migration playbooks
-  - positioning with the decision matrix (`docs/product-positioning.md`; `docs/decision-matrix.md` is a pointer stub)
+  - positioning with the decision matrix and messaging rules (`docs/product-positioning.md`)
   - provider migration packs and release-hardening evidence (`v0.5`):
     - `docs/migration-packs.md`
     - `docs/provider-benchmark-matrix.md`
@@ -333,6 +333,46 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - sync and async execution paths preserve typed deterministic errors
   - trace/correlation metadata remains intact end-to-end
   - quantized rerank lane remains deterministic for fixed seed and bounded parallel settings
+
+## Planned Contexts (2027 roadmap, added 2026-11-25)
+
+Ownership is fixed here before any Builder work, so no planned milestone starts with unclear bounded-context ownership (AGENTS.md stop rule). Module paths are *tentative* until each milestone's plan review or ADR fixes them.
+
+### 14) Simulation Methods Context (planned: ADR 0013, H2.4, H2.5, H2.6)
+
+- Owns: method selection by declared capability, and the method adapters (state vector, density matrix, trajectories, Pauli propagation).
+- Ports:
+  - `NxQuantum.Ports.Simulator` (amplitudes; unchanged)
+  - expectation-level method port (*tentative*: `NxQuantum.Ports.ExpectationEngine`, ADR 0013)
+- Invariants:
+  - every method declares its determinism level (`:bitwise` or `:tolerance`) and whether it is exact
+  - approximate methods report their error with the result, and run only when asked for
+  - each method's acceptance suite cross-checks against an exact method
+
+### 15) Noise Modeling Context (planned: H2.5)
+
+- Owns: `NoiseModel` and channel definitions (*tentative*: `lib/nx_quantum/noise/`), consumed by Simulation Methods and Mitigation.
+- Invariants:
+  - channels are checked for Kraus completeness when built
+  - trajectory seeds use the ADR 0012 derivation (`seed_derivation: v1`)
+  - the scalar `noise:` option (KG-30) stays documented as scalar until removed
+
+### 16) Distributed Execution Context (planned: ADR 0012, H2.1)
+
+- Owns: within-job fan-out of tasks (sweeps, shots, trajectories, observable partitions), placement, re-dispatch, and ordered reduction.
+- Ports: `NxQuantum.Ports.Cluster`, `NxQuantum.Ports.Clock` (*tentative*, ADR 0012).
+- Invariants: results identical on 1 vs N nodes for the same seed; orchestration across jobs stays in FluxQ.
+
+### 17) Interop Context (planned: H2.8)
+
+- Owns: OpenQASM 3 import and export for a documented subset (*tentative*: `lib/nx_quantum/interop/`).
+- Invariants: unsupported constructs return typed errors; round trips preserve the unitary up to global phase.
+
+### 18) Hamiltonian and Algorithms Context (planned: H2.9)
+
+- Owns: Pauli Hamiltonians, product formulas and qDRIFT, and the SQD and SKQD workflows (*tentative*: `lib/nx_quantum/hamiltonian/`, `lib/nx_quantum/algorithms/`).
+- Depends on: Primitive Estimation and Sampling (§3, §4), Simulation Methods (§14), and, for batches, Distributed Execution (§16), through their public facades only.
+- Invariants: every reported error bound has an analytic or exact-reference test.
 
 ## Refactor Rules
 
