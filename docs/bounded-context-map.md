@@ -353,7 +353,9 @@ Ownership is fixed here before any Builder work, so no planned milestone starts 
 
 ### 15) Noise Modeling Context (planned: H2.5)
 
+- Owner: user
 - Owns: `NoiseModel` and channel definitions (*tentative*: `lib/nx_quantum/noise/`), consumed by Simulation Methods and Mitigation.
+- Slice 1 (domain types and channel tests) lands on branch feat/h2.5-noise-model-domain. Placement: Domain. Future consumers: NxQuantum.Estimator and NxQuantum.Sampler.
 - Invariants:
   - channels are checked for Kraus completeness when built
   - trajectory seeds use the ADR 0012 derivation (`seed_derivation: v1`)

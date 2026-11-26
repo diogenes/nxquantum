@@ -30,6 +30,7 @@ Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
 ### Added
 
+- Noise channel domain types (H2.5, experimental, no executor yet): `NxQuantum.Noise.Channel` builds Kraus channels (depolarizing, amplitude damping, phase damping, Pauli, bit flip, phase flip, and generic `kraus/1`) with parameter and Kraus-completeness checks, and `NxQuantum.Noise.Model` maps gate names and qubits to channels. Tests: `test/nx_quantum/noise/`. The scalar `noise:` option is unchanged.
 - `NxQuantum.Circuit.to_qasm/2`: OpenQASM 3 export over the `stdgates.inc` subset, with typed `:unsupported_qasm_construct` errors for anything outside it. Import is not included. Tests: `test/nx_quantum/interop/open_qasm3_test.exs`.
   - Slice 1 of H2.8: export only; round-trip, corpus agreement and typed-error gates are open.
   - api change (additive, experimental). Angles print the widened f32 value (for example `0.10000000149011612`), which is deterministic but not the user's decimal.
