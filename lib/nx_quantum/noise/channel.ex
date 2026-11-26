@@ -4,12 +4,17 @@ defmodule NxQuantum.Noise.Channel do
 
   A channel is a list of Kraus operators `K_k`, each a complex (`{:c, 64}`) Nx tensor.
   Every constructor validates its parameters and checks Kraus completeness,
-  `sum_k K_k^† K_k = I`, within `completeness_tolerance/0`. Constructors return
+  `sum_k K_k^† K_k = I`, within `completeness_tolerance/0`, which is `1.0e-6` in each entry
+  (absolute). Constructors return
   `{:ok, channel}` or `{:error, %{code: :invalid_noise_channel, channel: name, reason: reason, ...}}`.
 
   Conventions:
 
     * `depolarizing(p)` maps `rho` to `(1 - p) rho + p I / 2`, so `p = 1` is the maximally mixed state.
+      Its Kraus operators are `sqrt(1 - 3p/4) I`, `sqrt(p)/2 X`, `sqrt(p)/2 Y` and `sqrt(p)/2 Z`, so each
+      of the X, Y and Z Pauli terms carries weight `p/4`. This differs from the Cirq-style Pauli-weight
+      form `(1 - p) rho + (p/3) sum_P P rho P`, which gives each Pauli weight `p/3` and a different
+      map for the same parameter `p`. Do not compare `p` values across the two conventions.
     * `amplitude_damping(gamma)` and `phase_damping(lambda)` use the standard Kraus operators
       of Nielsen and Chuang.
     * `pauli(px, py, pz)` maps `rho` to `(1 - px - py - pz) rho + px X rho X + py Y rho Y + pz Z rho Z`.

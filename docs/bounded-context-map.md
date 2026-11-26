@@ -333,6 +333,26 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - trace/correlation metadata remains intact end-to-end
   - quantized rerank lane remains deterministic for fixed seed and bounded parallel settings
 
+### 14) Noise Context (H2.5 slice 1, domain types only)
+
+- Owner: user
+- Placement: Domain
+- Features:
+  - `features/noise_and_shots.feature` (scalar `noise:` option; unchanged by this context)
+- Public entrypoints (experimental, see `docs/api-stability.md` item 17):
+  - NxQuantum.Noise.Channel
+  - NxQuantum.Noise.Model
+- Domain modules:
+  - NxQuantum.Noise.Channel
+  - NxQuantum.Noise.Model
+- Future consumers (not owners):
+  - NxQuantum.Estimator (executor slice, not yet built)
+  - NxQuantum.Sampler (executor slice, not yet built)
+- Invariants:
+  - pure Kraus data: no backend, adapter or randomness
+  - completeness checked within `Channel.completeness_tolerance/0` (1e-6)
+  - typed `:invalid_noise_channel` errors
+
 ## Refactor Rules
 
 1. Start from one context and one behavior slice.

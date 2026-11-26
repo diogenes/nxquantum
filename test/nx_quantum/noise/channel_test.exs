@@ -112,6 +112,49 @@ defmodule NxQuantum.Noise.ChannelTest do
     end
   end
 
+  # Tolerance note: Kraus operators are built in f32 and then cast to c64, so the
+  # deviation from the exact value is set by float32 rounding. eps32 = 2^-23 is about
+  # 1.19e-7, so the 1.0e-6 tolerance is roughly 8x that scale. Inputs are fixed, so
+  # these checks have no randomness.
+  describe "depolarizing analytic checks" do
+    test "coherence of |+><+| shrinks to (1 - p) / 2 at p = 0.2" do
+      {:ok, channel} = Channel.depolarizing(0.2)
+      rho = apply_channel(channel, plus())
+
+      [_r00, r01, r10, _r11] = rho |> Nx.real() |> Nx.to_flat_list()
+
+      assert_in_delta r01, 0.4, @tolerance
+      assert_in_delta r10, 0.4, @tolerance
+    end
+
+    test "trace is preserved for |0><0| and |+><+| at p in {0, 0.25, 1}" do
+      for rho_in <- [ket0(), plus()], p <- [0, 0.25, 1] do
+        {:ok, channel} = Channel.depolarizing(p)
+        rho = apply_channel(channel, rho_in)
+
+        assert_in_delta trace(rho), 1.0, @tolerance
+      end
+    end
+
+    test "<Z> of |0><0| after depolarizing(p) is (1 - p) for p in {0, 0.25, 1}" do
+      for p <- [0, 0.25, 1] do
+        {:ok, channel} = Channel.depolarizing(p)
+        rho = apply_channel(channel, ket0())
+
+        assert_in_delta expectation_z(rho), 1 - p, @tolerance
+      end
+    end
+
+    test "accepts c128 Kraus operators and stores them as c64" do
+      {:ok, reference} = Channel.depolarizing(0.2)
+      c128 = Enum.map(reference.kraus, &Nx.as_type(&1, {:c, 128}))
+
+      assert {:ok, channel} = Channel.kraus(c128)
+      assert Enum.all?(channel.kraus, &(Nx.type(&1) == {:c, 64}))
+      assert completeness_deviation(channel) <= @tolerance
+    end
+  end
+
   describe "kraus/1" do
     test "accepts a generic set of single-qubit Kraus operators" do
       {:ok, reference} = Channel.amplitude_damping(0.2)
@@ -227,6 +270,16 @@ defmodule NxQuantum.Noise.ChannelTest do
 
     rho
     |> Nx.multiply(x)
+    |> Nx.sum()
+    |> Nx.real()
+    |> Nx.to_number()
+  end
+
+  defp expectation_z(rho) do
+    z = Nx.tensor([[1.0, 0.0], [0.0, -1.0]], type: {:c, 64})
+
+    rho
+    |> Nx.multiply(z)
     |> Nx.sum()
     |> Nx.real()
     |> Nx.to_number()
