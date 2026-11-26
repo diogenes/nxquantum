@@ -63,6 +63,16 @@ defmodule NxQuantum.Architecture.DependencyDirectionTest do
     assert violations == []
   end
 
+  test "interop OpenQASM 3 codec does not depend on adapters or providers" do
+    violations =
+      layer_violations(
+        ["lib/nx_quantum/interop/open_qasm3.ex"],
+        ["NxQuantum.Adapters.", "NxQuantum.Provider"]
+      )
+
+    assert violations == []
+  end
+
   defp layer_files(glob) do
     @root
     |> Path.join(glob)

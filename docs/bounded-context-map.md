@@ -103,6 +103,9 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - NxQuantum.Mitigation.PassPipeline
   - NxQuantum.Mitigation.Passes.Readout
   - NxQuantum.Mitigation.Passes.ZneLinear
+  - NxQuantum.Mitigation.Passes.ZneRichardson
+  - NxQuantum.Mitigation.Passes.ZnePolyLs
+  - NxQuantum.Mitigation.Extrapolation
   - NxQuantum.Mitigation.Trace
 - Invariants:
   - deterministic counts/probabilities for fixed seed
@@ -368,6 +371,7 @@ Ownership is fixed here before any Builder work, so no planned milestone starts 
 
 - Owns: OpenQASM 3 import and export for a documented subset (*tentative*: `lib/nx_quantum/interop/`).
 - Invariants: unsupported constructs return typed errors; round trips preserve the unitary up to global phase.
+- Boundary note: NxQuantum.Interop is a pure codec. The Circuit domain facade may call it. Owner: user. The architecture test in test/architecture/dependency_direction_test.exs enforces that lib/nx_quantum/interop/open_qasm3.ex references no adapter or provider module.
 
 ### 18) Hamiltonian and Algorithms Context (planned: H2.9)
 
