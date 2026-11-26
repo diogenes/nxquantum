@@ -50,33 +50,55 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval do
   end
 
   @spec expectations_with_plan(Nx.Tensor.t(), expectation_plan(), keyword()) :: [Nx.Tensor.t()]
-  def expectations_with_plan(_state, %ExpectationPlan{terms: []}, _opts), do: []
-
   def expectations_with_plan(%Nx.Tensor{} = state, %ExpectationPlan{} = plan, opts) do
+    {values, _path} = expectations_with_plan_and_path(state, plan, opts)
+    values
+  end
+
+  @generic_path %{
+    expectation_path: :generic,
+    fused_kernel: %{requested_kernel: :unknown, selected_kernel: :unknown, reason: :not_applicable}
+  }
+
+  @doc """
+  Evaluates the plan and reports the branch that actually ran: `:fused_single_wire` only when the fused
+  kernel evaluated the terms, with the kernel resolution it used; `:generic` otherwise.
+  """
+  @spec expectations_with_plan_and_path(Nx.Tensor.t(), expectation_plan(), keyword()) ::
+          {[Nx.Tensor.t()], map()}
+  def expectations_with_plan_and_path(_state, %ExpectationPlan{terms: []}, _opts), do: {[], @generic_path}
+
+  def expectations_with_plan_and_path(%Nx.Tensor{} = state, %ExpectationPlan{} = plan, opts) do
     case plan.strategy.mode do
       :parallel ->
-        plan.terms
-        |> unique_terms()
-        |> chunk_for_parallel(plan.strategy.chunk_size)
-        |> Task.async_stream(
-          fn chunk ->
-            Enum.map(chunk, &expectation_with_prepared_term(state, &1))
-          end,
-          max_concurrency: plan.strategy.max_concurrency,
-          ordered: true,
-          timeout: :infinity
-        )
-        |> Enum.flat_map(fn
-          {:ok, values} -> values
-          {:exit, reason} -> raise "parallel observable evaluation failed: #{inspect(reason)}"
-        end)
-        |> map_values_to_plan_order(plan.terms)
+        values =
+          plan.terms
+          |> unique_terms()
+          |> chunk_for_parallel(plan.strategy.chunk_size)
+          |> Task.async_stream(
+            fn chunk ->
+              Enum.map(chunk, &expectation_with_prepared_term(state, &1))
+            end,
+            max_concurrency: plan.strategy.max_concurrency,
+            ordered: true,
+            timeout: :infinity
+          )
+          |> Enum.flat_map(fn
+            {:ok, values} -> values
+            {:exit, reason} -> raise "parallel observable evaluation failed: #{inspect(reason)}"
+          end)
+          |> map_values_to_plan_order(plan.terms)
+
+        {values, @generic_path}
 
       :scalar ->
         if FusedSingleWire.eligible?(plan.terms, plan.qubits) do
-          FusedSingleWire.expectations_for_runtime(state, plan.terms, plan.qubits, opts)
+          {values, resolution} =
+            FusedSingleWire.expectations_for_runtime_with_resolution(state, plan.terms, plan.qubits, opts)
+
+          {values, %{expectation_path: :fused_single_wire, fused_kernel: resolution}}
         else
-          evaluate_scalar_with_memo(state, plan)
+          {evaluate_scalar_with_memo(state, plan), @generic_path}
         end
     end
   end

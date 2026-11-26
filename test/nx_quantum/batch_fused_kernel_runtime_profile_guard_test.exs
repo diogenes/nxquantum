@@ -27,8 +27,8 @@ defmodule NxQuantum.BatchFusedKernelRuntimeProfileGuardTest do
       |> Nx.broadcast({256})
       |> Nx.put_slice([0], Nx.tensor([1.0], type: {:c, 64}))
 
-    _ = FusedSingleWire.expectations_for_runtime(state, plan.terms, 8, runtime_profile: :cpu_compiled)
-    resolution = Process.get(:nxq_fused_kernel_resolution)
+    {_values, resolution} =
+      FusedSingleWire.expectations_for_runtime_with_resolution(state, plan.terms, 8, runtime_profile: :cpu_compiled)
 
     assert resolution.requested_kernel == :compiled
     assert resolution.selected_kernel == :portable

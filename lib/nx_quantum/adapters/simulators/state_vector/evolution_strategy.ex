@@ -31,4 +31,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy do
     strategy = select(circuit)
     {Map.fetch!(@path_names, strategy), strategy.evolve(circuit)}
   end
+
+  # Pure: the path that evolve_with_path/1 takes for this circuit, without evolving it.
+  @spec path_for(Circuit.t()) :: evolution_path()
+  def path_for(%Circuit{} = circuit), do: circuit |> select() |> then(&Map.fetch!(@path_names, &1))
 end

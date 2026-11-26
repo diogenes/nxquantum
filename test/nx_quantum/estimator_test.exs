@@ -1,11 +1,13 @@
 defmodule NxQuantum.EstimatorTest do
   use ExUnit.Case, async: true
 
+  alias NxQuantum.Adapters.Simulators.StateVector
   alias NxQuantum.Circuit
   alias NxQuantum.Estimator
   alias NxQuantum.Estimator.Result
   alias NxQuantum.Estimator.StrategyObservability
   alias NxQuantum.Gates
+  alias NxQuantum.Ports.Simulator
 
   describe "expectation_result/2" do
     test "returns typed error for unsupported runtime profile" do
@@ -264,7 +266,7 @@ defmodule NxQuantum.EstimatorTest do
   end
 
   describe "simulation metadata (KG-20)" do
-    test "default backend on the real path reports real_pauli_z and the state backend" do
+    test "default backend on the real path reports real_pauli_z and the portable state backend" do
       circuit = real_path_circuit(0.271_828)
 
       assert {:ok, %Result{} = result} =
@@ -273,7 +275,7 @@ defmodule NxQuantum.EstimatorTest do
       assert result.metadata.simulation == %{
                method: :state_vector,
                evolution_path: :real_pauli_z,
-               state_backend: Nx.BinaryBackend,
+               state_backend: :portable,
                expectation_path: :generic
              }
     end
@@ -285,34 +287,46 @@ defmodule NxQuantum.EstimatorTest do
                Estimator.run(circuit, observables: [:pauli_x], wire: 1, cache_evolved_state: false)
 
       assert result.metadata.simulation.evolution_path == :complex
-      assert result.metadata.simulation.state_backend == Nx.BinaryBackend
+      assert result.metadata.simulation.state_backend == :portable
     end
 
     test "a fused single-wire Pauli batch reports the fused expectation path" do
-      circuit =
-        [qubits: 4]
-        |> Circuit.new()
-        |> Gates.h(0)
-        |> Gates.cnot(control: 0, target: 1)
-        |> Gates.cnot(control: 1, target: 2)
-
-      observables =
-        Enum.map(0..23, fn index ->
-          %{observable: Enum.at([:pauli_x, :pauli_y, :pauli_z], rem(index, 3)), wire: rem(index, 4)}
-        end)
+      circuit = fused_circuit(4)
 
       assert {:ok, %Result{} = result} =
-               Estimator.run(circuit, observables: observables, cache_evolved_state: false)
+               Estimator.run(circuit, observables: fused_observables(24, 4), cache_evolved_state: false)
 
       assert result.metadata.simulation == %{
                method: :state_vector,
                evolution_path: :complex,
-               state_backend: Nx.BinaryBackend,
+               state_backend: :portable,
                expectation_path: :fused_single_wire
              }
+
+      assert result.metadata.strategy_observability.fused_kernel_selected == :portable
     end
 
-    test "a repeated run served from the evolved-state cache reports no evolution path" do
+    test "23 single-wire Pauli terms are below the fused gate and take the generic path" do
+      circuit = fused_circuit(4)
+
+      assert {:ok, %Result{} = result} =
+               Estimator.run(circuit, observables: fused_observables(23, 4), cache_evolved_state: false)
+
+      assert result.metadata.simulation.expectation_path == :generic
+      assert result.metadata.strategy_observability.fused_kernel_selected == :unknown
+    end
+
+    test "13 qubits is above the fused gate and takes the generic path" do
+      circuit = fused_circuit(13)
+
+      assert {:ok, %Result{} = result} =
+               Estimator.run(circuit, observables: fused_observables(24, 13), cache_evolved_state: false)
+
+      assert result.metadata.simulation.expectation_path == :generic
+      assert result.metadata.strategy_observability.fused_kernel_selected == :unknown
+    end
+
+    test "a repeated run served from the evolved-state cache reports the state-vector method and no evolution path" do
       circuit = real_path_circuit(0.577_215)
       opts = [observables: [:pauli_z], wire: 1]
 
@@ -324,14 +338,49 @@ defmodule NxQuantum.EstimatorTest do
       assert second.metadata.simulation == %{
                method: :state_vector,
                evolution_path: nil,
-               state_backend: Nx.BinaryBackend,
+               state_backend: :portable,
                expectation_path: :generic
              }
     end
 
-    test "a run with no recorded simulation reports nil fields" do
-      Process.delete(:nxq_estimator_simulation)
+    test "a direct adapter call does not leak its simulation into the next Estimator.run" do
+      direct_circuit = Map.put(real_path_circuit(0.141_592), :measurement, %{observable: :pauli_x, wire: 1})
+      _ = StateVector.expectation(direct_circuit, runtime_profile: :cpu_portable, cache_evolved_state: false)
 
+      assert {:ok, %Result{} = result} =
+               Estimator.run(real_path_circuit(0.161_803), observables: [:pauli_z], wire: 1, cache_evolved_state: false)
+
+      assert result.metadata.simulation == %{
+               method: :state_vector,
+               evolution_path: :real_pauli_z,
+               state_backend: :portable,
+               expectation_path: :generic
+             }
+    end
+
+    test "a scalar expectation call does not leak its simulation into the next Estimator.run" do
+      scalar_circuit = real_path_circuit(0.122_333)
+
+      assert {:ok, _tensor} =
+               Estimator.expectation_result(scalar_circuit, observable: :pauli_x, wire: 1, cache_evolved_state: false)
+
+      assert {:ok, %Result{} = result} =
+               Estimator.run(fused_circuit(4), observables: fused_observables(23, 4), cache_evolved_state: false)
+
+      assert result.metadata.simulation.evolution_path == :complex
+      assert result.metadata.simulation.expectation_path == :generic
+    end
+
+    test "simulation facts are returned, not written to the process dictionary" do
+      assert {:ok, %Result{}} =
+               Estimator.run(real_path_circuit(0.200_001), observables: [:pauli_z], wire: 1, cache_evolved_state: false)
+
+      assert Process.get(:nxq_estimator_simulation) == nil
+      assert Process.get(:nxq_estimator_cache_status) == nil
+      assert Process.get(:nxq_fused_kernel_resolution) == nil
+    end
+
+    test "a run with no simulator facts reports nil fields" do
       opts = StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [], executed?: false)
 
       assert Keyword.fetch!(opts, :estimator_simulation) == %{
@@ -342,13 +391,14 @@ defmodule NxQuantum.EstimatorTest do
              }
     end
 
-    test "conflicting paths or backends inside one run are reported as mixed" do
-      Process.put(:nxq_estimator_simulation, %{
-        evolution_paths: [:complex, :real_pauli_z],
-        state_backends: [Nx.BinaryBackend, :"Elixir.EXLA.Backend"]
-      })
+    test "facts from several calls in one run are merged, and conflicts are reported as mixed" do
+      complex_portable = facts(evolution_path: :complex, state_backend: :portable)
+      real_compiled = facts(evolution_path: :real_pauli_z, state_backend: :compiled)
 
-      opts = StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [], executed?: true)
+      merged = StrategyObservability.merge_facts([complex_portable, real_compiled])
+
+      opts =
+        StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [], simulation: merged, executed?: true)
 
       assert Keyword.fetch!(opts, :estimator_simulation) == %{
                method: :state_vector,
@@ -358,18 +408,42 @@ defmodule NxQuantum.EstimatorTest do
              }
     end
 
-    test "a run that only hit the cache reports no evolution path and no expectation path when not executed" do
-      Process.put(:nxq_estimator_simulation, %{evolution_paths: [], state_backends: [Nx.BinaryBackend]})
+    test "a run that only hit the cache reports no expectation path when not executed" do
+      cached = facts(evolution_path: nil, state_backend: :portable, cache_status: :hit)
 
-      opts = StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [], executed?: false)
+      opts =
+        StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [], simulation: cached, executed?: false)
 
       assert Keyword.fetch!(opts, :estimator_simulation) == %{
                method: :state_vector,
                evolution_path: nil,
-               state_backend: Nx.BinaryBackend,
+               state_backend: :portable,
                expectation_path: nil
              }
+
+      assert Keyword.fetch!(opts, :estimator_cache_status) == :hit
     end
+  end
+
+  defp facts(overrides) do
+    Map.merge(
+      Simulator.unreported_facts(),
+      Map.merge(%{method: :state_vector, expectation_path: :generic}, Map.new(overrides))
+    )
+  end
+
+  defp fused_circuit(qubits) do
+    [qubits: qubits]
+    |> Circuit.new()
+    |> Gates.h(0)
+    |> Gates.cnot(control: 0, target: 1)
+    |> Gates.cnot(control: 1, target: 2)
+  end
+
+  defp fused_observables(count, wires) do
+    Enum.map(0..(count - 1), fn index ->
+      %{observable: Enum.at([:pauli_x, :pauli_y, :pauli_z], rem(index, 3)), wire: rem(index, wires)}
+    end)
   end
 
   describe "batched_expectation/3" do

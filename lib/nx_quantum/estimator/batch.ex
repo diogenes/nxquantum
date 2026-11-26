@@ -5,11 +5,9 @@ defmodule NxQuantum.Estimator.Batch do
   alias NxQuantum.Estimator.Batch.Strategies.Deterministic
   alias NxQuantum.Estimator.Batch.Strategies.ScalarFallback
   alias NxQuantum.Estimator.ExecutionMode
-  alias NxQuantum.Estimator.StrategyObservability
 
   @spec run(Circuit.t(), [map()], keyword()) :: {:ok, NxQuantum.Estimator.Result.t()} | {:error, map()}
   def run(circuit, observable_specs, opts) do
-    StrategyObservability.begin_run()
     strategy_for(opts).run(circuit, observable_specs, opts)
   end
 
