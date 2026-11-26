@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Mission
-Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML library with clean DDD + hexagonal boundaries and stable public APIs.
+Build NxQuantum as a high-performance, deterministic, BEAM-native quantum simulation and execution library with clean DDD + hexagonal boundaries and stable public APIs.
 
 ## Non-Negotiable Invariants
 - Keep dependency direction strict: domain and application depend on ports, never adapters.
@@ -9,7 +9,7 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 - Keep tests deterministic: fixed seeds, fixed fixtures, explicit tolerances, no hidden randomness.
 - Keep public API contracts stable unless change intent is explicitly `api change` and docs are updated.
 - Any non-trivial performance change must include reproducible benchmark evidence.
-- Public messaging must lead with deterministic quantum execution on BEAM and present hybrid quantum-AI only as an application of it; cite benchmarks only as internal, environment-specific references, never as official results or the lead proof; never imply universal provider breadth or deterministic live-QPU outcomes without explicit evidence.
+- Public messaging must lead with deterministic quantum simulation and execution on BEAM and present hybrid quantum-AI only as an application of it; describe parallelism only as deterministic ensemble parallelism and never call NxQuantum "the standard" (`docs/product-positioning.md` §11); cite benchmarks only as internal, environment-specific references, never as official results or the lead proof; never imply universal provider breadth or deterministic live-QPU outcomes without explicit evidence.
 
 ## Required Reading By Task Type
 | Task type | Required reading |
@@ -17,7 +17,7 @@ Build NxQuantum as a high-performance, deterministic, BEAM-native quantum ML lib
 | Feature delivery | `docs/roadmap.md`, `docs/development-flow.md`, `docs/bounded-context-map.md` |
 | Architecture/refactor | `docs/architecture.md`, `docs/bounded-context-map.md`, relevant `docs/adr/*.md` |
 | API/DX | `docs/api-stability.md`, `docs/development-flow.md`, `README.md` |
-| Positioning/docs | `README.md`, `docs/product-positioning.md`, `docs/vision.md`, `docs/decision-matrix.md`, latest `docs/python-alternatives-benchmark-*.md` |
+| Positioning/docs | `README.md`, `docs/product-positioning.md`, `docs/vision.md`, latest `docs/python-alternatives-benchmark-*.md` |
 | Verification | `docs/testing-strategy.md`, `docs/development-flow.md` |
 | Kernel/performance | `docs/performance-matrix.md`, latest `docs/python-alternatives-benchmark-*.md`, `docs/axon-integration.md` |
 | Provider integration/contracts | `docs/playbooks/provider-contracts.md`, `docs/migration-python-playbook.md`, `docs/python-comparison-workflows.md` |
