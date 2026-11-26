@@ -41,7 +41,7 @@ Items 4 to 15 are listed here so that the tier is explicit. This is a documentat
 
 Item 20 is listed on its own, so that items 16 to 19 stay unused:
 
-20. The `metadata.simulation` field of the `NxQuantum.Estimator.run/2` result, with its `method`, `evolution_path`, `state_backend` and `expectation_path` fields (KG-20). It is additive and never changes numeric results. `state_backend` is a neutral label (`:portable`, `:compiled`, `:other`, `:mixed`), not an Nx module. The field is documented in `docs/backend-support.md`, "Evolution Path Metadata".
+20. The `metadata.simulation` field of the `NxQuantum.Estimator.run/2` result, with its `method`, `evolution_path`, `state_backend` and `expectation_path` fields (KG-20). It is additive and never changes numeric results. `state_backend` is a neutral label (`:portable`, `:compiled`, `:other`, `:mixed`), not an Nx module. The field is documented in `docs/backend-support.md`, "Evolution Path Metadata". Change intent: api change (additive for the Estimator result; additive optional callbacks on the simulator port; state_backend is now a neutral label :portable, :compiled, :other, :mixed), experimental tier, owner: user, accepted 2026-11-26.
 
 Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
