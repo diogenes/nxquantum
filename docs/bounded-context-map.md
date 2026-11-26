@@ -288,7 +288,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 - Public assets:
   - side-by-side workflow guides
   - migration playbooks
-  - positioning with the decision matrix (`docs/product-positioning.md`; `docs/decision-matrix.md` is a pointer stub)
+  - positioning with the decision matrix and messaging rules (`docs/product-positioning.md`)
   - provider migration packs and release-hardening evidence (`v0.5`):
     - `docs/migration-packs.md`
     - `docs/provider-benchmark-matrix.md`

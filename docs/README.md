@@ -89,4 +89,3 @@ Start here to find a document by what you want to do. Each concern has one ownin
 ## History
 
 - [archive/](archive/): version-named specs, plans, and superseded benchmark runs. History only; not maintained.
-- [decision-matrix.md](decision-matrix.md): pointer stub, merged into `product-positioning.md` on 2026-10-30.

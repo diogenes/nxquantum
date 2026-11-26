@@ -1,6 +1,8 @@
 # NxQuantum
 
-Deterministic quantum execution on BEAM for Elixir and Nx teams.
+Deterministic quantum simulation and execution on BEAM.
+
+Same seed, same result: across repeat runs and across Nx and OTP upgrades on the default backend (see Determinism Scope).
 
 NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simulation, estimation, sampling, kernels, and transpilation inside your BEAM application, with no separate Python service. With fixed inputs, seed, runtime profile, and toolchain, simulator and fixture runs return the same outputs (see Determinism Scope). Jobs for IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI go through one typed lifecycle with versioned envelopes ([support tiers](docs/provider-support-catalog.md)); live hardware results remain probabilistic (see Determinism Scope).
 

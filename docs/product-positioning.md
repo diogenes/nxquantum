@@ -2,15 +2,13 @@
 
 Owns: the one line, the positioning statement, audience tiers, what users can rely on today (with evidence), the choose-NxQuantum-or-not guidance, and the messaging rules. Does not own: long-horizon strategy, ERRC, strategy canvas, and competitors (`docs/vision.md`); milestones, known gaps, and decisions (`docs/roadmap.md`).
 
-Merged with the former `docs/decision-matrix.md` on 2026-10-30 (H1.5). Revised in the 2026-11-25 strategy review: proposals PD-1 to PD-13 are in the `docs/roadmap.md` Decision Log, and the research inputs are in `docs/research/algorithm-landscape-2025-2026.md`.
+Merged with the former `docs/decision-matrix.md` on 2026-10-30 (H1.5; the pointer stub was removed on 2026-11-25). Revised in the 2026-11-25 strategy review: proposals PD-1 to PD-13 are in the `docs/roadmap.md` Decision Log, and the research inputs are in `docs/research/algorithm-landscape-2025-2026.md`.
 
 ## 1) One Line
 
-Deterministic quantum execution on BEAM for Elixir and Nx teams (decision D1, `docs/roadmap.md` Decision Log).
+**Deterministic quantum simulation and execution on BEAM.** Proof line: *same seed, same result, across repeat runs and Nx/OTP upgrades today, and across nodes once H2.1 passes gate D2.*
 
-Proposed refinement (PD-1, owner decides): **Deterministic quantum simulation and execution on BEAM.** Proof line: *same seed, same result, across repeat runs and Nx/OTP upgrades today, and across nodes once H2.1 passes gate D2.*
-
-Why refine it:
+Decision PD-1 (2026-11-25) refines D1 (2026-10-26), whose wording was "Deterministic quantum execution on BEAM for Elixir and Nx teams" (`docs/roadmap.md` Decision Log). Why it was refined:
 
 1. "Execution" alone hides what most users run, which is the simulator.
 2. "For Elixir and Nx teams" names the runtime, not the job the user needs done. The audience tiers (§3) carry the "who".

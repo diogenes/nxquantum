@@ -131,7 +131,6 @@ defmodule NxQuantum.MixProject do
         "docs/product-positioning.md",
         "docs/python-comparison-workflows.md",
         "docs/migration-python-playbook.md",
-        "docs/decision-matrix.md",
         "docs/livebook-tutorials.md",
         "docs/archive/python-alternatives-benchmark-2026-03-21.md",
         "docs/archive/python-alternatives-benchmark-2026-03-23-rerun.md",
@@ -227,8 +226,7 @@ defmodule NxQuantum.MixProject do
       ],
       "Product strategy": [
         "docs/vision.md",
-        "docs/roadmap.md",
-        "docs/decision-matrix.md"
+        "docs/roadmap.md"
       ],
       Contributing: [
         "CONTRIBUTING.md",
@@ -257,7 +255,7 @@ defmodule NxQuantum.MixProject do
   end
 
   defp description do
-    "Deterministic quantum circuit execution for Elixir on BEAM, built on Nx: Estimator, Sampler, Kernels, Transpiler, and a typed provider job lifecycle."
+    "Deterministic quantum simulation and execution for Elixir on BEAM, built on Nx: Estimator, Sampler, Kernels, Transpiler, and a typed provider job lifecycle."
   end
 
   defp package do
