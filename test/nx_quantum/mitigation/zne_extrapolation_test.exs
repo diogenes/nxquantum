@@ -127,6 +127,11 @@ defmodule NxQuantum.Mitigation.ZneExtrapolationTest do
                pass_error(:zne_richardson, scales: [1, 1.0, 2.0], values: [0.5, 0.5, 0.4])
     end
 
+    test "returns a typed error for distinct scales closer than 1.0e-9" do
+      assert {:error, %{code: :invalid_mitigation_input, reason: :duplicate_scales}} =
+               pass_error(:zne_richardson, scales: [1.0, 1.0 + 1.0e-12], values: [0.5, 0.4])
+    end
+
     test "returns a typed error when values are missing" do
       assert {:error, %{code: :invalid_mitigation_input, reason: :missing_values}} =
                pass_error(:zne_richardson, scales: [1.0, 2.0])
@@ -242,6 +247,35 @@ defmodule NxQuantum.Mitigation.ZneExtrapolationTest do
                Mitigation.pipeline(:not_a_result, [
                  {:zne_poly_ls, scales: [1.0, 2.0], values: [0.5, 0.4]}
                ])
+    end
+  end
+
+  describe "zne_poly_ls conditioning" do
+    # Scales 1, 10, 100, 1000 are widely spread, so the Gram matrix G = V'V of the
+    # degree-3 Vandermonde V is ill-conditioned. Four points and degree 3 make the
+    # fit exact interpolation, so the only error is rounding in solving G z = e0.
+    # A linear solve has forward error about cond(G) * eps, with eps = 2.2e-16 for
+    # float64. The tolerance 1.0e-12 * max(1.0, cond(G)) takes that bound's scaling
+    # with cond(G) and adds a fixed margin of about 4500x over eps for the other
+    # rounding in the dot product. The bound is heuristic, not tight. The test
+    # computes cond(G) from the same Gram matrix, using an SVD (singular values
+    # sorted descending, so cond = s_max / s_min).
+    test "recovers the value at zero for a known cubic within the conditioning tolerance" do
+      coefficients = [0.5, -2.0, 0.25, 1.0e-4]
+      scales = [1.0, 10.0, 100.0, 1000.0]
+      values = Enum.map(scales, &polynomial(coefficients, &1))
+
+      vandermonde =
+        Nx.tensor(Enum.map(scales, fn x -> Enum.map(0..3, &:math.pow(x, &1)) end), type: {:f, 64})
+
+      gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
+      {_u, singular, _vt} = Nx.LinAlg.svd(gram)
+      cond = Nx.to_number(singular[0]) / Nx.to_number(singular[3])
+      tolerance = @tol * max(1.0, cond)
+
+      entry = run_pass(:zne_poly_ls, scales: scales, values: values, degree: 3)
+
+      assert_in_delta entry.extrapolated_value, 0.5, tolerance
     end
   end
 

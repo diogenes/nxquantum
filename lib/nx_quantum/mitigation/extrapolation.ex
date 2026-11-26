@@ -48,9 +48,24 @@ defmodule NxQuantum.Mitigation.Extrapolation do
       length(Enum.uniq(floats(scales))) != length(scales) ->
         {:error, error(reason: :duplicate_scales, scales: scales)}
 
+      close_scales?(scales) ->
+        {:error, error(reason: :duplicate_scales, scales: scales)}
+
       true ->
         {:ok, scales}
     end
+  end
+
+  # Two scales closer than this are reported as duplicates: as abscissae merge,
+  # the Lagrange weights and the Vandermonde Gram matrix blow up.
+  @minimum_separation 1.0e-9
+
+  defp close_scales?(scales) do
+    scales
+    |> floats()
+    |> Enum.sort()
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.any?(fn [a, b] -> b - a < @minimum_separation end)
   end
 
   defp validate_values(opts, scales) do
