@@ -1,6 +1,6 @@
 # ADR 0013: Adapter option keys in the application option allow-list (KG-25 exception)
 
-- Status: Accepted (exception, 2026-11-26)
+- Status: Accepted (owner: user, 2026-11-26)
 - Date: 2026-11-26
 - Owner: user
 - Owner context: Primitive Estimation and Primitive Sampling (option validation at the public entrypoints)
