@@ -1,4 +1,4 @@
-# ADR 0013: Adapter option keys in the application option allow-list (KG-25 exception)
+# ADR 0014: Adapter option keys in the application option allow-list (KG-25 exception)
 
 - Status: Accepted (owner: user, 2026-11-26)
 - Date: 2026-11-26
