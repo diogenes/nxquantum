@@ -11,9 +11,12 @@ defmodule NxQuantum.OptionKeys do
   # expectation_result/2 or NxQuantum.Sampler.run/2 reads it from the caller's options,
   # or when the KG-22 cache and concurrency keys are named. Add a key in the same change
   # that starts reading it. Nested contents of `noise:` and `backend_opts:` are not checked.
+  # Adapter-specific keys are an exception recorded in docs/adr/0013-option-keys-adapter-exception.md.
 
   require Logger
 
+  # Exception (ADR 0013, owner: user): the five simulator and KG-22 cache keys below are adapter
+  # detail that the application allow-list names until a port carries the adapter's key list.
   # Estimator path: ObservableSpecs, Measurement, RuntimeProfile, ExecutionMode,
   # Stochastic, StrategyObservability, ResultBuilder, ExecuteCircuit, and the StateVector
   # simulator with its evolved-state cache and Pauli-expectation concurrency.

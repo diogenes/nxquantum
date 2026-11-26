@@ -70,6 +70,19 @@ defmodule NxQuantum.PublicApiContractTest do
              Runtime.resolve(:unknown_profile, runtime_available?: false)
   end
 
+  test "unknown option keys surface as metadata.unknown_options (list of atoms) on Sampler and Estimator results" do
+    circuit = Circuit.new(qubits: 1)
+
+    assert {:ok, %{metadata: %{unknown_options: [:seeed]}}} = Sampler.run(circuit, seeed: 1)
+
+    assert {:ok, %{metadata: %{unknown_options: unknown}}} =
+             Estimator.run(circuit, observable: :pauli_z, wire: 0, obsrvable: :pauli_x)
+
+    assert is_list(unknown)
+    assert Enum.all?(unknown, &is_atom/1)
+    assert :obsrvable in unknown
+  end
+
   defp assert_exported(module, function, arity) do
     assert Code.ensure_loaded?(module)
     assert {function, arity} in module.__info__(:functions)

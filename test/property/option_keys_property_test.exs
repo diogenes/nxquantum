@@ -22,7 +22,8 @@ defmodule NxQuantum.Property.OptionKeysPropertyTest do
   } do
     check all(
             base <- member_of(@reproducibility_keys),
-            misspelled <- misspelling(base)
+            misspelled <- misspelling(base),
+            initial_seed: 0
           ) do
       {:ok, default} = Sampler.run(circuit)
 
@@ -41,7 +42,8 @@ defmodule NxQuantum.Property.OptionKeysPropertyTest do
   } do
     check all(
             base <- member_of(@reproducibility_keys),
-            misspelled <- misspelling(base)
+            misspelled <- misspelling(base),
+            initial_seed: 0
           ) do
       valid_opts = valid_context(base)
       {:ok, default} = Estimator.run(circuit, valid_opts)
