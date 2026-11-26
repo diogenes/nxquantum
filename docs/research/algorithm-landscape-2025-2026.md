@@ -39,6 +39,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 
 ### 1. State-vector engine v2: fused, compiled, batched, with a precision option
 
+Roadmap: H2.4.
+
 - **Proposal:** fuse runs of gates into dense k-qubit blocks (k ≤ 4–5; diagonals separately), run one compiled program per plan, add a leading batch axis for sweeps, trajectories, and kernel rows, add `precision: :f32 | :f64`, and fuse the adjoint gradient so it keeps two states instead of every intermediate.
 - **Sources:**
   - arXiv:2511.14664 (Nov 2025), multi-GPU simulation and network performance: gate fusion balances arithmetic intensity; across GPUs, interconnect bisection bandwidth dominates. `preprint`.
@@ -50,6 +52,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 - **Falsifiable hypothesis:** on one host, fused EXLA evolution of a 20-qubit brickwork circuit is at least 5× faster than the current per-gate path on the same backend, and agrees with a float64 reference to 1e-10 in `:f64` mode.
 
 ### 2. Noise channels with deterministic batched trajectories, plus a small density-matrix oracle
+
+Roadmap: H2.5.
 
 - **Proposal:** a `NoiseModel` (per-gate and per-qubit Kraus channels: depolarizing, amplitude and phase damping, readout, Pauli-Lindblad), a trajectory executor that samples error patterns first, groups identical patterns, and runs each unique pattern once on the batch axis, and an exact density-matrix executor for up to about 12 qubits, used as a test oracle.
 - **Sources:**
@@ -63,6 +67,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 - **Why NxQuantum:** sampling error patterns before evolution turns noise into many independent, seedable units. Determinism then reduces to seed derivation and ordered reduction, which H2.1 already specifies.
 
 ### 3. Pauli-propagation estimator (Heisenberg picture)
+
+Roadmap: H2.6, after ADR 0013.
 
 - **Proposal:** a backend that evolves observables (as sparse Pauli sums) backwards through the circuit, truncating by coefficient, Pauli weight, or frequency, and reporting the truncated weight with the result. Noise enters as Pauli damping.
 - **Sources:**
@@ -78,6 +84,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 
 ### 4. Deterministic ensemble executor across BEAM nodes (H2.1)
 
+Roadmap: H2.1 (re-scoped).
+
 - **Proposal:** build H2.1 as an ensemble executor: shots, trajectories, parameter-shift evaluations, kernel tiles, and Pauli-propagation partitions fan out with derived seeds and are reduced in task-index order. Sharded state vectors stay out of scope (`docs/vision.md` §10).
 - **Sources:**
   - arXiv:2511.14664 (above): distributed state-vector performance is bound by interconnect bandwidth; in Qiskit, PennyLane, and Cirq, multi-GPU runs go through cuQuantum. `preprint`.
@@ -89,6 +97,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 
 ### 5. Hamiltonian simulation primitives and sample-based diagonalization (SQD, SKQD)
 
+Roadmap: H2.9.
+
 - **Proposal:** Pauli-evolution gates; first- and second-order Trotter formulas with error-bound reporting and a qDRIFT option; SQD (sample, recover configurations, project, diagonalize) and SKQD (sample Krylov states) workflows.
 - **Sources:**
   - Robledo-Moreno et al., chemistry beyond exact diagonalization on a quantum-centric supercomputer, Science Advances 11(25), eadu9991 (2025), arXiv:2405.05068: up to 77 qubits on IBM Heron with Fugaku post-processing; open-source `qiskit-addon-sqd`. `refereed`.
@@ -99,6 +109,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 - **Falsifiable hypothesis:** SKQD on a transverse-field Ising chain matches exact diagonalization ground energy within 1e-6 (relative) up to 16 qubits in `:f64` mode.
 
 ### 6. Error mitigation v2, checked against an exact noisy reference
+
+Roadmap: H2.7.
 
 - **Proposal:** Richardson and polynomial least-squares ZNE with error bars; noise scaling by gate folding and by amplifying channel rates in the noise model; seeded Pauli twirling; probabilistic error cancellation with the sampling overhead reported.
 - **Sources:**
@@ -112,6 +124,8 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 - **Falsifiable hypothesis:** on a 6-qubit noisy GHZ fixture, least-squares ZNE reduces absolute error against the noiseless value by at least 3× compared with no mitigation, and its reported error bar covers the true value in at least 95% of 200 seeded repetitions.
 
 ### 7. Stabilizer and Pauli-frame sampling with detector-error-model export
+
+Roadmap: H3.0 (demand-gated; `docs/vision.md` §11).
 
 - **Proposal:** a tableau simulator, a Pauli-frame sampler for bulk noisy shots, detector and observable annotations, Stim-compatible detector-error-model export, and a decoder port so external decoders plug in.
 - **Sources:**
@@ -129,7 +143,7 @@ Ranking rule: impact on the positioning (reproducible simulation on BEAM), feasi
 
 | Item | Source | Why not in the top 7 |
 | --- | --- | --- |
-| OpenQASM 3 import and export | No paper needed | Promoted by the strategy review (decision PD-13): it is the cheapest way for researchers outside Elixir to try NxQuantum on their circuits, and it lets the cross-framework harness share circuits |
+| OpenQASM 3 import and export | No paper needed | Promoted to H2.8 by the strategy review (decision PD-13): it is the cheapest way for researchers outside Elixir to try NxQuantum on their circuits, and it lets the cross-framework harness share circuits |
 | Matrix-product-state backend | arXiv:2508.10096 (2025); a vendor-run benchmark, arXiv:2607.09882 (2026) | Pauli propagation gives more differentiation per week for the Estimator workload; the benchmark is run by a vendor on its own product |
 | Decoded quantum interferometry demo | Jordan et al., Nature 646, 831–836 (2025), arXiv:2408.08292; limits in arXiv:2509.19966 | A good Livebook once a QFT and a classical decoder exist |
 | OTOC / "Quantum Echoes" stress test | Google Quantum AI, Nature 646, 825–830 (2025), arXiv:2506.10191 | A stress test for item 3's truncation limits |

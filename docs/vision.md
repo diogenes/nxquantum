@@ -145,15 +145,15 @@ Execution detail for H1 and H2 lives in `docs/roadmap.md`. H3 is detailed here b
   - compiler equivalence suite green;
   - Kano survey done.
 
-**H2: Distributed execution engine (2027)**
-- Goal: a single NxQuantum job fans out across BEAM nodes with seed-reproducible results and survives node loss; cut circuits execute across nodes and providers; FluxQ surfaces distributed runs.
-- Exit: decision gate D2 passed; one external team runs distributed jobs, directly or through FluxQ.
+**H2: Credible engine and deterministic scale-out (2027)** (restructured 2026-11-25)
+- Goal: the engine runs 24+ qubits on one device with an opt-in float64 mode and gate-level noise channels; a single NxQuantum job's ensemble work (sweeps, shots, noisy trajectories, observable partitions) fans out across BEAM nodes with seed-reproducible results and survives node loss; mitigation is checked against an exact noisy reference; FluxQ surfaces distributed runs. Circuit cutting moved to §11 (PD-8).
+- Exit: decision gate D2 passed; one external team runs distributed jobs, directly or through FluxQ; the H2 milestones' research hypotheses recorded as passed or failed (`docs/research/algorithm-landscape-2025-2026.md`).
 
 **H3: Deterministic distributed quantum systems (2028+, aligned with modular hardware)**
 
 | Milestone | Owner | Entry gate | Scope | Exit evidence |
 | --- | --- | --- | --- | --- |
-| H3.1 Systems twin alpha | NxQuantum | D3 passed | QPU modules, links, and decoders as processes; entanglement and decoherence models; fault injection; virtual-time replay | An external group reproduces a published distributed-QC result |
+| H3.1 Systems twin alpha | NxQuantum | D3 passed; prerequisites: H2.5 noise channels (decoherence models) and H3.0 stabilizer sampling (decoders as processes), see `docs/roadmap.md` | QPU modules, links, and decoders as processes; entanglement and decoherence models; fault injection; virtual-time replay | An external group reproduces a published distributed-QC result |
 | H3.2 Policy testing on the twin | FluxQ, with NxQuantum contracts | H3.1 exit | FluxQ routing and promotion policies run against twin failure scenarios | Policy decisions are reproducible against seeded twin scenarios |
 | H3.3 Twin to live | NxQuantum | H3.1 exit; vendors expose multi-module or multi-QPU control hooks | Swap twin adapters for real targets | Live and twin traces are contract-identical |
 | H3.4 Network control-plane exploration | FluxQ | Partner or testbed interest | Spike only: entanglement and resource scheduling across sites; possibly QKD key management, after market and standards are verified | Go/no-go memo |
@@ -191,16 +191,18 @@ Rebalance only after a decision gate passes. Announce only what is shipped and e
 
 | Idea | Trigger to un-park | Notes |
 | --- | --- | --- |
-| Clifford/stabilizer simulator | A named user needs QEC simulation | Commodity: Stim, Qiskit Aer (`stabilizer` method), CUDA-Q (`stim` target) (checked 2026-10-30: [Aer 0.18.2 docs](https://qiskit.github.io/qiskit-aer/stubs/qiskit_aer.AerSimulator.html), [CUDA-Q backends](https://nvidia.github.io/cuda-quantum/latest/using/backends/simulators.html)). Needs an ADR: `Ports.Simulator.apply_gates/3` returns amplitudes. |
+| Clifford/stabilizer simulator | A named user needs QEC simulation, or H3.1 planning (2026-11-25: listed as H3.0 in `docs/roadmap.md`, PD-7) | Scope it interop first: detector-error-model export and a decoder port, not a speed race. Commodity: Stim, Qiskit Aer (`stabilizer` method), CUDA-Q (`stim` target) (checked 2026-10-30: [Aer 0.18.2 docs](https://qiskit.github.io/qiskit-aer/stubs/qiskit_aer.AerSimulator.html), [CUDA-Q backends](https://nvidia.github.io/cuda-quantum/latest/using/backends/simulators.html)). Needs an ADR: `Ports.Simulator.apply_gates/3` returns amplitudes. |
 | FTQC resource estimation | Adoption interviews ask for it | PennyLane (`qp.estimator`) and CUDA-Q Logical ship it; Qiskit ships fault-tolerant compilation passes (checked 2026-10-30: [PennyLane v0.45](https://pennylane.ai/blog/2026/05/pennylane-release-0.45), [arXiv:2609.13388](https://arxiv.org/abs/2609.13388), [Qiskit v2.5](https://www.ibm.com/quantum/blog/qiskit-2-5-release-summary)) |
-| Tensor-network contraction engine | Benchmark win over dense at ≤20 qubits | `:tensor_network_fallback` is routing-only today |
-| Krylov/Lanczos time evolution | Hamiltonian-dynamics user | — |
+| Tensor-network contraction engine | Benchmark win over dense at ≤20 qubits | `:tensor_network_fallback` is routing-only today. Since 2026-11-25 (PD-7) the beyond-state-vector method is the Pauli-propagation estimator (H2.6); routing the label to it is a later `api change` |
+| Distributed circuit cutting (formerly H2.2; parked 2026-11-25, PD-8) | A named user with circuits beyond one device, and D2 passed | Sampling overhead grows exponentially with the number of cuts |
 | Qiskit C API compiler adapter | Distributed compile-farm demand | Opt-in adapter only; the native compiler stays the default |
 | Migration assurance toolkit (ADR 0007) | Teams migrating Python workflows ask for it | Scoped `Migration.AI*` slice already shipped |
 | New promotion-gate features in `Migration.AIGates` | — | Frozen: keep the API stable; promotion policy grows in FluxQ (P3) |
 | Analog/non-gate-model provider workflows | Provider demand | — |
 | Real-data hybrid rerank lane (BEIR SciFact; NFCorpus dropped) | A named user needs hybrid rerank quality evidence on real data, or D1 is reopened | Parked by D1 (2026-10-26). In-repo datasets are synthetic (KG-5). License notes from the 2026-10-25 intake (SciFact upstream LICENSE.md: CC BY 4.0 claims, ODC-By 1.0 abstracts, fetch-only and aggregates-only; NFCorpus: academic use only) and the Bumblebee path (0.8 needs nx ~> 1.0, axon ~> 0.9) are unverified in-repo; recheck at un-park. Bumblebee needs dependency justification and an architecture owner. |
 | Lean-verified gate identities | Research only | H1.4 covers identities with property tests |
+
+Un-parked on 2026-11-25 (PD-7): Krylov/Lanczos time evolution, now H2.9 (Hamiltonian simulation, SQD, SKQD) in `docs/roadmap.md`.
 
 ## 12. Research Intake Rule
 
