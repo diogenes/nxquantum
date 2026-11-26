@@ -340,7 +340,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 - Contexts named:
   - Primitive Estimation Context (3): `NxQuantum.Estimator.run/2`, `expectation_result/2`
   - Primitive Sampling and Mitigation Context (4): `NxQuantum.Sampler.run/2`
-- Rule: an unknown top-level key changes no result; it logs one warning and adds `metadata.unknown_options`. Adapter-specific keys on the allow-list are an exception recorded in `docs/adr/0013-option-keys-adapter-exception.md`.
+- Rule: an unknown top-level key changes no result; it logs one warning and adds `metadata.unknown_options`. Adapter-specific keys on the allow-list are an exception recorded in `docs/adr/0014-option-keys-adapter-exception.md`.
 - Invariant: the allow-list is the only place a top-level option key is declared for these entrypoints.
 
 ## Planned Contexts (2027 roadmap, added 2026-11-25)
