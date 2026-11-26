@@ -6,7 +6,10 @@
 # script works on branches with and without byte accounting.
 #
 # Run:
-#   NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 mise exec -- mix run bench/kg17_cache_miss_bench.exs
+#   NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 KG17_LABEL=branch mix run bench/kg17_cache_miss_bench.exs
+#
+# Output: one "KG17 <label> run=<i> ms=<float> retained_bytes=<int>" line per run, then one
+# "KG17 <label> median_ms=<float> retained_bytes=<int>" line. KG17_LABEL defaults to "branch".
 #
 # Determinism: the circuit has no random inputs (fixed angles). The seed is set for the harness only.
 
@@ -17,7 +20,9 @@ alias NxQuantum.Gates
 :rand.seed(:exsss, {0, 0, 0})
 
 qubits = 20
-iterations = 3
+iterations = 5
+# Label prefixes every result line so branch and main runs can be told apart in one CI log.
+label = System.get_env("KG17_LABEL", "branch")
 table = :nxq_state_vector_matrix_cache
 
 circuit = fn ->
@@ -75,15 +80,21 @@ _ = run_once.()
 
 results = for _ <- 1..iterations, do: run_once.()
 
-IO.puts("kg17_cache_miss_bench qubits=#{qubits} seed=0 iterations=#{iterations}")
+IO.puts("kg17_cache_miss_bench label=#{label} qubits=#{qubits} seed=0 iterations=#{iterations}")
 
-Enum.with_index(results, 1)
-|> Enum.each(fn {{micros, entries, bytes}, i} ->
-  IO.puts(
-    "iteration=#{i} miss_wall_ms=#{Float.round(micros / 1000, 2)} " <>
-      "retained_entries=#{entries} retained_bytes=#{bytes}"
-  )
+# Per-run lines: wall time of the miss path in ms, and bytes retained by the structure cache.
+rows =
+  results
+  |> Enum.with_index(1)
+  |> Enum.map(fn {{micros, _entries, bytes}, i} -> {i, micros / 1000, bytes} end)
+
+Enum.each(rows, fn {i, ms, bytes} ->
+  IO.puts("KG17 #{label} run=#{i} ms=#{Float.round(ms, 2)} retained_bytes=#{bytes}")
 end)
 
-best_ms = results |> Enum.map(fn {micros, _, _} -> micros end) |> Enum.min() |> Kernel./(1000)
-IO.puts("best_miss_wall_ms=#{Float.round(best_ms, 2)}")
+# iterations is odd (5), so the median is the middle sample of each sorted list.
+median = fn values -> values |> Enum.sort() |> Enum.at(div(length(values), 2)) end
+median_ms = rows |> Enum.map(fn {_, ms, _} -> ms end) |> median.()
+median_bytes = rows |> Enum.map(fn {_, _, bytes} -> bytes end) |> median.()
+
+IO.puts("KG17 #{label} median_ms=#{Float.round(median_ms, 2)} retained_bytes=#{median_bytes}")
