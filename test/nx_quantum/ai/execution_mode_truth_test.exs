@@ -108,6 +108,8 @@ defmodule NxQuantum.AI.ExecutionModeTruthTest do
     end
   end
 
+  # Smoke check on source text, not a behavior proof: it greps the handler sources for
+  # `mode: :quantum`. The behavior tests above are the proof of the reported mode.
   test "a bundled handler source reports :quantum only when it makes a simulator or provider call" do
     for path <- @bundled_handler_sources do
       source = File.read!(path)
