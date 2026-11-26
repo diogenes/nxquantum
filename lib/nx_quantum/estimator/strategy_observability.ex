@@ -1,18 +1,24 @@
 defmodule NxQuantum.Estimator.StrategyObservability do
   @moduledoc false
 
-  @default_parallel_threshold 96
-  @cache_status_key :nxq_estimator_cache_status
-  @fused_kernel_resolution_key :nxq_fused_kernel_resolution
+  alias NxQuantum.Ports.Simulator
 
+  @default_parallel_threshold 96
+  @unreported_simulation %{method: nil, evolution_path: nil, state_backend: nil, expectation_path: nil}
+
+  # The simulation facts arrive through `apply_opts[:simulation]`, the return value of the simulator port.
+  # Nothing here reads or writes process state.
   @spec apply(keyword(), map(), [map()], keyword()) :: keyword()
   def apply(opts, selection, observable_specs, apply_opts \\ []) do
     observable_strategy = observable_strategy(observable_specs, opts)
     runtime_lane = runtime_lane(selection.selected_profile)
-    cache_status = cache_status(opts, apply_opts)
-    fused_kernel = fused_kernel_resolution()
+    executed? = Keyword.get(apply_opts, :executed?, true)
+    facts = Keyword.get(apply_opts, :simulation, Simulator.unreported_facts())
+    cache_status = cache_status(opts, facts)
+    fused_kernel = facts.fused_kernel
 
     opts
+    |> Keyword.put(:estimator_simulation, simulation(executed?, facts))
     |> Keyword.put(:estimator_observable_strategy, observable_strategy)
     |> Keyword.put(:estimator_runtime_lane, runtime_lane)
     |> Keyword.put(:estimator_cache_mode, cache_mode(opts))
@@ -26,6 +32,32 @@ defmodule NxQuantum.Estimator.StrategyObservability do
       cache_status,
       fused_kernel.selected_kernel
     ])
+  end
+
+  # Combines the facts of several simulator calls that belong to one run. Equal values are kept;
+  # differing values collapse to :mixed.
+  @spec merge_facts([Simulator.simulation_facts()]) :: Simulator.simulation_facts()
+  def merge_facts([]), do: Simulator.unreported_facts()
+  def merge_facts([single]), do: single
+
+  def merge_facts([first | _] = facts) do
+    fused_source = Enum.find(facts, first, &(&1.fused_kernel.selected_kernel != :unknown))
+
+    %{
+      method: collapse(facts, :method),
+      evolution_path: collapse(facts, :evolution_path),
+      state_backend: collapse(facts, :state_backend),
+      cache_status: collapse(facts, :cache_status),
+      expectation_path: collapse(facts, :expectation_path),
+      fused_kernel: fused_source.fused_kernel
+    }
+  end
+
+  defp collapse(facts, key) do
+    case facts |> Enum.map(&Map.fetch!(&1, key)) |> Enum.uniq() do
+      [single] -> single
+      _ -> :mixed
+    end
   end
 
   defp observable_strategy(observable_specs, opts) do
@@ -51,39 +83,29 @@ defmodule NxQuantum.Estimator.StrategyObservability do
     end
   end
 
-  defp cache_status(opts, apply_opts) do
-    executed? = Keyword.get(apply_opts, :executed?, true)
-
+  defp cache_status(opts, facts) do
     case cache_mode(opts) do
       :disabled ->
-        consume_runtime_cache_status()
         :bypass
 
       :enabled ->
         case Keyword.fetch(opts, :estimator_cache_status) do
-          {:ok, status} ->
-            status
-
-          :error ->
-            if executed? do
-              consume_runtime_cache_status()
-            else
-              :unknown
-            end
+          {:ok, status} -> status
+          :error -> facts.cache_status
         end
     end
   end
 
-  defp consume_runtime_cache_status do
-    Process.delete(@cache_status_key) || :unknown
-  end
+  # Reported only from the simulator's facts. A simulator that reports none leaves the fields nil.
+  # expectation_path is nil when nothing was evaluated in this call.
+  defp simulation(_executed?, %{method: nil}), do: @unreported_simulation
 
-  defp fused_kernel_resolution do
-    Process.delete(@fused_kernel_resolution_key) ||
-      %{
-        requested_kernel: :unknown,
-        selected_kernel: :unknown,
-        reason: :not_applicable
-      }
+  defp simulation(executed?, facts) do
+    %{
+      method: facts.method,
+      evolution_path: facts.evolution_path,
+      state_backend: facts.state_backend,
+      expectation_path: if(executed?, do: facts.expectation_path)
+    }
   end
 end

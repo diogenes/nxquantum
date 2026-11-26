@@ -37,12 +37,16 @@ defmodule NxQuantum.Estimator.Batch.Strategies.Deterministic do
            ) do
       result_opts = RuntimeProfile.apply_selection_metadata(opts, selection)
 
-      values =
-        measured_circuit
-        |> ExecuteCircuit.expectations(observable_specs, [runtime_profile: selection.profile] ++ result_opts)
-        |> Nx.as_type({:f, 32})
+      {values, facts} =
+        ExecuteCircuit.expectations_with_simulation(
+          measured_circuit,
+          observable_specs,
+          [runtime_profile: selection.profile] ++ result_opts
+        )
 
-      result_opts = StrategyObservability.apply(result_opts, selection, observable_specs)
+      values = Nx.as_type(values, {:f, 32})
+
+      result_opts = StrategyObservability.apply(result_opts, selection, observable_specs, simulation: facts)
       {:ok, ResultBuilder.build(values, observable_specs, result_opts)}
     end
   end

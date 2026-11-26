@@ -48,6 +48,10 @@ The AI tool-contract surface is declared experimental as item 21. It is a separa
 
 21. `NxQuantum.AI` (the tool-contract surface: `NxQuantum.AI.run_tool/2` and its request and result envelopes). The tier is experimental. The `schema_version: "v2"` success envelope is the first versioned break under this tier: an `api change`, recorded in CHANGELOG `[Unreleased]` (schema v1 to v2 for success envelopes; the error envelope stays `"v1"`). Tool names and request envelopes are unchanged.
 
+Item 20 is listed on its own, so that items 16 to 19 stay unused:
+
+20. The `metadata.simulation` field of the `NxQuantum.Estimator.run/2` result, with its `method`, `evolution_path`, `state_backend` and `expectation_path` fields (KG-20). It is additive and never changes numeric results. `state_backend` is a neutral label (`:portable`, `:compiled`, `:other`, `:mixed`), not an Nx module. The field is documented in `docs/backend-support.md`, "Evolution Path Metadata". Change intent: api change (additive for the Estimator result; additive optional callbacks on the simulator port; state_backend is now a neutral label :portable, :compiled, :other, :mixed), experimental tier, owner: user, accepted 2026-11-26.
+
 Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
 Experimental does not mean untested. The notebooks under `examples/livebook/` use several of these items, and `test/nx_quantum/livebooks_test.exs` runs them (`docs/livebook-tutorials.md`). A notebook that passes shows the current behavior, not a stability promise.
