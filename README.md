@@ -116,8 +116,9 @@ mix run examples/quantum_kernel_classifier.exs
 
 The roadmap is the source of truth for status ([docs/roadmap.md](docs/roadmap.md)). Next up:
 
-- H1.5 adoption launch (in progress): Livebooks, launch write-up, Kano survey.
-- H2.1 within-job distributed execution: deterministic fan-out across BEAM nodes, gated by decision D2.
+- H1.5 adoption launch (in progress) and H1.7 claims and option hygiene.
+- 2027 engine track: state-vector engine v2 with an opt-in float64 mode (H2.4), OpenQASM 3 interop (H2.8), gate-level noise channels with deterministic trajectories (H2.5).
+- 2027 differentiator track: deterministic ensemble fan-out across BEAM nodes (H2.1, gated by decision D2), error mitigation checked against an exact noisy reference (H2.7), a Pauli-propagation estimator (H2.6), and Hamiltonian simulation with SQD/SKQD (H2.9).
 - Case studies from named external BEAM deployments (none documented yet).
 
 ## Docs

@@ -65,7 +65,7 @@ Known gaps:
 
 | ID | Gap | Addressed by |
 | --- | --- | --- |
-| KG-1 | `:tensor_network_fallback` is a routing label; no tensor-network engine executes it | Closed in H1.1: documented as routing-only (`docs/backend-support.md`, `Runtime` type comment); engine parked |
+| KG-1 | `:tensor_network_fallback` is a routing label; no tensor-network engine executes it | Closed in H1.1: documented as routing-only (`docs/backend-support.md`, `Runtime` type comment); engine parked. PD-7 (2026-11-25): the beyond-state-vector method becomes H2.6 |
 | KG-2 | Phases 14–16 were never checked off | Closed in H1.1: audit recorded in Shipped History; partial items listed there |
 | KG-3 | No property tests prove compiler passes preserve semantics (Phase 15 deliverable 6); `compiler_test.exs` is example-based | Closed in H1.4: property suites and dense reference (see H1.4 Evidence) |
 | KG-4 | Phase 17 Migration Assurance Toolkit not delivered | Closed in H1.1: ADR 0007 Deferred; parked (`docs/vision.md` §11) |
@@ -74,33 +74,33 @@ Known gaps:
 | KG-7 | `ProviderBridge.Serialization` serializes envelopes, but no decode/rehydrate path was found for resuming persisted jobs (needed by FluxQ) | H1.2 |
 | KG-8 | Doc sprawl: about 60 docs, version-named living docs, pointer-only duplicates | Closed in H1.1: 34 living docs in `docs/`, 24 history docs in `docs/archive/` |
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
-| KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement |
+| KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement. Reopen proposed 2026-11-25 (PD-4): opt-in `:f64` in H2.4, default unchanged |
 | KG-11 | Hybrid benchmark scripts emit fixed figures, not measurements: quality (`ndcg_at_10`, `map_at_10`, `objective_gap_to_known_best`), the TurboQuant KPIs in `bench/hybrid_quantum_ai_benchmark.exs` (`quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`), and every `latency_fallback_impact` metric. Lanes report dataset ids they do not load: both rerank lanes report `rq_small_v1` (inline scores, or generated sin/cos embeddings unless `--dataset-path` is given), and `constrained_optimization_assistant` reports the nonexistent `co_knapsack_v1`. `bench/turboquant_rerank_benchmark.exs` computes memory and compression from the tool result | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
-| KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | unassigned (owner decision) |
+| KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | H1.7 (PD-6) |
 | KG-13 | The OpenTelemetry-named observability adapter (`lib/nx_quantum/adapters/observability/open_telemetry.ex`) records spans, metrics, and logs in the process dictionary; there is no OpenTelemetry dependency or exporter, and `docs/observability.md` calls it the production emitter adapter | unassigned (owner decision) |
 | KG-14 | `ProviderBridge.Serialization` raises on struct values (`Nx.Tensor`, `DateTime`, `MapSet`) in envelope payload, metadata, reason, or response (`lib/nx_quantum/provider_bridge/serialization.ex`, `stringify_value/1` → `stringify_keys/1`), contrary to `serialize/1`'s `{:ok, String.t()}` spec. A fix needs a v1 encoding decision under the Envelope Compatibility Policy | unassigned (owner decision) |
 | KG-15 | The acceptance scenario 'Calibration payload provenance is normalized' (`features/provider_mitigation_calibration_contracts.feature`) asserts a constant its own step injects; `CalibrationPayload.validate/1` drops provenance | unassigned (owner decision) |
-| KG-16 | `cpu_compiled` does not speed up state evolution. Both profiles build and evolve the state on Nx's default backend (`lib/nx_quantum/adapters/simulators/state_vector/state.ex`), and `cpu_compiled` then transfers the evolved state to EXLA (`lib/nx_quantum/adapters/simulators/state_vector.ex`), so only the expectation step runs on EXLA | unassigned (owner decision) |
-| KG-17 | The state-vector structure cache is capped at 4096 entries, not by bytes (`lib/nx_quantum/adapters/simulators/state_vector/cache.ex`). Each CNOT permutation is an s64 tensor of 2^n entries (`lib/nx_quantum/adapters/simulators/state_vector/matrix_library.ex`), which is 134 MB at 24 qubits, and runs of consecutive CNOTs add a composed permutation each (`lib/nx_quantum/adapters/simulators/state_vector/compiled_plan.ex`). By code reading (not measured), a 24-qubit brickwork family keeps about 25 such tensors resident, roughly 3.4 GB. The evolved-state cache has a byte cap (`lib/nx_quantum/adapters/simulators/state_vector/evolved_state_cache.ex`); this cache does not | unassigned (owner decision) |
+| KG-16 | `cpu_compiled` does not speed up state evolution. Both profiles build and evolve the state on Nx's default backend (`lib/nx_quantum/adapters/simulators/state_vector/state.ex`), and `cpu_compiled` then transfers the evolved state to EXLA (`lib/nx_quantum/adapters/simulators/state_vector.ex`), so only the expectation step runs on EXLA | H2.4 (PD-3) |
+| KG-17 | The state-vector structure cache is capped at 4096 entries, not by bytes (`lib/nx_quantum/adapters/simulators/state_vector/cache.ex`). Each CNOT permutation is an s64 tensor of 2^n entries (`lib/nx_quantum/adapters/simulators/state_vector/matrix_library.ex`), which is 134 MB at 24 qubits, and runs of consecutive CNOTs add a composed permutation each (`lib/nx_quantum/adapters/simulators/state_vector/compiled_plan.ex`). By code reading (not measured), a 24-qubit brickwork family keeps about 25 such tensors resident, roughly 3.4 GB. The evolved-state cache has a byte cap (`lib/nx_quantum/adapters/simulators/state_vector/evolved_state_cache.ex`); this cache does not | H2.4 |
 | KG-18 | In batch estimation, the first observable picks the evolution path: `Deterministic.run/3` sets `measurement: hd(observable_specs)` (`lib/nx_quantum/estimator/batch/strategies/deterministic.ex`), and `RealPauliZ` applies only to `:pauli_z` (`lib/nx_quantum/adapters/simulators/state_vector/evolution_strategy/real_pauli_z.ex`). A batch of real gates that starts with X or Y therefore takes the complex path | unassigned (owner decision) |
-| KG-19 | There is no public multi-qubit Pauli observable. Observables are `:pauli_x \| :pauli_y \| :pauli_z` on a single `wire` (`lib/nx_quantum/observables.ex`, `lib/nx_quantum/estimator/observable_specs.ex`). ⟨Z_a Z_b⟩ is reachable only through the circuit identity: apply CNOT(a,b), then measure Z_b | unassigned (owner decision) |
-| KG-20 | No public facade reports the evolution path (RealPauliZ or Complex). `Estimator.Result.metadata` has no path field (`lib/nx_quantum/estimator/result_builder.ex`), and `EvolutionStrategy` is `@moduledoc false` (`lib/nx_quantum/adapters/simulators/state_vector/evolution_strategy.ex`). The H1.3 path evidence therefore lives in a test that calls the internal selector and mirrors KG-18's rule (`test/nx_quantum/bench_evolution_path_test.exs`, merged by the bench PR) | unassigned (owner decision) |
-| KG-21 | Sparse Z-mask observables over counts cannot be built through a documented API. `Estimator.sampled_expectation_from_counts/2` accepts `sparse_pauli: %SparsePauli{}`, but the `SparsePauli` module is `@moduledoc false` (`lib/nx_quantum/observables/sparse_pauli.ex`). For that reason the H1.3 `sampled_counts_sparse_terms` NxQuantum lane is not run | unassigned (owner decision) |
+| KG-19 | There is no public multi-qubit Pauli observable. Observables are `:pauli_x \| :pauli_y \| :pauli_z` on a single `wire` (`lib/nx_quantum/observables.ex`, `lib/nx_quantum/estimator/observable_specs.ex`). ⟨Z_a Z_b⟩ is reachable only through the circuit identity: apply CNOT(a,b), then measure Z_b | H2.6 deliverable 2 |
+| KG-20 | No public facade reports the evolution path (RealPauliZ or Complex). `Estimator.Result.metadata` has no path field (`lib/nx_quantum/estimator/result_builder.ex`), and `EvolutionStrategy` is `@moduledoc false` (`lib/nx_quantum/adapters/simulators/state_vector/evolution_strategy.ex`). The H1.3 path evidence therefore lives in a test that calls the internal selector and mirrors KG-18's rule (`test/nx_quantum/bench_evolution_path_test.exs`, merged by the bench PR) | H2.4 (evolution path in result metadata) |
+| KG-21 | Sparse Z-mask observables over counts cannot be built through a documented API. `Estimator.sampled_expectation_from_counts/2` accepts `sparse_pauli: %SparsePauli{}`, but the `SparsePauli` module is `@moduledoc false` (`lib/nx_quantum/observables/sparse_pauli.ex`). For that reason the H1.3 `sampled_counts_sparse_terms` NxQuantum lane is not run | H2.6 deliverable 2 |
 | KG-22 | The cache and concurrency options are undocumented, and the cache options fail open. `cache_evolved_state`, `cache_parsed_counts`, and `cache_mask_lookup_plan` are read with `Keyword.get(opts, key, true)`, so a misspelled key silently leaves the cache on. `parallel_observables`, `max_concurrency`, and `sampled_parallel_mode` are also undocumented. H1.3 cold mode depends on these options; the bench guards it with the library-reported `strategy_observability.cache_mode` on the batch path. Keeping them internal is deliberate, because documenting them is an `api change` | unassigned (owner decision) |
 | KG-23 | Pre-existing boundary breach. `lib/nx_quantum/ai/tools/kernel_rerank/dataset_csv.ex` references `bench/datasets` from `lib/`, contrary to `docs/bounded-context-map.md` (bench must never be referenced from `lib/`). Fixing it needs a refactor-intent change | unassigned (owner decision; refactor) |
 | KG-24 | `NxQuantum.Performance.benchmark_matrix/2` and `compare_batched_workflows/3` return modeled latency and throughput (a formula in `lib/nx_quantum/performance/model.ex`), not measurements, under "benchmark" names (`lib/nx_quantum/performance.ex`, whose moduledoc calls them "Deterministic scale/performance helpers for benchmark evidence and CI gates"). Docs must not cite them as measured. Renaming or removing them is an `api change`. H1.5 PR-1 removed the modeled figures from `docs/case-study-beam-integration.md` | unassigned (owner decision) |
-| KG-25 | Unknown or misspelled options are silently ignored. For example, `Sampler.run(c, seeed: 1)` runs with the default seed (0), and `Estimator.run/2` accepts `obsrvable:` and falls back to `:pauli_z` (checked 2026-10-30). Options are not validated at the boundary, and `docs/api-stability.md` states no option-validation rule (checked 2026-10-30, after H1.5 PR-2 added the experimental tier). Fixing it is an `api change` | unassigned (owner decision) |
+| KG-25 | Unknown or misspelled options are silently ignored. For example, `Sampler.run(c, seeed: 1)` runs with the default seed (0), and `Estimator.run/2` accepts `obsrvable:` and falls back to `:pauli_z` (checked 2026-10-30). Options are not validated at the boundary, and `docs/api-stability.md` states no option-validation rule (checked 2026-10-30, after H1.5 PR-2 added the experimental tier). Fixing it is an `api change` | H1.7, phase 1 (warning), then a typed error in a later minor |
 | KG-26 | `config :nx_quantum, :observability` is documented in `docs/observability.md`, but no code reads it (no `Application.get_env(:nx_quantum, :observability)` call in `lib/`) | unassigned (owner decision) |
 | KG-27 | Estimator and Sampler emit no observability signals. Neither calls the `ObservabilityEmitter` port, and `lib/` has no `:telemetry` call. Only `ProviderBridge` lifecycle operations emit, through the port, when `observability: [enabled: true]` is set (`lib/nx_quantum/observability.ex`, `lib/nx_quantum/observability/profile.ex`). Users who want per-call signals wrap the calls themselves (`examples/livebook/supervised_service.livemd`) | unassigned (owner decision) |
 | KG-28 | `ObservabilityEmitter` callback specs are wider than what `NxQuantum.Observability` needs. `span_start/3` is specced to return `map()` but must return `:trace_id` and `:span_id` (`lib/nx_quantum/ports/observability_emitter.ex`, `lib/nx_quantum/observability.ex`). An emitter that matches the specs and returns `%{}`, or any emitter that raises, makes `ProviderBridge.run_lifecycle/3` raise instead of returning a typed error (the `rescue` in `lib/nx_quantum/application/provider_lifecycle/dispatcher.ex` wraps only the provider call). Fixing it is an `api change` | unassigned (owner decision) |
 | KG-29 | Notebooks are checked by an extractor in the test VM (`test/nx_quantum/livebooks_test.exs`), not by Livebook itself. Livebook-specific behaviour is untested: resolving the setup-cell path against the runtime working directory, and `Mix.install` resolution | unassigned (owner decision) |
-| KG-30 | The Estimator `noise:` option is a scalar transform of the final expectation, not a noise channel. `Stochastic.apply_noise` (`lib/nx_quantum/estimator/stochastic.ex`, `@moduledoc false`) computes `E·(1−p_dep)·(1−γ) + γ` on the ideal value, so the result does not depend on circuit depth, gate count, or which qubits the gates touch. The `+γ` shift is the ⟨Z⟩ formula for amplitude damping, and it is applied to every observable. Checked 2026-11-25 on `main` (69d5bfc), default backend: with `noise: [depolarizing: 0.1, amplitude_damping: 0.2]`, ⟨Z⟩ is 0.92 after 1 gate and after 100 gates; after H, ⟨X⟩ with `amplitude_damping: 0.2` is 1.0, where an amplitude-damping channel gives √0.8 ≈ 0.894. `features/noise_and_shots.feature` names these "noise channels" but only checks the direction of the change. Changing the option's semantics is an `api change` | docs relabeled 2026-11-25 (`docs/model-recipes.md`); channel-based noise planned (decision PD-5) |
+| KG-30 | The Estimator `noise:` option is a scalar transform of the final expectation, not a noise channel. `Stochastic.apply_noise` (`lib/nx_quantum/estimator/stochastic.ex`, `@moduledoc false`) computes `E·(1−p_dep)·(1−γ) + γ` on the ideal value, so the result does not depend on circuit depth, gate count, or which qubits the gates touch. The `+γ` shift is the ⟨Z⟩ formula for amplitude damping, and it is applied to every observable. Checked 2026-11-25 on `main` (69d5bfc), default backend: with `noise: [depolarizing: 0.1, amplitude_damping: 0.2]`, ⟨Z⟩ is 0.92 after 1 gate and after 100 gates; after H, ⟨X⟩ with `amplitude_damping: 0.2` is 1.0, where an amplitude-damping channel gives √0.8 ≈ 0.894. `features/noise_and_shots.feature` names these "noise channels" but only checks the direction of the change. Changing the option's semantics is an `api change` | docs relabeled 2026-11-25 (`docs/model-recipes.md`); channel-based noise in H2.5 (PD-5) |
 
 ---
 
 ## Horizon 1 - Honest, Evidenced, Embeddable (Q4 2026 – Q1 2027)
 
-Order: H1.1 first. H1.2, H1.3, and H1.4 then run in parallel. H1.5 comes after H1.3, because decision D1 shapes the messaging. H1.6 merges before any H1.3 benchmark run, so H1.3 evidence describes the upgraded stack.
+Order: H1.1 first. H1.2, H1.3, and H1.4 then run in parallel. H1.5 comes after H1.3, because decision D1 shapes the messaging. H1.6 merges before any H1.3 benchmark run, so H1.3 evidence describes the upgraded stack. H1.7 (added 2026-11-25) follows H1.5 deliverable 1 and must finish before the H1.5 launch post, or the post leaves the bundled AI handlers out (PD-6).
 
 ### H1.1 - Status Truth and Docs Consolidation
 
@@ -305,23 +305,169 @@ Review gate:
 5. A diff audit shows no loosened test tolerance, no changed seed, and no regenerated snapshot.
 6. Fresh-clone first-compile time with EXLA 1.0 is recorded (input to the H1.5 time-to-first-result target).
 
+### H1.7 - Claims and Option Hygiene
+
+- Status: planned
+- Intent: api change
+- Seats: Lead, DX, Critic, Verifier, Docs sync (claims audit)
+- Depends on: H1.5 deliverable 1
+- Target release: 0.12.0 if the owner decides PD-6 before the release cut; otherwise 0.13.0, and the launch post leaves the bundled AI handlers out (PD-6)
+
+Goal:
+
+1. No result reports a quantum execution mode for a classical computation (KG-12).
+2. A misspelled option can no longer silently change a seeded result (KG-25). This starts with the options that decide reproducibility: `seed`, `shots`, `observable`, `wire`, `runtime_profile`, and `noise`.
+
+Implementation deliverables:
+
+1. KG-12: the bundled rerank and constrained-optimization handlers report `execution.mode: :classical` (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, `lib/nx_quantum/ai/tool_runner.ex`). The change follows the versioning rule in `docs/quantum-ai-tool-contracts.md`, and that document's references to the nonexistent `constrained_optimize.v1` / `constrained_optimize.ex` are corrected.
+2. KG-25, phase 1: `Estimator.run/2`, `Estimator.expectation_result/2`, and `Sampler.run/2` validate option keys at the boundary against a declared schema that includes the internal cache and concurrency keys (KG-22). An unknown key adds a typed warning to result metadata and logs once (*tentative*: `lib/nx_quantum/options.ex`). Phase 2, a typed error, is a later minor release with a CHANGELOG migration note.
+3. Docs: an option-validation rule in `docs/api-stability.md`; `docs/product-positioning.md` §8 and §11 updated; the launch draft checklist gains the PD-6 item.
+
+Review gate:
+
+1. A contract test fails if any bundled AI handler reports `:quantum` without a simulator or provider call (*tentative*: `test/nx_quantum/ai/execution_mode_truth_test.exs`).
+2. A property test over generated misspellings of `seed`, `shots`, and `observable` shows every call returns the warning and none silently runs with the default seed.
+3. `mix quality`, `mix dialyzer`, and `mix test.domain_coverage` (100%) are green. Provider envelope snapshots are unchanged.
+
 ---
 
-## Horizon 2 - Distributed Execution Engine (2027)
+## Horizon 2 - Credible Engine and Deterministic Scale-Out (2027)
 
 Entry: H1.1 and H1.2 done. Distribution here is within a single job. Orchestration across jobs stays in FluxQ.
+
+Restructured on 2026-11-25 by the strategy review (decisions PD-2 to PD-13). H2 used to be distribution only. It now has two tracks, because a reproducibility guarantee only matters on an engine that can run the circuit and model its noise:
+
+1. **Engine track:** H2.4 (engine v2 and the float64 option), H2.8 (OpenQASM 3), H2.5 (noise channels and deterministic trajectories).
+2. **Differentiator track:** H2.1 (deterministic ensemble executor), H2.7 (mitigation checked against a noisy reference), H2.6 (Pauli-propagation estimator), H2.9 (Hamiltonian simulation, SQD, SKQD). H2.3 closes the horizon with FluxQ and a launch.
+
+H2.2 (distributed circuit cutting) moved to Parked (PD-8; `docs/vision.md` §11). Its id is retired.
+
+Planned sequence (one engineer fluent in Nx; the dates are a plan, not a commitment):
+
+| Window | Milestones | Target release | Exit evidence |
+| --- | --- | --- | --- |
+| Q1 2027 | H1.7, H2.4, H2.8 | 0.13.0 | 24-qubit internal evidence with tolerances; float64 mode; OpenQASM round trip |
+| Q2 2027 | H2.5, H2.1 | 0.14.0 | Noisy counts byte-identical across workers; D2 recorded |
+| Q3 2027 | H2.7, H2.6 | 0.15.0 | Mitigation green against the density-matrix reference; Pauli propagation within its reported error |
+| Q4 2027 | H2.9, H2.3 | 0.16.0 | SKQD matches exact diagonalization; one external team on distributed jobs; D3 recorded |
+
+Where each milestone builds an edge (the factors are the rows of the strategy canvas in `docs/vision.md` §6):
+
+| Milestone | Edge it builds | Proof artifact |
+| --- | --- | --- |
+| H2.4 | Single-device scale and precision reach "credible" | `bench/results/<date>-h2.4/`, float64 cross-check |
+| H2.8 | Tier-2 reach; one circuit source for the cross-framework harness | Imported-corpus agreement test |
+| H2.5 | Noise fidelity; reproducibility under noise | Channel closed-form tests; byte-identical counts across batch sizes and workers |
+| H2.1 | Deterministic, fault-tolerant fan-out | 1 vs N nodes and node-kill tests; D2 |
+| H2.7 | Mitigation checked against an exact noisy reference | CI suite against the H2.5 density-matrix executor |
+| H2.6 | Simulability diagnostics with a reported error | Agreement within reported truncated weight; 100-qubit fixture |
+| H2.9 | Sampling plus heavy classical post-processing in one supervised runtime | SKQD vs exact diagonalization; Livebook |
+| H2.3 | Adoption | One external team; D3 |
+
+Every milestone below that starts from a paper records the research-intake checklist (`docs/vision.md` §12) in its plan review. The candidates and their falsifiable hypotheses are in `docs/research/algorithm-landscape-2025-2026.md`.
+
+### H2.4 - State-Vector Engine v2
+
+- Status: planned
+- Intent: performance, api change (additive, experimental `precision` option)
+- Seats: Lead, Quantum physics/math, Critic, DX, Verifier (benchmark), Docs
+- Depends on: H1.6
+- Target release: 0.13.0
+
+Goal:
+
+1. State evolution runs as compiled, fused programs on the selected backend, including EXLA on host CPU or one GPU. This closes KG-16 (PD-3).
+2. Users can opt into float64 (`precision: :f64`) with documented accuracy, while the `{:f, 32}` default is unchanged (PD-4).
+3. Internal, tolerance-checked evidence reaches 24 qubits on one device (baseline 8; `docs/vision.md` §14).
+
+Implementation deliverables:
+
+1. A fusion pass over the compiled plan: greedy fusion into dense k-qubit blocks (k configurable, default 4), with diagonal runs fused separately. It reuses the `CompiledPlan` and `KeyEncoder` cache keys (*tentative*: `lib/nx_quantum/adapters/simulators/state_vector/fusion.ex`).
+2. One `defn` program per compiled plan, compiled with the runtime profile's compiler, with the state created on that profile's backend (closes KG-16).
+3. A leading batch axis (`Nx.vectorize`) for parameter sweeps and kernel rows, used by the Estimator batch strategies and later by H2.5 trajectories.
+4. `precision: :f32 | :f64` (experimental tier in `docs/api-stability.md`): `complex64` and `{:f, 32}` by default, `complex128` and `{:f, 64}` on request.
+5. A fused adjoint gradient that keeps two states, so memory is O(2^n) instead of one state per gate (`lib/nx_quantum/grad/adjoint.ex`).
+6. A byte cap on the structure cache (closes KG-17), and the evolution path reported in result metadata (additive; closes KG-20).
+7. A benchmark of 12–24-qubit brickwork and QAOA families, before and after, on `cpu_portable`, `cpu_compiled`, and `nvidia_gpu_compiled` when available, with fixed seeds and 3 runs (*tentative*: `bench/engine_v2.exs`).
+8. Docs: the `docs/backend-support.md` precision table rerun in both modes, plus a 20-qubit float64 cross-check against the pinned Python harness, labeled an internal reference.
+
+Review gate:
+
+1. On the default path (BinaryBackend, `:f32`), all existing suites pass unchanged. Numerics digests are byte-identical, or every moved bit is explained under the H1.6 rule. Envelope snapshots are unchanged.
+2. A property test shows fused and unfused evolution agree within 1e-6 (`:f32`) and 1e-12 (`:f64`) on random circuits up to 10 qubits, over 3 fixed seed sets (*tentative*: `test/property/fusion_equivalence_property_test.exs`).
+3. The fused adjoint matches parameter-shift gradients within 1e-10 in `:f64` mode on the gradient fixtures.
+4. The benchmark delta is published under `bench/results/<date>-h2.4/` with its environment, and the item-1 hypothesis in the research intake is recorded as passed or failed.
+
+### H2.8 - OpenQASM 3 Interop (Subset)
+
+- Status: planned
+- Intent: feature, api change (additive, experimental)
+- Seats: Lead, DX, Quantum engineering, Critic, Verifier, Docs
+- Depends on: H1.4 (dense reference)
+- Target release: 0.13.0
+
+Goal:
+
+1. A researcher can import an OpenQASM 3 circuit written for another framework, run it in NxQuantum, and export it back (tier-2 reach, PD-13).
+2. The cross-framework harness reads one OpenQASM file per scenario instead of re-encoding each circuit per framework.
+
+Implementation deliverables:
+
+1. A documented OpenQASM 3 subset: qubit and bit declarations, the `stdgates.inc` gates that NxQuantum supports, angle parameters, and measurement. Everything else returns a typed error naming the construct; nothing is dropped silently (*tentative*: `lib/nx_quantum/interop/open_qasm3.ex`).
+2. `Circuit.from_qasm/2` and `Circuit.to_qasm/2` in the experimental tier.
+3. A parser in pure Elixir with no new dependency; any dependency needs architecture ownership and a justification (AGENTS.md stop rule).
+4. A fixture corpus exported from Qiskit, Cirq, and PennyLane by the pinned harness (`bench/requirements-python-alternatives.txt`), checked in with provenance.
+
+Review gate:
+
+1. Round trip: `to_qasm` then `from_qasm` gives a circuit equal to the original up to global phase (dense reference), on random circuits up to 6 qubits over 3 seed sets.
+2. Each imported corpus circuit matches the exporting framework's state vector within 1e-6 (`:f32`), or 1e-10 (`:f64`) once H2.4 ships.
+3. Every unsupported construct in the corpus returns a typed error that names it.
+
+### H2.5 - Noise Channels and Deterministic Trajectories
+
+- Status: planned
+- Intent: feature, api change (additive; deprecates the scalar `noise:` option)
+- Seats: Lead, Quantum physics/math (acceptance owner), Critic, DX, Verifier, Docs
+- Depends on: H2.4 (batch axis and `:f64`)
+- Target release: 0.14.0
+
+Goal:
+
+1. Gate-level noise behaves like the channels it names, checked against an exact density-matrix reference. This closes KG-30 (PD-5).
+2. Noisy shot counts are byte-identical for the same seed, whatever the batch size and worker count.
+
+Implementation deliverables:
+
+1. A `NoiseModel` with per-gate and per-qubit channels: depolarizing, amplitude damping, phase damping, Pauli channel, and readout. Channels are checked for Kraus completeness when built (*tentative*: `lib/nx_quantum/noise/`).
+2. A density-matrix executor for up to about 12 qubits in `:f64`, run as a doubled state vector on the H2.4 kernels. It is documented as a reference, not a scale path (*tentative*: `lib/nx_quantum/adapters/simulators/density_matrix.ex`).
+3. A trajectory executor (*tentative*: `lib/nx_quantum/adapters/simulators/trajectories.ex`):
+   - for Pauli and other unitary-mixture channels, error patterns are sampled per shot before evolution, with seeds derived from the job seed and shot index; identical patterns are grouped and each unique pattern runs once on the batch axis, weighted by its count (the PTSBE approach);
+   - for general channels, a per-trajectory fallback samples Kraus operators during evolution.
+4. A `noise_model:` option on the Estimator and Sampler (experimental tier). The scalar `noise:` option keeps working, warns that it is deprecated, and stays documented as scalar; removing it is a later `api change`.
+5. The seed derivation is shared with ADR 0012 (`seed_derivation: v1`), so H2.1 can distribute trajectories without changing results.
+6. `features/noise_channels.feature`, and the "noise channels" wording in `features/noise_and_shots.feature` corrected to "scalar noise model".
+
+Review gate:
+
+1. Single-qubit channels match closed forms within 1e-12 in `:f64`. For example, amplitude damping with rate γ on |+⟩ gives ⟨X⟩ = √(1−γ).
+2. Trajectory estimates match the density-matrix result within a stated 3σ statistical bound on fixed 4–10-qubit fixtures (GHZ, one QAOA layer), with fixed seeds.
+3. Counts are byte-identical across batch sizes 1, 64, and 1024, and across `max_concurrency` 1 and 8, for the same seed.
+4. The item-2 hypothesis in the research intake (unique patterns vs shots at p ≤ 1e-3) is recorded as passed or failed.
+5. The physics seat signs off the channel definitions and tolerances.
 
 ### H2.1 - Distributed Execution Core
 
 - Status: planned
 - Intent: feature, api change (additive, experimental)
 - Seats: Lead, Critic (DDD/hexagonal), DX, Quantum physics/math (seed semantics), Verifier
-- Depends on: H1.1, H1.2
-- Target release: 0.13.0
+- Depends on: H1.1, H1.2; H2.4 (batch axis) for batched tasks
+- Target release: 0.14.0
 
 Goal:
 
-1. One NxQuantum job (parameter sweep, batched estimation, shot partitioning) fans out across BEAM nodes.
+1. One NxQuantum job's ensemble work fans out across BEAM nodes: parameter sweeps, batched estimation, and shot partitions first, then noisy trajectories (H2.5) and Pauli-propagation partitions (H2.6) through the same task contract (PD-2).
 2. It returns results identical to single-node execution for the same seed, and survives node loss.
 
 Implementation deliverables:
@@ -335,14 +481,15 @@ Implementation deliverables:
 4. An experimental facade for distributed sweep and batch execution. Results carry per-task provenance: node, seed, attempt.
 5. Within-job fault handling: a lost task is re-dispatched with the same seed. There is no job-level persistence (FluxQ owns that).
 6. Fan-out telemetry spans with correlation ids, consumable by FluxQ.
-7. Tests:
+7. Ordered reduction: partial results are reduced in task-index order, because floating-point sums are not associative.
+8. Tests:
    - a feature file;
    - a property test that the same seed gives identical results on 1 vs N nodes;
    - a virtual-time test for identical event traces;
    - a node-kill test using `:peer` nodes with identical results;
    - `mix test.arch` boundary checks;
    - a `docs/bounded-context-map.md` update.
-8. A throughput benchmark from 1 to 4 local peer nodes, with fixed seeds.
+9. A throughput benchmark from 1 to 4 local peer nodes, with fixed seeds.
 
 Review gate:
 
@@ -350,42 +497,97 @@ Review gate:
 2. The benchmark delta is published.
 3. Decision D2 is recorded.
 
-### H2.2 - Distributed Circuit Cutting
+### H2.7 - Error Mitigation v2, Checked Against a Noisy Reference
 
 - Status: planned
-- Intent: feature
-- Seats: Quantum physics/math (owner), Quantum engineering, Critic, Verifier
-- Depends on: H2.1 (D2 passed)
-- Target release: 0.14.0
+- Intent: feature, api change (additive)
+- Seats: Lead, Quantum physics/math (acceptance owner), Quantum engineering, Critic, Verifier, Docs
+- Depends on: H2.5
+- Target release: 0.15.0
 
 Goal:
 
-1. Circuits larger than one simulator or device budget run as fragments across nodes and providers.
-2. Results are reconstructed with a stated sampling overhead.
+1. Mitigation goes beyond linear ZNE, and every pass reports error bars and its overhead.
+2. Every pass is regression-tested in CI against the H2.5 density-matrix reference (PD-5).
 
 Implementation deliverables:
 
-1. A physics-owned acceptance spec covering:
-   - supported cut types (wire cuts first);
-   - quasi-probability reconstruction;
-   - the sampling-overhead formula.
-2. A deterministic cut planner for a restricted circuit class, fragment execution through H2.1, and reconstruction.
-3. Diagnostics: cut count, sampling overhead, per-fragment provenance.
-4. Docs that state that overhead grows exponentially with the number of cuts.
+1. Richardson and polynomial least-squares extrapolators with propagated error bars (*tentative*: `lib/nx_quantum/mitigation/passes/zne_richardson.ex`, `lib/nx_quantum/mitigation/passes/zne_poly_ls.ex`).
+2. Noise scaling by gate folding (global and local) and, in simulator lanes, by amplifying channel rates in the `NoiseModel`.
+3. Seeded Pauli twirling as a compiler pass, with a seed derived per circuit instance (*tentative*: `lib/nx_quantum/compiler/passes/pauli_twirl.ex`).
+4. Probabilistic error cancellation for Pauli channels, with the sampling overhead γ reported in results.
+5. A mitigation validation playbook in `docs/playbooks/`. Provider lanes apply the same passes to live results, with no determinism claim.
 
 Review gate:
 
-1. Reconstructed expectations match uncut dense results within analytic tolerance on fixed fixtures of up to 12 qubits.
-2. The physics seat has verified the overhead formula.
-3. A benchmark against single-node execution is published.
+1. On fixed noisy fixtures of up to 8 qubits, each pass reduces the absolute error against the noiseless value by its stated factor, and its error bar covers the true value in at least 95% of 200 seeded repetitions (item-6 hypothesis in the research intake).
+2. Twirled circuits equal the original up to global phase (property test against the dense reference).
+3. The reported PEC overhead matches the analytic γ for the fixture channel within 1e-9.
+
+### H2.6 - Pauli-Propagation Estimator
+
+- Status: planned
+- Intent: feature, api change (additive, experimental)
+- Seats: Lead, Quantum physics/math (acceptance owner), Critic (DDD/hexagonal), DX, Verifier, Docs
+- Depends on: ADR 0013 accepted; H2.4 for state-vector cross-checks; H2.5 for the noisy mode
+- Target release: 0.15.0
+
+Goal:
+
+1. Estimator users can compute expectation values beyond state-vector width for shallow or noisy circuits, with a reported truncation error (PD-7).
+2. Users can check whether a model's expectation values are classically simulable at a chosen error: a simulability diagnostic.
+
+Implementation deliverables:
+
+1. ADR 0013 accepted: an expectation-level simulation-method port with declared capabilities. The state-vector adapter implements it without behaviour change.
+2. Public multi-qubit Pauli observables: `SparsePauli` becomes a documented type (closes KG-19 and KG-21).
+3. The engine: Pauli strings packed as x and z bitmasks; Clifford conjugation by bit operations; branching on Pauli rotations; merging duplicates by sort and segment sum; truncation by coefficient magnitude and Pauli weight (*tentative*: `lib/nx_quantum/adapters/simulators/pauli_propagation.ex`).
+4. Noise as Pauli damping for the depolarizing and dephasing channels of the H2.5 `NoiseModel`.
+5. Result metadata: truncated weight, peak live terms, and the truncation thresholds used.
+6. Method selection through `Estimator.run/2` options; partitions exposed as fan-out tasks for H2.1.
+7. Parameter-shift gradients on this backend. Reverse mode is a follow-up.
+
+Review gate:
+
+1. Without truncation, results agree with the state vector within 1e-10 (`:f64`) on random Clifford-plus-rotation circuits up to 12 qubits, over 3 seed sets.
+2. With truncation, the error against the state vector stays within the reported truncated weight on fixtures up to 20 qubits.
+3. The item-3 hypothesis in the research intake (100-qubit kicked Ising) is recorded as passed or failed.
+4. The same circuit and options give byte-identical term lists across runs and across partition counts.
+
+### H2.9 - Hamiltonian Simulation and Sample-Based Diagonalization
+
+- Status: planned
+- Intent: feature, api change (additive, experimental)
+- Seats: Lead, Quantum physics/math (acceptance owner), Critic, DX, Verifier, Docs
+- Depends on: H2.4 (`:f64`, batching); H2.6 deliverable 2 (public `SparsePauli`)
+- Target release: 0.16.0
+
+Goal:
+
+1. Users can build time-evolution circuits from a Pauli Hamiltonian, with a reported Trotter error bound (PD-7).
+2. Users can run SQD and SKQD workflows end to end: seeded sampling, configuration recovery, projection, and diagonalization, on the simulator or through the provider lifecycle.
+
+Implementation deliverables:
+
+1. A Pauli-evolution gate, first- and second-order Trotter product formulas with commutator-based error bounds, and qDRIFT with seeded sampling (*tentative*: `lib/nx_quantum/hamiltonian/`).
+2. An SQD workflow: bitstring deduplication on packed integers, configuration recovery for particle-number-conserving problems, the projected Hamiltonian as a sparse matrix, `Nx.LinAlg.eigh` for small subspaces, and Lanczos for larger ones (*tentative*: `lib/nx_quantum/algorithms/sqd.ex`).
+3. An SKQD workflow that samples Krylov states U^k|ψ0⟩ (*tentative*: `lib/nx_quantum/algorithms/skqd.ex`).
+4. Batches exposed as fan-out tasks for H2.1.
+5. A Livebook: the transverse-field Ising ground state by SKQD, compared with exact diagonalization.
+
+Review gate:
+
+1. Trotter evolution matches exact matrix exponentiation within the reported bound on fixtures up to 10 qubits (`:f64`).
+2. SKQD on the transverse-field Ising chain matches the exact ground energy within 1e-6 (relative) up to 16 qubits (item-5 hypothesis in the research intake).
+3. SQD results are byte-identical for the same seed across batch partitionings.
 
 ### H2.3 - Distributed Runs in FluxQ and Launch
 
 - Status: planned
 - Intent: feature (DX and docs)
 - Seats: Lead, DX, Product marketing, Verifier
-- Depends on: H2.1; H2.2 for fragment views
-- Target release: 0.15.0
+- Depends on: H2.1; H2.5 for the noisy-trajectory demo
+- Target release: 0.16.0
 
 Goal:
 
@@ -394,8 +596,8 @@ Goal:
 
 Implementation deliverables:
 
-1. Fan-out task and fragment fields added to the H1.2 envelope snapshots, with a `schema_version` bump.
-2. A multi-node Livebook demo and `docs/distributed-execution-guide.md`.
+1. Fan-out task fields added to the H1.2 envelope snapshots, with a `schema_version` bump.
+2. A multi-node Livebook demo: one seeded noisy-trajectory job across local peer nodes, with counts identical to a single-node run, that survives a node kill. Plus `docs/distributed-execution-guide.md`.
 3. An external-user case study, with permission.
 4. FluxQ run-detail views for fan-out, tracked in the FluxQ roadmap.
 
@@ -412,7 +614,8 @@ Review gate:
 
 | Milestone | Owner | Entry gate |
 | --- | --- | --- |
-| H3.1 Systems twin alpha | NxQuantum | D3 |
+| H3.0 Stabilizer and Pauli-frame sampling with detector-error-model export (added 2026-11-25, PD-7; interop first, real-time decoding stays a non-goal) | NxQuantum | A named QEC user, or H3.1 planning after D3; H2.5 done |
+| H3.1 Systems twin alpha | NxQuantum | D3; H2.5 (decoherence models) and H3.0 (decoders as processes) |
 | H3.2 Policy testing on the twin | FluxQ | H3.1 exit |
 | H3.3 Twin to live | NxQuantum | H3.1 exit, plus vendor control hooks |
 | H3.4 Network control-plane exploration | FluxQ | Partner or testbed interest |
@@ -443,7 +646,7 @@ Decisions already taken (2026-10-30, owner):
 
 ### Proposed decisions (strategy review 2026-11-25; owner decides)
 
-Inputs: `docs/research/algorithm-landscape-2025-2026.md` and the claims audit that found KG-30. Each row becomes `decided` only with the owner's approval, recorded with its date. Milestone ids marked *(roadmap update)* are created by the roadmap follow-up to this review.
+Inputs: `docs/research/algorithm-landscape-2025-2026.md` and the claims audit that found KG-30. Each row becomes `decided` only with the owner's approval, recorded with its date. Milestone ids marked *(roadmap update)* were created by the roadmap update of the same date (H1.7, H2.4 to H2.9, H3.0, ADR 0013).
 
 | Id | Proposal | Rationale | Creates or changes | Status |
 | --- | --- | --- | --- | --- |

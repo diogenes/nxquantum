@@ -7,6 +7,7 @@
 > - [ ] 0.12.0 published on Hex and tagged.
 > - [ ] Hex description (`mix.exs`) aligned to decisions D1 and PD-1 (`docs/roadmap.md`).
 > - [ ] Claims cleanup done in the 0.12.0 docs.
+> - [ ] KG-12 resolved (H1.7), or the bundled AI handlers left out of this post (decision PD-6).
 > - [ ] A Hex-based quick start is in the README and `docs/getting-started.md`.
 > - [ ] Time to first result (TTFR) measured on the published 0.12.0.
 > - [ ] Survey live (`docs/research/kano-survey-h1.5.md`).
