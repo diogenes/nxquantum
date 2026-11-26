@@ -336,6 +336,16 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - trace/correlation metadata remains intact end-to-end
   - quantized rerank lane remains deterministic for fixed seed and bounded parallel settings
 
+### 4.1) Option Key Validation (cross-cutting boundary, KG-25 phase 1)
+
+- Owner: user
+- Module: `NxQuantum.OptionKeys` (`lib/nx_quantum/option_keys.ex`)
+- Contexts named:
+  - Primitive Estimation Context (3): `NxQuantum.Estimator.run/2`, `expectation_result/2`
+  - Primitive Sampling and Mitigation Context (4): `NxQuantum.Sampler.run/2`
+- Rule: an unknown top-level key changes no result; it logs one warning and adds `metadata.unknown_options`. Adapter-specific keys on the allow-list are an exception recorded in `docs/adr/0014-option-keys-adapter-exception.md`.
+- Invariant: the allow-list is the only place a top-level option key is declared for these entrypoints.
+
 ## Planned Contexts (2027 roadmap, added 2026-11-25)
 
 Ownership is fixed here before any Builder work, so no planned milestone starts with unclear bounded-context ownership (AGENTS.md stop rule). Module paths are *tentative* until each milestone's plan review or ADR fixes them.

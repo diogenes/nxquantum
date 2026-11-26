@@ -30,6 +30,7 @@ Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
 ### Added
 
+- Option-key validation at `Estimator.run/2`, `Estimator.expectation_result/2`, and `Sampler.run/2` (KG-25 phase 1, `api change`). An unknown top-level key, such as `seeed: 7`, still returns the result it returned before, logs one `Logger.warning`, and adds `metadata.unknown_options` to results that have metadata. Rule and allow-list: `docs/api-stability.md` (Option Validation) and `lib/nx_quantum/option_keys.ex`. Phase 2 (typed error) follows in a later minor with a migration note.
 - Noise channel domain types (H2.5, experimental, no executor yet): `NxQuantum.Noise.Channel` builds Kraus channels (depolarizing, amplitude damping, phase damping, Pauli, bit flip, phase flip, and generic `kraus/1`) with parameter and Kraus-completeness checks, and `NxQuantum.Noise.Model` maps gate names and qubits to channels. Tests: `test/nx_quantum/noise/`. The scalar `noise:` option is unchanged.
 - `NxQuantum.Circuit.to_qasm/2`: OpenQASM 3 export over the `stdgates.inc` subset, with typed `:unsupported_qasm_construct` errors for anything outside it. Import is not included. Tests: `test/nx_quantum/interop/open_qasm3_test.exs`.
   - Slice 1 of H2.8: export only; round-trip, corpus agreement and typed-error gates are open.
