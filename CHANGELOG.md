@@ -30,6 +30,7 @@ Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
 ### Added
 
+- Noise channel domain types (H2.5, experimental, no executor yet): `NxQuantum.Noise.Channel` builds Kraus channels (depolarizing, amplitude damping, phase damping, Pauli, bit flip, phase flip, and generic `kraus/1`) with parameter and Kraus-completeness checks, and `NxQuantum.Noise.Model` maps gate names and qubits to channels. Tests: `test/nx_quantum/noise/`. The scalar `noise:` option is unchanged.
 - External envelope golden snapshots for every core provider (job, result, error) under `test/fixtures/contracts/envelopes/`, with a byte-level snapshot test. A shape or meaning change requires a `schema_version` bump; compatibility policy in `docs/api-stability.md`.
 - `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations. Round-trip and rehydrate-and-poll contract tests: `test/nx_quantum/contracts/envelope_decode_test.exs`.
 - Compiler semantic-equivalence property suites (H1.4): gate-identity catalogue, random circuits up to 6 qubits over three fixed seed sets, and routing equivalence. The oracle is an independent dense reference (`test/support/dense_reference.ex`).

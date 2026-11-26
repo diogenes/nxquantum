@@ -37,7 +37,9 @@ These are available but may evolve without an `api change`:
 14. The `NxQuantum.Ports.ObservabilityEmitter` behaviour, when you implement it in your own code. Its callbacks may change.
 15. Envelope serialization and notebook-used result fields: `NxQuantum.ProviderBridge.Serialization.to_external_map/1` and `from_external_map/1`; the `counts` field of the `NxQuantum.Sampler.run/2` result; and, for `NxQuantum.Transpiler.run/2`, the `operations` field of the routed circuit and the `inserted_swaps` and `added_swap_gates` fields of the report
 
-Items 4 to 15 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
+16. `NxQuantum.Noise.Channel` (Kraus channel constructors, including `kraus/1`) and `NxQuantum.Noise.Model` (gate and qubit noise maps). Added as H2.5 domain types: no executor uses them yet, and the scalar `noise:` option is unchanged.
+
+Items 4 to 15 are listed here so that the tier is explicit. Item 16 is new and was never on the stable surface. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
 
 Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
