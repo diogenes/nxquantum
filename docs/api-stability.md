@@ -53,6 +53,16 @@ Experimental does not mean untested. The notebooks under `examples/livebook/` us
 3. Public API contract tests live in:
    - `test/nx_quantum/public_api_contract_test.exs`
 
+## Option Validation (KG-25, phase 1)
+
+Applies to the top-level keyword options of `NxQuantum.Estimator.run/2`, `NxQuantum.Estimator.expectation_result/2`, and `NxQuantum.Sampler.run/2`. `NxQuantum.Estimator.expectation/2` and `NxQuantum.Circuit.expectation/2` go through the same check, because they call `expectation_result/2`.
+
+1. Each call checks every top-level key against the allow-list in `lib/nx_quantum/option_keys.ex`. The Estimator list covers every key read on the estimator path, including the simulator's cache and concurrency keys (KG-22). The Sampler list covers the keys `Sampler.run/2` reads.
+2. An unknown key does not change the computation. The call returns the result it returned before, logs one `Logger.warning` that names the keys, and, when the result has a `metadata` map (`Estimator.run/2` and `Sampler.run/2`), adds `metadata.unknown_options`, the unknown keys in order of appearance. The entry is absent when no key is unknown. `expectation_result/2` returns a tensor and has no metadata, so it only logs.
+3. Phase 2, in a later minor release, returns a typed error for an unknown key, with a CHANGELOG migration note. Until then, a misspelled key is ignored, as it was before this rule.
+4. A change that starts reading a new top-level option adds its key to the allow-list in the same change. Otherwise callers get a false warning.
+5. Not checked in phase 1: the nested contents of `noise:` and `backend_opts:`, `Estimator.batched_expectation/3`, `Sampler.batched_run/3`, and `Estimator.sampled_expectation_from_counts/2`.
+
 ## Envelope Compatibility Policy (external provider envelopes)
 
 Applies to job, result, and error envelopes produced by `NxQuantum.ProviderBridge.Serialization.to_external_map/1`.

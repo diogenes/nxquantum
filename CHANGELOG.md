@@ -30,6 +30,7 @@ Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
 ### Added
 
+- Option-key validation at `Estimator.run/2`, `Estimator.expectation_result/2`, and `Sampler.run/2` (KG-25 phase 1, `api change`). An unknown top-level key, such as `seeed: 7`, still returns the result it returned before, logs one `Logger.warning`, and adds `metadata.unknown_options` to results that have metadata. Rule and allow-list: `docs/api-stability.md` (Option Validation) and `lib/nx_quantum/option_keys.ex`. Phase 2 (typed error) follows in a later minor with a migration note.
 - External envelope golden snapshots for every core provider (job, result, error) under `test/fixtures/contracts/envelopes/`, with a byte-level snapshot test. A shape or meaning change requires a `schema_version` bump; compatibility policy in `docs/api-stability.md`.
 - `NxQuantum.ProviderBridge.Serialization.from_external_map/1`: decodes stored `v1` job, result, and error envelopes; typed errors for unknown versions, types, states, codes, and operations. Round-trip and rehydrate-and-poll contract tests: `test/nx_quantum/contracts/envelope_decode_test.exs`.
 - Compiler semantic-equivalence property suites (H1.4): gate-identity catalogue, random circuits up to 6 qubits over three fixed seed sets, and routing equivalence. The oracle is an independent dense reference (`test/support/dense_reference.ex`).
