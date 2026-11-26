@@ -423,6 +423,59 @@ defmodule NxQuantum.EstimatorTest do
 
       assert Keyword.fetch!(opts, :estimator_cache_status) == :hit
     end
+
+    test "observable strategy is parallel only when enabled and at or above the threshold" do
+      specs = [%{observable: :pauli_z, wire: 0}, %{observable: :pauli_x, wire: 1}]
+      selection = %{selected_profile: :cpu_portable}
+
+      parallel =
+        StrategyObservability.apply([parallel_observables: true, parallel_observables_threshold: 2], selection, specs,
+          executed?: false
+        )
+
+      below_threshold =
+        StrategyObservability.apply([parallel_observables: true, parallel_observables_threshold: 3], selection, specs,
+          executed?: false
+        )
+
+      disabled =
+        StrategyObservability.apply([parallel_observables: false, parallel_observables_threshold: 2], selection, specs,
+          executed?: false
+        )
+
+      assert Keyword.fetch!(parallel, :estimator_observable_strategy) == :parallel
+      assert Keyword.fetch!(below_threshold, :estimator_observable_strategy) == :scalar
+      assert Keyword.fetch!(disabled, :estimator_observable_strategy) == :scalar
+    end
+
+    test "runtime lane is compiled only for compiled profiles" do
+      for profile <- [:cpu_compiled, :nvidia_gpu_compiled] do
+        opts = StrategyObservability.apply([], %{selected_profile: profile}, [], executed?: false)
+        assert Keyword.fetch!(opts, :estimator_runtime_lane) == :compiled
+      end
+
+      opts = StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [], executed?: false)
+      assert Keyword.fetch!(opts, :estimator_runtime_lane) == :portable
+    end
+
+    test "disabled state cache reports bypass and is reflected in the strategy tags" do
+      opts =
+        StrategyObservability.apply([cache_evolved_state: false], %{selected_profile: :cpu_portable}, [],
+          simulation: facts(cache_status: :hit),
+          executed?: true
+        )
+
+      assert Keyword.fetch!(opts, :estimator_cache_mode) == :disabled
+      assert Keyword.fetch!(opts, :estimator_cache_status) == :bypass
+      assert opts |> Keyword.fetch!(:estimator_strategy_tags) |> Enum.take(3) == [:scalar, :portable, :bypass]
+    end
+
+    test "merging no facts or a single call's facts keeps them unchanged" do
+      assert StrategyObservability.merge_facts([]) == Simulator.unreported_facts()
+
+      single = facts(evolution_path: :complex, state_backend: :portable)
+      assert StrategyObservability.merge_facts([single]) == single
+    end
   end
 
   defp facts(overrides) do
