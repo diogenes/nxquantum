@@ -94,6 +94,7 @@ Known gaps:
 | KG-27 | Estimator and Sampler emit no observability signals. Neither calls the `ObservabilityEmitter` port, and `lib/` has no `:telemetry` call. Only `ProviderBridge` lifecycle operations emit, through the port, when `observability: [enabled: true]` is set (`lib/nx_quantum/observability.ex`, `lib/nx_quantum/observability/profile.ex`). Users who want per-call signals wrap the calls themselves (`examples/livebook/supervised_service.livemd`) | unassigned (owner decision) |
 | KG-28 | `ObservabilityEmitter` callback specs are wider than what `NxQuantum.Observability` needs. `span_start/3` is specced to return `map()` but must return `:trace_id` and `:span_id` (`lib/nx_quantum/ports/observability_emitter.ex`, `lib/nx_quantum/observability.ex`). An emitter that matches the specs and returns `%{}`, or any emitter that raises, makes `ProviderBridge.run_lifecycle/3` raise instead of returning a typed error (the `rescue` in `lib/nx_quantum/application/provider_lifecycle/dispatcher.ex` wraps only the provider call). Fixing it is an `api change` | unassigned (owner decision) |
 | KG-29 | Notebooks are checked by an extractor in the test VM (`test/nx_quantum/livebooks_test.exs`), not by Livebook itself. Livebook-specific behaviour is untested: resolving the setup-cell path against the runtime working directory, and `Mix.install` resolution | unassigned (owner decision) |
+| KG-30 | The Estimator `noise:` option is a scalar transform of the final expectation, not a noise channel. `NxQuantum.Estimator.Stochastic.apply_noise/2` (`lib/nx_quantum/estimator/stochastic.ex`) computes `E·(1−p_dep)·(1−γ) + γ` on the ideal value, so the result does not depend on circuit depth, gate count, or which qubits the gates touch. The `+γ` shift is the ⟨Z⟩ formula for amplitude damping, and it is applied to every observable. Checked 2026-11-25 on `main` (69d5bfc), default backend: with `noise: [depolarizing: 0.1, amplitude_damping: 0.2]`, ⟨Z⟩ is 0.92 after 1 gate and after 100 gates; after H, ⟨X⟩ with `amplitude_damping: 0.2` is 1.0, where an amplitude-damping channel gives √0.8 ≈ 0.894. `features/noise_and_shots.feature` names these "noise channels" but only checks the direction of the change. Changing the option's semantics is an `api change` | docs relabeled 2026-11-25 (`docs/model-recipes.md`); channel-based noise planned (decision PD-5) |
 
 ---
 
@@ -491,7 +492,7 @@ Full phase text is in git history. Status per row is pending the H1.1 audit wher
 
 | Phases | Release | Theme | Status |
 | --- | --- | --- | --- |
-| 0–4 | pre-0.5.0 (no CHANGELOG entries) | Foundation, state-vector correctness, gradients, noise, kernels, Axon, API stabilization, CI | done |
+| 0–4 | pre-0.5.0 (no CHANGELOG entries) | Foundation, state-vector correctness, gradients, noise, kernels, Axon, API stabilization, CI | done, except channel-level noise: the `noise:` option is a scalar model (KG-30) |
 | 5–8 | pre-0.5.0 | Estimator/Sampler primitives, batching, mitigation, transpilation, dynamic IR, Python-alternative positioning | done, except Phase 7's tensor-network path (KG-1) |
 | 9–11 | 0.5.0 | Provider bridges (IBM, AWS, Azure), cross-provider normalization, OpenTelemetry, migration packs | done |
 | 12 | `v0.6` label (no CHANGELOG entry) | Contract completion, adapter hardening | done |
