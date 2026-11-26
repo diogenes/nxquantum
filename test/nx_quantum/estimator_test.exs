@@ -263,6 +263,19 @@ defmodule NxQuantum.EstimatorTest do
       assert first.metadata.strategy_observability.cache_status in [:hit, :miss]
       assert second.metadata.strategy_observability.cache_status in [:hit, :miss]
     end
+
+    test "apply/3 uses the default apply_opts when no simulator facts are passed" do
+      opts = StrategyObservability.apply([], %{selected_profile: :cpu_portable}, [])
+
+      assert Keyword.fetch!(opts, :estimator_simulation) == %{
+               method: nil,
+               evolution_path: nil,
+               state_backend: nil,
+               expectation_path: nil
+             }
+
+      assert Keyword.fetch!(opts, :estimator_observable_strategy) == :scalar
+    end
   end
 
   describe "simulation metadata (KG-20)" do
