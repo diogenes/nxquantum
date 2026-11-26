@@ -34,8 +34,7 @@ defmodule NxQuantum.Application.ExecuteCircuit do
   @doc "Like `expectations/3`, and also returns the simulator's facts about how the values were produced."
   @spec expectations_with_simulation(Circuit.t(), [map()], keyword()) ::
           {Nx.Tensor.t(), Simulator.simulation_facts()}
-  def expectations_with_simulation(%Circuit{} = circuit, observable_specs, opts \\ [])
-      when is_list(observable_specs) do
+  def expectations_with_simulation(%Circuit{} = circuit, observable_specs, opts \\ []) when is_list(observable_specs) do
     {simulator, simulator_opts} = resolve(opts)
 
     cond do
