@@ -350,7 +350,9 @@ Ownership is fixed here before any Builder work, so no planned milestone starts 
 
 ### 15) Noise Modeling Context (planned: H2.5)
 
+- Owner: user
 - Owns: `NoiseModel` and channel definitions (*tentative*: `lib/nx_quantum/noise/`), consumed by Simulation Methods and Mitigation.
+- Slice 1 (domain types and channel tests) lands on branch feat/h2.5-noise-model-domain. Placement: Domain. Future consumers: NxQuantum.Estimator and NxQuantum.Sampler.
 - Invariants:
   - channels are checked for Kraus completeness when built
   - trajectory seeds use the ADR 0012 derivation (`seed_derivation: v1`)
@@ -372,26 +374,6 @@ Ownership is fixed here before any Builder work, so no planned milestone starts 
 - Owns: Pauli Hamiltonians, product formulas and qDRIFT, and the SQD and SKQD workflows (*tentative*: `lib/nx_quantum/hamiltonian/`, `lib/nx_quantum/algorithms/`).
 - Depends on: Primitive Estimation and Sampling (§3, §4), Simulation Methods (§14), and, for batches, Distributed Execution (§16), through their public facades only.
 - Invariants: every reported error bound has an analytic or exact-reference test.
-
-### 19) Noise Context (H2.5 slice 1, domain types only)
-
-- Owner: user
-- Placement: Domain
-- Features:
-  - `features/noise_and_shots.feature` (scalar `noise:` option; unchanged by this context)
-- Public entrypoints (experimental, see `docs/api-stability.md` item 17):
-  - NxQuantum.Noise.Channel
-  - NxQuantum.Noise.Model
-- Domain modules:
-  - NxQuantum.Noise.Channel
-  - NxQuantum.Noise.Model
-- Future consumers (not owners):
-  - NxQuantum.Estimator (executor slice, not yet built)
-  - NxQuantum.Sampler (executor slice, not yet built)
-- Invariants:
-  - pure Kraus data: no backend, adapter or randomness
-  - completeness checked within `Channel.completeness_tolerance/0` (1e-6)
-  - typed `:invalid_noise_channel` errors
 
 ## Refactor Rules
 
