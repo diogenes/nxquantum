@@ -2,7 +2,6 @@ defmodule NxQuantum.Performance.BatchProfiler do
   @moduledoc false
 
   alias NxQuantum.Estimator
-  alias NxQuantum.Estimator.Scalar
   alias NxQuantum.Performance.Metrics
   alias NxQuantum.Performance.Model
 
@@ -48,7 +47,7 @@ defmodule NxQuantum.Performance.BatchProfiler do
       value
       |> Nx.tensor()
       |> circuit_builder.()
-      |> Scalar.run(opts)
+      |> Estimator.expectation_result(opts)
     end)
   end
 
