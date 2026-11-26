@@ -79,17 +79,19 @@ Changing the precision is a public contract change (the output dtype of `expecta
 
 | Field | Values | Meaning |
 | --- | --- | --- |
-| `method` | `:state_vector` or `nil` | `:state_vector` when the state-vector simulator ran in this call. `nil` when no state was evolved or the simulator does not report the field. |
+| `method` | `:state_vector` or `nil` | `:state_vector` when the state was produced, or served from the evolved-state cache, in this call. `nil` when the simulator does not report the field. A cache hit is still `:state_vector`; read `strategy_observability.cache_status` to tell a hit from a miss. |
 | `evolution_path` | `:real_pauli_z`, `:complex`, `:mixed`, or `nil` | `:real_pauli_z` when the real-amplitude path ran (H, X, Z, RY, and CNOT only, with a `pauli_z` measurement). `:complex` otherwise. `nil` when the state was served from the evolved-state cache, so no evolution ran in this call. `:mixed` when one call evolved with different paths. |
-| `state_backend` | a module, such as `Nx.BinaryBackend`, or `:mixed` | The backend of the state tensor after the runtime transfer. A failed transfer is not an error: the field then reports the backend the state actually has, which can differ from the requested profile. |
-| `expectation_path` | `:fused_single_wire`, `:generic`, or `nil` | `:fused_single_wire` when the fused single-wire Pauli kernel evaluated the observables (single-wire Pauli terms, at least 24 of them, at most 12 qubits). `:generic` for every other evaluation. `nil` when no observable was evaluated. |
+| `state_backend` | `:portable`, `:compiled`, `:other`, `:mixed`, or `nil` | A neutral label for the backend of the state tensor after the runtime transfer. `:portable` for `Nx.BinaryBackend`, `:compiled` for the EXLA backend, `:other` for any other backend. The Nx module itself is not exposed. A failed transfer is not an error: the field then reports the backend the state actually has, which can differ from the requested profile. |
+| `expectation_path` | `:fused_single_wire`, `:generic`, `:mixed`, or `nil` | `:fused_single_wire` when the fused single-wire Pauli kernel evaluated the observables. This is reported from the branch that ran, and that branch is taken only for at least 24 single-wire Pauli terms on at most 12 qubits in a non-parallel plan. `:generic` for every other evaluation. `nil` when no observable was evaluated in this call. |
 
 Not reported, because the code has no choice to report:
 
 - Gate application always runs through the compiled execution plan, so there is no "compiled-plan vs per-gate" field.
 - Expectation kernels run on the state tensor's backend (`backend_from_state/1` in `pauli_expval/fused_single_wire.ex`), so there is no separate `expectation_backend`. Read `state_backend` for both.
 
-`metadata.strategy_observability` keeps its existing fields. `cache_status` and the `fused_kernel_*` fields are unchanged. `metadata.simulation` adds the path and backend facts those fields do not give.
+The facts reach the Estimator through the return value of the simulator port (`expectation_with_simulation/2` and `expectations_with_simulation/3` in `NxQuantum.Ports.Simulator`), not through process state. A simulator that does not implement those callbacks reports nil fields.
+
+`metadata.strategy_observability` keeps its existing fields. `cache_status` (`:hit`, `:miss`, `:bypass`, or `:mixed` when a scalar fallback run had both) and the `fused_kernel_*` fields keep their meaning. `metadata.simulation` adds the path and backend facts those fields do not give.
 
 `NxQuantum.Estimator.expectation/2` and `expectation_result/2` return a tensor, not a `Result`, so they carry no metadata.
 

@@ -39,6 +39,10 @@ These are available but may evolve without an `api change`:
 
 Items 4 to 15 are listed here so that the tier is explicit. This is a documentation statement, not a promotion: nothing moved to the stable surface, and these items stay experimental until the owner decides otherwise under an `api change` intent.
 
+Item 20 is listed on its own, so that items 16 to 19 stay unused:
+
+20. The `metadata.simulation` field of the `NxQuantum.Estimator.run/2` result, with its `method`, `evolution_path`, `state_backend` and `expectation_path` fields (KG-20). It is additive and never changes numeric results. `state_backend` is a neutral label (`:portable`, `:compiled`, `:other`, `:mixed`), not an Nx module. The field is documented in `docs/backend-support.md`, "Evolution Path Metadata".
+
 Not listed on purpose: `metadata.transport` of a provider result. It is built by an internal module and typed only as `map()`, so no notebook or caller should rely on its keys.
 
 Experimental does not mean untested. The notebooks under `examples/livebook/` use several of these items, and `test/nx_quantum/livebooks_test.exs` runs them (`docs/livebook-tutorials.md`). A notebook that passes shows the current behavior, not a stability promise.
