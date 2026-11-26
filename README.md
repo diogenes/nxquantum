@@ -112,51 +112,22 @@ mix run examples/quantum_kernel_classifier.exs
 
 ## What Is Still Planned
 
-- v0.8 migration-assurance toolkit scope from ADR 0007 (unscheduled).
-- Additional provider depth and broader provider-native dynamic/non-gate-model paths.
+The roadmap is the source of truth for status ([docs/roadmap.md](docs/roadmap.md)). Next up:
+
+- H1.5 adoption launch (in progress): Livebooks, launch write-up, Kano survey.
+- H2.1 within-job distributed execution: deterministic fan-out across BEAM nodes, gated by decision D2.
 - Case studies from named external BEAM deployments (none documented yet).
-
-Track status here:
-
-- [docs/roadmap.md](docs/roadmap.md)
-- [docs/archive/v0.6-feature-spec.md](docs/archive/v0.6-feature-spec.md)
-- [docs/archive/v0.6-acceptance-criteria.md](docs/archive/v0.6-acceptance-criteria.md)
-- [docs/archive/v0.6-feature-to-step-mapping.md](docs/archive/v0.6-feature-to-step-mapping.md)
-- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
-- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
-- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
-- [docs/archive/v0.3-feature-spec.md](docs/archive/v0.3-feature-spec.md)
-- [docs/archive/v0.4-feature-spec.md](docs/archive/v0.4-feature-spec.md)
 
 ## Docs
 
-- [docs/getting-started.md](docs/getting-started.md)
-- [docs/product-positioning.md](docs/product-positioning.md)
-- [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md)
-- [docs/migration-python-playbook.md](docs/migration-python-playbook.md)
-- [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
-- [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md) (illustrative pattern)
-- [docs/axon-integration.md](docs/axon-integration.md)
-- [docs/model-recipes.md](docs/model-recipes.md)
-- [docs/backend-support.md](docs/backend-support.md)
-- [docs/api-stability.md](docs/api-stability.md)
-- [docs/architecture.md](docs/architecture.md)
-- [docs/observability.md](docs/observability.md)
-- [docs/observability-dashboards.md](docs/observability-dashboards.md)
-- [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
-- [docs/archive/v0.5-feature-spec.md](docs/archive/v0.5-feature-spec.md)
-- [docs/archive/v0.6-feature-spec.md](docs/archive/v0.6-feature-spec.md)
-- [docs/archive/v0.6-acceptance-criteria.md](docs/archive/v0.6-acceptance-criteria.md)
-- [docs/archive/v0.6-feature-to-step-mapping.md](docs/archive/v0.6-feature-to-step-mapping.md)
-- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
-- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
-- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
-- [docs/archive/v0.5-provider-implementation-plan.md](docs/archive/v0.5-provider-implementation-plan.md)
-- [docs/archive/v0.5-acceptance-criteria.md](docs/archive/v0.5-acceptance-criteria.md)
-- [docs/migration-packs.md](docs/migration-packs.md)
-- [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
-- [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
+The [documentation map](docs/README.md) lists every living document by what you want to do. The most used:
+
+- Start: [docs/getting-started.md](docs/getting-started.md), [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
+- Decide: [docs/product-positioning.md](docs/product-positioning.md), [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md), [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
+- Build: [docs/model-recipes.md](docs/model-recipes.md), [docs/backend-support.md](docs/backend-support.md), [docs/api-stability.md](docs/api-stability.md)
+- Design and direction: [docs/architecture.md](docs/architecture.md), [docs/vision.md](docs/vision.md), [docs/roadmap.md](docs/roadmap.md)
+
+Version-named specs and plans are history only (`docs/archive/`).
 
 ## Contributing
 
