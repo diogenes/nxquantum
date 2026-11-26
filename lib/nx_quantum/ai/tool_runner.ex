@@ -30,7 +30,7 @@ defmodule NxQuantum.AI.ToolRunner do
 
     cond do
       Map.get(capabilities, :supports_constrained_optimize, true) ->
-        {:ok, optimized_result(request, candidates, :quantum, [])}
+        {:ok, optimized_result(request, candidates, :classical, [])}
 
       fallback_policy == :allow_classical_fallback ->
         {:ok,
@@ -57,10 +57,10 @@ defmodule NxQuantum.AI.ToolRunner do
       |> List.first()
       |> Kernel.||(%{id: "none", cost: nil, feasible: false})
 
-    status = if mode == :quantum, do: :ok, else: :fallback
+    status = if mode == :classical_fallback, do: :fallback, else: :ok
 
     %Result{
-      schema_version: "v1",
+      schema_version: Result.schema_version(),
       request_id: request.request_id,
       correlation_id: request.correlation_id,
       status: status,
