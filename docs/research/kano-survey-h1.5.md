@@ -1,7 +1,7 @@
 # H1.5 Kano survey (instrument and recording template)
 
 - **Status:** instrument ready; fielding waits for 0.12.0 and the launch.
-- **Instrument version:** v1 (2026-10-30).
+- **Instrument version:** v1.1 (2026-11-25). v1 (2026-10-30) plus S3's noise option and F13–F16 (decision PD-11, `docs/roadmap.md` Decision Log). Not yet fielded, so no answers were collected under v1.
 - **Purpose:** test the Kano hypotheses in `docs/vision.md` §6 for H1.5 gate 3 (n >= 10 targeted respondents).
 - **Owner decides** every change that follows from the results. Nothing here changes the vision or roadmap by itself.
 
@@ -19,7 +19,7 @@
 
 - S1 Role: backend/platform engineer | ML engineer | researcher | operator/SRE | other
 - S2 Do you run Elixir in production? yes | no
-- S3 Top need from a quantum library (pick one): run inside my Elixir service | reproducible results | many hardware providers | advanced compiler | GPU-scale simulation | learning/teaching | other
+- S3 Top need from a quantum library (pick one): run inside my Elixir service | reproducible results | noise and error-mitigation studies | many hardware providers | advanced compiler | GPU-scale simulation | learning/teaching | other
 - S4 NxQuantum use: never | tried | using
 
 ### Questions for each feature
@@ -29,7 +29,7 @@ Answer scale: 1 I like it, 2 I expect it, 3 I'm neutral, 4 I can live with it, 5
 - Functional: "If you <feature> with NxQuantum, how do you feel?"
 - Dysfunctional: "If you did NOT <feature> with NxQuantum, how do you feel?"
 - Optional: "How important is this to you?" 1-9
-- Unshipped items (F9, F10) use the explicit wording under Features instead of the template.
+- Unshipped items (F9, F10, F13–F16) use the explicit wording under Features instead of the template.
 
 ### Features
 
@@ -45,6 +45,10 @@ Answer scale: 1 I like it, 2 I expect it, 3 I'm neutral, 4 I can live with it, 5
 - F10 (not built). Functional: "Would you value a Livebook showing one job fanned out across BEAM nodes with the same results as one node? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
 - F11 keep seeded results bit-identical after you upgrade Nx or Erlang/OTP (default backend)
 - F12 run quantum workloads inside your own supervised Elixir application, with no separate Python service
+- F13 (not built). Functional: "Would you value noisy simulations (gate-level noise channels) whose shot counts are bit-identical for the same seed, whether they run on one core or many machines? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
+- F14 (not built). Functional: "Would you value a float64 mode whose results agree with Qiskit, PennyLane, or Cirq to about 1e-10? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
+- F15 (not built). Functional: "Would you value a one-call check that tells you whether your circuit's expectation values can be computed classically, with an error estimate? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
+- F16 (not built). Functional: "Would you value importing an OpenQASM 3 circuit written for another framework, running it in NxQuantum, and exporting it back? If NxQuantum offered this, how do you feel?" Dysfunctional: "If NxQuantum did NOT offer this, how do you feel?"
 
 ### Close
 
@@ -59,6 +63,10 @@ Optional contact for follow-up, collected outside the repo.
 | F8-F10 | Delighter | F8 shipped. F9 and F10 not built |
 | F11 | New | Tests the D1 lead (`docs/roadmap.md`) |
 | F12 | New | Primary-audience value; shipped |
+| F13 | Delighter (added v1.1) | Not built; tests the near-term thesis (`docs/vision.md` §3) and PD-5 |
+| F14 | Performance (added v1.1) | Not built; tests PD-4 |
+| F15 | Delighter (added v1.1) | Not built; tests PD-7 (Pauli propagation) |
+| F16 | Delighter (added v1.1) | Not built; tests PD-13 and tier-2 reach |
 
 ## Channels
 
@@ -98,11 +106,16 @@ Kano evaluation table (functional row by dysfunctional column; A attractive, O o
 | F9 = A with high Better | Candidate feature |
 | F9 = I | Park it |
 | F10 = I | Deprioritize the H2.3 demo |
+| F13 = A or O, mostly from S3 = reproducible results or noise and error-mitigation studies | The near-term thesis holds; keep noise and trajectories ahead of other H2 work |
+| F13 = I | Revisit PD-5's priority; keep the KG-30 relabel |
+| F14 = M | Treat float64 as a must-be: move the default-flip decision (PD-4) forward |
+| F15 = I | Move the Pauli-propagation estimator after SQD/SKQD |
+| F16 = M or O | Keep OpenQASM 3 in the first engine wave (PD-13) |
 | F2 or F3 = M while still partial | Pause launch activity until fixed |
 
 ## Recording template
 
-Status: collecting | closed. Instrument: v1 (2026-10-30). Window: (empty). Channels (responses): (empty).
+Status: collecting | closed. Instrument: v1.1 (2026-11-25). Window: (empty). Channels (responses): (empty).
 
 ### Respondents
 
