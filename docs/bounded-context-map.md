@@ -103,6 +103,9 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - NxQuantum.Mitigation.PassPipeline
   - NxQuantum.Mitigation.Passes.Readout
   - NxQuantum.Mitigation.Passes.ZneLinear
+  - NxQuantum.Mitigation.Passes.ZneRichardson
+  - NxQuantum.Mitigation.Passes.ZnePolyLs
+  - NxQuantum.Mitigation.Extrapolation
   - NxQuantum.Mitigation.Trace
 - Invariants:
   - deterministic counts/probabilities for fixed seed

@@ -38,6 +38,7 @@ Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 - Livebooks (fixture and simulator lanes only): two new notebooks (supervised service, researcher reproducibility) and a reworked provider-bridge side-by-side notebook. `test/nx_quantum/livebooks_test.exs` (`mix test.livebooks`) evaluates all five notebooks twice and compares checkpoints to goldens. The surfaces they use beyond the stable tier stay experimental. The notebooks use a repository-relative setup cell until the Hex release.
 - Experimental API tier in `docs/api-stability.md`, listing what the notebooks use beyond the stable tier.
 - Time-to-first-result harness (`bench/ttfr/run.sh`) that checks the documented install flow from fresh directories. It is an onboarding check, not a speed benchmark.
+- Mitigation passes `{:zne_richardson, scales:, values:, std_errors:}` (exact Lagrange extrapolation to zero) and `{:zne_poly_ls, scales:, values:, degree:, std_errors:}` (least-squares polynomial of degree below the point count, default 1). Both append `extrapolated_value` and, when `std_errors` are given, a linearly propagated `std_error` to the mitigation trace, and return typed `:invalid_mitigation_input` errors for too few points, duplicate scales, and degree at or above the point count. Experimental; tests: `test/nx_quantum/mitigation/zne_extrapolation_test.exs`.
 
 ### Changed
 
