@@ -87,7 +87,10 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.CacheByteCapTest do
   test "the default cap is 512 MiB" do
     Application.delete_env(:nx_quantum, @cap_env)
 
-    # 24-qubit CNOT permutation: 2^24 s64 entries, about 128 MiB, so the default holds a few of them.
+    # The default is the fallback passed to Application.get_env/3 when the key is unset.
+    assert Application.get_env(:nx_quantum, @cap_env, @default_cap) == 512 * 1024 * 1024
+
+    # Probe: 2^20 s64 entries = 8 MiB, well under the default cap, so it is retained.
     _ = Cache.fetch(:default_cap_probe, fn -> Nx.iota({1_048_576}, type: {:s, 64}) end)
     assert Cache.total_bytes() == 8 * 1_048_576
     assert Cache.total_bytes() <= @default_cap
