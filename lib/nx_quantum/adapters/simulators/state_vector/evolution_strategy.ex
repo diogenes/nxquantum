@@ -11,6 +11,9 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy do
   @callback evolve(Circuit.t()) :: Nx.Tensor.t()
 
   @strategies [RealPauliZ, Complex]
+  @path_names %{RealPauliZ => :real_pauli_z, Complex => :complex}
+
+  @type evolution_path :: :real_pauli_z | :complex
 
   @spec select(Circuit.t()) :: t()
   def select(%Circuit{} = circuit) do
@@ -19,7 +22,13 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.EvolutionStrategy do
 
   @spec evolve(Circuit.t()) :: Nx.Tensor.t()
   def evolve(%Circuit{} = circuit) do
+    {_path, state} = evolve_with_path(circuit)
+    state
+  end
+
+  @spec evolve_with_path(Circuit.t()) :: {evolution_path(), Nx.Tensor.t()}
+  def evolve_with_path(%Circuit{} = circuit) do
     strategy = select(circuit)
-    strategy.evolve(circuit)
+    {Map.fetch!(@path_names, strategy), strategy.evolve(circuit)}
   end
 end

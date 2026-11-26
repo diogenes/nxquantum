@@ -19,6 +19,8 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
 
   @type state_vector :: Nx.Tensor.t()
 
+  @simulation_key :nxq_estimator_simulation
+
   @impl true
   @spec expectation(Circuit.t(), keyword()) :: Nx.Tensor.t()
   def expectation(%Circuit{measurement: nil}, _opts) do
@@ -80,21 +82,35 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
       cache_key = evolved_state_cache_key(circuit, opts)
 
       {state, cache_status} =
-        EvolvedStateCache.fetch_with_status(
-          cache_key,
-          fn -> circuit |> EvolutionStrategy.evolve() |> maybe_apply_runtime_backend(opts) end,
-          opts
-        )
+        EvolvedStateCache.fetch_with_status(cache_key, fn -> evolve_state(circuit, opts) end, opts)
 
       Process.put(:nxq_estimator_cache_status, cache_status)
+
+      # A hit reuses a state that an earlier call evolved; no evolution ran in this call.
+      if cache_status == :hit, do: record_simulation(nil, state)
       state
     else
       Process.put(:nxq_estimator_cache_status, :bypass)
-
-      circuit
-      |> EvolutionStrategy.evolve()
-      |> maybe_apply_runtime_backend(opts)
+      evolve_state(circuit, opts)
     end
+  end
+
+  defp evolve_state(%Circuit{} = circuit, opts) do
+    {path, evolved} = EvolutionStrategy.evolve_with_path(circuit)
+    state = maybe_apply_runtime_backend(evolved, opts)
+    record_simulation(path, state)
+    state
+  end
+
+  # Plain atoms and module names only. The Estimator reads this record through the process
+  # dictionary, the same way it reads the cache status, so no adapter module is referenced there.
+  defp record_simulation(path, %Nx.Tensor{data: data}) do
+    current = Process.get(@simulation_key, %{evolution_paths: [], state_backends: []})
+
+    Process.put(@simulation_key, %{
+      evolution_paths: if(path, do: Enum.uniq([path | current.evolution_paths]), else: current.evolution_paths),
+      state_backends: Enum.uniq([data.__struct__ | current.state_backends])
+    })
   end
 
   defp cache_evolved_state?(%Circuit{qubits: qubits}, opts) do

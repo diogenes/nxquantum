@@ -73,6 +73,26 @@ What this means:
 
 Changing the precision is a public contract change (the output dtype of `expectation/2`). Reopen KG-10 with an `api change` intent if an external user needs float64 agreement, or if a benchmark shows a cheap path to complex128.
 
+## Evolution Path Metadata
+
+`NxQuantum.Estimator.run/2` results carry `metadata.simulation` (experimental, additive, KG-20). It reports which state-vector evolution path produced the state for that call. The fields are plain atoms and module names, and they never change numeric results.
+
+| Field | Values | Meaning |
+| --- | --- | --- |
+| `method` | `:state_vector` or `nil` | `:state_vector` when the state-vector simulator ran in this call. `nil` when no state was evolved or the simulator does not report the field. |
+| `evolution_path` | `:real_pauli_z`, `:complex`, `:mixed`, or `nil` | `:real_pauli_z` when the real-amplitude path ran (H, X, Z, RY, and CNOT only, with a `pauli_z` measurement). `:complex` otherwise. `nil` when the state was served from the evolved-state cache, so no evolution ran in this call. `:mixed` when one call evolved with different paths. |
+| `state_backend` | a module, such as `Nx.BinaryBackend`, or `:mixed` | The backend of the state tensor after the runtime transfer. A failed transfer is not an error: the field then reports the backend the state actually has, which can differ from the requested profile. |
+| `expectation_path` | `:fused_single_wire`, `:generic`, or `nil` | `:fused_single_wire` when the fused single-wire Pauli kernel evaluated the observables (single-wire Pauli terms, at least 24 of them, at most 12 qubits). `:generic` for every other evaluation. `nil` when no observable was evaluated. |
+
+Not reported, because the code has no choice to report:
+
+- Gate application always runs through the compiled execution plan, so there is no "compiled-plan vs per-gate" field.
+- Expectation kernels run on the state tensor's backend (`backend_from_state/1` in `pauli_expval/fused_single_wire.ex`), so there is no separate `expectation_backend`. Read `state_backend` for both.
+
+`metadata.strategy_observability` keeps its existing fields. `cache_status` and the `fused_kernel_*` fields are unchanged. `metadata.simulation` adds the path and backend facts those fields do not give.
+
+`NxQuantum.Estimator.expectation/2` and `expectation_result/2` return a tensor, not a `Result`, so they carry no metadata.
+
 ## Deferred Backends (Post-Foundation)
 
 - `EXLA` on `:rocm` (AMD GPU tuning and validation).

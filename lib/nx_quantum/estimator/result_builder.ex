@@ -3,6 +3,8 @@ defmodule NxQuantum.Estimator.ResultBuilder do
 
   alias NxQuantum.Estimator.Result
 
+  @unreported_simulation %{method: nil, evolution_path: nil, state_backend: nil, expectation_path: nil}
+
   @spec build(Nx.Tensor.t(), [map()], keyword()) :: Result.t()
   def build(values, observable_specs, opts) do
     resolved_runtime_profile = runtime_profile_id(opts)
@@ -34,6 +36,7 @@ defmodule NxQuantum.Estimator.ResultBuilder do
           fused_kernel_reason: Keyword.get(opts, :estimator_fused_kernel_reason, :not_applicable),
           strategy_tags: Keyword.get(opts, :estimator_strategy_tags, [])
         },
+        simulation: Keyword.get(opts, :estimator_simulation, @unreported_simulation),
         shots: Keyword.get(opts, :shots),
         seed: Keyword.get(opts, :seed)
       }
