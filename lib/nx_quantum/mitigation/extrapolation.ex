@@ -20,8 +20,8 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     with {:ok, scales} <- validate_scales(opts),
          {:ok, values} <- validate_values(opts, scales),
          {:ok, std_errors} <- validate_std_errors(opts, scales),
-         {:ok, degree} <- validate_degree(method, opts, scales) do
-      weights = weights(method, scales, degree)
+         {:ok, degree} <- validate_degree(method, opts, scales),
+         {:ok, weights} <- weights(method, scales, degree) do
       value = dot(weights, values)
       std_error = standard_error(weights, std_errors)
 
@@ -121,8 +121,8 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
-  defp weights(:richardson, scales, _degree), do: richardson_weights(floats(scales))
-  defp weights(:poly_ls, scales, degree), do: poly_ls_weights(floats(scales), degree)
+  defp weights(:richardson, scales, _degree), do: {:ok, richardson_weights(floats(scales))}
+  defp weights(:poly_ls, scales, degree), do: poly_ls_weights(floats(scales), scales, degree)
 
   # Lagrange basis polynomials evaluated at 0: w_i = prod_{j != i} x_j / (x_j - x_i).
   defp richardson_weights(xs) do
@@ -136,17 +136,49 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
+  # Upper bound on the 2-norm condition number of the Vandermonde matrix before
+  # the least-squares weights are trusted. Solving the normal equations squares
+  # this number, so at 1e8 roughly 16 digits of double precision are consumed.
+  # Tentative: the threshold is not yet measured against an analytic reference
+  # (H2.7 risk R1, see docs/roadmap.md).
+  @max_condition_number 1.0e8
+
   # Unweighted least-squares fit y ~ V c with V the Vandermonde matrix of degree
   # `degree`. The intercept c_0 = e_0' (V'V)^-1 V' y, so the weights are
-  # w_i = sum_k z_k x_i^k where z solves (V'V) z = e_0.
-  defp poly_ls_weights(xs, degree) do
+  # w_i = sum_k z_k x_i^k where z solves (V'V) z = e_0. The fit is refused when
+  # V is ill-conditioned, because the weights would carry no reliable digits.
+  defp poly_ls_weights(xs, scales, degree) do
     vandermonde = Nx.tensor(Enum.map(xs, fn x -> Enum.map(0..degree, &:math.pow(x, &1)) end), type: {:f, 64})
-    gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
-    e0 = Nx.tensor([1.0 | List.duplicate(0.0, degree)], type: {:f, 64})
+    condition = condition_number(vandermonde)
 
-    vandermonde
-    |> Nx.dot(Nx.LinAlg.solve(gram, e0))
-    |> Nx.to_flat_list()
+    if condition == :infinity or condition > @max_condition_number do
+      {:error, error(reason: :ill_conditioned, scales: scales, degree: degree, condition_number: condition)}
+    else
+      gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
+      e0 = Nx.tensor([1.0 | List.duplicate(0.0, degree)], type: {:f, 64})
+
+      weights =
+        vandermonde
+        |> Nx.dot(Nx.LinAlg.solve(gram, e0))
+        |> Nx.to_flat_list()
+
+      {:ok, weights}
+    end
+  end
+
+  # Ratio of the largest to the smallest singular value; infinity when the
+  # smallest is zero, which is reported as the threshold being exceeded.
+  defp condition_number(matrix) do
+    {_u, s, _vt} = Nx.LinAlg.svd(matrix)
+
+    case Nx.to_flat_list(s) do
+      [] ->
+        0.0
+
+      singular_values ->
+        smallest = List.last(singular_values)
+        if smallest > 0, do: hd(singular_values) / smallest, else: :infinity
+    end
   end
 
   defp standard_error(_weights, nil), do: nil
