@@ -4,6 +4,10 @@
 
 Planned as 0.12.0. Not yet on Hex; 0.11.0 is the latest release.
 
+### Toolchain
+
+- CI, release, and the mise pin move to the latest patch releases: Elixir 1.20.5 / OTP 29.1.3 (from 1.20.4 / 29.1.2). The supported floor stays Elixir 1.19.1 / OTP 28.1. Nx stays at 1.0.0, which is the latest release of the dependency.
+
 ### Upgrading from 0.11.0
 
 - Dependency currency (H1.6 PR-A, `api change`: the runtime dependency floor moved). Migration note:
