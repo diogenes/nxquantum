@@ -136,25 +136,25 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
-  # Upper bound on the 2-norm condition number of the Vandermonde matrix before
-  # the least-squares weights are trusted. Solving the normal equations squares
-  # this number, so at 1e8 roughly 16 digits of double precision are consumed.
-  # Tentative: the threshold is not yet measured against an analytic reference
-  # (H2.7 risk R1, see docs/roadmap.md).
-  @max_condition_number 1.0e8
+  # Upper bound on the 1-norm condition number of the Gram matrix V'V, where V is
+  # the Vandermonde matrix. The Gram condition is the square of the Vandermonde
+  # condition, so 1e16 here means about 1e8 on V: the normal equations have no
+  # reliable double-precision digits left. Tentative: not yet measured against an
+  # analytic reference (H2.7 risk R1, see docs/roadmap.md).
+  @max_condition_number 1.0e16
 
   # Unweighted least-squares fit y ~ V c with V the Vandermonde matrix of degree
   # `degree`. The intercept c_0 = e_0' (V'V)^-1 V' y, so the weights are
   # w_i = sum_k z_k x_i^k where z solves (V'V) z = e_0. The fit is refused when
-  # V is ill-conditioned, because the weights would carry no reliable digits.
+  # V'V is ill-conditioned, because the weights would carry no reliable digits.
   defp poly_ls_weights(xs, scales, degree) do
     vandermonde = Nx.tensor(Enum.map(xs, fn x -> Enum.map(0..degree, &:math.pow(x, &1)) end), type: {:f, 64})
-    condition = condition_number(vandermonde)
+    gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
+    condition = norm_1(gram) * norm_1(Nx.LinAlg.invert(gram))
 
     if condition > @max_condition_number do
       {:error, error(reason: :ill_conditioned, scales: scales, degree: degree, condition_number: condition)}
     else
-      gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
       e0 = Nx.tensor([1.0 | List.duplicate(0.0, degree)], type: {:f, 64})
 
       weights =
@@ -166,24 +166,13 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
-  # Ratio of the largest to the smallest singular value. The smallest is floored
-  # at a tiny positive number, so a rank-deficient matrix reports a huge finite
-  # condition number instead of dividing by zero.
-  @smallest_singular_floor 1.0e-300
-
-  defp condition_number(matrix) do
-    {_u, s, _vt} = Nx.LinAlg.svd(matrix)
-    singular_values = Nx.to_flat_list(s)
-    smallest = max(Enum.min(singular_values), @smallest_singular_floor)
-
-    Enum.max(singular_values) / smallest
-  end
-
-  defp standard_error(_weights, nil), do: nil
-
-  defp standard_error(weights, std_errors) do
-    variance = dot(Enum.map(weights, &(&1 * &1)), Enum.map(std_errors, &(&1 * &1)))
-    :math.sqrt(variance)
+  # Induced 1-norm: the largest absolute column sum.
+  defp norm_1(matrix) do
+    matrix
+    |> Nx.abs()
+    |> Nx.sum(axes: [0])
+    |> Nx.reduce_max()
+    |> Nx.to_number()
   end
 
   defp put_degree(entry, :poly_ls, degree), do: Map.put(entry, :degree, degree)
