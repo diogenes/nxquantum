@@ -226,6 +226,16 @@ defmodule NxQuantum.Mitigation.ZneExtrapolationTest do
                pass_error(:zne_poly_ls, scales: [1.0, 2.0, 3.0], values: [0.5, 0.4, 0.3], degree: 3)
     end
 
+    test "refuses a least-squares fit whose Vandermonde matrix is ill-conditioned" do
+      # Scales spanning 1 to 3000 at degree 3 put x^3 near 2.7e10 in one column, far above the threshold.
+      assert {:error, %{code: :invalid_mitigation_input, reason: :ill_conditioned, degree: 3}} =
+               pass_error(:zne_poly_ls,
+                 scales: [1.0, 1000.0, 2000.0, 3000.0],
+                 values: [0.5, 0.4, 0.3, 0.2],
+                 degree: 3
+               )
+    end
+
     test "returns a typed error for a negative or non-integer degree" do
       assert {:error, %{code: :invalid_mitigation_input, reason: :invalid_degree}} =
                pass_error(:zne_poly_ls, scales: [1.0, 2.0], values: [0.5, 0.4], degree: -1)

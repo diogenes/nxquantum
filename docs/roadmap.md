@@ -524,6 +524,10 @@ Review gate:
 2. Twirled circuits equal the original up to global phase (property test against the dense reference).
 3. The reported PEC overhead matches the analytic γ for the fixture channel within 1e-9.
 
+Open risks:
+
+- R1, least-squares conditioning. `zne_poly_ls` refuses a fit whose Gram matrix V'V has a 1-norm condition number above 1e16 (about 1e8 on the Vandermonde matrix; typed `:ill_conditioned` error; threshold tentative). The guard stops silent loss of digits, but the threshold is not yet measured. Exit: a condition-number versus error curve, measured in double precision on the scales the pass accepts, sets the threshold and a regression tolerance, and both run in CI. Owner: user. Acceptance owner: quantum physics/math.
+
 ### H2.6 - Pauli-Propagation Estimator
 
 - Status: planned

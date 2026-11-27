@@ -20,8 +20,8 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     with {:ok, scales} <- validate_scales(opts),
          {:ok, values} <- validate_values(opts, scales),
          {:ok, std_errors} <- validate_std_errors(opts, scales),
-         {:ok, degree} <- validate_degree(method, opts, scales) do
-      weights = weights(method, scales, degree)
+         {:ok, degree} <- validate_degree(method, opts, scales),
+         {:ok, weights} <- weights(method, scales, degree) do
       value = dot(weights, values)
       std_error = standard_error(weights, std_errors)
 
@@ -121,8 +121,8 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
-  defp weights(:richardson, scales, _degree), do: richardson_weights(floats(scales))
-  defp weights(:poly_ls, scales, degree), do: poly_ls_weights(floats(scales), degree)
+  defp weights(:richardson, scales, _degree), do: {:ok, richardson_weights(floats(scales))}
+  defp weights(:poly_ls, scales, degree), do: poly_ls_weights(floats(scales), scales, degree)
 
   # Lagrange basis polynomials evaluated at 0: w_i = prod_{j != i} x_j / (x_j - x_i).
   defp richardson_weights(xs) do
@@ -136,17 +136,43 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
+  # Upper bound on the 1-norm condition number of the Gram matrix V'V, where V is
+  # the Vandermonde matrix. The Gram condition is the square of the Vandermonde
+  # condition, so 1e16 here means about 1e8 on V: the normal equations have no
+  # reliable double-precision digits left. Tentative: not yet measured against an
+  # analytic reference (H2.7 risk R1, see docs/roadmap.md).
+  @max_condition_number 1.0e16
+
   # Unweighted least-squares fit y ~ V c with V the Vandermonde matrix of degree
   # `degree`. The intercept c_0 = e_0' (V'V)^-1 V' y, so the weights are
-  # w_i = sum_k z_k x_i^k where z solves (V'V) z = e_0.
-  defp poly_ls_weights(xs, degree) do
+  # w_i = sum_k z_k x_i^k where z solves (V'V) z = e_0. The fit is refused when
+  # V'V is ill-conditioned, because the weights would carry no reliable digits.
+  defp poly_ls_weights(xs, scales, degree) do
     vandermonde = Nx.tensor(Enum.map(xs, fn x -> Enum.map(0..degree, &:math.pow(x, &1)) end), type: {:f, 64})
     gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
-    e0 = Nx.tensor([1.0 | List.duplicate(0.0, degree)], type: {:f, 64})
+    condition = norm_1(gram) * norm_1(Nx.LinAlg.invert(gram))
 
-    vandermonde
-    |> Nx.dot(Nx.LinAlg.solve(gram, e0))
-    |> Nx.to_flat_list()
+    if condition > @max_condition_number do
+      {:error, error(reason: :ill_conditioned, scales: scales, degree: degree, condition_number: condition)}
+    else
+      e0 = Nx.tensor([1.0 | List.duplicate(0.0, degree)], type: {:f, 64})
+
+      weights =
+        vandermonde
+        |> Nx.dot(Nx.LinAlg.solve(gram, e0))
+        |> Nx.to_flat_list()
+
+      {:ok, weights}
+    end
+  end
+
+  # Induced 1-norm: the largest absolute column sum.
+  defp norm_1(matrix) do
+    matrix
+    |> Nx.abs()
+    |> Nx.sum(axes: [0])
+    |> Nx.reduce_max()
+    |> Nx.to_number()
   end
 
   defp standard_error(_weights, nil), do: nil
