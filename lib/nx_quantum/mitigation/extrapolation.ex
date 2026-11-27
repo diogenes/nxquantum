@@ -175,6 +175,13 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     |> Nx.to_number()
   end
 
+  defp standard_error(_weights, nil), do: nil
+
+  defp standard_error(weights, std_errors) do
+    variance = dot(Enum.map(weights, &(&1 * &1)), Enum.map(std_errors, &(&1 * &1)))
+    :math.sqrt(variance)
+  end
+
   defp put_degree(entry, :poly_ls, degree), do: Map.put(entry, :degree, degree)
   defp put_degree(entry, :richardson, _degree), do: entry
 
