@@ -151,7 +151,7 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     vandermonde = Nx.tensor(Enum.map(xs, fn x -> Enum.map(0..degree, &:math.pow(x, &1)) end), type: {:f, 64})
     condition = condition_number(vandermonde)
 
-    if condition == :infinity or condition > @max_condition_number do
+    if condition > @max_condition_number do
       {:error, error(reason: :ill_conditioned, scales: scales, degree: degree, condition_number: condition)}
     else
       gram = Nx.dot(Nx.transpose(vandermonde), vandermonde)
@@ -166,19 +166,17 @@ defmodule NxQuantum.Mitigation.Extrapolation do
     end
   end
 
-  # Ratio of the largest to the smallest singular value; infinity when the
-  # smallest is zero, which is reported as the threshold being exceeded.
+  # Ratio of the largest to the smallest singular value. The smallest is floored
+  # at a tiny positive number, so a rank-deficient matrix reports a huge finite
+  # condition number instead of dividing by zero.
+  @smallest_singular_floor 1.0e-300
+
   defp condition_number(matrix) do
     {_u, s, _vt} = Nx.LinAlg.svd(matrix)
+    singular_values = Nx.to_flat_list(s)
+    smallest = max(Enum.min(singular_values), @smallest_singular_floor)
 
-    case Nx.to_flat_list(s) do
-      [] ->
-        0.0
-
-      singular_values ->
-        smallest = List.last(singular_values)
-        if smallest > 0, do: hd(singular_values) / smallest, else: :infinity
-    end
+    Enum.max(singular_values) / smallest
   end
 
   defp standard_error(_weights, nil), do: nil
