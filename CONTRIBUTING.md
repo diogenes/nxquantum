@@ -30,7 +30,7 @@ mix setup
 
 Toolchain notes:
 
-- `mise.toml` pins Elixir 1.20.4 / OTP 29.1.2 exactly.
+- `mise.toml` pins Elixir 1.20.5 / OTP 29.1.3 exactly.
 - To run the supported floor locally: `NXQ_ENABLE_EXLA=0 NXQ_ENABLE_TORCHX=0 mise exec erlang@28.1 elixir@1.19.1-otp-28 -- mix test`.
 - Switch toolchains with `mise exec`. If you override `PATH` by hand, also set `MIX_HOME` and `MIX_ARCHIVES`. Repair a mismatched Hex archive with `mix local.hex --force`.
 - After toggling `NXQ_ENABLE_EXLA` or `NXQ_ENABLE_TORCHX` in one checkout, recompile deps (`mix deps.compile` or a clean `_build`). A stale build was observed to fail EXLA tests with `no process EXLA.Client`.
