@@ -49,7 +49,8 @@ defmodule NxQuantum.AI.ToolOutputGoldenTest do
   defp assert_golden(tool_name, input) do
     first = run(tool_name, input)
     second = run(tool_name, input)
-    fresh_process = Task.async(fn -> run(tool_name, input) end) |> Task.await()
+    task = Task.async(fn -> run(tool_name, input) end)
+    fresh_process = Task.await(task)
 
     assert {:ok, %{status: status}} = first
     assert status in [:ok, :fallback]
