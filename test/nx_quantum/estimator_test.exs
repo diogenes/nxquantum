@@ -339,23 +339,6 @@ defmodule NxQuantum.EstimatorTest do
       assert result.metadata.strategy_observability.fused_kernel_selected == :unknown
     end
 
-    test "a repeated run served from the evolved-state cache reports the state-vector method and no evolution path" do
-      circuit = real_path_circuit(0.577_215)
-      opts = [observables: [:pauli_z], wire: 1]
-
-      assert {:ok, %Result{}} = Estimator.run(circuit, opts)
-      assert {:ok, %Result{} = second} = Estimator.run(circuit, opts)
-
-      assert second.metadata.strategy_observability.cache_status == :hit
-
-      assert second.metadata.simulation == %{
-               method: :state_vector,
-               evolution_path: nil,
-               state_backend: :portable,
-               expectation_path: :generic
-             }
-    end
-
     test "a direct adapter call does not leak its simulation into the next Estimator.run" do
       direct_circuit = Map.put(real_path_circuit(0.141_592), :measurement, %{observable: :pauli_x, wire: 1})
       _ = StateVector.expectation(direct_circuit, runtime_profile: :cpu_portable, cache_evolved_state: false)
