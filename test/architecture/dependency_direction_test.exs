@@ -12,7 +12,9 @@ defmodule NxQuantum.Architecture.DependencyDirectionTest do
     "lib/nx_quantum/observables.ex",
     "lib/nx_quantum/observables/error.ex",
     "lib/nx_quantum/observables/schema.ex",
-    "lib/nx_quantum/observables/sparse_pauli.ex"
+    "lib/nx_quantum/observables/sparse_pauli.ex",
+    "lib/nx_quantum/noise/channel.ex",
+    "lib/nx_quantum/noise/model.ex"
   ]
 
   test "domain layer does not depend on application or adapters" do
@@ -56,6 +58,16 @@ defmodule NxQuantum.Architecture.DependencyDirectionTest do
       layer_violations(
         files,
         ["NxQuantum.Application."]
+      )
+
+    assert violations == []
+  end
+
+  test "interop OpenQASM 3 codec does not depend on adapters or providers" do
+    violations =
+      layer_violations(
+        ["lib/nx_quantum/interop/open_qasm3.ex"],
+        ["NxQuantum.Adapters.", "NxQuantum.Provider"]
       )
 
     assert violations == []

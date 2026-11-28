@@ -103,6 +103,9 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - NxQuantum.Mitigation.PassPipeline
   - NxQuantum.Mitigation.Passes.Readout
   - NxQuantum.Mitigation.Passes.ZneLinear
+  - NxQuantum.Mitigation.Passes.ZneRichardson
+  - NxQuantum.Mitigation.Passes.ZnePolyLs
+  - NxQuantum.Mitigation.Extrapolation
   - NxQuantum.Mitigation.Trace
 - Invariants:
   - deterministic counts/probabilities for fixed seed
@@ -288,7 +291,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 - Public assets:
   - side-by-side workflow guides
   - migration playbooks
-  - positioning with the decision matrix (`docs/product-positioning.md`; `docs/decision-matrix.md` is a pointer stub)
+  - positioning with the decision matrix and messaging rules (`docs/product-positioning.md`)
   - provider migration packs and release-hardening evidence (`v0.5`):
     - `docs/migration-packs.md`
     - `docs/provider-benchmark-matrix.md`
@@ -305,6 +308,7 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
 
 ### 13) Quantum AI Tool Contract Context (Planned v1.0)
 
+- Owner: user
 - Features:
   - `features/quantum_ai_tool_contracts.feature`
   - `features/quantum_ai_rollout_gates.feature`
@@ -332,6 +336,59 @@ This map keeps refactoring grounded in behavior. Every internal structural chang
   - sync and async execution paths preserve typed deterministic errors
   - trace/correlation metadata remains intact end-to-end
   - quantized rerank lane remains deterministic for fixed seed and bounded parallel settings
+
+### 4.1) Option Key Validation (cross-cutting boundary, KG-25 phase 1)
+
+- Owner: user
+- Module: `NxQuantum.OptionKeys` (`lib/nx_quantum/option_keys.ex`)
+- Contexts named:
+  - Primitive Estimation Context (3): `NxQuantum.Estimator.run/2`, `expectation_result/2`
+  - Primitive Sampling and Mitigation Context (4): `NxQuantum.Sampler.run/2`
+- Rule: an unknown top-level key changes no result; it logs one warning and adds `metadata.unknown_options`. Adapter-specific keys on the allow-list are an exception recorded in `docs/adr/0014-option-keys-adapter-exception.md`.
+- Invariant: the allow-list is the only place a top-level option key is declared for these entrypoints.
+
+## Planned Contexts (2027 roadmap, added 2026-11-25)
+
+Ownership is fixed here before any Builder work, so no planned milestone starts with unclear bounded-context ownership (AGENTS.md stop rule). Module paths are *tentative* until each milestone's plan review or ADR fixes them.
+
+### 14) Simulation Methods Context (planned: ADR 0013, H2.4, H2.5, H2.6)
+
+- Owns: method selection by declared capability, and the method adapters (state vector, density matrix, trajectories, Pauli propagation).
+- Ports:
+  - `NxQuantum.Ports.Simulator` (amplitudes; unchanged)
+  - expectation-level method port (*tentative*: `NxQuantum.Ports.ExpectationEngine`, ADR 0013)
+- Invariants:
+  - every method declares its determinism level (`:bitwise` or `:tolerance`) and whether it is exact
+  - approximate methods report their error with the result, and run only when asked for
+  - each method's acceptance suite cross-checks against an exact method
+
+### 15) Noise Modeling Context (planned: H2.5)
+
+- Owner: user
+- Owns: `NoiseModel` and channel definitions (*tentative*: `lib/nx_quantum/noise/`), consumed by Simulation Methods and Mitigation.
+- Slice 1 (domain types and channel tests) landed on main (#35, 2026-11-26). Placement: Domain. Future consumers: NxQuantum.Estimator and NxQuantum.Sampler.
+- Invariants:
+  - channels are checked for Kraus completeness when built
+  - trajectory seeds use the ADR 0012 derivation (`seed_derivation: v1`)
+  - the scalar `noise:` option (KG-30) stays documented as scalar until removed
+
+### 16) Distributed Execution Context (planned: ADR 0012, H2.1)
+
+- Owns: within-job fan-out of tasks (sweeps, shots, trajectories, observable partitions), placement, re-dispatch, and ordered reduction.
+- Ports: `NxQuantum.Ports.Cluster`, `NxQuantum.Ports.Clock` (*tentative*, ADR 0012).
+- Invariants: results identical on 1 vs N nodes for the same seed; orchestration across jobs stays in FluxQ.
+
+### 17) Interop Context (planned: H2.8)
+
+- Owns: OpenQASM 3 import and export for a documented subset (*tentative*: `lib/nx_quantum/interop/`).
+- Invariants: unsupported constructs return typed errors; round trips preserve the unitary up to global phase.
+- Boundary note: NxQuantum.Interop is a pure codec. The Circuit domain facade may call it. Owner: user. The architecture test in test/architecture/dependency_direction_test.exs enforces that lib/nx_quantum/interop/open_qasm3.ex references no adapter or provider module.
+
+### 18) Hamiltonian and Algorithms Context (planned: H2.9)
+
+- Owns: Pauli Hamiltonians, product formulas and qDRIFT, and the SQD and SKQD workflows (*tentative*: `lib/nx_quantum/hamiltonian/`, `lib/nx_quantum/algorithms/`).
+- Depends on: Primitive Estimation and Sampling (§3, §4), Simulation Methods (§14), and, for batches, Distributed Execution (§16), through their public facades only.
+- Invariants: every reported error bound has an analytic or exact-reference test.
 
 ## Refactor Rules
 

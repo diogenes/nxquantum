@@ -28,7 +28,8 @@ defmodule NxQuantum.DomainCoverageGate do
     "NxQuantum.Grad.",
     "NxQuantum.Compiler.",
     "NxQuantum.Transpiler.",
-    "NxQuantum.DynamicIR."
+    "NxQuantum.DynamicIR.",
+    "NxQuantum.Noise."
   ]
 
   @export_name "domain_gate"

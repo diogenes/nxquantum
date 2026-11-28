@@ -5,8 +5,9 @@
 > Launch checklist (all items must be done before publishing):
 >
 > - [ ] 0.12.0 published on Hex and tagged.
-> - [ ] Hex description (`mix.exs`) aligned to decision D1 (`docs/roadmap.md`).
+> - [ ] Hex description (`mix.exs`) aligned to decisions D1 and PD-1 (`docs/roadmap.md`).
 > - [ ] Claims cleanup done in the 0.12.0 docs.
+> - [x] KG-12 resolved (H1.7): the bundled AI handlers report `execution.mode: :classical`, so they may appear in this post as classical computations (decision PD-6).
 > - [ ] A Hex-based quick start is in the README and `docs/getting-started.md`.
 > - [ ] Time to first result (TTFR) measured on the published 0.12.0.
 > - [ ] Survey live (`docs/research/kano-survey-h1.5.md`).
@@ -29,7 +30,7 @@ Alternatives:
 
 NxQuantum is a quantum circuit library for Elixir and Nx. It runs a state-vector simulator inside your BEAM process and puts the focus on reproducibility: a fixed seed gives the same sampled counts, and job, result and error records have a versioned shape.
 
-It is for two groups. One group is BEAM and Nx teams who want to embed quantum workloads in a supervised service. The other is researchers who need to rerun a result and get the same answer. It is not for you if your top need is provider breadth, compiler depth, or GPU-scale simulation.
+It is for two groups. One group is BEAM and Nx teams who want to embed quantum workloads in a supervised service. The other is researchers who need to rerun a result and get the same answer. It is not for you if your top need is provider breadth, compiler depth, noise simulation, or large-scale GPU or multi-node simulation.
 
 ## Try it in two minutes
 

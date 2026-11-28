@@ -12,7 +12,11 @@ defmodule NxQuantum.Mitigation do
   alias NxQuantum.Mitigation.PassPipeline
   alias NxQuantum.Sampler.Result, as: SamplerResult
 
-  @type pass :: {:readout, keyword()} | {:zne_linear, keyword()}
+  @type pass ::
+          {:readout, keyword()}
+          | {:zne_linear, keyword()}
+          | {:zne_richardson, keyword()}
+          | {:zne_poly_ls, keyword()}
 
   @spec pipeline(EstimatorResult.t() | SamplerResult.t(), [pass()]) ::
           {:ok, EstimatorResult.t() | SamplerResult.t()} | {:error, map()}

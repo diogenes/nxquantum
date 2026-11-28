@@ -10,6 +10,7 @@ defmodule NxQuantum.Sampler do
 
   alias NxQuantum.Circuit
   alias NxQuantum.Estimator
+  alias NxQuantum.OptionKeys
   alias NxQuantum.Sampler.BatchedRunner
   alias NxQuantum.Sampler.Engine
   alias NxQuantum.Sampler.Options
@@ -18,8 +19,11 @@ defmodule NxQuantum.Sampler do
 
   @spec run(Circuit.t(), keyword()) :: {:ok, Result.t()} | {:error, map()}
   def run(%Circuit{} = circuit, opts \\ []) do
-    with {:ok, config} <- Options.normalize(opts) do
-      run_with_config(circuit, config)
+    unknown = OptionKeys.validate(opts, :sampler, "NxQuantum.Sampler.run/2")
+
+    with {:ok, config} <- Options.normalize(opts),
+         {:ok, result} <- run_with_config(circuit, config) do
+      {:ok, OptionKeys.put_unknown(result, unknown)}
     end
   end
 

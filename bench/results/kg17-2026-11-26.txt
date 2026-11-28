@@ -1,0 +1,45 @@
+KG-17 benchmark: state-vector structure cache, cache-miss path (CI)
+Date: 2026-11-26
+
+CI run: https://github.com/diogenes/nxquantum/actions/runs/45892427672
+Job: kg17-bench (job id 140158070149), result: success
+Branch: feat/h2.4-kg17-cache-byte-cap, head e39ebf4
+Baseline: main (origin/main)
+
+Command (as run in CI):
+  branch: KG17_LABEL=branch mix run bench/kg17_cache_miss_bench.exs
+  main:   KG17_LABEL=main mix run bench/kg17_cache_miss_bench.exs
+  The main run executes in a checkout of main, with bench/kg17_cache_miss_bench.exs copied in from the branch.
+
+Environment:
+  Runner: ubuntu-latest (resolved in this run to image ubuntu-26.04, 20261122.9.1, Ubuntu 26.04.1 LTS)
+  Elixir 1.20.4 (compiled with Erlang/OTP 29)
+  OTP 29.1.2 (erts-17.1.1)
+  NXQ_ENABLE_EXLA=0
+  NXQ_ENABLE_TORCHX=0
+  MIX_ENV=test
+  Workload: 20-qubit CNOT ladder (forward and back), fixed seed 0, 5 runs, fresh process per run (every structure-cache lookup is a miss)
+
+Result blocks (as printed):
+
+kg17_cache_miss_bench label=branch qubits=20 seed=0 iterations=5
+KG17 branch run=1 ms=91685.37 retained_bytes=176253338
+KG17 branch run=2 ms=91986.97 retained_bytes=176253338
+KG17 branch run=3 ms=92157.46 retained_bytes=176253338
+KG17 branch run=4 ms=92103.5 retained_bytes=176253338
+KG17 branch run=5 ms=91822.33 retained_bytes=176253338
+KG17 branch median_ms=91986.97 retained_bytes=176253338
+
+kg17_cache_miss_bench label=main qubits=20 seed=0 iterations=5
+KG17 main run=1 ms=89947.37 retained_bytes=176253338
+KG17 main run=2 ms=90033.15 retained_bytes=176253338
+KG17 main run=3 ms=90024.07 retained_bytes=176253338
+KG17 main run=4 ms=90091.57 retained_bytes=176253338
+KG17 main run=5 ms=89956.65 retained_bytes=176253338
+KG17 main median_ms=90024.07 retained_bytes=176253338
+
+Delta (median): +1962.9 ms, about +2.2% on the cache-miss path (branch 91986.97 ms vs main 90024.07 ms). Retained bytes are identical (176253338) on both.
+
+Caveat:
+- The retained working set (176 MB) is below the 512 MiB byte cap, so eviction does not fire in this benchmark.
+- The measured delta is the byte-accounting overhead on the cache-miss path. It is not a measurement of the eviction path (the O(n) ETS fold on over-budget inserts), which is not measured here and whose cost is unknown.

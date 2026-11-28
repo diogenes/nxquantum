@@ -8,7 +8,6 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
 
   defguardp unit_scale(scale) when abs(scale - 1.0) < 1.0e-12
   defguardp neg_unit_scale(scale) when abs(scale + 1.0) < 1.0e-12
-  @kernel_resolution_key :nxq_fused_kernel_resolution
 
   @type prepared_term :: map()
 
@@ -56,13 +55,25 @@ defmodule NxQuantum.Adapters.Simulators.StateVector.PauliExpval.FusedSingleWire 
   @spec expectations_for_runtime(Nx.Tensor.t(), [prepared_term()], pos_integer(), keyword()) ::
           [Nx.Tensor.t()]
   def expectations_for_runtime(%Nx.Tensor{} = state, terms, qubits, opts \\ []) do
-    {kernel, reason} = resolve_kernel(opts, qubits, length(terms))
-    Process.put(@kernel_resolution_key, kernel_resolution(opts, kernel, reason))
+    {values, _resolution} = expectations_for_runtime_with_resolution(state, terms, qubits, opts)
+    values
+  end
 
-    case kernel do
-      :compiled -> expectations_compiled(state, terms, qubits)
-      :portable -> expectations(state, terms, qubits)
-    end
+  @type kernel_resolution :: %{requested_kernel: atom(), selected_kernel: atom(), reason: atom()}
+
+  # Returns the values with the kernel that actually evaluated them. No process state is written.
+  @spec expectations_for_runtime_with_resolution(Nx.Tensor.t(), [prepared_term()], pos_integer(), keyword()) ::
+          {[Nx.Tensor.t()], kernel_resolution()}
+  def expectations_for_runtime_with_resolution(%Nx.Tensor{} = state, terms, qubits, opts \\ []) do
+    {kernel, reason} = resolve_kernel(opts, qubits, length(terms))
+
+    values =
+      case kernel do
+        :compiled -> expectations_compiled(state, terms, qubits)
+        :portable -> expectations(state, terms, qubits)
+      end
+
+    {values, kernel_resolution(opts, kernel, reason)}
   end
 
   @spec kernel_for_runtime(keyword()) :: :portable | :compiled

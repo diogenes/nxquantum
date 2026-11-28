@@ -1,8 +1,8 @@
 # Goldens for examples/livebook/researcher_reproducibility.livemd.
 #
-# The fingerprint is exact. Measured on OTP 29.1.2 / Elixir 1.20.4. The CI floor job also runs
-# this test on OTP 28.1. OTP does not promise that term_to_binary(_, [:deterministic]) stays
-# stable across majors. If a future OTP changes it, re-derive the value here and in the notebook
+# The fingerprint is exact. Last re-derived on OTP 29.1.2 / Elixir 1.20.4. CI passes this test on
+# OTP 29.1.3 / Elixir 1.20.5 (core-ci, main 0305d04) and on the OTP 28.1 floor job.
+# OTP does not promise that term_to_binary(_, [:deterministic]) stays stable across majors. If a future OTP changes it, re-derive the value here and in the notebook
 # prose, and say so in the CHANGELOG.
 # Counts are exact. Floats use the 1.0e-6 absolute tolerance (f32 results, docs/backend-support.md).
 %{

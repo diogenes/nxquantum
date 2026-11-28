@@ -21,6 +21,7 @@ Use after any change that can affect docs, onboarding, architecture guidance, or
 1. Every performance or quality claim cites an in-repo evidence file, with its date and environment.
 2. Synthetic-data results are labeled synthetic.
 3. No wording that implies deterministic live-QPU outcomes or universal provider breadth.
+4. Wording follows the messaging rules in `docs/product-positioning.md` §11 (for example: no "standard", no unqualified "parallel simulation", no "noise channels" for the scalar `noise:` option).
 
 ## Output Requirements
 - Updated docs aligned with code behavior and contracts.

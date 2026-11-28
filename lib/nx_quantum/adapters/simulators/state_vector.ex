@@ -19,40 +19,62 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
 
   @type state_vector :: Nx.Tensor.t()
 
+  @generic_expectation_path %{
+    expectation_path: :generic,
+    fused_kernel: %{requested_kernel: :unknown, selected_kernel: :unknown, reason: :not_applicable}
+  }
+
   @impl true
   @spec expectation(Circuit.t(), keyword()) :: Nx.Tensor.t()
-  def expectation(%Circuit{measurement: nil}, _opts) do
+  def expectation(%Circuit{} = circuit, opts) do
+    {value, _facts} = expectation_with_simulation(circuit, opts)
+    value
+  end
+
+  @impl true
+  @spec expectation_with_simulation(Circuit.t(), keyword()) :: {Nx.Tensor.t(), map()}
+  def expectation_with_simulation(%Circuit{measurement: nil}, _opts) do
     raise ArgumentError, "measurement not set; call Circuit.expectation/2 with observable and wire"
   end
 
-  def expectation(%Circuit{} = circuit, opts) do
+  def expectation_with_simulation(%Circuit{} = circuit, opts) do
     %{observable: observable, wire: wire} = circuit.measurement
-    state = evolve_with_cache(circuit, opts)
+    {state, run} = evolve_with_cache(circuit, opts)
     value = expectation_for_observable(state, observable, wire, circuit.qubits)
-    Nx.as_type(value, {:f, 32})
+    {Nx.as_type(value, {:f, 32}), simulation_facts(run, @generic_expectation_path)}
   end
 
   @impl true
   @spec expectations(Circuit.t(), [map()], keyword()) :: Nx.Tensor.t()
   def expectations(%Circuit{} = circuit, observable_specs, opts) when is_list(observable_specs) do
+    {values, _facts} = expectations_with_simulation(circuit, observable_specs, opts)
+    values
+  end
+
+  @impl true
+  @spec expectations_with_simulation(Circuit.t(), [map()], keyword()) :: {Nx.Tensor.t(), map()}
+  def expectations_with_simulation(%Circuit{} = circuit, observable_specs, opts) when is_list(observable_specs) do
     if observable_specs == [] do
-      Nx.tensor([], type: {:f, 32})
+      {Nx.tensor([], type: {:f, 32}), NxQuantum.Ports.Simulator.unreported_facts()}
     else
-      state = evolve_with_cache(circuit, opts)
+      {state, run} = evolve_with_cache(circuit, opts)
       maybe_bitmask_terms = Enum.map(observable_specs, &PauliExpval.term_for_observable(&1.observable, &1.wire))
 
-      values =
+      {values, path} =
         if Enum.all?(maybe_bitmask_terms, &is_map/1) do
           maybe_bitmask_terms
           |> PauliExpval.plan(circuit.qubits, opts)
-          |> then(&PauliExpval.expectations_with_plan(state, &1, opts))
+          |> then(&PauliExpval.expectations_with_plan_and_path(state, &1, opts))
         else
-          Enum.map(observable_specs, fn %{observable: observable, wire: wire} ->
-            expectation_for_observable(state, observable, wire, circuit.qubits)
-          end)
+          values =
+            Enum.map(observable_specs, fn %{observable: observable, wire: wire} ->
+              expectation_for_observable(state, observable, wire, circuit.qubits)
+            end)
+
+          {values, @generic_expectation_path}
         end
 
-      values |> Nx.stack() |> Nx.as_type({:f, 32})
+      {values |> Nx.stack() |> Nx.as_type({:f, 32}), simulation_facts(run, path)}
     end
   end
 
@@ -75,26 +97,51 @@ defmodule NxQuantum.Adapters.Simulators.StateVector do
     State.expectation_from_state(state, observable_matrix)
   end
 
+  # Returns the state and what happened to it in this call. A cache hit reuses a state that an
+  # earlier call evolved, so no evolution path is reported for it.
   defp evolve_with_cache(%Circuit{} = circuit, opts) do
     if cache_evolved_state?(circuit, opts) do
       cache_key = evolved_state_cache_key(circuit, opts)
 
       {state, cache_status} =
-        EvolvedStateCache.fetch_with_status(
-          cache_key,
-          fn -> circuit |> EvolutionStrategy.evolve() |> maybe_apply_runtime_backend(opts) end,
-          opts
-        )
+        EvolvedStateCache.fetch_with_status(cache_key, fn -> evolve_state(circuit, opts) end, opts)
 
-      Process.put(:nxq_estimator_cache_status, cache_status)
-      state
+      path = if cache_status == :miss, do: EvolutionStrategy.path_for(circuit)
+      {state, %{cache_status: cache_status, evolution_path: path, state_backend: state_backend(state)}}
     else
-      Process.put(:nxq_estimator_cache_status, :bypass)
+      state = evolve_state(circuit, opts)
 
-      circuit
-      |> EvolutionStrategy.evolve()
-      |> maybe_apply_runtime_backend(opts)
+      run = %{
+        cache_status: :bypass,
+        evolution_path: EvolutionStrategy.path_for(circuit),
+        state_backend: state_backend(state)
+      }
+
+      {state, run}
     end
+  end
+
+  defp evolve_state(%Circuit{} = circuit, opts) do
+    {_path, evolved} = EvolutionStrategy.evolve_with_path(circuit)
+    maybe_apply_runtime_backend(evolved, opts)
+  end
+
+  defp simulation_facts(run, path) do
+    %{
+      method: :state_vector,
+      evolution_path: run.evolution_path,
+      state_backend: run.state_backend,
+      cache_status: run.cache_status,
+      expectation_path: path.expectation_path,
+      fused_kernel: path.fused_kernel
+    }
+  end
+
+  # Neutral label for the state's backend. The Nx backend module itself never leaves the adapter.
+  defp state_backend(%Nx.Tensor{data: %{__struct__: Nx.BinaryBackend}}), do: :portable
+
+  defp state_backend(%Nx.Tensor{data: %{__struct__: backend}}) do
+    if backend == exla_backend_module(), do: :compiled, else: :other
   end
 
   defp cache_evolved_state?(%Circuit{qubits: qubits}, opts) do

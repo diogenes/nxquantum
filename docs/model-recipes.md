@@ -26,17 +26,18 @@ See:
 - `docs/axon-integration.md`
 - `examples/axon_hybrid_train_step.exs`
 
-## 3) Noisy/Shot-Based Evaluation
+## 3) Shot-Based Evaluation (and the Scalar Noise Option)
 
-For deterministic experiments with realistic execution assumptions:
+Seeded shots give reproducible finite-sampling estimates:
 
 ```elixir
 NxQuantum.Estimator.expectation_result(
   circuit,
   shots: 2048,
-  seed: 2026,
-  noise: [depolarizing: 0.1, amplitude_damping: 0.2]
+  seed: 2026
 )
 ```
 
-Keep seed and noise config fixed between runs for reproducibility.
+The `noise:` option (`noise: [depolarizing: p, amplitude_damping: g]`) is a scalar model, not a noise channel. It rescales the final ideal expectation, so it ignores circuit depth and which qubits the gates act on, and its amplitude-damping shift is the ⟨Z⟩ formula applied to every observable (`docs/roadmap.md`, KG-30). Use it only as a coarse sensitivity knob, not as a model of hardware noise. Channel-based noise is planned (`docs/roadmap.md`, decision PD-5).
+
+Keep seed, shots, and options fixed between runs for reproducibility.

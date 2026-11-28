@@ -7,6 +7,7 @@ defmodule NxQuantum.Circuit do
   alias NxQuantum.Circuit.Validation
   alias NxQuantum.Estimator
   alias NxQuantum.GateOperation
+  alias NxQuantum.Interop.OpenQASM3
   alias NxQuantum.Observables
   alias NxQuantum.Observables.Schema
 
@@ -44,6 +45,16 @@ defmodule NxQuantum.Circuit do
     Validation.validate_operation_wires_in_circuit!(operation.wires, circuit.qubits)
     %{circuit | operations: circuit.operations ++ [operation]}
   end
+
+  @doc """
+  Experimental. Exports the circuit as OpenQASM 3 text over the `stdgates.inc`
+  subset. Pass `measure: true` to declare `bit[n] c;` and append `c = measure q;`.
+
+  Returns `{:error, %{code: :unsupported_qasm_construct, construct: _, ...}}`
+  for any construct outside the subset. See `NxQuantum.Interop.OpenQASM3`.
+  """
+  @spec to_qasm(t(), keyword()) :: {:ok, String.t()} | {:error, map()}
+  def to_qasm(%__MODULE__{} = circuit, opts \\ []), do: OpenQASM3.to_qasm(circuit, opts)
 
   @spec expectation(t(), keyword()) :: Nx.Tensor.t()
   def expectation(%__MODULE__{} = circuit, opts \\ []) do

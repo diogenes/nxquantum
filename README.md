@@ -1,6 +1,8 @@
 # NxQuantum
 
-Deterministic quantum execution on BEAM for Elixir and Nx teams.
+Deterministic quantum simulation and execution on BEAM.
+
+Same seed, same result: across repeat runs and across Nx and OTP upgrades on the default backend (see Determinism Scope).
 
 NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simulation, estimation, sampling, kernels, and transpilation inside your BEAM application, with no separate Python service. With fixed inputs, seed, runtime profile, and toolchain, simulator and fixture runs return the same outputs (see Determinism Scope). Jobs for IBM Runtime, AWS Braket, Azure Quantum, and Google Quantum AI go through one typed lifecycle with versioned envelopes ([support tiers](docs/provider-support-catalog.md)); live hardware results remain probabilistic (see Determinism Scope).
 
@@ -9,7 +11,7 @@ NxQuantum is a pure-Elixir quantum library built on `Nx`. It runs circuit simula
 - Elixir and Nx teams embedding quantum workloads in BEAM services, who need seeded, reproducible results and typed contracts in the same runtime.
 - Teams building host applications or control planes on NxQuantum's versioned job, result, and error envelopes and structured telemetry.
 - Researchers who need reproducible runs: fixed seeds, experiment fingerprints, and Livebook tutorials.
-- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically today (results still report `execution.mode: :quantum`; KG-12), and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
+- Teams exploring hybrid quantum-AI as an application of the same runtime: training steps that differentiate through quantum expectations (Axon-style pattern, `docs/axon-integration.md`), and versioned AI tool contracts for reranking and constrained optimization. The bundled rerank and optimization handlers compute classically and report `execution.mode: :classical`, and the in-repo rerank datasets are synthetic; no real-data quality claim is made.
 - Not a primary fit (today) for teams whose top requirement is broad hardware-provider coverage, compiler depth, or large-scale GPU simulation.
 
 ## Why Teams Choose NxQuantum
@@ -22,7 +24,7 @@ Quantum tooling is mostly Python-first today. NxQuantum focuses on the Elixir/Nx
 - Envelope compatibility guarded in CI: golden snapshots of job, result, and error envelopes fail the build on any byte change, and a shape or meaning change requires a `schema_version` bump (`docs/api-stability.md`). (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
 - Verified physics with stated limits: compiler and transpiler passes are property-tested against an independent dense reference on random circuits up to 6 qubits, and the single-precision accuracy floor is documented. (unreleased; on `main`, see CHANGELOG `[Unreleased]`)
 - Telemetry with OpenTelemetry-style span, metric, and log names behind a pluggable emitter (the bundled OpenTelemetry-named adapter records in-process; no OpenTelemetry exporter ships), plus experiment fingerprints for comparing runs. VM-independent fingerprint hashing is unreleased (on `main`, see CHANGELOG `[Unreleased]`).
-- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-inspired compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically today (results still report `execution.mode: :quantum`; KG-12).
+- Hybrid quantum-AI building blocks (versioned AI tool contracts, a TurboQuant-inspired compressed rerank handler, rollout gates) as an application rather than the core; the bundled handlers compute classically and report `execution.mode: :classical`.
 
 See positioning and comparison details:
 
@@ -58,7 +60,7 @@ NxQuantum makes no cross-framework speed claims. We keep an internal benchmark h
 
 These are the requirements on `main` (unreleased). NxQuantum 0.11.0 on Hex requires `nx ~> 0.10` (see CHANGELOG `[Unreleased]`).
 
-- Elixir `~> 1.19` on OTP 28 or newer. CI tests two toolchain pairs: Elixir 1.19.1 / OTP 28.1 (the supported floor; optional backends off) and Elixir 1.20.4 / OTP 29.1.2. The optional EXLA and Torchx backends are tested on the 1.20.4 / OTP 29.1.2 pair only (`.github/workflows/ci.yml`).
+- Elixir `~> 1.19` on OTP 28 or newer. CI tests two toolchain pairs: Elixir 1.19.1 / OTP 28.1 (the supported floor; optional backends off) and Elixir 1.20.5 / OTP 29.1.3. The optional EXLA and Torchx backends are tested on the 1.20.4 / OTP 29.1.2 pair only (`.github/workflows/ci.yml`).
 - Nx `~> 1.0`.
 - Optional EXLA and Torchx backends, `~> 1.0`.
 
@@ -106,57 +108,29 @@ mix run examples/quantum_kernel_classifier.exs
 - Shot-based sampling with explicit seeds (deterministic in simulator/fixture lanes).
 - Batched estimator/sampler APIs.
 - Gradient modes (`backprop`, `parameter_shift`, `adjoint`).
-- Error mitigation pipeline (`readout`, `zne_linear`).
+- Error mitigation pipeline (`readout`, `zne_linear`, and the experimental `zne_richardson` and `zne_poly_ls` extrapolators with propagated standard errors).
 - Topology-aware transpilation interface.
 - Quantum kernel matrix generation.
 
 ## What Is Still Planned
 
-- v0.8 migration-assurance toolkit scope from ADR 0007 (unscheduled).
-- Additional provider depth and broader provider-native dynamic/non-gate-model paths.
+The roadmap is the source of truth for status ([docs/roadmap.md](docs/roadmap.md)). Next up:
+
+- H1.5 adoption launch (in progress) and H1.7 claims and option hygiene.
+- 2027 engine track: state-vector engine v2 with an opt-in float64 mode (H2.4), OpenQASM 3 interop (H2.8), gate-level noise channels with deterministic trajectories (H2.5).
+- 2027 differentiator track: deterministic ensemble fan-out across BEAM nodes (H2.1, gated by decision D2), error mitigation checked against an exact noisy reference (H2.7), a Pauli-propagation estimator (H2.6), and Hamiltonian simulation with SQD/SKQD (H2.9).
 - Case studies from named external BEAM deployments (none documented yet).
-
-Track status here:
-
-- [docs/roadmap.md](docs/roadmap.md)
-- [docs/archive/v0.6-feature-spec.md](docs/archive/v0.6-feature-spec.md)
-- [docs/archive/v0.6-acceptance-criteria.md](docs/archive/v0.6-acceptance-criteria.md)
-- [docs/archive/v0.6-feature-to-step-mapping.md](docs/archive/v0.6-feature-to-step-mapping.md)
-- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
-- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
-- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
-- [docs/archive/v0.3-feature-spec.md](docs/archive/v0.3-feature-spec.md)
-- [docs/archive/v0.4-feature-spec.md](docs/archive/v0.4-feature-spec.md)
 
 ## Docs
 
-- [docs/getting-started.md](docs/getting-started.md)
-- [docs/product-positioning.md](docs/product-positioning.md)
-- [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md)
-- [docs/migration-python-playbook.md](docs/migration-python-playbook.md)
-- [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
-- [docs/case-study-beam-integration.md](docs/case-study-beam-integration.md) (illustrative pattern)
-- [docs/axon-integration.md](docs/axon-integration.md)
-- [docs/model-recipes.md](docs/model-recipes.md)
-- [docs/backend-support.md](docs/backend-support.md)
-- [docs/api-stability.md](docs/api-stability.md)
-- [docs/architecture.md](docs/architecture.md)
-- [docs/observability.md](docs/observability.md)
-- [docs/observability-dashboards.md](docs/observability-dashboards.md)
-- [docs/standalone-integration-profiles.md](docs/standalone-integration-profiles.md)
-- [docs/archive/v0.5-feature-spec.md](docs/archive/v0.5-feature-spec.md)
-- [docs/archive/v0.6-feature-spec.md](docs/archive/v0.6-feature-spec.md)
-- [docs/archive/v0.6-acceptance-criteria.md](docs/archive/v0.6-acceptance-criteria.md)
-- [docs/archive/v0.6-feature-to-step-mapping.md](docs/archive/v0.6-feature-to-step-mapping.md)
-- [docs/archive/v0.7-feature-spec.md](docs/archive/v0.7-feature-spec.md)
-- [docs/archive/v0.7-acceptance-criteria.md](docs/archive/v0.7-acceptance-criteria.md)
-- [docs/archive/v0.7-feature-to-step-mapping.md](docs/archive/v0.7-feature-to-step-mapping.md)
-- [docs/archive/v0.5-provider-implementation-plan.md](docs/archive/v0.5-provider-implementation-plan.md)
-- [docs/archive/v0.5-acceptance-criteria.md](docs/archive/v0.5-acceptance-criteria.md)
-- [docs/migration-packs.md](docs/migration-packs.md)
-- [docs/provider-benchmark-matrix.md](docs/provider-benchmark-matrix.md)
-- [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
-- [docs/turboquant-rerank-guide.md](docs/turboquant-rerank-guide.md)
+The [documentation map](docs/README.md) lists every living document by what you want to do. The most used:
+
+- Start: [docs/getting-started.md](docs/getting-started.md), [docs/livebook-tutorials.md](docs/livebook-tutorials.md)
+- Decide: [docs/product-positioning.md](docs/product-positioning.md), [docs/python-comparison-workflows.md](docs/python-comparison-workflows.md), [docs/provider-support-catalog.md](docs/provider-support-catalog.md)
+- Build: [docs/model-recipes.md](docs/model-recipes.md), [docs/backend-support.md](docs/backend-support.md), [docs/api-stability.md](docs/api-stability.md)
+- Design and direction: [docs/architecture.md](docs/architecture.md), [docs/vision.md](docs/vision.md), [docs/roadmap.md](docs/roadmap.md)
+
+Version-named specs and plans are history only (`docs/archive/`).
 
 ## Contributing
 
