@@ -96,7 +96,7 @@ Hybrid quantum-AI (AI tool contracts with rerank and optimization handlers) is a
 
 - The in-repo rerank datasets are synthetic and carry `provenance: synthetic` (KG-5). The real-data lane is parked (`docs/vision.md` §11).
 - The hybrid benchmark scripts emit fixed placeholder figures, not measurements (KG-11).
-- The bundled rerank and optimization handlers compute classically while reporting `execution.mode: :quantum` (KG-12). Decision PD-6 proposes fixing the reported mode before the launch post.
+- The bundled rerank and optimization handlers compute classically and report `execution.mode: :classical` (KG-12, PD-6). They make no simulator or provider call, so they are not quantum computations.
 
 No real-data quality claim is made.
 
@@ -130,7 +130,7 @@ Used by the docs-sync claims audit (`skills/docs-sync/SKILL.md`) for README, doc
 | "the `noise:` option is a scalar model" | "noise channels", "realistic noise" (until channel-based noise ships) | KG-30 |
 | "internal, environment-specific benchmark reference" | any cross-framework speed claim | README Performance section; owner decision 2026-10-30 |
 | "4 core providers through one typed lifecycle" | "every provider", "provider-neutral" without the supported list | AGENTS.md invariant |
-| "classical computation behind a quantum tool contract" (if PD-6 keeps the handlers) | "quantum rerank" or "quantum optimization" for the bundled handlers | KG-12 |
+| "classical computation behind a quantum tool contract", with `execution.mode: :classical` | "quantum rerank" or "quantum optimization" for the bundled handlers | KG-12 |
 
 ## 12) Further Reading
 

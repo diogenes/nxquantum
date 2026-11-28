@@ -76,7 +76,7 @@ Known gaps:
 | KG-9 | No git tags for published versions | H1.1 (owner action) |
 | KG-10 | Simulator gate matrices and state are `complex64`. Expectation outputs are `{:f, 32}`. The precision was undocumented, and `resynthesize_1q` angles carry ~1e-7 error | Closed by decision 2026-10-25, option A (keep single precision and document the floor). Evidence: `docs/backend-support.md` "Numerical Precision", `bench/numerics_precision_floor.exs`. Reopen with an `api change` intent if an external user needs float64 agreement. Reopen proposed 2026-11-25 (PD-4): opt-in `:f64` in H2.4, default unchanged |
 | KG-11 | Hybrid benchmark scripts emit fixed figures, not measurements: quality (`ndcg_at_10`, `map_at_10`, `objective_gap_to_known_best`), the TurboQuant KPIs in `bench/hybrid_quantum_ai_benchmark.exs` (`quality_drop`, `memory_bytes_per_vector`, `compression_ratio_vs_fp32`), and every `latency_fallback_impact` metric. Lanes report dataset ids they do not load: both rerank lanes report `rq_small_v1` (inline scores, or generated sin/cos embeddings unless `--dataset-path` is given), and `constrained_optimization_assistant` reports the nonexistent `co_knapsack_v1`. `bench/turboquant_rerank_benchmark.exs` computes memory and compression from the tool result | Labeled placeholder (2026-10-26); fix or remove when the real-data lane un-parks (`docs/vision.md` §11) |
-| KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | H1.7 (PD-6). Owner: user. Status: landed on main (#30, 2026-11-26), verified by CI. Golden test (same input and seed gives the same output) not yet written |
+| KG-12 | AI tool handlers compute classically but report `execution.mode: :quantum`: `NxQuantum.AI.run_tool/2` rerank (`lib/nx_quantum/ai/tools/kernel_rerank.ex`, sorts caller scores or TurboQuant dot products) and constrained optimization (`lib/nx_quantum/ai/tool_runner.ex`, picks the lowest-cost feasible candidate). `docs/quantum-ai-tool-contracts.md` names `constrained_optimize.v1` / `constrained_optimize.ex`, which do not exist. Changing the reported mode is an `api change` | H1.7 (PD-6). Owner: user. Status: resolved. The reported mode is `:classical` (#30, 2026-11-26), and the golden test (same input and seed gives the same output) is `test/nx_quantum/ai/tool_output_golden_test.exs` (H1.7 closeout PR, 2026-11-28) |
 | KG-13 | The OpenTelemetry-named observability adapter (`lib/nx_quantum/adapters/observability/open_telemetry.ex`) records spans, metrics, and logs in the process dictionary; there is no OpenTelemetry dependency or exporter, and `docs/observability.md` calls it the production emitter adapter | unassigned (owner decision) |
 | KG-14 | `ProviderBridge.Serialization` raises on struct values (`Nx.Tensor`, `DateTime`, `MapSet`) in envelope payload, metadata, reason, or response (`lib/nx_quantum/provider_bridge/serialization.ex`, `stringify_value/1` → `stringify_keys/1`), contrary to `serialize/1`'s `{:ok, String.t()}` spec. A fix needs a v1 encoding decision under the Envelope Compatibility Policy | unassigned (owner decision) |
 | KG-15 | The acceptance scenario 'Calibration payload provenance is normalized' (`features/provider_mitigation_calibration_contracts.feature`) asserts a constant its own step injects; `CalibrationPayload.validate/1` drops provenance | unassigned (owner decision) |
@@ -307,7 +307,7 @@ Review gate:
 
 ### H1.7 - Claims and Option Hygiene
 
-- Status: planned
+- Status: done
 - Intent: api change
 - Seats: Lead, DX, Critic, Verifier, Docs sync (claims audit)
 - Depends on: H1.5 deliverable 1
@@ -329,6 +329,13 @@ Review gate:
 1. A contract test fails if any bundled AI handler reports `:quantum` without a simulator or provider call (*tentative*: `test/nx_quantum/ai/execution_mode_truth_test.exs`).
 2. A property test over generated misspellings of `seed`, `shots`, and `observable` shows every call returns the warning and none silently runs with the default seed.
 3. `mix quality`, `mix dialyzer`, and `mix test.domain_coverage` (100%) are green. Provider envelope snapshots are unchanged.
+
+Evidence (2026-11-28):
+
+- Deliverable 1 (KG-12): the bundled handlers report `execution.mode: :classical` (`lib/nx_quantum/ai/tool_runner.ex`, `lib/nx_quantum/ai/tools/kernel_rerank.ex`; #30). `docs/quantum-ai-tool-contracts.md` now names the real handler, `lib/nx_quantum/ai/tool_runner.ex`, and no longer `constrained_optimize.ex`. Golden test: `test/nx_quantum/ai/tool_output_golden_test.exs`.
+- Deliverable 2 (KG-25, phase 1): `lib/nx_quantum/option_keys.ex`, ADR 0014, and `docs/api-stability.md` (Option Validation). Acceptance: `test/property/option_keys_property_test.exs` covers misspelled `seed`, `shots`, and `observable` for `Sampler.run/2` and `Estimator.run/2` (#31). Phase 2, the typed error, is a later minor release and is not part of H1.7.
+- Deliverable 3: `docs/product-positioning.md` §8 and §11 state the classical mode; `docs/launch/launch-0.12-draft.md` carries the PD-6 checklist item.
+- Review gate 1: `test/nx_quantum/ai/execution_mode_truth_test.exs`. Review gate 2: `test/property/option_keys_property_test.exs`. Review gate 3: this closeout PR's CI, with no change to provider envelope snapshots.
 
 ---
 
